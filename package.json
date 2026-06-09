@@ -1,0 +1,11 @@
+{
+  "name": "partson-live",
+  "version": "1.0.0",
+  "description": "PartsOn - 자동화 부품 선정 플랫폼",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "build": "echo 'Static site - no build needed'",
+    "start": "python3 -m http.server 3000"
+  }
+}

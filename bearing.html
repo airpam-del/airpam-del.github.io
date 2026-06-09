@@ -1,0 +1,1451 @@
+﻿<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartsOn Linear — 베어링 선정 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --steel:#94A3B8;
+  --steel-dark:#64748B;
+  --ball:#1A3A2A;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input{font-family:var(--mono)}
+.check-val{font-family:var(--mono)}
+.hero-model{font-family:var(--mono)}
+.bore-btn{font-family:var(--mono)}
+
+/* 헤더 */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* 레이아웃 */
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+
+/* 스텝바 */
+.steps-bar{display:flex;align-items:flex-start;margin-bottom:1.75rem;position:relative}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-node:not(:last-child)::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .2s}
+.step-node:not(:last-child).done::after{background:var(--accent)}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;position:relative;z-index:1}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:12px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;line-height:1.3}
+.step-label.done{color:var(--accent)}
+.step-label.active{color:var(--accent);font-weight:600}
+
+.step-wrap{display:none}
+.step-wrap.active{display:block}
+
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* 초보자 가이드 토글 */
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}
+.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+
+/* 베어링 선택 그리드 (이미지 포함) */
+.bearing-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bearing-card{padding:0;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;overflow:hidden;text-align:left;width:100%;font-family:inherit;display:flex;flex-direction:column}
+.bearing-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.bearing-card.sel{border-color:var(--accent);background:var(--accent-light);box-shadow:0 0 0 1px var(--accent)}
+.bearing-card.sel .bearing-name{color:var(--accent)}
+.bearing-svg{background:linear-gradient(135deg,#F8FAFC 0%,#EAF4EE 100%);padding:12px 8px;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--border);min-height:100px;height:100px;width:100%}
+.bearing-svg svg{width:100%;max-width:160px;height:80px;display:block;flex-shrink:0}
+.bearing-meta{padding:10px 12px}
+.bearing-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.bearing-code{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.bearing-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.bearing-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;font-size:14px;font-weight:700;color:var(--accent);background:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent)}
+.bearing-card{position:relative}
+
+/* 옵션 버튼 (Step 2~) */
+.opt-grid{display:grid;gap:8px}
+.opt-grid.col2{grid-template-columns:1fr 1fr}
+.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;width:100%;font-family:inherit}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}
+.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+
+/* 입력 필드 */
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-hidden{display:none !important}
+
+/* 내경 버튼 그리드 */
+.bore-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;margin-bottom:8px}
+.bore-btn{height:44px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:14px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.bore-btn:hover{border-color:var(--accent-mid);background:var(--accent-light);color:var(--accent)}
+.bore-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.bore-btn:disabled{opacity:.3;cursor:not-allowed}
+.bore-btn:disabled:hover{border-color:var(--border);background:#fff;color:var(--text2)}
+
+/* 네비 버튼 */
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}
+.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}
+.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+
+/* 결과 */
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-edit,.btn-restart{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;background:#fff;color:var(--text2);transition:all .15s}
+.btn-edit:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.btn-restart:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result-title{font-size:16px;font-weight:700;color:var(--text);flex:1}
+
+.hero-card{background:var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;transition:background .2s}
+.hero-card.warn{background:var(--warn)}
+.hero-card.bad{background:var(--bad)}
+.hero-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-img{width:96px;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:8px;padding:8px;display:flex;justify-content:center;align-items:center}
+.hero-img svg{width:100%;height:auto}
+.hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hero-model{font-size:28px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1.1}
+.hero-dim{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:3px}
+.hero-cap{font-size:12px;color:rgba(255,255,255,.7)}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--card);border-radius:10px;padding:14px 16px;border:1.5px solid var(--border)}
+.check-card.ok{border-color:#BBF7D0;background:var(--ok-bg)}
+.check-card.warn{border-color:#FCD34D;background:var(--warn-bg)}
+.check-card.bad{border-color:#FECACA;background:var(--bad-bg)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.check-card.ok .check-label{color:var(--ok)}
+.check-card.warn .check-label{color:var(--warn)}
+.check-card.bad .check-label{color:var(--bad)}
+.check-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.check-card.ok .check-val{color:var(--ok)}
+.check-card.warn .check-val{color:var(--warn)}
+.check-card.bad .check-val{color:var(--bad)}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500;color:var(--text3)}
+.check-card.ok .check-judge{color:var(--ok)}
+.check-card.warn .check-judge{color:var(--warn)}
+.check-card.bad .check-judge{color:var(--bad)}
+
+.note-box{background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#22654A;line-height:1.8}
+.note-box strong{color:var(--accent)}
+
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto;min-width:640px}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl th:first-child{text-align:center;width:44px}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+.tag-rec{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.tag-rec.warn{background:var(--warn)}
+.tag-rec.bad{background:var(--bad)}
+table.ctbl tr.rec-row.warn td{background:#FFFBEB}
+table.ctbl tr.rec-row.bad td{background:#FEF2F2}
+.tag-ok{display:inline-block;font-size:11px;color:var(--ok);font-weight:600}
+.tag-warn{display:inline-block;font-size:11px;color:var(--warn);font-weight:600}
+.tag-bad{display:inline-block;font-size:11px;color:var(--bad);font-weight:600}
+
+.disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
+
+/* 면책 공지 카드 (결과 상단) */
+.notice-card{background:#FEF2F2;border:1.5px solid #FECACA;border-left:4px solid var(--bad);border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#7F1D1D;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:var(--bad);margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#991B1B;margin-top:8px;font-weight:600}
+.notice-card details summary::-webkit-details-marker{display:none}
+.notice-card details summary::before{content:'▶ ';font-size:9px}
+.notice-card details[open] summary::before{content:'▼ '}
+.notice-card details .detail-body{margin-top:8px;padding-top:8px;border-top:1px dashed #FECACA;font-size:12px;color:#7F1D1D}
+.notice-card details .detail-body p{margin-bottom:5px}
+.notice-card details .detail-body strong{color:#991B1B}
+
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+/* 면책 공지 카드 (Step 1 상단 - 소형) */
+.notice-mini{background:#FEF2F2;border:1px solid #FECACA;border-left:3px solid var(--bad);border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#7F1D1D;line-height:1.6}
+.notice-mini strong{color:var(--bad)}
+
+.warn-banner{background:var(--warn-bg);border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.info-banner{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#166534;line-height:1.6}
+
+@media(max-width:480px){
+  .opt-grid.col3{grid-template-columns:1fr}
+  .checks{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .bearing-grid{grid-template-columns:1fr}
+  .hero-card{flex-direction:column;text-align:center;align-items:stretch}
+  .hero-img{width:auto}
+  .hero-img svg{max-width:140px;margin:0 auto}
+}
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+/* ── 공급사 섹션 ── */
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.supplier-empty{font-size:13px;color:var(--text3);text-align:center;padding:1.25rem}
+
+/* ── CAD 도면 다운로드 ── */
+.cad-section{margin-top:1rem;background:var(--accent);border-radius:12px;padding:1.25rem 1.5rem;border:none}
+.cad-section-title{font-size:13px;font-weight:700;letter-spacing:.4px;color:#fff;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.cad-section-title::before{content:'';display:inline-block;width:4px;height:18px;background:#4ade80;border-radius:2px;flex-shrink:0}
+.cad-btns{display:flex;flex-wrap:wrap;gap:10px}
+.cad-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border:none;border-radius:8px;background:rgba(255,255,255,0.15);font-size:13px;font-weight:600;color:#fff;text-decoration:none;transition:all .18s;backdrop-filter:blur(4px)}
+.cad-btn:hover{background:rgba(255,255,255,0.28);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cad-btn:active{transform:translateY(0)}
+.cad-btn-icon{font-size:16px;flex-shrink:0}
+.cad-note{font-size:11px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6}
+.cad-note a{color:#4ade80;text-underline-offset:2px}
+/* ── PDF 출력 ── */
+.print-header{display:none}
+.print-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#1A3A2A;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin:1rem 0;font-family:inherit;transition:background .15s}
+.print-pdf-btn:hover{background:#2D6B4A}
+@media print{
+  @page{size:A4;margin:12mm 14mm 12mm 14mm}
+  .partson-nav,header,footer,.disclaimer,.print-pdf-btn,.step-section,.steps-nav,.wizard-section,nav,.tab-bar{display:none!important}
+  .step-wrap{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}
+  .ph-title{font-size:18px;font-weight:700;color:#1A3A2A}
+  .ph-sub{font-size:12px;color:#6B6760;margin-top:2px}
+  .ph-date{font-size:11px;color:#9E9B96;text-align:right}
+  body{background:#fff!important;font-size:12px}
+  main{padding:0!important;max-width:100%!important}
+  #resultArea{display:block!important}
+  table{break-inside:avoid;font-size:11px}
+  .checks{grid-template-columns:1fr 1fr!important}
+  a{color:inherit!important;text-decoration:none!important}
+}
+</style>
+</head>
+<body>
+
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <a href="lmguide.html">LM Guide</a>
+  <a href="ballscrew.html">볼스크류 선정</a>
+  <a href="bearing.html" class="active">베어링 선정</a>
+  <a href="servo_motor.html">서보모터 선정</a>
+  <a href="screwjack.html">스크류잭 선정</a>
+</nav>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">⚙️</div>
+    <div>
+      <h1>베어링 선정 계산기</h1>
+      <p>PartsOn Linear · NSK · SKF · FAG · INA 카탈로그 평균 · ISO 281</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 스텝바 -->
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-node" id="sn1"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1">베어링<br>종류</div></div>
+    <div class="step-node" id="sn2"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2">하중<br>입력</div></div>
+    <div class="step-node" id="sn3"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3">운전<br>조건</div></div>
+    <div class="step-node" id="sn4"><div class="step-circle" id="sc4">4</div><div class="step-label" id="sl4">요구<br>수명</div></div>
+    <div class="step-node" id="sn5"><div class="step-circle" id="sc5">5</div><div class="step-label" id="sl5">치수<br>선택</div></div>
+  </div>
+
+  <!-- ═══════ STEP 1: 베어링 종류 (이미지 포함) ═══════ -->
+  <div class="card step-wrap active" id="step1">
+    <!-- 면책 공지 (간략판) -->
+    <div class="notice-mini">
+      <strong>⚠️ 참고용 도구입니다.</strong> 본 계산기는 ISO 281 기본 수명 식을 단순화한 <strong>참고용</strong>이며, 실제 설계·발주에는 사용할 수 없습니다. 반드시 제조사 카탈로그(NSK·SKF·FAG 등)와 자격 있는 엔지니어의 검토를 거치세요.
+    </div>
+
+    <div class="question">베어링 종류를 선택하세요</div>
+    <div class="question-desc">단면도와 설명을 보고 용도에 맞는 베어링을 고르세요. 어떤 걸 골라야 할지 모르겠으면 아래 가이드를 펼쳐보세요.</div>
+
+    <!-- 초보자 가이드 -->
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 베어링이 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>베어링의 두 가지 하중:</strong></p>
+          <p>• <strong>반경(레이디얼) 하중 Fr</strong> — 축에 <em>수직</em>으로 작용 (예: 벨트 장력, 화물 무게)</p>
+          <p>• <strong>축방향(액시얼) 하중 Fa</strong> — 축을 <em>밀거나 당기는</em> 힘 (예: 헬리컬 기어 추력, 임펠러 반발력)</p>
+          <p style="margin-top:8px"><strong>고르는 순서 (간단 버전):</strong></p>
+          <p>① <strong>반경 하중만</strong> → 깊은홈 볼(DGBB) 또는 원통 롤러(CRB)</p>
+          <p>② <strong>반경+축방향</strong> → 앵귤러 콘택트(ACBB), 테이퍼 롤러(TRB)</p>
+          <p>③ <strong>축방향만</strong> → 스러스트 볼(TBB)</p>
+          <p>④ <strong>축이 휘는 경우</strong> → 자동조심 볼(SBB) / 자동조심 롤러(SRB)</p>
+          <p>⑤ <strong>좁은 공간 + 큰 반경 하중</strong> → 니들 롤러(NRB)</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="bearing-grid" id="bearingGrid">
+      <!-- JS로 동적 생성 -->
+    </div>
+
+    <div class="err-msg" id="err1">베어링 종류를 선택해 주세요.</div>
+    <div class="nav-row">
+      <button class="btn btn-primary" onclick="go(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ STEP 2 ═══════ -->
+  <div class="card step-wrap" id="step2">
+    <div class="question">어떤 기계에 사용하시나요?</div>
+    <div class="question-desc">기계 종류를 선택하면 전형적인 하중 범위를 자동으로 제안합니다.</div>
+
+    <div class="opt-grid" id="appGrid" style="margin-bottom:1rem">
+      <button class="opt-btn" onclick="selApp(&#39;motor&#39;,this)"><div class="opt-title">⚡ 전동기 / 팬</div><div class="sub">벨트·커플링 장착 · 충격 거의 없음</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;pump&#39;,this)"><div class="opt-title">💧 펌프 / 압축기</div><div class="sub">반경 + 축방향 혼합 · 경미한 충격</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;cnv&#39;,this)"><div class="opt-title">📦 컨베이어 롤러</div><div class="sub">반경 하중 위주 · 보통 충격</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;mc&#39;,this)"><div class="opt-title">🔧 공작기계 주축</div><div class="sub">절삭력 복합 하중 · 보통 충격</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;gear&#39;,this)"><div class="opt-title">⚙️ 감속기 / 기어박스</div><div class="sub">큰 반경 + 축방향 · 보통 충격</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;heavy&#39;,this)"><div class="opt-title">🏗️ 압연기 / 크러셔</div><div class="sub">대 충격 하중 · 강한 충격</div></button>
+      <button class="opt-btn" onclick="selApp(&#39;custom&#39;,this)"><div class="opt-title">✏️ 직접 입력</div><div class="sub">수치를 이미 알고 있을 때</div></button>
+    </div>
+
+    <div id="appSuggestBox" style="display:none;background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#22654A;line-height:1.8">
+      <div id="appSuggestText" style="margin-bottom:6px"></div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:12px;color:#166534">위 값을 그대로 사용할까요?</span>
+        <button id="applyBtn" onclick="applyAppValues()" style="height:30px;padding:0 14px;border-radius:7px;background:#16653A;color:#fff;border:none;font-size:12px;font-weight:600;cursor:pointer">✓ 적용</button>
+        <button onclick="showDirectInput()" style="height:30px;padding:0 14px;border-radius:7px;background:#fff;color:#166534;border:1.5px solid #B4DCC7;font-size:12px;font-weight:600;cursor:pointer">수정하기</button>
+      </div>
+    </div>
+
+    <div id="loadInputArea" style="display:none;margin-bottom:1rem">
+      <div class="grid2">
+        <div class="field" id="fieldFr">
+          <label>반경 하중 Fr <button class="help-btn" onclick="openBrgHelp('fr')">?</button></label>
+          <div class="input-wrap"><input type="number" id="inFr" placeholder="0" min="0" step="1"><span class="unit">kgf</span></div>
+          <span class="hint">축에 수직으로 작용하는 힘</span>
+        </div>
+        <div class="field" id="fieldFa">
+          <label>축방향 하중 Fa <button class="help-btn" onclick="openBrgHelp('fa')">?</button></label>
+          <div class="input-wrap"><input type="number" id="inFa" placeholder="0" min="0" step="1"><span class="unit">kgf</span></div>
+          <span class="hint">축 방향으로 미는 힘</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="fwArea" style="display:none">
+      <div class="question" style="font-size:14px;margin-bottom:.75rem">하중 성질 확인 (하중계수 fw) <button class="help-btn" onclick="openBrgHelp('fw')">?</button></div>
+      <div class="opt-grid col3" id="fwGrid">
+        <button class="opt-btn" onclick="selFw(1.0, this)"><div class="opt-title">충격 없음</div><div class="sub">fw = 1.0<br>전동기 · 팬</div></button>
+        <button class="opt-btn" onclick="selFw(1.5, this)"><div class="opt-title">보통 충격</div><div class="sub">fw = 1.5<br>공작기계 · 컨베이어</div></button>
+        <button class="opt-btn" onclick="selFw(2.5, this)"><div class="opt-title">강한 충격</div><div class="sub">fw = 2.5<br>압연기 · 크러셔</div></button>
+      </div>
+    </div>
+
+    <div class="err-msg" id="err2">기계 종류를 선택하거나 하중 값을 입력해 주세요.</div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="go(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="go(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ STEP 3 ═══════ -->
+  <div class="card step-wrap" id="step3">
+    <div class="question">운전 조건을 입력하세요</div>
+    <div class="question-desc">운전 회전수와 운전 온도를 입력합니다.</div>
+    <div class="field" style="margin-bottom:1rem">
+      <label>회전수 n <button class="help-btn" onclick="openBrgHelp('rpm')">?</button></label>
+      <div class="input-wrap" style="max-width:200px"><input type="number" id="inRPM" placeholder="1000" min="1" step="100"><span class="unit">rpm</span></div>
+    </div>
+    <div class="question" style="font-size:14px;margin-bottom:.75rem">운전 온도 (온도계수 ft)</div>
+    <div class="opt-grid col2" id="ftGrid">
+      <button class="opt-btn" onclick="selFt(1.00, this)"><div class="opt-title">125°C 미만</div><div class="sub">ft = 1.00 — 일반 운전</div></button>
+      <button class="opt-btn" onclick="selFt(0.95, this)"><div class="opt-title">125 ~ 150°C</div><div class="sub">ft = 0.95</div></button>
+      <button class="opt-btn" onclick="selFt(0.90, this)"><div class="opt-title">150 ~ 175°C</div><div class="sub">ft = 0.90</div></button>
+      <button class="opt-btn" onclick="selFt(0.85, this)"><div class="opt-title">175°C 이상</div><div class="sub">ft = 0.85 — 고온 윤활 필요</div></button>
+    </div>
+    <div class="err-msg" id="err3">회전수와 운전 온도를 모두 입력·선택해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(2)">← 이전</button><button class="btn btn-primary" onclick="go(4)">다음 →</button></div>
+  </div>
+
+  <!-- ═══════ STEP 4 ═══════ -->
+  <div class="card step-wrap" id="step4">
+    <div class="question">요구 수명을 선택하세요 <button class="help-btn" onclick="openBrgHelp('lh')">?</button></div>
+    <div class="question-desc">적용 기계의 사용 목적에 맞는 목표 수명(L₁₀h)을 선택합니다.</div>
+    <div class="opt-grid" id="lhGrid">
+      <button class="opt-btn" onclick="selLh(1000, this)"><div class="opt-title">가정용 / 간헐 운전</div><div class="sub">L₁₀h = 1,000 시간</div></button>
+      <button class="opt-btn" onclick="selLh(8000, this)"><div class="opt-title">단속 운전</div><div class="sub">L₁₀h = 8,000 시간</div></button>
+      <button class="opt-btn" onclick="selLh(20000, this)"><div class="opt-title">하루 8시간 연속</div><div class="sub">L₁₀h = 20,000 시간</div></button>
+      <button class="opt-btn" onclick="selLh(50000, this)"><div class="opt-title">하루 24시간 연속</div><div class="sub">L₁₀h = 50,000 시간</div></button>
+      <button class="opt-btn" id="lhCustomBtn" onclick="selLhCustom(this)"><div class="opt-title">직접 입력</div><div class="sub">목표 수명을 직접 지정</div></button>
+    </div>
+    <div id="lhCustomWrap" style="display:none;margin-top:12px">
+      <div class="field"><label>목표 수명 입력</label><div class="input-wrap" style="max-width:200px"><input type="number" id="inLhCustom" placeholder="10000" min="100" step="100"><span class="unit">h</span></div></div>
+    </div>
+    <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-top:14px">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px">일일 가동 시간 <span style="font-size:11px;font-weight:400;color:var(--text3)">(수명을 "년"으로 환산)</span> <button class="help-btn" onclick="openBrgHelp('hday')">?</button></div>
+      <div class="opt-grid col3" style="margin-bottom:10px">
+        <button class="opt-btn" onclick="selBrgHday(8,this)"><div class="opt-title">8시간</div><div class="sub">1교대</div></button>
+        <button class="opt-btn" onclick="selBrgHday(16,this)"><div class="opt-title">16시간</div><div class="sub">2교대</div></button>
+        <button class="opt-btn" onclick="selBrgHday(24,this)"><div class="opt-title">24시간</div><div class="sub">연속 가동</div></button>
+      </div>
+      <div class="field" style="max-width:180px">
+        <label style="font-size:12px;color:var(--text3)">직접 입력</label>
+        <div class="input-wrap"><input type="number" id="inHday" value="8" min="1" max="24" step="1" oninput="brgState.h_day=parseFloat(this.value)||8"><span class="unit">h/일</span></div>
+      </div>
+    </div>
+    <div class="err-msg" id="err4">요구 수명을 선택하거나 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(3)">← 이전</button><button class="btn btn-primary" onclick="go(5)">다음 →</button></div>
+  </div>
+
+  <!-- ═══════ STEP 5: 치수 선택 (내경/외경 통합) ═══════ -->
+  <div class="card step-wrap" id="step5">
+    <div class="question">축 또는 하우징 치수를 선택하세요</div>
+    <div class="question-desc">기준을 선택하면 치수 목록이 바로 나타납니다.</div>
+    <div class="opt-grid col2" id="searchByGrid" style="margin-bottom:14px">
+      <button class="opt-btn" onclick="selSearchBy('bore', this)">
+        <div class="opt-title">📐 내경(축경) d 기준</div>
+        <div class="sub">축 지름을 알고 있을 때<br>예: 모터 축 φ20</div>
+      </button>
+      <button class="opt-btn" onclick="selSearchBy('od', this)">
+        <div class="opt-title">⭕ 외경(하우징) D 기준</div>
+        <div class="sub">하우징 보어가 정해진 경우<br>예: 보어 φ52</div>
+      </button>
+    </div>
+    <div id="boreSection" style="display:none">
+      <div id="step5DimLabel" style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">치수를 선택하세요</div>
+      <div class="bore-grid" id="boreGrid"></div>
+    </div>
+    <div class="err-msg" id="err5">기준을 선택하고 치수를 클릭해 주세요.</div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="go(4)">← 이전</button>
+      <button class="btn btn-primary" onclick="calcAndShow()">결과 보기 →</button>
+    </div>
+  </div>
+
+  <!-- ═══════ RESULT ═══════ -->
+  <div id="resultArea" style="display:none">
+    <div class="print-header">
+      <div><div class="ph-title">PartsOn</div><div class="ph-sub">베어링 선정 계산기 — 계산 결과</div></div>
+      <div class="ph-date" id="brg-print-date"></div>
+    </div>
+    <div class="result-header">
+      <span class="result-title">선정 결과</span>
+      <button class="btn-edit" onclick="goEdit()">← 조건 수정</button>
+      <button class="btn-restart" onclick="restart()">처음부터</button>
+    </div>
+
+    <!-- 면책 공지 카드 (결과 상단 - 펼침 가능) -->
+    <div class="notice-card">
+      <div class="notice-head">⚠️ 면책 공지 — 반드시 확인하세요</div>
+      본 결과는 <strong>참고용 추정치</strong>이며, 실제 설계·구매·시공의 근거로 사용할 수 없습니다.
+      ISO 281 기본 수명 식을 단순화한 모델이므로 실제 베어링 수명·성능과 차이가 있을 수 있습니다.
+      <details>
+        <summary>자세한 한계 및 면책 사항 보기</summary>
+        <div class="detail-body">
+          <p><strong>① 계산 모델의 한계</strong></p>
+          <p>• 본 도구는 ISO 281 <strong>기본 정격 수명 L₁₀h</strong>만 산출하며, 수정 수명 L<sub>nm</sub>(aISO 계수 — 신뢰도·재질·오염도·점도)은 반영하지 않습니다.</p>
+          <p>• 등가 하중 P 계산 시 e·Y·X 값은 대표값으로 단순화했습니다. 실제 카탈로그 값과 ±10~30% 오차 가능.</p>
+          <p>• <strong>윤활 조건, 오염도, 설치 정밀도, 열팽창, 진동</strong> 등 실제 수명에 큰 영향을 주는 인자는 반영되지 않았습니다.</p>
+
+          <p style="margin-top:8px"><strong>② 데이터 한계</strong></p>
+          <p>• 동·정정격하중(C, C₀)과 허용 회전수는 NSK·SKF·FAG·INA 카탈로그의 <strong>평균값</strong>이며, 특정 제조사·로트의 실제 값과 다를 수 있습니다.</p>
+          <p>• 허용 회전수는 <strong>그리스 윤활 기준</strong>입니다. 오일 윤활 시 일반적으로 +25~30% 상승합니다.</p>
+          <p>• 사용 데이터는 <strong>비밀봉(개방형)</strong> 기준이며, 실(seal) 부착·접촉식 실 등은 별도 보정 필요.</p>
+
+          <p style="margin-top:8px"><strong>③ 실제 설계 시 반드시 확인</strong></p>
+          <p>• 제조사 <strong>최신 카탈로그</strong>의 정확한 C, C₀, 허용 회전수, 형번 치수.</p>
+          <p>• <strong>축·하우징 끼워맞춤</strong>, 내부 틈새, 예압, 윤활 종류 및 주입량.</p>
+          <p>• <strong>안전계수</strong>(s₀ ≥ 일반 1.0 / 충격 2.0 / 정밀 4.0)와 결합 강도 검토.</p>
+          <p>• 자격 있는 <strong>기계설계 기술자의 검토 및 승인</strong>.</p>
+
+          <p style="margin-top:8px"><strong>④ 책임 한계</strong></p>
+          <p>본 결과를 근거로 한 설계·구매·시공에서 발생한 <strong>모든 직·간접 손해</strong>(고장, 파손, 인명·재산 피해, 영업 손실 등)에 대해 본 도구 제공자(PartsOn) 및 작성자는 <strong>일체의 책임을 지지 않습니다</strong>. 사용자는 본 도구 사용으로 인한 결과의 위험을 전적으로 부담합니다.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 추천 히어로 카드 (이미지 포함) -->
+    <div class="hero-card" id="heroCard">
+      <div class="hero-img" id="heroImg"></div>
+      <div class="hero-info">
+        <div class="hero-label" id="heroLabel">추천 베어링</div>
+        <div class="hero-model" id="heroModel">—</div>
+        <div class="hero-dim" id="heroDim">—</div>
+        <div class="hero-cap" id="heroCap">—</div>
+      </div>
+    </div>
+
+    <!-- 치수 카드 (내경·외경·폭) -->
+    <div class="checks" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="check-card ok" style="text-align:center">
+        <div class="check-label">내경 d</div>
+        <div class="check-val" id="dimBore">—</div>
+        <div class="check-judge">축이 들어가는 안쪽 지름</div>
+      </div>
+      <div class="check-card ok" style="text-align:center">
+        <div class="check-label">외경 D</div>
+        <div class="check-val" id="dimOD">—</div>
+        <div class="check-judge">하우징 보어 지름</div>
+      </div>
+      <div class="check-card ok" style="text-align:center">
+        <div class="check-label">폭 B</div>
+        <div class="check-val" id="dimB">—</div>
+        <div class="check-judge">베어링 두께</div>
+      </div>
+    </div>
+
+    <div class="warn-banner" id="warnBanner" style="display:none"></div>
+    <div class="info-banner" id="infoBanner" style="display:none"></div>
+
+    <div class="checks">
+      <div class="check-card" id="cc1">
+        <div class="check-label">수명 L₁₀h</div>
+        <div class="check-val" id="ccV1">—</div>
+        <div class="check-judge" id="ccJ1">—</div>
+        <div style="font-size:12px;margin-top:4px;opacity:.85" id="ccYears"></div>
+      </div>
+      <div class="check-card" id="cc2"><div class="check-label">정적 안전율 s₀</div><div class="check-val" id="ccV2">—</div><div class="check-judge" id="ccJ2">—</div></div>
+      <div class="check-card" id="cc3"><div class="check-label">등가 하중 P</div><div class="check-val" id="ccV3">—</div><div class="check-judge" id="ccJ3">—</div></div>
+      <div class="check-card" id="cc4"><div class="check-label">허용 회전수</div><div class="check-val" id="ccV4">—</div><div class="check-judge" id="ccJ4">—</div></div>
+    </div>
+
+    <div class="note-box" id="noteBox"></div>
+
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm" id="cmpTitle">동일 치수 전 시리즈 비교</div>
+      <div class="tbl-wrap">
+        <table class="ctbl">
+          <thead><tr><th style="text-align:center">판정</th><th>형번</th><th>d × D × B (mm)</th><th>C (kN)</th><th>C₀ (kN)</th><th>수명 (h)</th><th>s₀</th><th>허용rpm</th><th>종합</th></tr></thead>
+          <tbody id="cmpTbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="supplier-section" id="brg-supplier-section" style="display:none">
+      <div class="supplier-section-title">공급사 연결</div>
+      <div class="supplier-list" id="brg-supplier-list"></div>
+    </div>
+
+    <div class="cad-section" id="brg-cad-section" style="display:none">
+      <div class="cad-section-title">CAD 도면 다운로드</div>
+      <div class="cad-btns" id="brg-cad-btns"></div>
+      <div class="cad-note">※ 버튼 클릭 후 해당 제품 페이지에서 CAD 파일을 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>※ 면책 공지</strong><br>
+      본 계산기는 ISO 281 기본 수명(L₁₀h) 식을 단순화한 <strong>참고용 추정 도구</strong>입니다.
+      수정 수명(aISO), 윤활·오염·정렬·진동·열팽창 등 실제 수명에 영향을 주는 다수 인자는 반영되지 않습니다.
+      실제 설계·발주 시에는 제조사 카탈로그(NSK·SKF·FAG·INA 등)의 최신 데이터와 자격 있는 엔지니어의 검토가 필수입니다.<br>
+      데이터 출처: NSK · SKF · FAG · INA 카탈로그 평균값(그리스 윤활 기준).
+    </div>
+  </div>
+</main>
+
+<script>
+'use strict';
+
+/* ══════════ 베어링 SVG 단면도 (재사용) ══════════ */
+const SVG = {
+  DGBB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- 외륜 -->
+    <rect x="10" y="6" width="120" height="14" rx="1" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <path d="M10 20 L130 20 L130 24 Q70 32 10 24 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <!-- 내륜 -->
+    <path d="M10 60 L130 60 L130 56 Q70 48 10 56 Z" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <rect x="10" y="60" width="120" height="14" rx="1" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 볼 -->
+    <circle cx="35" cy="40" r="11" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="70" cy="40" r="11" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="105" cy="40" r="11" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <!-- 하이라이트 -->
+    <circle cx="32" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <circle cx="67" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <circle cx="102" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <!-- 축 표시 -->
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  ACBB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- 외륜(한쪽 어깨 높음) -->
+    <path d="M10 6 L130 6 L130 26 Q90 30 10 22 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <!-- 내륜(반대쪽 어깨 높음) -->
+    <path d="M10 74 L130 74 L130 50 Q90 58 10 56 Z" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 볼 -->
+    <circle cx="35" cy="40" r="10" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="70" cy="40" r="10" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="105" cy="40" r="10" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="32" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <circle cx="67" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <circle cx="102" cy="37" r="3" fill="#fff" opacity="0.4"/>
+    <!-- 접촉각 표시 -->
+    <line x1="35" y1="40" x2="60" y2="20" stroke="#B91C1C" stroke-width="0.8" stroke-dasharray="2,1"/>
+    <text x="62" y="18" font-size="6" fill="#B91C1C">접촉각</text>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  CRB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="6" width="120" height="20" rx="1" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <rect x="10" y="54" width="120" height="20" rx="1" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 원통 롤러 -->
+    <rect x="22" y="28" width="22" height="24" rx="2" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <rect x="59" y="28" width="22" height="24" rx="2" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <rect x="96" y="28" width="22" height="24" rx="2" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <line x1="25" y1="32" x2="25" y2="48" stroke="#fff" opacity="0.4" stroke-width="2"/>
+    <line x1="62" y1="32" x2="62" y2="48" stroke="#fff" opacity="0.4" stroke-width="2"/>
+    <line x1="99" y1="32" x2="99" y2="48" stroke="#fff" opacity="0.4" stroke-width="2"/>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  SBB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- 외륜 (구면 내면) -->
+    <path d="M10 6 L130 6 L130 28 Q70 42 10 28 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <path d="M10 74 L130 74 L130 52 Q70 38 10 52 Z" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 두 줄 볼 -->
+    <circle cx="40" cy="34" r="7" fill="#16653A" stroke="#0f4022" stroke-width="0.5"/>
+    <circle cx="70" cy="34" r="7" fill="#16653A" stroke="#0f4022" stroke-width="0.5"/>
+    <circle cx="100" cy="34" r="7" fill="#16653A" stroke="#0f4022" stroke-width="0.5"/>
+    <circle cx="40" cy="46" r="7" fill="#22A05A" stroke="#0f4022" stroke-width="0.5"/>
+    <circle cx="70" cy="46" r="7" fill="#22A05A" stroke="#0f4022" stroke-width="0.5"/>
+    <circle cx="100" cy="46" r="7" fill="#22A05A" stroke="#0f4022" stroke-width="0.5"/>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  SRB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 6 L130 6 L130 26 Q70 40 10 26 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <path d="M10 74 L130 74 L130 54 Q70 40 10 54 Z" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 배럴 롤러 두 줄 -->
+    <ellipse cx="40" cy="33" rx="11" ry="6" fill="#16653A" stroke="#0f4022" stroke-width="0.5" transform="rotate(-12 40 33)"/>
+    <ellipse cx="70" cy="33" rx="11" ry="6" fill="#16653A" stroke="#0f4022" stroke-width="0.5" transform="rotate(-12 70 33)"/>
+    <ellipse cx="100" cy="33" rx="11" ry="6" fill="#16653A" stroke="#0f4022" stroke-width="0.5" transform="rotate(-12 100 33)"/>
+    <ellipse cx="40" cy="47" rx="11" ry="6" fill="#22A05A" stroke="#0f4022" stroke-width="0.5" transform="rotate(12 40 47)"/>
+    <ellipse cx="70" cy="47" rx="11" ry="6" fill="#22A05A" stroke="#0f4022" stroke-width="0.5" transform="rotate(12 70 47)"/>
+    <ellipse cx="100" cy="47" rx="11" ry="6" fill="#22A05A" stroke="#0f4022" stroke-width="0.5" transform="rotate(12 100 47)"/>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  TRB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- 테이퍼 외륜(컵) -->
+    <path d="M10 6 L130 6 L130 18 L10 32 Z" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <!-- 테이퍼 내륜(콘) -->
+    <path d="M10 74 L130 74 L130 62 L10 48 Z" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 테이퍼 롤러 (사다리꼴) -->
+    <polygon points="22,32 38,32 42,48 18,48" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <polygon points="58,28 76,28 80,52 54,52" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <polygon points="94,24 116,24 120,56 90,56" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+
+  TBB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <!-- 위 와셔 -->
+    <rect x="20" y="10" width="100" height="14" rx="1" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <!-- 아래 와셔 -->
+    <rect x="20" y="56" width="100" height="14" rx="1" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 볼 (수직 하중을 받음) -->
+    <circle cx="35" cy="40" r="13" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="70" cy="40" r="13" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="105" cy="40" r="13" fill="#16653A" stroke="#0f4022" stroke-width="0.6"/>
+    <circle cx="32" cy="36" r="4" fill="#fff" opacity="0.4"/>
+    <circle cx="67" cy="36" r="4" fill="#fff" opacity="0.4"/>
+    <circle cx="102" cy="36" r="4" fill="#fff" opacity="0.4"/>
+    <!-- 수직 화살표 (Fa) -->
+    <path d="M70 2 L70 8 M67 5 L70 2 L73 5" stroke="#B91C1C" stroke-width="1" fill="none"/>
+    <path d="M70 78 L70 72 M67 75 L70 78 L73 75" stroke="#B91C1C" stroke-width="1" fill="none"/>
+  </svg>`,
+
+  NRB: `<svg viewBox="0 0 140 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="6" width="120" height="14" rx="1" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+    <rect x="10" y="60" width="120" height="14" rx="1" fill="#CBD5E1" stroke="#475569" stroke-width="0.8"/>
+    <!-- 가늘고 긴 니들 롤러 -->
+    <rect x="14" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="26" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="38" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="50" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="62" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="74" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="86" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="98" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="110" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <rect x="122" y="22" width="6" height="36" rx="3" fill="#16653A" stroke="#0f4022" stroke-width="0.4"/>
+    <line x1="5" y1="40" x2="135" y2="40" stroke="#94A3B8" stroke-width="0.5" stroke-dasharray="3,2"/>
+  </svg>`,
+};
+
+/* ══════════ 베어링 메타정보 ══════════ */
+const BRG_META = {
+  DGBB: { name:'깊은홈 볼 베어링', code:'DGBB · 6000 / 6200 / 6300 시리즈', desc:'가장 범용적. 반경+소축방향 하중·고속 가능.', allowsFr:true, allowsFa:true, p:3 },
+  ACBB: { name:'앵귤러 콘택트 볼 베어링', code:'ACBB · 7200 / 7300 시리즈', desc:'반경+큰 축방향 하중 조합. 접촉각 40°·고속.', allowsFr:true, allowsFa:true, p:3 },
+  CRB:  { name:'원통 롤러 베어링', code:'CRB · NJ200 / NJ300 시리즈', desc:'대 반경 하중 전용. 축방향 하중 지지 불가.', allowsFr:true, allowsFa:false, p:10/3 },
+  SBB:  { name:'자동조심 볼 베어링', code:'SBB · 1200 / 1300 시리즈', desc:'축이 약간 휘어도 OK. 두 줄 볼·구면 외륜.', allowsFr:true, allowsFa:true, p:3 },
+  SRB:  { name:'자동조심 롤러 베어링', code:'SRB · 22200 / 22300 시리즈', desc:'대 반경+축방향 + 휨 허용. 중장비용.', allowsFr:true, allowsFa:true, p:10/3 },
+  TRB:  { name:'테이퍼 롤러 베어링', code:'TRB · 30200 / 30300 시리즈', desc:'반경+큰 축방향 동시 지지. 자동차 휠·기어박스.', allowsFr:true, allowsFa:true, p:10/3 },
+  TBB:  { name:'스러스트 볼 베어링', code:'TBB · 51200 시리즈', desc:'순수 축방향 하중 전용. 반경 하중 불가·저속.', allowsFr:false, allowsFa:true, p:3 },
+  NRB:  { name:'니들 롤러 베어링', code:'NRB · NA4900 시리즈', desc:'반경 방향만. 단면 작고 큰 반경 하중. 좁은 공간용.', allowsFr:true, allowsFa:false, p:10/3 },
+};
+
+/* ══════════ 베어링 데이터베이스 ══════════
+   형식: '형번':[내경mm, 외경mm, 폭mm, C(kN), C0(kN), 허용회전수rpm] */
+const BRG_DB = {
+  DGBB: {
+    '6000':[10,26,8,4.55,1.96,32000],'6001':[12,28,8,5.10,2.36,28000],'6002':[15,32,9,5.60,2.85,24000],
+    '6003':[17,35,10,6.00,3.25,22000],'6004':[20,42,12,9.95,5.00,18000],'6005':[25,47,12,11.2,5.85,15000],
+    '6006':[30,55,13,13.3,7.35,13000],'6007':[35,62,14,16.8,9.50,11000],'6008':[40,68,15,17.8,10.8,9500],
+    '6009':[45,75,16,21.1,13.2,8500],'6010':[50,80,16,21.8,14.6,7500],'6011':[55,90,18,28.1,19.0,6700],
+    '6012':[60,95,18,29.5,20.8,6000],'6014':[70,110,20,40.5,29.0,5000],'6016':[80,125,22,52.7,39.0,4500],
+    '6018':[90,140,24,60.5,46.5,4000],'6020':[100,150,24,64.4,52.0,3600],
+    '6200':[10,30,9,5.10,2.36,30000],'6201':[12,32,10,6.82,3.10,26000],'6202':[15,35,11,7.65,3.72,22000],
+    '6203':[17,40,12,9.56,4.75,19000],'6204':[20,47,14,12.7,6.55,16000],'6205':[25,52,15,14.0,7.80,13000],
+    '6206':[30,62,16,19.5,11.2,11000],'6207':[35,72,17,25.5,15.3,9000],'6208':[40,80,18,29.0,17.8,8000],
+    '6209':[45,85,19,31.5,20.4,7000],'6210':[50,90,20,35.1,23.2,6300],'6211':[55,100,21,43.6,29.0,5600],
+    '6212':[60,110,22,52.7,36.0,5000],'6214':[70,125,24,62.0,45.0,4300],'6216':[80,140,26,72.8,53.0,3800],
+    '6218':[90,160,30,96.5,71.5,3400],'6220':[100,180,34,124,95.0,3000],
+    '6300':[10,35,11,8.06,3.35,28000],'6301':[12,37,12,9.72,4.50,24000],'6302':[15,42,13,11.4,5.40,20000],
+    '6303':[17,47,14,13.8,6.55,17000],'6304':[20,52,15,15.9,7.80,14000],'6305':[25,62,17,22.5,11.4,12000],
+    '6306':[30,72,19,29.0,15.0,9500],'6307':[35,80,21,33.5,18.0,8000],'6308':[40,90,23,41.0,22.8,7000],
+    '6309':[45,100,25,52.7,30.5,6000],'6310':[50,110,27,61.8,38.0,5300],'6311':[55,120,29,71.5,45.5,4800],
+    '6312':[60,130,31,81.9,53.0,4300],'6314':[70,150,35,105,69.5,3400],'6316':[80,170,39,123,86.5,3000],
+    '6318':[90,190,43,145,105,2600],'6320':[100,215,47,174,130,2400],
+  },
+  ACBB: {
+    '7200':[10,30,9,5.85,3.35,34000],'7201':[12,32,10,7.28,4.15,30000],'7202':[15,35,11,8.45,5.00,26000],
+    '7203':[17,40,12,10.6,6.55,22000],'7204':[20,47,14,13.3,8.65,19000],'7205':[25,52,15,15.9,11.2,16000],
+    '7206':[30,62,16,22.4,16.3,13000],'7207':[35,72,17,30.7,22.8,11000],'7208':[40,80,18,36.4,27.5,9500],
+    '7209':[45,85,19,38.5,30.5,8000],'7210':[50,90,20,43.6,36.0,7000],'7211':[55,100,21,52.7,43.0,6300],
+    '7212':[60,110,22,63.7,53.0,5600],'7214':[70,125,24,78.3,68.0,4800],'7216':[80,140,26,96.5,86.5,4300],
+    '7218':[90,160,30,122,112,3800],'7220':[100,180,34,150,143,3400],
+    '7304':[20,52,15,16.8,11.2,17000],'7305':[25,62,17,25.6,18.0,14000],'7306':[30,72,19,33.4,24.5,11000],
+    '7307':[35,80,21,40.2,30.0,9500],'7308':[40,90,23,50.7,38.0,8000],'7309':[45,100,25,65.5,50.5,7000],
+    '7310':[50,110,27,76.1,60.0,6000],'7311':[55,120,29,90.4,72.5,5300],'7312':[60,130,31,104,84.5,4800],
+    '7314':[70,150,35,132,112,4000],'7316':[80,170,39,163,143,3600],'7318':[90,190,43,196,179,3200],
+    '7320':[100,215,47,242,228,2800],
+  },
+  CRB: {
+    'NJ204':[20,47,14,22.9,20.8,15000],'NJ205':[25,52,15,28.1,27.5,13000],'NJ206':[30,62,16,36.4,35.5,11000],
+    'NJ207':[35,72,17,47.5,46.5,9000],'NJ208':[40,80,18,56.1,57.2,8000],'NJ209':[45,85,19,57.2,60.5,7000],
+    'NJ210':[50,90,20,64.4,69.5,6300],'NJ211':[55,100,21,82.4,90.4,5600],'NJ212':[60,110,22,101,113,5000],
+    'NJ214':[70,125,24,120,139,4300],'NJ216':[80,140,26,143,172,3800],'NJ218':[90,160,30,193,240,3200],
+    'NJ220':[100,180,34,237,305,2800],
+    'NJ304':[20,52,15,26.5,25.5,14000],'NJ305':[25,62,17,40.7,40.5,12000],'NJ306':[30,72,19,55.1,56.1,9500],
+    'NJ307':[35,80,21,63.7,65.5,8000],'NJ308':[40,90,23,83.2,87.1,7000],'NJ309':[45,100,25,104,112,6000],
+    'NJ310':[50,110,27,124,138,5300],'NJ311':[55,120,29,143,162,4800],'NJ312':[60,130,31,166,192,4300],
+    'NJ314':[70,150,35,208,248,3600],'NJ316':[80,170,39,255,315,3200],'NJ318':[90,190,43,317,405,2800],
+    'NJ320':[100,215,47,381,500,2400],
+  },
+  SBB: {
+    '1200':[10,30,9,5.55,1.27,28000],'1201':[12,32,10,5.60,1.40,26000],'1202':[15,35,11,7.80,1.90,22000],
+    '1203':[17,40,12,8.10,2.30,19000],'1204':[20,47,14,10.0,2.85,17000],'1205':[25,52,15,11.7,3.55,14000],
+    '1206':[30,62,16,15.5,4.85,12000],'1207':[35,72,17,15.9,5.50,10000],'1208':[40,80,18,19.0,7.20,9000],
+    '1209':[45,85,19,21.5,8.70,8500],'1210':[50,90,20,22.8,9.50,8000],'1211':[55,100,21,26.5,11.7,7000],
+    '1212':[60,110,22,30.7,14.4,6300],
+    '1300':[10,35,11,7.65,1.83,24000],'1301':[12,37,12,9.85,2.45,22000],'1302':[15,42,13,9.95,2.55,18000],
+    '1303':[17,47,14,12.5,3.40,16000],'1304':[20,52,15,12.5,3.55,14000],'1305':[25,62,17,17.4,5.10,12000],
+    '1306':[30,72,19,21.2,6.55,10000],'1307':[35,80,21,25.0,8.30,9000],'1308':[40,90,23,29.0,10.4,8000],
+    '1309':[45,100,25,38.0,13.3,7000],'1310':[50,110,27,43.0,16.0,6300],'1311':[55,120,29,49.5,19.0,5600],
+    '1312':[60,130,31,57.2,22.4,5000],
+  },
+  SRB: {
+    '22205':[25,52,18,32.5,33.5,11000],'22206':[30,62,20,40.5,42.5,9500],'22207':[35,72,23,55.0,57.0,8500],
+    '22208':[40,80,23,57.0,63.0,7500],'22209':[45,85,23,63.5,70.0,7000],'22210':[50,90,23,68.0,77.0,6300],
+    '22211':[55,100,25,85.0,98.0,5600],'22212':[60,110,28,105,122,5000],'22214':[70,125,31,128,160,4300],
+    '22216':[80,140,33,156,205,3800],'22218':[90,160,40,212,275,3400],'22220':[100,180,46,260,340,3000],
+    '22305':[25,62,24,57.0,60.0,9500],'22306':[30,72,27,75.0,80.0,8500],'22307':[35,80,31,93.0,102,7500],
+    '22308':[40,90,33,116,128,6700],'22309':[45,100,36,143,160,6000],'22310':[50,110,40,170,194,5300],
+    '22311':[55,120,43,200,236,4800],'22312':[60,130,46,236,280,4300],'22314':[70,150,51,310,375,3800],
+    '22316':[80,170,58,380,470,3400],'22318':[90,190,64,470,600,3000],'22320':[100,215,73,580,750,2600],
+  },
+  TRB: {
+    '30204':[20,47,15.25,32.5,37.5,13000],'30205':[25,52,16.25,38.0,44.5,11000],'30206':[30,62,17.25,53.0,63.5,9500],
+    '30207':[35,72,18.25,67.0,82.0,8000],'30208':[40,80,19.75,77.0,98.0,7000],'30209':[45,85,20.75,83.5,108,6300],
+    '30210':[50,90,21.75,87.0,118,5600],'30211':[55,100,22.75,108,148,5000],'30212':[60,110,23.75,128,180,4500],
+    '30214':[70,125,26.25,154,226,4000],'30216':[80,140,28.25,182,278,3500],'30218':[90,160,32.5,240,375,3200],
+    '30220':[100,180,37,300,475,2800],
+    '30304':[20,52,16.25,40.0,42.5,12000],'30305':[25,62,18.25,57.0,64.0,10000],'30306':[30,72,20.75,76.0,87.0,9000],
+    '30307':[35,80,22.75,93.0,108,8000],'30308':[40,90,25.25,116,138,7000],'30309':[45,100,27.25,138,170,6300],
+    '30310':[50,110,29.25,170,212,5600],'30311':[55,120,31.5,202,260,5000],'30312':[60,130,33.5,232,310,4500],
+    '30314':[70,150,38,300,415,3800],'30316':[80,170,42.5,360,520,3200],'30318':[90,190,46.5,440,650,2800],
+    '30320':[100,215,51.5,540,820,2600],
+  },
+  TBB: {
+    '51200':[10,26,11,12.5,17.0,5300],'51201':[12,28,11,13.5,19.5,4800],'51202':[15,32,12,16.0,24.5,4500],
+    '51203':[17,35,12,17.5,28.5,4000],'51204':[20,40,14,22.5,38.0,3600],'51205':[25,47,15,27.0,49.0,3200],
+    '51206':[30,52,16,28.0,54.0,3000],'51207':[35,62,18,39.5,77.0,2600],'51208':[40,68,19,44.0,90.0,2400],
+    '51209':[45,73,20,48.0,102,2200],'51210':[50,78,22,53.0,114,2000],'51211':[55,90,25,73.5,158,1800],
+    '51212':[60,95,26,78.0,170,1700],
+  },
+  NRB: {
+    'NA4900':[10,22,13,12.5,16.5,17000],'NA4901':[12,24,13,13.0,17.5,15000],'NA4902':[15,28,13,15.5,22.5,13000],
+    'NA4903':[17,30,13,16.0,24.5,11000],'NA4904':[20,37,17,24.5,38.5,9500],'NA4905':[25,42,17,27.0,46.5,8500],
+    'NA4906':[30,47,17,30.5,55.0,7500],'NA4907':[35,55,20,42.5,77.5,6700],'NA4908':[40,62,22,53.0,98.0,6000],
+    'NA4909':[45,68,22,57.0,108,5300],'NA4910':[50,72,22,59.0,117,5000],'NA4911':[55,80,25,76.5,153,4500],
+    'NA4912':[60,85,25,80.0,166,4000],
+  },
+};
+
+/* DGBB ISO 281 보간 */
+const DGBB_TABLE = [
+  {ratio:0.025,e:0.22,Y:2.00},{ratio:0.040,e:0.24,Y:1.80},{ratio:0.070,e:0.27,Y:1.60},
+  {ratio:0.130,e:0.31,Y:1.40},{ratio:0.250,e:0.37,Y:1.20},{ratio:0.500,e:0.44,Y:1.00},
+];
+function interpDGBB(faC0) {
+  const t = DGBB_TABLE;
+  if (faC0 <= t[0].ratio) return {e:t[0].e,Y:t[0].Y};
+  if (faC0 >= t[t.length-1].ratio) return {e:t[t.length-1].e,Y:t[t.length-1].Y};
+  for (let i=0;i<t.length-1;i++) {
+    if (faC0 >= t[i].ratio && faC0 <= t[i+1].ratio) {
+      const r = (faC0 - t[i].ratio)/(t[i+1].ratio - t[i].ratio);
+      return {e:t[i].e + r*(t[i+1].e-t[i].e), Y:t[i].Y + r*(t[i+1].Y-t[i].Y)};
+    }
+  }
+  return {e:0.44,Y:1.00};
+}
+
+/* 상태 */
+let state = { type:null, fr:null, fa:null, fw:null, n:null, ft:null, lh:null, searchBy:null, dimVal:null };
+const brgState = { h_day: 8 }; // 일일 가동 시간
+let currentStep = 1;
+const KGFTON = 0.00981; // kgf → kN
+
+function fmt(v,d=1){if(v===null||v===undefined||!isFinite(v))return '—';return (+v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtInt(v){if(v===null||v===undefined||!isFinite(v))return '—';return Math.round(v).toLocaleString('ko-KR');}
+
+/* ══════════ Step 1: 베어링 그리드 동적 생성 ══════════ */
+function initBearingGrid(){
+  const grid = document.getElementById('bearingGrid');
+  grid.innerHTML = '';
+  Object.keys(BRG_META).forEach(key => {
+    const m = BRG_META[key];
+    // button 대신 div 사용 (button 안의 SVG가 일부 브라우저에서 렌더링 안되는 이슈 회피)
+    const card = document.createElement('div');
+    card.className = 'bearing-card';
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.onclick = () => selType(key, card);
+    card.onkeydown = (e) => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); selType(key, card); } };
+    card.innerHTML =
+      '<div class="bearing-svg">' + SVG[key] + '</div>' +
+      '<div class="bearing-meta">' +
+        '<div class="bearing-name">' + m.name + '</div>' +
+        '<div class="bearing-code">' + m.code + '</div>' +
+        '<div class="bearing-desc">' + m.desc + '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function selType(type, btn) {
+  state.type = type;
+  document.querySelectorAll('#bearingGrid .bearing-card').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // Fr/Fa 가시성 업데이트
+  const m = BRG_META[type];
+  const fieldFr = document.getElementById('fieldFr');
+  const fieldFa = document.getElementById('fieldFa');
+  if (fieldFr) {
+    if (m.allowsFr) fieldFr.classList.remove('field-hidden');
+    else { fieldFr.classList.add('field-hidden'); state.fr = 0; document.getElementById('inFr').value=''; }
+  }
+  if (fieldFa) {
+    if (m.allowsFa) fieldFa.classList.remove('field-hidden');
+    else { fieldFa.classList.add('field-hidden'); state.fa = 0; document.getElementById('inFa').value=''; }
+  }
+}
+
+/* ══════════ Step 2 ══════════ */
+const APP_DATA = {
+  motor:  { frHint:150, faHint:0,   fw:1.0, desc:'전동기·팬 — 벨트 장력 기준 Fr≈150 kgf, Fa≈0 (커플링 직결)' },
+  pump:   { frHint:200, faHint:80,  fw:1.0, desc:'펌프·압축기 — Fr≈200 kgf, Fa≈80 kgf (축추력)' },
+  cnv:    { frHint:300, faHint:0,   fw:1.5, desc:'컨베이어 롤러 — Fr≈300 kgf, Fa≈0' },
+  mc:     { frHint:500, faHint:200, fw:1.5, desc:'공작기계 주축 — Fr≈500 kgf, Fa≈200 kgf' },
+  gear:   { frHint:800, faHint:300, fw:1.5, desc:'감속기·기어박스 — Fr≈800 kgf, Fa≈300 kgf' },
+  heavy:  { frHint:2000,faHint:500, fw:2.5, desc:'압연기·크러셔 — Fr≈2000 kgf, Fa≈500 kgf' },
+  custom: { frHint:null, faHint:null, fw:null, desc:null },
+};
+let _pendingFr=null,_pendingFa=null;
+
+function selApp(key, btn) {
+  document.querySelectorAll('#appGrid .opt-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const d = APP_DATA[key];
+  const m = BRG_META[state.type] || {allowsFr:true, allowsFa:true};
+  const sBox = document.getElementById('appSuggestBox');
+  const lArea = document.getElementById('loadInputArea');
+  const fwA = document.getElementById('fwArea');
+
+  if (key === 'custom') {
+    sBox.style.display='none'; lArea.style.display='block'; fwA.style.display='block';
+    document.querySelectorAll('#fwGrid .opt-btn').forEach(b=>b.classList.remove('sel'));
+    state.fw = null; return;
+  }
+  _pendingFr = m.allowsFr ? d.frHint : 0;
+  _pendingFa = m.allowsFa ? d.faHint : 0;
+
+  let frText = m.allowsFr ? `Fr ≈ ${_pendingFr} kgf` : 'Fr = 0 (이 베어링은 반경 하중 불가)';
+  let faText = m.allowsFa ? `Fa ≈ ${_pendingFa} kgf` : 'Fa = 0 (이 베어링은 축방향 하중 불가)';
+
+  document.getElementById('appSuggestText').innerHTML =
+    `<strong>${d.desc}</strong><br>📌 제안값: ${frText} · ${faText} · fw = ${d.fw}` +
+    `<br><span style="font-size:11px;color:#166534">※ 실제 설계값으로 꼭 확인하세요</span>`;
+  sBox.style.display='block'; lArea.style.display='none'; fwA.style.display='none';
+  state.fw = d.fw;
+  document.getElementById('applyBtn').textContent='✓ 적용';
+  document.getElementById('applyBtn').style.background='#16653A';
+}
+
+function applyAppValues() {
+  state.fr = _pendingFr; state.fa = _pendingFa;
+  document.getElementById('inFr').value = state.fr;
+  document.getElementById('inFa').value = state.fa;
+  const fwA = document.getElementById('fwArea');
+  fwA.style.display='block';
+  const fwBtns = document.querySelectorAll('#fwGrid .opt-btn');
+  fwBtns.forEach(b=>b.classList.remove('sel'));
+  const fwMap={1.0:0,1.5:1,2.5:2};
+  const idx = fwMap[state.fw];
+  if (idx!==undefined) fwBtns[idx].classList.add('sel');
+  document.getElementById('appSuggestText').innerHTML =
+    document.getElementById('appSuggestText').innerHTML.replace('📌 제안값','✅ <strong style="color:#15803D">적용됨</strong> — 제안값');
+  document.getElementById('applyBtn').textContent='✓ 적용됨';
+  document.getElementById('applyBtn').style.background='#15803D';
+}
+
+function showDirectInput() {
+  document.getElementById('loadInputArea').style.display='block';
+  document.getElementById('fwArea').style.display='block';
+  if (_pendingFr!==null) document.getElementById('inFr').value=_pendingFr;
+  if (_pendingFa!==null) document.getElementById('inFa').value=_pendingFa;
+  const fwBtns = document.querySelectorAll('#fwGrid .opt-btn');
+  fwBtns.forEach(b=>b.classList.remove('sel'));
+  const fwMap={1.0:0,1.5:1,2.5:2};
+  const idx = fwMap[state.fw];
+  if (idx!==undefined) fwBtns[idx].classList.add('sel');
+}
+
+function selFw(fw, btn){state.fw=fw;document.querySelectorAll('#fwGrid .opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function selFt(ft, btn){state.ft=ft;document.querySelectorAll('#ftGrid .opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function selLh(lh, btn){state.lh=lh;document.querySelectorAll('#lhGrid .opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');document.getElementById('lhCustomWrap').style.display='none';}
+function selLhCustom(btn){state.lh=null;document.querySelectorAll('#lhGrid .opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');document.getElementById('lhCustomWrap').style.display='block';}
+function selBrgHday(val, btn){brgState.h_day=val;document.getElementById('inHday').value=val;document.querySelectorAll('#step4 .opt-grid.col3 .opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+
+/* ══════════ Step 5: 검색 기준 + 치수 목록 즉시 표시 ══════════ */
+function selSearchBy(mode, btn) {
+  state.searchBy = mode;
+  state.dimVal = null;
+  document.querySelectorAll('#searchByGrid .opt-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // 치수 목록 즉시 표시
+  initBoreGrid();
+  const boreSection = document.getElementById('boreSection');
+  if (boreSection) boreSection.style.display = 'block';
+  const lbl = document.getElementById('step5DimLabel');
+  if (lbl) lbl.textContent = mode === 'bore' ? '내경(축경) d를 선택하세요' : '외경(하우징) D를 선택하세요';
+}
+
+/* ══════════ Step 6: 치수 그리드 (선택 기준+종류에 따라 활성화) ══════════ */
+function initBoreGrid() {
+  const grid = document.getElementById('boreGrid');
+  if (!grid) return;
+  grid.innerHTML='';
+  if (!state.type || !state.searchBy) return;
+
+  // 선택한 베어링 종류의 데이터에서 기준 치수 목록 추출
+  const idx = state.searchBy === 'bore' ? 0 : 1;
+  const valsInDB = new Set(Object.values(BRG_DB[state.type]).map(d=>d[idx]));
+  const allVals = Array.from(valsInDB).sort((a,b)=>a-b);
+
+  allVals.forEach(d=>{
+    const btn=document.createElement('button');
+    btn.className='bore-btn'; btn.textContent=d+' mm'; btn.type='button';
+    if (state.dimVal === d) btn.classList.add('sel');
+    btn.onclick=()=>selBore(d,btn);
+    grid.appendChild(btn);
+  });
+}
+function selBore(d, btn){state.dimVal=d;document.querySelectorAll('#boreGrid .bore-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+
+/* ══════════ 스텝 이동 ══════════ */
+function go(step) {
+  if (step > currentStep) {
+    if (!validate(currentStep)) return;
+  }
+  if (step === 5) { // 통합된 step5로 이동 시 초기화
+    document.getElementById('boreSection').style.display='none';
+  }
+  showStep(step);
+}
+function showStep(step, pushHistory=true) {
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  document.getElementById('resultArea').style.display='none';
+  if(pushHistory) history.pushState({brgStep:step}, '');
+  for (let i=1;i<=5;i++) {
+    const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);
+    if(!sc)continue;
+    sc.classList.remove('done','active');sl.classList.remove('done','active');sn.classList.remove('done');
+    if (i<step){sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}
+    else if (i===step){sc.classList.add('active');sl.classList.add('active');sc.onclick=null;}
+    else{sc.onclick=null;}
+  }
+  currentStep=step; window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate', e=>{
+  const n = e.state && e.state.brgStep;
+  if(n) showStep(n, false);
+  else showStep(1, false);
+});
+
+function validate(step) {
+  const errEl = document.getElementById('err'+step);
+  if (errEl) errEl.style.display='none';
+  const m = state.type ? BRG_META[state.type] : null;
+
+  if (step===1){if(!state.type){errEl.style.display='block';return false;}}
+  if (step===2){
+    if(!document.querySelector('#appGrid .opt-btn.sel')){errEl.style.display='block';return false;}
+    const lArea=document.getElementById('loadInputArea');
+    if (lArea.style.display!=='none') {
+      if (m.allowsFr) {
+        const fr=parseFloat(document.getElementById('inFr').value);
+        if(isNaN(fr)||fr<0){errEl.style.display='block';return false;}
+        state.fr=fr;
+      } else state.fr=0;
+      if (m.allowsFa) {
+        const fa=parseFloat(document.getElementById('inFa').value);
+        state.fa = isNaN(fa) ? 0 : fa;
+      } else state.fa=0;
+    }
+    if (state.fr===null||state.fr===undefined){errEl.style.display='block';return false;}
+    if (state.fa===null||state.fa===undefined) state.fa=0;
+    // TBB는 Fa>0 필요
+    if (state.type==='TBB' && state.fa<=0){errEl.style.display='block';errEl.textContent='스러스트 볼 베어링은 축방향 하중(Fa)이 필요합니다.';return false;}
+    if (!state.fw){errEl.style.display='block';return false;}
+  }
+  if (step===3){
+    const n=parseFloat(document.getElementById('inRPM').value);
+    if(isNaN(n)||n<=0){errEl.style.display='block';return false;}
+    state.n=n;
+    if(!state.ft){errEl.style.display='block';return false;}
+  }
+  if (step===4){
+    if(!state.lh){
+      const c=parseFloat(document.getElementById('inLhCustom').value);
+      if(isNaN(c)||c<=0){errEl.style.display='block';return false;}
+      state.lh=c;
+    }
+    brgState.h_day = parseFloat(document.getElementById('inHday').value)||8;
+  }
+  if (step===5){
+    if(!state.searchBy){errEl.style.display='block';return false;}
+    if(!state.dimVal){errEl.style.display='block';return false;}
+  }
+  return true;
+}
+
+/* ══════════ 계산 ══════════ */
+function calcP(type, frKN, faKN, C0kN) {
+  if (type === 'CRB' || type === 'NRB') return frKN; // 반경 전용
+  if (type === 'TBB') return faKN; // 축방향 전용
+  if (type === 'ACBB') {
+    if (frKN === 0) return faKN * 0.57;
+    const r = faKN/frKN;
+    if (r <= 1.14) return frKN;
+    return 0.35*frKN + 0.57*faKN;
+  }
+  if (type === 'TRB') {
+    // e ≈ 0.4, Y ≈ 1.5 (대표값)
+    const e = 0.4, Y = 1.5;
+    if (frKN === 0) return 0.4*0 + Y*faKN;
+    const r = faKN/frKN;
+    if (r <= e) return frKN;
+    return 0.4*frKN + Y*faKN;
+  }
+  if (type === 'SBB') {
+    // 자동조심 볼: e ≈ 0.27, Y2 ≈ 2.3 (대표)
+    const e = 0.27, Y1 = 2.3, Y2 = 3.4;
+    if (frKN === 0) return Y2*faKN;
+    const r = faKN/frKN;
+    if (r <= e) return frKN + Y1*faKN;
+    return 0.65*frKN + Y2*faKN;
+  }
+  if (type === 'SRB') {
+    // 자동조심 롤러: e ≈ 0.3, Y2 ≈ 2.5 (대표)
+    const e = 0.3, Y1 = 2.5, Y2 = 3.7;
+    if (frKN === 0) return Y2*faKN;
+    const r = faKN/frKN;
+    if (r <= e) return frKN + Y1*faKN;
+    return 0.67*frKN + Y2*faKN;
+  }
+  // DGBB
+  if (frKN === 0 && faKN === 0) return 0;
+  if (C0kN === 0) {
+    if (frKN === 0) return faKN;
+    return Math.max(frKN, 0.56*frKN + 1.5*faKN);
+  }
+  const faC0 = faKN/C0kN;
+  const {e,Y} = interpDGBB(faC0);
+  if (frKN === 0) return faKN;
+  const r = faKN/frKN;
+  if (r <= e) return frKN;
+  return 0.56*frKN + Y*faKN;
+}
+
+function calcP0(type, frKN, faKN) {
+  if (type === 'CRB' || type === 'NRB') return frKN;
+  if (type === 'TBB') return faKN;
+  if (type === 'ACBB') return Math.max(0.5*frKN + 0.26*faKN, frKN);
+  if (type === 'TRB') return Math.max(0.5*frKN + 0.22*faKN, frKN);
+  if (type === 'SBB') return Math.max(0.6*frKN + 0.5*faKN, frKN);
+  if (type === 'SRB') return Math.max(0.5*frKN + 0.45*faKN, frKN);
+  return Math.max(0.6*frKN + 0.5*faKN, frKN); // DGBB
+}
+
+function calcL10h(C, P_eff, p) {
+  if (P_eff <= 0) return Infinity;
+  return Math.pow(C/P_eff, p) * 1e6 / (60*state.n);
+}
+function calcCReq(P_eff, p) { return P_eff * Math.pow(state.lh*60*state.n/1e6, 1/p); }
+
+function findCandidates() {
+  const db = BRG_DB[state.type];
+  const filterIdx = state.searchBy === 'bore' ? 0 : 1;
+  const filterVal = state.dimVal;
+  const frKN = state.fr * KGFTON;
+  const faKN = state.fa * KGFTON;
+  const fw=state.fw, ft=state.ft, lh=state.lh, n=state.n;
+  const p = BRG_META[state.type].p;
+  const cands = Object.entries(db).filter(([,d])=>d[filterIdx]===filterVal).map(([name,d])=>{
+    const [,OD,B,C,C0,nAllow]=d;
+    const P=calcP(state.type,frKN,faKN,C0);
+    const P0=calcP0(state.type,frKN,faKN);
+    const P_eff=fw*P/ft;
+    const l10h=calcL10h(C,P_eff,p);
+    const s0=(P0>0)?C0/P0:Infinity;
+    const cReq=calcCReq(P_eff,p);
+    const lifeOk=l10h>=lh, s0Ok=s0>=1.0, rpmOk=n<=nAllow;
+    let judge;
+    if (lifeOk&&s0Ok&&rpmOk) judge='ok';
+    else if ((l10h>=lh*0.5)&&(s0>=0.5)&&(n<=nAllow*1.1)) judge='warn';
+    else judge='bad';
+    return {name,OD,B,C,C0,nAllow,P,P0,P_eff,l10h,s0,cReq,judge};
+  });
+  return cands;
+}
+
+/* ══════════ 결과 표시 ══════════ */
+function calcAndShow() {
+  if (!validate(6)) return;
+  const cands = findCandidates();
+  if (cands.length===0) {
+    const lbl = state.searchBy==='bore' ? '내경' : '외경';
+    alert('해당 '+lbl+'('+state.dimVal+' mm)의 베어링 데이터가 없습니다.');
+    return;
+  }
+
+  let rec = cands.find(c=>c.judge==='ok' && c.C>=c.cReq);
+  if (!rec) rec = cands.filter(c=>c.judge==='ok').sort((a,b)=>a.C-b.C)[0];
+  if (!rec) rec = cands.filter(c=>c.judge==='warn').sort((a,b)=>b.l10h-a.l10h)[0];
+  if (!rec) rec = cands.sort((a,b)=>b.l10h-a.l10h)[0];
+
+  // 결정된 내경 (DB 첫번째 컬럼) — 외경 검색이라도 추천 베어링의 실제 내경값 사용
+  const recBore = BRG_DB[state.type][rec.name][0];
+
+  // 히어로 카드 색상 + 라벨 (판정에 따라 가변)
+  const heroCard = document.getElementById('heroCard');
+  heroCard.classList.remove('warn','bad');
+  let heroLabelText;
+  if (rec.judge === 'ok') {
+    heroLabelText = '✓ 추천 베어링 · ' + BRG_META[state.type].name;
+  } else if (rec.judge === 'warn') {
+    heroCard.classList.add('warn');
+    heroLabelText = '⚠️ 최선책 (조건 일부 미충족) · ' + BRG_META[state.type].name;
+  } else {
+    heroCard.classList.add('bad');
+    heroLabelText = '❌ 참고용 — 조건 미충족 · ' + BRG_META[state.type].name;
+  }
+  document.getElementById('heroImg').innerHTML = SVG[state.type];
+  document.getElementById('heroLabel').textContent = heroLabelText;
+  document.getElementById('heroModel').textContent = rec.name;
+  document.getElementById('heroDim').textContent = '내경 φ'+recBore+' × 외경 φ'+rec.OD+' × 폭 '+rec.B+' mm';
+  document.getElementById('heroCap').textContent = 'C = '+fmt(rec.C,1)+' kN   C₀ = '+fmt(rec.C0,1)+' kN';
+
+  // 치수 카드 (3분할: 내경/외경/폭)
+  document.getElementById('dimBore').textContent = 'φ'+recBore+' mm';
+  document.getElementById('dimOD').textContent = 'φ'+rec.OD+' mm';
+  document.getElementById('dimB').textContent = rec.B+' mm';
+
+  // 경고 — 어떤 조건이 미달인지 구체적으로 안내 + 다음 조치 제안
+  const warnB=document.getElementById('warnBanner'), infoB=document.getElementById('infoBanner');
+  warnB.style.display='none'; infoB.style.display='none';
+  let warns = [];
+
+  // 베어링 종류 vs 하중 종류 비호환
+  if ((state.type==='CRB'||state.type==='NRB') && state.fa>0)
+    warns.push('⚠️ 이 베어링은 축방향 하중을 지지할 수 없습니다. 입력된 Fa는 계산에서 제외됩니다.');
+  if (state.type==='TBB' && state.fr>0)
+    warns.push('⚠️ 스러스트 볼 베어링은 반경 하중을 지지할 수 없습니다. Fr는 계산에서 제외됩니다.');
+  if (!rec.lifeOk)
+    warns.push('⚠️ 수명 미달: 해당 치수 내에서 목표 수명('+fmtInt(state.lh)+'h)을 만족하는 베어링이 없습니다. 더 큰 치수로 검색하거나 하중 조건을 재검토하세요.');
+  if (state.n > rec.nAllow)
+    warns.push('⚠️ 회전수 초과: 운전 rpm('+fmtInt(state.n)+')이 허용값('+fmtInt(rec.nAllow)+')을 초과합니다. 고속형 사양(C3 클리어런스 등)을 검토하세요.');
+  if (warns.length) { warnB.style.display='block'; warnB.innerHTML=warns.join('<br>'); }
+
+  // 정보 메시지
+  let infos=[];
+  if (state.ft<1.0) infos.push('ℹ️ 고온 운전: 온도계수 ft='+state.ft+' 적용됨. 고온용 그리스 확인 필요.');
+  if (rec.l10h > state.lh*5) infos.push('ℹ️ 수명 여유가 큽니다. 한 치수 작은 사이즈도 검토해보세요.');
+  if (infos.length) { infoB.style.display='block'; infoB.innerHTML=infos.join('<br>'); }
+
+  // ── 체크 카드 ──
+  const lifeOk=rec.l10h>=state.lh, s0Ok=rec.s0>=1.0, rpmOk=state.n<=rec.nAllow;
+
+  // 수명 카드 (년수 포함)
+  const cc1=document.getElementById('cc1');
+  cc1.className='check-card '+(lifeOk?'ok':rec.l10h>=state.lh*0.5?'warn':'bad');
+  document.getElementById('ccV1').textContent=rec.l10h>=999999?'>1,000,000':fmtInt(rec.l10h);
+  document.getElementById('ccJ1').textContent=(lifeOk?'✓ 충분':'✗ 부족')+' (요구 '+fmtInt(state.lh)+' h)';
+  const lifeYears=rec.l10h/(brgState.h_day*365);
+  const yStr=lifeYears>=1?lifeYears.toFixed(1)+'년':(lifeYears*12).toFixed(1)+'개월';
+  const yearsEl=document.getElementById('ccYears');
+  if(yearsEl) yearsEl.textContent='≈ '+yStr+' ('+brgState.h_day+'h/일 기준)';
+
+  // 정적 안전율 카드
+  const cc2=document.getElementById('cc2');
+  cc2.className='check-card '+(s0Ok?'ok':rec.s0>=0.5?'warn':'bad');
+  document.getElementById('ccV2').textContent=fmt(rec.s0,2);
+  document.getElementById('ccJ2').textContent=(s0Ok?'✓ 양호':'✗ 낮음')+' (권장 ≥ 1.0)';
+
+  // 등가 하중 카드
+  const cc3=document.getElementById('cc3');
+  cc3.className='check-card ok';
+  document.getElementById('ccV3').textContent=fmt(rec.P,2)+' kN';
+  document.getElementById('ccJ3').textContent='fw='+state.fw+'→ 유효 '+fmt(rec.P_eff,2)+' kN';
+
+  // 허용 회전수 카드
+  const cc4=document.getElementById('cc4');
+  cc4.className='check-card '+(rpmOk?'ok':'bad');
+  document.getElementById('ccV4').textContent=fmtInt(rec.nAllow)+' rpm';
+  document.getElementById('ccJ4').textContent=(rpmOk?'✓ 적합':'✗ 초과')+' (운전 '+fmtInt(state.n)+' rpm)';
+
+  // 비고 박스 — 필요 C값 표시
+  document.getElementById('noteBox').innerHTML=
+    '<strong>필요 동정격하중 C_req = '+fmt(rec.cReq,2)+' kN</strong> (목표 '+fmtInt(state.lh)+'h 기준)<br>'+
+    '선택 베어링 C = '+fmt(rec.C,1)+' kN — '+(rec.C>=rec.cReq?'✓ 충족':'✗ 미달')+'<br>'+
+    '<span style="opacity:.8">fw='+state.fw+' · ft='+state.ft+' · '+fmtInt(state.n)+' rpm</span>';
+
+  // ── 비교 테이블 ──
+  const lbl2=state.searchBy==='bore'?'내경 '+state.dimVal+' mm':'외경 '+state.dimVal+' mm';
+  document.getElementById('cmpTitle').textContent=lbl2+' — 전 시리즈 비교';
+  const tbody=document.getElementById('cmpTbody');
+  tbody.innerHTML='';
+  const sorted=[...cands].sort((a,b)=>{
+    if(a.judge==='ok'&&b.judge!=='ok')return -1;
+    if(b.judge==='ok'&&a.judge!=='ok')return 1;
+    return b.l10h-a.l10h;
+  });
+  sorted.forEach(c=>{
+    const isRec=c.name===rec.name;
+    const lYrs=c.l10h/(brgState.h_day*365);
+    const lYrsStr=lYrs>=1?lYrs.toFixed(1)+'년':(lYrs*12).toFixed(1)+'개월';
+    const d2=BRG_DB[state.type][c.name];
+    const judgeSpan=c.judge==='ok'?'<span class="tag-ok">✓</span>':c.judge==='warn'?'<span class="tag-warn">△</span>':'<span class="tag-bad">✗</span>';
+    const recTag=isRec?'<span class="tag-rec">추천</span> ':'';
+    const tr=document.createElement('tr');
+    tr.className=isRec?'rec-row '+rec.judge:'';
+    tr.innerHTML=`<td style="text-align:center">${recTag}${judgeSpan}</td>
+      <td>${c.name}</td>
+      <td>φ${d2[0]}×φ${c.OD}×${c.B}</td>
+      <td>${fmt(c.C,1)}</td><td>${fmt(c.C0,1)}</td>
+      <td>${c.l10h>=999999?'>1M':fmtInt(c.l10h)} <span style="font-size:10px;color:var(--text3)">(${lYrsStr})</span></td>
+      <td>${fmt(c.s0,2)}</td>
+      <td>${fmtInt(c.nAllow)}</td>
+      <td>${c.judge==='ok'?'<span class="tag-ok">적합</span>':c.judge==='warn'?'<span class="tag-warn">주의</span>':'<span class="tag-bad">불가</span>'}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // 공급사 연결
+  renderBrgSuppliers();
+  renderBRGCAD(state.type, recBore, rec.name);
+
+  // 결과 표시
+  document.getElementById('resultArea').style.display='block';
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goEdit(){showStep(currentStep||5);}
+function restart(){
+  state={type:null,fr:null,fa:null,fw:null,n:null,ft:null,lh:null,searchBy:null,dimVal:null};
+  brgState.h_day=8;
+  document.getElementById('resultArea').style.display='none';
+  document.getElementById('brg-supplier-section').style.display='none';
+  document.getElementById('brg-cad-section').style.display='none';
+  showStep(1);
+  initBearingGrid();
+}
+
+/* ══════════ 공급사 연결 ══════════ */
+const BRG_SUPPLIER_KEY='partson_brg_suppliers';
+function getBrgSuppliers(){
+  try{const r=localStorage.getItem(BRG_SUPPLIER_KEY);if(r)return JSON.parse(r);}catch(e){}
+  const d=[{id:'1',name:'오성오토메이션',phone:'010-9119-2153',email:'scvp1@naver.com',website:'',brands:['NSK','SKF','FAG'],note:''}];
+  localStorage.setItem(BRG_SUPPLIER_KEY,JSON.stringify(d));return d;
+}
+function renderBrgSuppliers(){
+  const sec=document.getElementById('brg-supplier-section');
+  const list=document.getElementById('brg-supplier-list');
+  if(!sec||!list)return;
+  const suppliers=getBrgSuppliers();
+  sec.style.display='block';
+  if(!suppliers.length){list.innerHTML='<div class="supplier-empty">등록된 공급사가 없습니다.</div>';return;}
+  list.innerHTML=suppliers.map(s=>{
+    const brands=s.brands&&s.brands.length?s.brands.join(' · '):'';
+    const contacts=[];
+    if(s.phone)contacts.push(`<a href="tel:${s.phone}" class="supplier-lnk">📞 ${s.phone}</a>`);
+    if(s.email)contacts.push(`<a href="mailto:${s.email}" class="supplier-lnk">✉ ${s.email}</a>`);
+    if(s.website)contacts.push(`<a href="${s.website}" target="_blank" class="supplier-lnk">🌐 홈페이지</a>`);
+    return`<div class="supplier-card-item">
+      <div class="supplier-nm">${s.name}</div>
+      ${brands?`<div class="supplier-br">${brands}</div>`:''}
+      <div class="supplier-ct">${contacts.join('')}</div>
+      ${s.note?`<div class="supplier-nt">${s.note}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+/* ── CAD 도면 다운로드 ── */
+/* SKF 제품 페이지 경로 (타입별) */
+const SKF_PATHS = {
+  DGBB: 'ball-bearings/deep-groove-ball-bearings',
+  ACBB: 'ball-bearings/angular-contact-ball-bearings',
+  CRB:  'roller-bearings/cylindrical-roller-bearings',
+  SBB:  'ball-bearings/self-aligning-ball-bearings',
+  SRB:  'roller-bearings/spherical-roller-bearings',
+  TRB:  'roller-bearings/tapered-roller-bearings',
+  TBB:  'thrust-bearings/thrust-ball-bearings',
+  NRB:  'roller-bearings/needle-roller-bearings',
+};
+/* NSK TraceParts 타입별 카테고리 URL */
+const NSK_TP = {
+  DGBB: 'https://www.traceparts.com/els/nsk/en/search/nsk-ball-bearings-deep-groove-ball-bearings?CatalogPath=NSK:NSK.010.010',
+  ACBB: 'https://www.traceparts.com/en/search/nsk-angular-contact-ball-bearings?CatalogPath=NSK:NSK.010.020',
+  CRB:  'https://www.traceparts.com/en/search/nsk-cylindrical-roller-bearings?CatalogPath=NSK:NSK.030.010',
+  SBB:  'https://www.traceparts.com/en/search/nsk-self-aligning-ball-bearings?CatalogPath=NSK:NSK.010.030',
+  SRB:  'https://www.traceparts.com/en/search/nsk-spherical-roller-bearings?CatalogPath=NSK:NSK.030.030',
+  TRB:  'https://www.traceparts.com/en/search/nsk-tapered-roller-bearings?CatalogPath=NSK:NSK.040.010',
+  TBB:  'https://www.traceparts.com/en/search/nsk-thrust-bearings?CatalogPath=NSK:NSK.050',
+  NRB:  'https://www.traceparts.com/en/search/nsk-needle-roller-bearings?CatalogPath=NSK:NSK.060',
+};
+
+function renderBRGCAD(type, bore, modelName) {
+  const sec  = document.getElementById('brg-cad-section');
+  const btns = document.getElementById('brg-cad-btns');
+  if (!sec || !btns) return;
+  sec.style.display = 'block';
+
+  /* SKF: 모델명으로 제품 페이지 직접 링크 */
+  const skfPath = SKF_PATHS[type] || 'ball-bearings/deep-groove-ball-bearings';
+  const skfUrl  = `https://www.skf.com/group/products/rolling-bearings/${skfPath}/productid-${modelName}`;
+
+  /* NSK: TraceParts 타입별 카테고리 */
+  const nskUrl = NSK_TP[type] || 'https://www.traceparts.com/en/search/nsk?CatalogPath=NSK%3AF_NSK';
+
+  /* FAG/INA (Schaeffler): TraceParts 공식 카탈로그 */
+  const fagUrl = 'https://www.traceparts.com/en/search/schaeffler-technologies-ag-co-kg?CatalogPath=INAFAG:F_INAFAG';
+
+  const items = [
+    { icon: '⬇', maker: 'SKF',     label: modelName, sub: '제품 페이지 직접 이동',     url: skfUrl },
+    { icon: '⬇', maker: 'NSK',     label: 'TraceParts', sub: '타입별 카탈로그',        url: nskUrl },
+    { icon: '⬇', maker: 'FAG/INA', label: 'TraceParts', sub: 'Schaeffler 공식 카탈로그', url: fagUrl },
+  ];
+  btns.innerHTML = items.map(l => `
+    <a href="${l.url}" target="_blank" rel="noopener" class="cad-btn">
+      <span class="cad-btn-icon">${l.icon}</span>
+      <span>
+        <span style="display:block;font-size:11px;opacity:.7;font-weight:400;letter-spacing:.3px">${l.maker}</span>
+        <span style="display:block;line-height:1.2">${l.label}</span>
+      </span>
+    </a>`).join('');
+}
+function brgDoPrint(){
+  document.getElementById('brg-print-date').textContent =
+    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
+  window.print();
+}/* ══════════ 초기화 ══════════ */
+initBearingGrid();
+
+/* ── 도움말 팝업 ── */
+const BRG_HELP = {
+  fr: { title:'반경 하중 Fr', desc:'베어링 중심에 수직(방사) 방향으로 작용하는 하중입니다.\n벨트 장력, 기어 하중, 자중 등이 해당됩니다.\n모르면 용도 자동 입력을 사용하세요.', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><circle cx="100" cy="55" r="35" fill="none" stroke="#B4DCC7" stroke-width="3"/><circle cx="100" cy="55" r="18" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="100" cy="55" r="6" fill="#1A3A2A" opacity="0.6"/><line x1="100" y1="20" x2="100" y2="37" stroke="#E05C2A" stroke-width="2.5"/><polygon points="96,37 100,45 104,37" fill="#E05C2A"/><text x="108" y="28" font-size="11" fill="#E05C2A" font-family="monospace">Fr</text><text x="100" y="103" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">방사 방향 하중 [kgf]</text></svg>` },
+  fa: { title:'축방향 하중 Fa', desc:'축의 길이 방향(스러스트)으로 작용하는 하중입니다.\n펌프 임펠러, 헬리컬 기어, 웜 기어 등에서 발생합니다.\n깊은홈 볼베어링은 Fa/Fr ≤ 0.5 정도까지 허용합니다.', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><circle cx="100" cy="55" r="35" fill="none" stroke="#B4DCC7" stroke-width="3"/><circle cx="100" cy="55" r="18" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="100" cy="55" r="6" fill="#1A3A2A" opacity="0.6"/><line x1="160" y1="55" x2="180" y2="55" stroke="#1A3A2A" stroke-width="3" opacity="0.5"/><line x1="20" y1="55" x2="40" y2="55" stroke="#1A3A2A" stroke-width="3" opacity="0.5"/><line x1="160" y1="55" x2="142" y2="55" stroke="#E05C2A" stroke-width="2.5"/><polygon points="142,51 135,55 142,59" fill="#E05C2A"/><text x="165" y="48" font-size="11" fill="#E05C2A" font-family="monospace">Fa</text><text x="100" y="103" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">축 방향 하중 (스러스트) [kgf]</text></svg>` },
+  rpm: { title:'회전수 n', desc:'베어링의 분당 회전수입니다.\n회전수가 높을수록 발열이 증가하고 수명이 단축됩니다.\n허용 회전수는 베어링 크기와 윤활 방식에 따라 달라집니다.', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><circle cx="100" cy="55" r="35" fill="none" stroke="#B4DCC7" stroke-width="3"/><circle cx="100" cy="55" r="18" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="100" cy="55" r="6" fill="#1A3A2A" opacity="0.6"/><path d="M 128 30 A 33 33 0 0 1 133 55" stroke="#E05C2A" stroke-width="2.5" fill="none"/><polygon points="133,55 138,46 128,48" fill="#E05C2A"/><text x="100" y="18" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">n (rpm)</text><text x="100" y="103" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">분당 회전수 — 높을수록 수명↓</text></svg>` },
+  lh:  { title:'목표 수명 (L10h)', desc:'베어링 L10 기본 정격 수명 목표값입니다.\n동일 조건 100개 중 90개가 이 시간까지 고장 없이 사용 가능한 시간입니다.\n· 가정용: 1,000~2,000h\n· 일반 산업: 10,000~20,000h\n· 24시간 연속: 40,000h 이상', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="20" y="28" width="160" height="52" rx="6" fill="#F0FDF4" stroke="#B4DCC7" stroke-width="1.5"/><text x="100" y="56" font-size="16" fill="#16653A" text-anchor="middle" font-weight="bold" font-family="monospace">10,000 h</text><text x="100" y="72" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">일반 산업기계 기준 (L10)</text><text x="100" y="100" font-size="10" fill="#9CA3AF" text-anchor="middle" font-family="monospace">100개 중 90개가 이 시간까지 정상</text></svg>` },
+  hday:{ title:'일일 가동 시간', desc:'하루 중 베어링이 실제 회전하는 시간입니다.\n수명을 연 단위로 환산할 때 사용됩니다.\n· 1교대 8h · 2교대 16h · 연속 24h', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><circle cx="100" cy="52" r="38" fill="none" stroke="#B4DCC7" stroke-width="3"/><circle cx="100" cy="52" r="4" fill="#1A3A2A" opacity="0.6"/><line x1="100" y1="52" x2="100" y2="22" stroke="#1A3A2A" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/><line x1="100" y1="52" x2="124" y2="65" stroke="#1A3A2A" stroke-width="2" stroke-linecap="round" opacity="0.7"/><path d="M 100 14 A 38 38 0 0 1 138 52" stroke="#E05C2A" stroke-width="3" fill="none" stroke-linecap="round"/><text x="100" y="102" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">1교대=8h · 연속=24h</text></svg>` },
+  fw:  { title:'하중계수 fw', desc:'충격이나 진동에 의한 동적 하중 증가를 반영하는 계수입니다.\n· fw = 1.0: 충격 없음 (전동기·팬)\n· fw = 1.5: 보통 충격 (공작기계·컨베이어)\n· fw = 2.5: 강한 충격 (압연기·크러셔)\n하중에 fw를 곱한 값이 유효 하중이 됩니다.', svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="20" y="60" width="160" height="14" rx="3" fill="#B4DCC7"/><rect x="70" y="38" width="60" height="22" rx="3" fill="#1A3A2A" opacity="0.7"/><line x1="100" y1="30" x2="120" y2="30" stroke="#E05C2A" stroke-width="2"/><polygon points="118,27 125,30 118,33" fill="#E05C2A"/><text x="100" y="95" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">유효하중 = Fr × fw ÷ ft</text><text x="155" y="28" font-size="14" fill="#E05C2A" font-family="monospace" font-weight="bold">fw</text></svg>` },
+};
+function openBrgHelp(key) {
+  const h = BRG_HELP[key]; if (!h) return;
+  document.getElementById('brg-help-title').textContent = h.title;
+  document.getElementById('brg-help-svg').innerHTML = h.svg;
+  document.getElementById('brg-help-desc').innerHTML = h.desc.replace(/\n/g,'<br>');
+  document.getElementById('brg-help-overlay').style.display = 'flex';
+}
+function closeBrgHelp(e) {
+  if (!e || e.target === document.getElementById('brg-help-overlay'))
+    document.getElementById('brg-help-overlay').style.display = 'none';
+}
+</script>
+
+<!-- 도움말 팝업 -->
+<div id="brg-help-overlay" onclick="closeBrgHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:300px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <span id="brg-help-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span>
+      <button onclick="closeBrgHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button>
+    </div>
+    <div id="brg-help-svg" style="text-align:center;margin-bottom:10px"></div>
+    <p id="brg-help-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+</body></html>

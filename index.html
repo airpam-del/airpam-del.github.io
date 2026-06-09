@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PartsOn — 자동화 부품 선정 플랫폼</title>
+  <meta name="description" content="LM Guide, 볼스크류, 베어링을 엔지니어링 데이터 기반으로 빠르게 선정하고 공급사와 연결하는 자동화 부품 플랫폼">
+  <meta property="og:title" content="PartsOn — 자동화 부품 선정 플랫폼">
+  <meta property="og:description" content="LM Guide, 볼스크류, 베어링, 서보모터를 데이터 기반으로 빠르게 선정하세요">
+  <meta property="og:image" content="https://partson.co.kr/og-image.png">
+  <meta property="og:url" content="https://partson.co.kr">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: #F8F7F5;
+      --surface: #FFFFFF;
+      --border: #E8E5DF;
+      --border-light: #F0EEEB;
+      --text-primary: #0F0E0C;
+      --text-secondary: #5A5752;
+      --text-muted: #8E8B86;
+      --accent-primary: #1A3A2A;
+      --accent-secondary: #2D6B4A;
+      --accent-light: #E8F0EC;
+      --accent-bright: #00C853;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Pretendard', sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 네비게이션 ── */
+    nav {
+      background: var(--accent-primary);
+      padding: 0 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(26, 58, 42, 0.08);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 140px;
+    }
+
+    .nav-brand {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: transform 0.3s var(--ease-out);
+    }
+
+    .nav-brand:hover {
+      transform: scale(1.05);
+    }
+
+    .nav-logo {
+      height: 110px;
+      width: auto;
+      display: block;
+      margin-left: -68px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .nav-link {
+      font-size: 16px;
+      font-family: var(--font-display);
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: all 0.2s var(--ease-out);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--accent-bright);
+      transform: translateX(-50%);
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .nav-link:hover::after {
+      width: 60%;
+    }
+
+    /* ── 히어로 ── */
+    .hero {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #0F2818 100%);
+      padding: 6rem 2rem 8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: 'PartsOn';
+      position: absolute;
+      right: -40px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-display);
+      font-size: 200px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.05);
+      line-height: 1;
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: -4px;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 200, 83, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.85);
+      padding: 10px 20px;
+      border-radius: 24px;
+      margin-bottom: 2.5rem;
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      animation: fadeInDown 0.8s var(--ease-out);
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-bright);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .hero-title {
+      font-size: clamp(42px, 6vw, 68px);
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.08;
+      letter-spacing: -1px;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
+    }
+
+    .hero-title .dim {
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 400;
+    }
+
+    .hero-subtitle {
+      font-size: 17px;
+      color: rgba(255, 255, 255, 0.55);
+      font-weight: 400;
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.8s var(--ease-out) 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      color: var(--accent-primary);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+      border: 2px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.85);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 14px 32px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: translateY(-3px);
+    }
+
+    /* ── 통계 바 ── */
+    .stats-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-light);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stats-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
+    }
+
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      padding: 2rem;
+      gap: 2rem;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    /* ── 섹션 공통 ── */
+    section {
+      padding: 6rem 2rem;
+    }
+
+    .section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .section-desc {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      max-width: 580px;
+    }
+
+    /* ── 계산기 카드 ── */
+    .tools-header {
+      margin-bottom: 3.5rem;
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.25rem;
+      transition: all 0.4s var(--ease-out);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-bright));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .tool-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .tool-card:hover {
+      border-color: var(--accent-secondary);
+      transform: translateY(-8px);
+      box-shadow: 0 16px 48px rgba(26, 58, 42, 0.12);
+    }
+
+    .tool-icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent-light), rgba(0, 200, 83, 0.1));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .tool-card:hover .tool-icon {
+      transform: scale(1.1) rotate(5deg);
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent-primary));
+    }
+
+    .tool-card:hover .tool-icon svg {
+      color: #fff;
+    }
+
+    .tool-icon svg {
+      transition: color 0.3s var(--ease-out);
+      color: var(--accent-primary);
+    }
+
+    .tool-tag {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--accent-secondary);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tool-name {
+      font-size: 20px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.3px;
+    }
+
+    .tool-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+    }
+
+    .tool-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .tool-features li {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .tool-card:hover .tool-features li {
+      color: var(--text-secondary);
+      transform: translateX(4px);
+    }
+
+    .tool-features li::before {
+      content: '';
+      width: 5px;
+      height: 5px;
+      background: var(--accent-bright);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .tool-card:hover .tool-features li::before {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-primary);
+    }
+
+    .tool-arrow {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      font-size: 20px;
+      color: var(--accent-primary);
+      opacity: 0;
+      transform: translateX(-8px);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .tool-card:hover .tool-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ── Why 섹션 ── */
+    .why-section {
+      background: linear-gradient(180deg, var(--surface) 0%, rgba(0, 200, 83, 0.02) 100%);
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .why-features {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .why-item {
+      display: flex;
+      gap: 1.5rem;
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .why-item-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--accent-light), rgba(0, 200, 83, 0.1));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .why-item:hover .why-item-icon {
+      background: linear-gradient(135deg, var(--accent-bright), var(--accent-primary));
+      transform: scale(1.1);
+    }
+
+    .why-item:hover .why-item-icon svg {
+      color: #fff;
+    }
+
+    .why-item-icon svg {
+      transition: color 0.3s var(--ease-out);
+      color: var(--accent-primary);
+    }
+
+    .why-item-title {
+      font-size: 16px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .why-item-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* 계산 미리보기 */
+    .calc-preview-box {
+      background: linear-gradient(135deg, var(--bg), var(--surface));
+      border-radius: 16px;
+      padding: 2.5rem;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 8px 24px rgba(26, 58, 42, 0.06);
+      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
+    }
+
+    .calc-preview-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .calc-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .calc-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .calc-row:hover {
+      border-color: var(--accent-bright);
+      background: rgba(0, 200, 83, 0.02);
+    }
+
+    .calc-row-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .calc-row-val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--accent-primary);
+      font-weight: 600;
+    }
+
+    .calc-result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 10px;
+      margin-top: 8px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .calc-result-row:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(26, 58, 42, 0.2);
+    }
+
+    .calc-result-label {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      font-weight: 500;
+    }
+
+    .calc-result-val {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── 공급사 섹션 ── */
+    .supplier-layout {
+      display: flex;
+      gap: 4rem;
+      align-items: flex-start;
+    }
+
+    .supplier-content {
+      flex: 1.1;
+    }
+
+    .supplier-brand-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 2rem;
+    }
+
+    .brand-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      transition: all 0.3s var(--ease-out);
+      cursor: pointer;
+    }
+
+    .brand-chip:hover {
+      border-color: var(--accent-bright);
+      color: var(--accent-primary);
+      background: rgba(0, 200, 83, 0.05);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(26, 58, 42, 0.08);
+    }
+
+    .supplier-contact {
+      flex: 1;
+      background: linear-gradient(135deg, var(--surface), rgba(0, 200, 83, 0.02));
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 24px rgba(26, 58, 42, 0.06);
+      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
+    }
+
+    .contact-title {
+      font-size: 16px;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .contact-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.75rem;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .contact-row:hover {
+      background: rgba(0, 200, 83, 0.05);
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .contact-row svg {
+      flex-shrink: 0;
+      color: var(--accent-primary);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .contact-row:hover svg {
+      transform: scale(1.2);
+    }
+
+    .register-btn {
+      display: block;
+      margin-top: 1.75rem;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.3s var(--ease-out);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(26, 58, 42, 0.15);
+    }
+
+    .register-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(26, 58, 42, 0.2);
+    }
+
+    /* ── CTA 섹션 ── */
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent-primary) 0%, #0F2818 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0, 200, 83, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta-title {
+      font-size: clamp(32px, 4vw, 44px);
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.5px;
+      animation: fadeInUp 0.6s var(--ease-out);
+    }
+
+    .cta-desc {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 2.5rem;
+      line-height: 1.8;
+      animation: fadeInUp 0.6s var(--ease-out) 0.1s both;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
+    }
+
+    /* ── 푸터 ── */
+    footer {
+      background: #0A0F0B;
+      padding: 3rem 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .footer-brand {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.5px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-link {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.35);
+      text-decoration: none;
+      transition: all 0.3s var(--ease-out);
+      position: relative;
+    }
+
+    .footer-link:hover {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent-bright);
+      transition: width 0.3s var(--ease-out);
+    }
+
+    .footer-link:hover::after {
+      width: 100%;
+    }
+
+    /* ── 애니메이션 ── */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 1024px) {
+      .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .why-grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .supplier-layout {
+        flex-direction: column;
+        gap: 2.5rem;
+      }
+
+      .stats-inner {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-inner {
+        height: 180px;
+        gap: 1rem;
+      }
+
+      .nav-logo {
+        height: 80px;
+        margin-left: -50px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 4rem 1.5rem 5.5rem;
+      }
+
+      .hero::before {
+        font-size: 120px;
+        right: -20px;
+      }
+
+      section {
+        padding: 4rem 1.5rem;
+      }
+
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-inner {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+        gap: 1.5rem;
+      }
+
+      .supplier-brand-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .hero-cta {
+        flex-direction: column;
+      }
+
+      .btn-primary,
+      .btn-ghost {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .cta-buttons .btn-primary,
+      .cta-buttons .btn-ghost {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .section-title {
+        font-size: 24px;
+      }
+
+      .tool-card {
+        padding: 1.75rem;
+      }
+
+      .calc-preview-box {
+        padding: 1.75rem;
+      }
+
+      .supplier-brand-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-value {
+        font-size: 24px;
+      }
+    }
+
+    /* ── 접근성 ── */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── 네비게이션 ── -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">
+      <img src="logo-white.png" alt="PartsOn" class="nav-logo">
+    </a>
+    <div class="nav-links">
+      <a href="lmguide.html" class="nav-link">LM Guide</a>
+      <a href="ballscrew.html" class="nav-link">볼스크류 선정</a>
+      <a href="bearing.html" class="nav-link">베어링 선정</a>
+      <a href="servo_motor.html" class="nav-link">서보모터 선정</a>
+      <a href="screwjack.html" class="nav-link">스크류잭 선정</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── 히어로 ── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      자동화 부품 선정 플랫폼
+    </div>
+    <h1 class="hero-title">
+      빠른 선정,<br>
+      <span class="dim">정확한 부품.</span>
+    </h1>
+    <p class="hero-subtitle">
+      데이터 기반 계산으로 정밀 부품을 빠르게 선정하고,<br>최적의 공급사와 즉시 연결됩니다.
+    </p>
+    <div class="hero-cta">
+      <a href="lmguide.html" class="btn-primary">LM Guide 선정 시작 →</a>
+      <a href="ballscrew.html" class="btn-ghost">볼스크류 선정하기</a>
+      <a href="bearing.html" class="btn-ghost">베어링 선정하기</a>
+      <a href="servo_motor.html" class="btn-ghost">서보모터 선정하기</a>
+      <a href="screwjack.html" class="btn-ghost">스크류잭 선정하기</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── 통계 바 ── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-value">5종</span>
+      <span class="stat-label">선정 계산기</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">ISO</span>
+      <span class="stat-label">규격 기반 계산</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">무료</span>
+      <span class="stat-label">모든 계산기</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">즉시</span>
+      <span class="stat-label">공급사 연결</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── 계산기 소개 ── -->
+<section>
+  <div class="section-inner">
+    <div class="tools-header">
+      <div class="section-label">선정 계산기</div>
+      <h2 class="section-title">필요한 부품을 바로 계산하세요</h2>
+      <p class="section-desc">복잡한 카탈로그 없이 조건만 입력하면 적합한 부품을 즉시 추천합니다.</p>
+    </div>
+    <div class="tools-grid">
+
+      <!-- LM Guide -->
+      <a href="lmguide.html" class="tool-card">
+        <div class="tool-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="9" width="20" height="6" rx="2"/>
+            <line x1="6" y1="9" x2="6" y2="15"/>
+            <line x1="18" y1="9" x2="18" y2="15"/>
+            <rect x="9" y="7" width="6" height="10" rx="1.5"/>
+          </svg>
+        </div>
+        <div class="tool-tag">LM Guide</div>
+        <div class="tool-name">LM Guide 선정</div>
+        <div class="tool-desc">하중·속도·설치 방향 조건을 입력하면 LM Guide 모델·사이즈를 선정하고 수명을 계산합니다.</div>
+        <ul class="tool-features">
+          <li>ISO 기준 모델 선정</li>
+          <li>하중 계수·방향 자동 보정</li>
+          <li>추천 공급사 연결</li>
+        </ul>
+        <span class="tool-arrow">→</span>
+      </a>
+
+      <!-- Ball Screw -->
+      <a href="ballscrew.html" class="tool-card">
+        <div class="tool-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <circle cx="7" cy="12" r="2.5"/>
+            <circle cx="12" cy="12" r="2.5"/>
+            <circle cx="17" cy="12" r="2.5"/>
+            <line x1="3" y1="8" x2="3" y2="16"/>
+            <line x1="21" y1="8" x2="21" y2="16"/>
+          </svg>
+        </div>
+        <div class="tool-tag">Ball Screw</div>
+        <div class="tool-name">볼스크류 선정</div>
+        <div class="tool-desc">이송 조건과 하중을 입력하면 볼스크류 + LM Guide 최적 조합을 추천합니다.</div>
+        <ul class="tool-features">
+          <li>리드·직경 자동 선정</li>
+          <li>좌굴 하중 및 임계 회전수 검증</li>
+          <li>LM Guide 동시 선정</li>
+        </ul>
+        <span class="tool-arrow">→</span>
+      </a>
+
+      <!-- Bearing -->
+      <a href="bearing.html" class="tool-card">
+        <div class="tool-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="9"/>
+            <circle cx="12" cy="12" r="4"/>
+            <line x1="12" y1="3" x2="12" y2="8"/>
+            <line x1="12" y1="16" x2="12" y2="21"/>
+            <line x1="3" y1="12" x2="8" y2="12"/>
+            <line x1="16" y1="12" x2="21" y2="12"/>
+          </svg>
+        </div>
+        <div class="tool-tag">Bearing</div>
+        <div class="tool-name">베어링 선정</div>
+        <div class="tool-desc">하중·회전수·사용 조건으로 적합한 베어링 타입과 사이즈를 선정합니다.</div>
+        <ul class="tool-features">
+          <li>5단계 입력 가이드</li>
+          <li>L10 수명 계산</li>
+          <li>타입별 비교 추천</li>
+        </ul>
+        <span class="tool-arrow">→</span>
+      </a>
+
+      <!-- Servo Motor -->
+      <a href="servo_motor.html" class="tool-card">
+        <div class="tool-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="8" width="10" height="8" rx="2"/>
+            <line x1="13" y1="12" x2="21" y2="12"/>
+            <circle cx="19" cy="12" r="2"/>
+            <line x1="6" y1="8" x2="6" y2="5"/>
+            <line x1="9" y1="8" x2="9" y2="5"/>
+          </svg>
+        </div>
+        <div class="tool-tag">Servo Motor</div>
+        <div class="tool-name">서보모터 선정</div>
+        <div class="tool-desc">부하 조건·전달 방식 입력으로 필요 토크·관성을 계산하고 최적 서보모터를 추천합니다.</div>
+        <ul class="tool-features">
+          <li>5가지 부하 형태 지원</li>
+          <li>관성비·부하율 자동 검증</li>
+          <li>미쯔비시·파나소닉·LS산전 DB</li>
+        </ul>
+        <span class="tool-arrow">→</span>
+      </a>
+
+      <!-- Screw Jack -->
+      <a href="screwjack.html" class="tool-card">
+        <div class="tool-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="4" rx="1"/>
+            <line x1="12" y1="6" x2="12" y2="18"/>
+            <path d="M8 10 Q12 8 16 10"/>
+            <path d="M8 14 Q12 12 16 14"/>
+            <rect x="7" y="18" width="10" height="4" rx="1"/>
+          </svg>
+        </div>
+        <div class="tool-tag">Screw Jack</div>
+        <div class="tool-name">스크류잭 선정</div>
+        <div class="tool-desc">ZIMM ZE 시리즈 기반으로 좌굴 안전성·구동 토크·필요 모터 출력을 자동 계산합니다.</div>
+        <ul class="tool-features">
+          <li>Euler 좌굴 자동 검토</li>
+          <li>초보/숙련 모드 지원</li>
+          <li>ZIMM ZE-5 ~ ZE-200 DB</li>
+        </ul>
+        <span class="tool-arrow">→</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Why PartsOn ── -->
+<section class="why-section">
+  <div class="section-inner">
+    <div class="why-grid">
+      <div>
+        <div class="section-label">왜 PartsOn인가</div>
+        <h2 class="section-title">엔지니어를 위한<br>부품 선정 도구</h2>
+        <div class="why-features">
+          <div class="why-item">
+            <div class="why-item-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <polyline points="3,10 7,14 17,5"/>
+              </svg>
+            </div>
+            <div>
+              <div class="why-item-title">ISO 기반 정확한 계산</div>
+              <div class="why-item-desc">국제 표준 규격의 계산식을 적용해 카탈로그와 동일한 신뢰할 수 있는 결과를 제공합니다.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="10" cy="10" r="7"/>
+                <polyline points="10,6 10,10 13,12"/>
+              </svg>
+            </div>
+            <div>
+              <div class="why-item-title">설계 시간 단축</div>
+              <div class="why-item-desc">복잡한 카탈로그 계산 없이 조건 입력만으로 최적 부품을 즉시 선정할 수 있습니다.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-item-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <path d="M3 7l7-4 7 4v8l-7 4-7-4z"/>
+                <polyline points="3,7 10,11 17,7"/>
+                <line x1="10" y1="11" x2="10" y2="19"/>
+              </svg>
+            </div>
+            <div>
+              <div class="why-item-title">공급사 직접 연결</div>
+              <div class="why-item-desc">선정 결과에서 검증된 공급사에게 즉시 문의하거나 견적을 요청할 수 있습니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-preview-box">
+        <div class="calc-preview-label">LM Guide 선정 예시</div>
+        <div class="calc-rows">
+          <div class="calc-row">
+            <span class="calc-row-label">정격 동하중 C</span>
+            <span class="calc-row-val">12,800 N</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-row-label">적용 하중 F</span>
+            <span class="calc-row-val">3,200 N</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-row-label">스트로크</span>
+            <span class="calc-row-val">400 mm</span>
+          </div>
+          <div class="calc-row">
+            <span class="calc-row-label">분당 사이클</span>
+            <span class="calc-row-val">30 cpm</span>
+          </div>
+          <div class="calc-result-row">
+            <span class="calc-result-label">예상 수명</span>
+            <span class="calc-result-val">≈ 32,768 km</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 공급사 섹션 ── -->
+<section>
+  <div class="section-inner">
+    <div class="supplier-layout">
+      <div class="supplier-content">
+        <div class="section-label">공급사 네트워크</div>
+        <h2 class="section-title">부품 선정 후<br>바로 구매까지</h2>
+        <p class="section-desc" style="margin-top: 0.75rem;">
+          계산기로 선정한 부품을 검증된 공급사와 직접 연결합니다. Bosch, NSK, SKF, FAG 등 주요 브랜드를 취급합니다.
+        </p>
+        <div class="supplier-brand-grid">
+          <div class="brand-chip">Bosch</div>
+          <div class="brand-chip">NSK</div>
+          <div class="brand-chip">SKF</div>
+          <div class="brand-chip">FAG</div>
+          <div class="brand-chip">TBI</div>
+          <div class="brand-chip" style="color: var(--text-muted); font-family: var(--font-body); font-size: 11px;">+ 더보기</div>
+        </div>
+      </div>
+
+      <div class="supplier-contact">
+        <div class="contact-title">공급사 등록 문의</div>
+        <p class="contact-desc">
+          자동화 부품을 공급하는 업체라면 무료로 등록하고 계산기를 통해 유입되는 고객에게 노출되세요.
+        </p>
+        <div class="contact-row">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M1 3.5l6.5 4.5 6.5-4.5"/>
+            <rect x="0.5" y="2.5" width="14" height="10" rx="2"/>
+          </svg>
+          airpam@naver.com
+        </div>
+        <div class="contact-row">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="7.5" cy="7.5" r="5.5"/>
+            <polyline points="7.5,4 7.5,7.5 9.5,9"/>
+          </svg>
+          현재 무료 등록 가능
+        </div>
+        <a href="admin.html" class="register-btn">공급사 관리 페이지 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="section-inner">
+    <div class="cta-inner">
+      <h2 class="cta-title">지금 바로 시작하세요</h2>
+      <p class="cta-desc">5가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
+      <div class="cta-buttons">
+        <a href="lmguide.html" class="btn-primary">LM Guide 선정</a>
+        <a href="ballscrew.html" class="btn-ghost">볼스크류 선정</a>
+        <a href="bearing.html" class="btn-ghost">베어링 선정</a>
+        <a href="servo_motor.html" class="btn-ghost">서보모터 선정</a>
+        <a href="screwjack.html" class="btn-ghost">스크류잭 선정</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 푸터 ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">PartsOn</div>
+    <div class="footer-links">
+      <a href="lmguide.html" class="footer-link">LM Guide</a>
+      <a href="ballscrew.html" class="footer-link">볼스크류</a>
+      <a href="bearing.html" class="footer-link">베어링</a>
+      <a href="servo_motor.html" class="footer-link">서보모터</a>
+      <a href="screwjack.html" class="footer-link">스크류잭</a>
+      <a href="admin.html" class="footer-link">공급사 관리</a>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:1.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);text-align:center;font-size:12px;color:rgba(255,255,255,.3)">
+    © 2026 PartsOn. All rights reserved.
+  </div>
+</footer>
+
+</body>
+</html>

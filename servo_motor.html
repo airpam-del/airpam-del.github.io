@@ -1,0 +1,1689 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartsOn — 서보모터 선정 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select{font-family:var(--mono)}
+.r-val{font-family:var(--mono)}
+.check-val{font-family:var(--mono)}
+
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+
+/* ── 헤더 ── */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 레이아웃 ── */
+main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* ── 위저드 진행 바 ── */
+.steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1}
+.step-row{display:flex;align-items:center;width:100%}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .2s}
+.step-line.done{background:var(--accent)}
+.step-label{font-size:10px;color:var(--text3);margin-top:4px;text-align:center;white-space:nowrap}
+.step-label.active{color:var(--accent);font-weight:600}
+
+/* ── 위저드 스텝 ── */
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 선택 카드 ── */
+.opt-grid{display:grid;gap:8px}
+.opt-grid.col2{grid-template-columns:1fr 1fr}
+.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;font-family:var(--font)}
+.opt-btn svg rect,.opt-btn svg circle,.opt-btn svg ellipse,.opt-btn svg line,.opt-btn svg polygon,.opt-btn svg path{transition:all .15s}
+.opt-btn.sel svg rect,.opt-btn.sel svg circle,.opt-btn.sel svg ellipse{fill:rgba(255,255,255,0.85)!important}
+.opt-btn.sel svg line,.opt-btn.sel svg polygon,.opt-btn.sel svg path{stroke:rgba(255,255,255,0.9)!important;fill:rgba(255,255,255,0.9)}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}
+.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+
+/* ── 입력 필드 ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input,.input-wrap select{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px;line-height:1.6}
+
+/* ── 내비 버튼 ── */
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:var(--font);transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}
+.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}
+.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.btn-full{width:100%;height:46px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);margin-top:1rem;transition:background .15s}
+.btn-full:hover{background:var(--accent-mid)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+
+/* ── 결과 ── */
+.result-hero{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.result-hero-label{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--accent-mid);margin-bottom:6px}
+.result-hero-main{font-size:26px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;font-family:var(--mono)}
+.result-hero-sub{font-size:13px;color:#22654A;margin-top:6px;line-height:1.7}
+.result-hero-sub b{font-weight:600}
+
+.result-fail{background:var(--bad-bg);border:1.5px solid #FECACA;border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.result-fail-title{font-size:15px;font-weight:600;color:var(--bad);margin-bottom:6px}
+.result-fail-desc{font-size:13px;color:#6B1A1A;line-height:1.7}
+
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--bg);border-radius:9px;padding:12px 14px;border:1px solid var(--border)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:4px}
+.check-val{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500}
+.ok .check-val{color:var(--ok)}.ok .check-judge{color:var(--ok)}
+.warn .check-val{color:var(--warn)}.warn .check-judge{color:var(--warn)}
+.bad .check-val{color:var(--bad)}.bad .check-judge{color:var(--bad)}
+
+.safety{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:500;margin-bottom:8px}
+.safety .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.s-ok{background:var(--ok-bg);color:var(--ok)}.s-ok .dot{background:var(--ok)}
+.s-warn{background:var(--warn-bg);color:var(--warn)}.s-warn .dot{background:var(--warn)}
+.s-bad{background:var(--bad-bg);color:var(--bad)}.s-bad .dot{background:var(--bad)}
+
+.res-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem}
+.res-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:.75rem}
+.res-item{background:var(--bg);border-radius:9px;padding:12px 10px}
+.r-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.r-val{font-size:18px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;font-family:var(--mono)}
+.r-unit{font-size:12px;color:var(--text2);margin-top:4px}
+
+/* 관성비 게이지 */
+.ir-gauge{background:#E8E5DF;border-radius:4px;height:10px;overflow:hidden;margin:6px 0 3px}
+.ir-fill{height:100%;border-radius:4px;transition:width .4s}
+.ir-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text3)}
+
+/* 후보 테이블 */
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.cand-scroll{overflow-x:auto}
+table.ctbl{width:100%;border-collapse:collapse;font-size:13px}
+table.ctbl th{font-size:11px;color:var(--text3);font-weight:600;text-align:left;padding:6px 9px;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--bg)}
+table.ctbl td{padding:8px 9px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:13px;white-space:nowrap}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+table.ctbl tr.fail-row td{color:var(--text3)}
+.tag-rec{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-weight:600;margin-left:5px}
+.v-ok{color:var(--ok)}.v-warn{color:var(--warn)}.v-bad{color:var(--bad)}
+
+/* 토크 파형 */
+.chart-wrap{background:var(--bg);border-radius:10px;padding:16px;margin-bottom:12px}
+.chart-title{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+canvas#torque-canvas{display:block;width:100%;height:160px}
+
+/* 제조사 필터 */
+.maker-filter{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.mf-btn{border:1.5px solid var(--border);border-radius:7px;padding:6px 16px;background:#fff;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;font-family:var(--font);transition:all .15s}
+.mf-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+.mf-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* 부하율 메트릭 바 */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.metric-card{background:var(--bg);border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
+.metric-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.metric-label{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:.3px}
+.metric-value{font-size:22px;font-weight:700;font-family:var(--mono);line-height:1}
+.metric-unit{font-size:13px;font-weight:500;margin-left:2px}
+.metric-bar-bg{height:8px;background:#E8E5DF;border-radius:4px;overflow:hidden;margin-bottom:6px}
+.metric-bar-fill{height:100%;border-radius:4px;transition:width .45s ease}
+.metric-sub{font-size:12px;color:var(--text2);line-height:1.5}
+@media(max-width:500px){.metric-grid{grid-template-columns:1fr}}
+
+/* 모델 네비게이터 */
+.model-nav{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.model-nav-btn{width:36px;height:36px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s;flex-shrink:0;font-family:var(--font)}
+.model-nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.model-nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.model-nav-info{flex:1;text-align:center}
+.model-nav-name{font-size:16px;font-weight:700;color:var(--accent);font-family:var(--mono)}
+.model-nav-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.model-nav-count{font-size:11px;color:var(--text3);margin-top:1px}
+
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}
+.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+.notice-mini{background:#FEF2F2;border:1px solid #FECACA;border-left:3px solid #EF4444;border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#7F1D1D;line-height:1.6}
+.notice-mini strong{color:#DC2626}
+/* 면책 */
+.disclaimer{max-width:720px;margin:0 auto 1rem;padding:1rem 1.25rem;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text3);line-height:1.8}
+.disclaimer strong{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.5px;display:block;margin-bottom:5px}
+footer{text-align:center;font-size:11px;color:var(--text3);padding:1.5rem}
+
+.warn-banner{background:#FFF7ED;border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.hidden{display:none!important}
+
+@media(max-width:500px){
+  .grid2{grid-template-columns:1fr}
+  .checks,.res-grid4{grid-template-columns:1fr 1fr}
+  .res-grid3{grid-template-columns:1fr 1fr}
+  .opt-grid.col3{grid-template-columns:1fr 1fr}
+  .r-val{font-size:15px}
+}
+/* 공급사 섹션 */
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.supplier-empty{font-size:13px;color:var(--text3);text-align:center;padding:1.25rem}
+
+/* ── CAD 도면 다운로드 ── */
+.cad-section{margin-top:1rem;background:var(--accent);border-radius:12px;padding:1.25rem 1.5rem}
+.cad-section-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.cad-section-title::before{content:'';display:inline-block;width:4px;height:18px;background:#4ade80;border-radius:2px;flex-shrink:0}
+.cad-btns{display:flex;flex-wrap:wrap;gap:10px}
+.cad-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border:none;border-radius:8px;background:rgba(255,255,255,0.15);font-size:13px;font-weight:600;color:#fff;text-decoration:none;transition:all .18s}
+.cad-btn:hover{background:rgba(255,255,255,0.28);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cad-btn:active{transform:translateY(0)}
+.cad-btn-icon{font-size:16px;flex-shrink:0}
+.cad-note{font-size:11px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6}
+.cad-note a{color:#4ade80}
+/* ── PDF 출력 ── */
+.print-header{display:none}
+.print-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#1A3A2A;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:1rem;font-family:var(--font);transition:background .15s}
+.print-pdf-btn:hover{background:#2D6B4A}
+@media print{
+  @page{size:A4;margin:12mm 14mm 12mm 14mm}
+  .partson-nav,header,footer,.disclaimer,.print-pdf-btn,.btn-back,.btn-full,.maker-filter,.model-nav-btn,#steps-bar,#s1,#s2,#s3,#s4{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}
+  .ph-title{font-size:18px;font-weight:700;color:#1A3A2A}
+  .ph-sub{font-size:12px;color:#6B6760;margin-top:2px}
+  .ph-date{font-size:11px;color:#9E9B96;text-align:right}
+  body{background:#fff!important;font-size:12px}
+  main{padding:0!important;max-width:100%!important}
+  .card{box-shadow:none!important;border:1px solid #ddd!important;break-inside:avoid}
+  .metric-grid{grid-template-columns:1fr 1fr!important}
+  .res-grid4{grid-template-columns:repeat(4,1fr)!important}
+  .res-grid3{grid-template-columns:repeat(3,1fr)!important}
+  .chart-wrap{break-inside:avoid}
+  #s-result{display:block!important}
+  .supplier-section{break-inside:avoid}
+  .result-hero{break-inside:avoid}
+  a{color:inherit!important;text-decoration:none!important}
+}
+</style>
+</head>
+<body>
+
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <a href="lmguide.html">LM Guide</a>
+  <a href="ballscrew.html">볼스크류 선정</a>
+  <a href="bearing.html">베어링 선정</a>
+  <a href="servo_motor.html" class="active">서보모터 선정</a>
+  <a href="screwjack.html">스크류잭 선정</a>
+</nav>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">⚡</div>
+    <div>
+      <h1>서보모터 선정 계산기</h1>
+      <p>PartsOn Linear · Beta v1.0 &nbsp;|&nbsp; 미쯔비시 · 파나소닉 · LS산전 · 관성비 / 토크 자동 검증</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ════════ 위저드 ════════ -->
+<div id="steps-bar" class="steps-bar"></div>
+
+<div class="card">
+
+  <!-- STEP 1 : 부하 형태 -->
+  <div id="s1" class="step-wrap active">
+    <div class="notice-mini">
+      <strong>⚠️ 참고용 도구입니다.</strong> 본 계산기는 제조사 공개 사양을 기반으로 한 <strong>참고용</strong>이며, 실제 설계·발주에는 사용할 수 없습니다. 반드시 제조사 카탈로그와 자격 있는 엔지니어의 검토를 거치세요.
+    </div>
+
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 서보모터 선정이 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>서보모터 선정의 핵심 기준 3가지:</strong></p>
+          <p>① <strong>실효 토크 (RMS) ≤ 정격 토크 × 90%</strong> — 연속 운전 시 모터가 과열되지 않아야 합니다</p>
+          <p>② <strong>피크 토크 ≤ 최대 토크</strong> — 가속 순간 최대 토크가 모터 한계를 넘으면 안 됩니다</p>
+          <p>③ <strong>관성비 JL/JM ≤ 10</strong> — 부하 관성이 모터 관성의 10배 이하여야 응답성이 좋습니다</p>
+          <p><strong>모르는 값이 있다면?</strong></p>
+          <p>• 마찰계수 μ: LM 가이드 사용 시 <strong>0.003~0.01</strong> 입력</p>
+          <p>• 볼스크류 효율 η: 일반 볼스크류 <strong>0.90</strong> 입력</p>
+          <p>• 가감속 시간: 일반 기계 <strong>0.1~0.3초</strong>, 고속 장비 <strong>0.05~0.15초</strong></p>
+          <p>• 사이클 타임: 1회 동작 전체 시간 (가속+등속+감속+정지 포함)</p>
+          <p><strong>감속기를 쓰면?</strong> 부하 관성이 감속비² 만큼 줄어 작은 모터로도 선정이 가능해집니다.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- 제조사 사전 선택 -->
+    <div style="margin-bottom:1.5rem">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">선호 제조사 <span style="font-size:11px;font-weight:400;color:var(--text3)">(선택 사항 · 결과에서도 변경 가능)</span></div>
+      <div class="maker-filter" id="maker-prefilter">
+        <button class="mf-btn active" onclick="selMaker('전체',this)">전체</button>
+        <button class="mf-btn" onclick="selMaker('미쯔비시',this)">미쯔비시</button>
+        <button class="mf-btn" onclick="selMaker('파나소닉',this)">파나소닉</button>
+        <button class="mf-btn" onclick="selMaker('LS산전',this)">LS산전</button>
+      </div>
+    </div>
+
+    <div class="question">부하 형태가 어떻게 되나요?</div>
+    <div class="question-desc">모터에 연결된 기계 메커니즘의 종류를 선택합니다. 관성·토크 계산 방식이 달라집니다.</div>
+    <div class="opt-grid">
+      <button class="opt-btn" onclick="sel(1,'lt','ballscrew',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="5" y="27" width="70" height="6" rx="2" fill="#C2D9CC"/><rect x="5" y="21" width="70" height="5" rx="1" fill="#8BAD9A" opacity="0.5"/><rect x="28" y="15" width="24" height="18" rx="3" fill="#1A3A2A" opacity="0.75"/><line x1="8" y1="9" x2="22" y2="9" stroke="#E05C2A" stroke-width="2"/><polygon points="22,6 28,9 22,12" fill="#E05C2A"/><circle cx="5" cy="24" r="5" fill="#1A3A2A" opacity="0.4"/><circle cx="75" cy="24" r="5" fill="#1A3A2A" opacity="0.3"/></svg>
+        <div class="opt-title">볼스크류 <span class="help-btn" role="button" tabindex="0" onclick="event.stopPropagation();openHelp('lt_ballscrew')">?</span></div>
+        <div class="sub">회전 → 직선 변환 · LM 가이드 이송 · 가장 일반적</div>
+      </button>
+      <button class="opt-btn" onclick="sel(1,'lt','rack',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="5" y="34" width="70" height="8" rx="2" fill="#8BAD9A" opacity="0.5"/><rect x="9" y="28" width="6" height="6" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="21" y="28" width="6" height="6" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="33" y="28" width="6" height="6" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="45" y="28" width="6" height="6" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="57" y="28" width="6" height="6" rx="1" fill="#1A3A2A" opacity="0.6"/><circle cx="35" cy="18" r="11" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="35" cy="18" r="4" fill="#1A3A2A" opacity="0.6"/><line x1="50" y1="34" x2="64" y2="34" stroke="#E05C2A" stroke-width="2"/><polygon points="64,31 70,34 64,37" fill="#E05C2A"/></svg>
+        <div class="opt-title">랙 &amp; 피니언 <span class="help-btn" role="button" tabindex="0" onclick="event.stopPropagation();openHelp('lt_rack')">?</span></div>
+        <div class="sub">피니언 회전 → 랙 직선이동 · 장행정 이송에 적합</div>
+      </button>
+      <button class="opt-btn" onclick="sel(1,'lt','conveyor',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="14" y="22" width="52" height="8" rx="0" fill="#C2D9CC" opacity="0.6"/><ellipse cx="16" cy="26" rx="10" ry="8" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><ellipse cx="64" cy="26" rx="10" ry="8" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="16" cy="26" r="3" fill="#1A3A2A" opacity="0.6"/><circle cx="64" cy="26" r="3" fill="#1A3A2A" opacity="0.6"/><rect x="24" y="12" width="18" height="10" rx="2" fill="#1A3A2A" opacity="0.5"/><line x1="32" y1="5" x2="46" y2="5" stroke="#E05C2A" stroke-width="2"/><polygon points="46,2 52,5 46,8" fill="#E05C2A"/></svg>
+        <div class="opt-title">컨베이어 / 벨트 이송 <span class="help-btn" role="button" tabindex="0" onclick="event.stopPropagation();openHelp('lt_conveyor')">?</span></div>
+        <div class="sub">롤러로 물건을 직선 이송 · 수평 또는 경사 설치</div>
+      </button>
+      <button class="opt-btn" onclick="sel(1,'lt','index',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><ellipse cx="40" cy="38" rx="28" ry="7" fill="#C2D9CC" opacity="0.5"/><circle cx="40" cy="24" r="18" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="40" cy="24" r="5" fill="#1A3A2A" opacity="0.5"/><line x1="40" y1="6" x2="40" y2="24" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="24" y1="15" x2="40" y2="24" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="24" y1="33" x2="40" y2="24" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="56" y1="15" x2="40" y2="24" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="56" y1="33" x2="40" y2="24" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><path d="M 54 13 A 17 17 0 0 1 57 20" stroke="#E05C2A" stroke-width="2" fill="none"/><polygon points="57,20 62,15 55,14" fill="#E05C2A"/></svg>
+        <div class="opt-title">인덱스 테이블 <span class="help-btn" role="button" tabindex="0" onclick="event.stopPropagation();openHelp('lt_index')">?</span></div>
+        <div class="sub">분할 회전 동작 · 다분할 정위치 결정</div>
+      </button>
+      <button class="opt-btn" onclick="sel(1,'lt','rotary',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><circle cx="40" cy="26" r="17" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="40" cy="26" r="9" fill="none" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><circle cx="40" cy="26" r="4" fill="#1A3A2A" opacity="0.6"/><line x1="8" y1="26" x2="23" y2="26" stroke="#1A3A2A" stroke-width="3" opacity="0.5"/><line x1="57" y1="26" x2="72" y2="26" stroke="#1A3A2A" stroke-width="3" opacity="0.5"/><path d="M 53 12 A 15 15 0 0 1 56 20" stroke="#E05C2A" stroke-width="2" fill="none"/><polygon points="56,20 62,15 54,15" fill="#E05C2A"/></svg>
+        <div class="opt-title">회전 부하 (척·스핀들) <span class="help-btn" role="button" tabindex="0" onclick="event.stopPropagation();openHelp('lt_rotary')">?</span></div>
+        <div class="sub">직접 회전 부하 · 척·롤러·스핀들 등</div>
+      </button>
+    </div>
+    <div class="err-msg" id="err1">부하 형태를 선택해주세요</div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="goNext(1)">다음 단계 →</button></div>
+  </div>
+
+  <!-- STEP 2 : 동력 전달 방식 -->
+  <div id="s2" class="step-wrap">
+    <div class="question">동력 전달 방식을 선택해주세요</div>
+    <div class="question-desc">모터에서 부하까지 동력을 전달하는 방법입니다. 감속비·효율·추가 관성이 결정됩니다.</div>
+    <div class="opt-grid col2">
+      <button class="opt-btn" onclick="sel(2,'dt','direct',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="4" y="17" width="22" height="18" rx="3" fill="#1A3A2A" opacity="0.7"/><text x="15" y="30" font-size="9" fill="white" text-anchor="middle" font-weight="bold" font-family="monospace">M</text><rect x="26" y="22" width="7" height="8" rx="1" fill="#8BAD9A"/><rect x="33" y="20" width="4" height="12" rx="1" fill="#C2D9CC"/><rect x="37" y="22" width="7" height="8" rx="1" fill="#8BAD9A"/><rect x="44" y="17" width="30" height="18" rx="3" fill="#1A3A2A" opacity="0.4"/><text x="59" y="30" font-size="8" fill="#1A3A2A" text-anchor="middle" font-weight="bold" font-family="monospace">LOAD</text><line x1="15" y1="8" x2="15" y2="17" stroke="#E05C2A" stroke-width="2"/><polygon points="12,8 15,3 18,8" fill="#E05C2A"/></svg>
+        <div class="opt-title">직결 (커플링)</div>
+        <div class="sub">감속비 = 1 · 효율 최고 · 모터 RPM = 부하 RPM</div>
+      </button>
+      <button class="opt-btn" onclick="sel(2,'dt','belt',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><circle cx="20" cy="28" r="12" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="20" cy="28" r="4" fill="#1A3A2A" opacity="0.6"/><circle cx="60" cy="28" r="8" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="60" cy="28" r="3" fill="#1A3A2A" opacity="0.5"/><line x1="20" y1="16" x2="60" y2="20" stroke="#8BAD9A" stroke-width="3" opacity="0.8"/><line x1="20" y1="40" x2="60" y2="36" stroke="#8BAD9A" stroke-width="3" opacity="0.8"/><line x1="12" y1="8" x2="20" y2="16" stroke="#E05C2A" stroke-width="2"/><polygon points="10,8 13,2 17,7" fill="#E05C2A"/></svg>
+        <div class="opt-title">벨트 드라이브</div>
+        <div class="sub">풀리 직경비로 감속 · 타이밍벨트 권장</div>
+      </button>
+      <button class="opt-btn" onclick="sel(2,'dt','gear',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><circle cx="28" cy="28" r="14" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="28" cy="28" r="5" fill="#1A3A2A" opacity="0.6"/><circle cx="56" cy="28" r="10" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="56" cy="28" r="3.5" fill="#1A3A2A" opacity="0.5"/><rect x="40" y="25" width="5" height="6" rx="1" fill="#C2D9CC" opacity="0.8"/><line x1="18" y1="9" x2="28" y2="14" stroke="#E05C2A" stroke-width="2"/><polygon points="16,9 20,3 22,9" fill="#E05C2A"/></svg>
+        <div class="opt-title">기어 감속기</div>
+        <div class="sub">정밀 감속 · 유성/헬리컬/하모닉 드라이브</div>
+      </button>
+      <button class="opt-btn" onclick="sel(2,'dt','chain',this)">
+        <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><circle cx="18" cy="28" r="11" fill="none" stroke="#1A3A2A" stroke-width="2.5" opacity="0.7"/><circle cx="18" cy="28" r="4" fill="#1A3A2A" opacity="0.6"/><circle cx="60" cy="28" r="8" fill="none" stroke="#1A3A2A" stroke-width="2" opacity="0.6"/><circle cx="60" cy="28" r="3" fill="#1A3A2A" opacity="0.5"/><rect x="24" y="19" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="31" y="19" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="38" y="19" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="45" y="19" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="24" y="27" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="31" y="27" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="38" y="27" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><rect x="45" y="27" width="6" height="5" rx="1.5" fill="#8BAD9A" opacity="0.9"/><line x1="10" y1="9" x2="18" y2="17" stroke="#E05C2A" stroke-width="2"/><polygon points="8,9 12,3 15,8" fill="#E05C2A"/></svg>
+        <div class="opt-title">체인 드라이브</div>
+        <div class="sub">중하중 · 미끄럼 없음 · 유지보수 필요</div>
+      </button>
+    </div>
+
+    <!-- 벨트 추가 입력 -->
+    <div id="belt-fields" class="hidden" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="section-label">벨트 드라이브 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>구동 풀리 직경 (모터측)</label>
+          <div class="input-wrap"><input type="number" id="bt-drive" value="80" min="10" step="5"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>종동 풀리 직경 (부하측)</label>
+          <div class="input-wrap"><input type="number" id="bt-driven" value="160" min="10" step="5"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>벨트 질량</label>
+          <div class="input-wrap"><input type="number" id="bt-mass" value="0.5" min="0" step="0.1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>벨트 전달 효율 η</label>
+          <div class="input-wrap"><input type="number" id="bt-eta" value="0.97" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 기어/체인 추가 입력 -->
+    <div id="gear-fields" class="hidden" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+      <div class="section-label">감속기 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>감속비 i <span style="font-weight:400;color:var(--text3)">(모터RPM / 부하RPM)</span></label>
+          <div class="input-wrap"><input type="number" id="gr-ratio" value="5" min="1" step="0.5"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>감속기 효율 η</label>
+          <div class="input-wrap"><input type="number" id="gr-eta" value="0.90" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>감속기 입력측 관성 J<sub>G</sub></label>
+          <div class="input-wrap"><input type="number" id="gr-J" value="0.05" min="0" step="0.01"><span class="unit">kg·cm²</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="err-msg" id="err2">전달 방식을 선택해주세요</div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goBack(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="goNext(2)">다음 단계 →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 : 부하 조건 -->
+  <div id="s3" class="step-wrap">
+    <div class="question">부하 조건을 입력해주세요</div>
+    <div class="question-desc" id="s3-desc">선택한 부하 형태에 맞는 사양을 입력합니다.</div>
+
+    <!-- 볼스크류 -->
+    <div id="fields-ballscrew">
+      <div class="section-label">볼스크류 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>볼스크류 리드 <button class="help-btn" onclick="openHelp('lead')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-lead" value="10" min="1" step="1"><span class="unit">mm</span></div>
+          <div class="hint">1회전당 이동 거리. 모터 RPM = 이송속도×60÷리드</div>
+        </div>
+        <div class="field">
+          <label>스크류 외경 <button class="help-btn" onclick="openHelp('diam')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-diam" value="25" min="5" step="1"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>지지간 거리 (유효 길이) <button class="help-btn" onclick="openHelp('len')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-len" value="800" min="50" step="10"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>볼스크류 효율 η <button class="help-btn" onclick="openHelp('eff')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-eta" value="0.90" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+          <div class="hint">일반 볼스크류 0.90~0.95</div>
+        </div>
+        <div class="field">
+          <label>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-mass" value="50" min="0.1" step="1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>가이드 마찰계수 μ <button class="help-btn" onclick="openHelp('mu')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-mu" value="0.01" min="0" max="1" step="0.001"><span class="unit">—</span></div>
+          <div class="hint">LM 볼 가이드 0.003~0.01</div>
+        </div>
+        <div class="field full">
+          <label>설치 방향</label>
+          <div class="opt-grid col3" style="margin-top:4px">
+            <button class="opt-btn sel" onclick="sel(0,'bs-ori','h',this)"><div class="opt-title">수평</div></button>
+            <button class="opt-btn" onclick="sel(0,'bs-ori','v',this)"><div class="opt-title">수직</div><div class="sub">모터 브레이크 필요</div></button>
+          </div>
+        </div>
+        <div id="bs-cb-row" class="field full hidden">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input type="checkbox" id="bs-cb" style="width:16px;height:16px">
+            카운터밸런스 적용 (중력 하중 상쇄)
+          </label>
+        </div>
+        <div class="field">
+          <label>외부 하중 (절삭력 등) <button class="help-btn" onclick="openHelp('extload')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-extload" value="0" min="0" step="10"><span class="unit">N</span></div>
+          <div class="hint">없으면 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 랙 & 피니언 -->
+    <div id="fields-rack" class="hidden">
+      <div class="section-label">랙 &amp; 피니언 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>피니언 피치원 직경 <button class="help-btn" onclick="openHelp('pitch')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-diam" value="50" min="5" step="1"><span class="unit">mm</span></div>
+          <div class="hint">모터 RPM = 이송속도×60÷(π×직경)</div>
+        </div>
+        <div class="field">
+          <label>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-mass" value="100" min="0.1" step="1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>랙 질량 <button class="help-btn" onclick="openHelp('rack_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-rack-mass" value="10" min="0" step="1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>전달 효율 η <button class="help-btn" onclick="openHelp('eff')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-eta" value="0.90" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>마찰계수 μ <button class="help-btn" onclick="openHelp('mu')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-mu" value="0.01" min="0" max="1" step="0.001"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>외부 하중 <button class="help-btn" onclick="openHelp('extload')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rp-extload" value="0" min="0" step="10"><span class="unit">N</span></div>
+        </div>
+        <div class="field full">
+          <label>설치 방향</label>
+          <div class="opt-grid col2" style="margin-top:4px">
+            <button class="opt-btn sel" onclick="sel(0,'rp-ori','h',this)"><div class="opt-title">수평</div></button>
+            <button class="opt-btn" onclick="sel(0,'rp-ori','v',this)"><div class="opt-title">수직</div></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 컨베이어 -->
+    <div id="fields-conveyor" class="hidden">
+      <div class="section-label">컨베이어 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>구동 롤러 직경 <button class="help-btn" onclick="openHelp('roller')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-roller" value="100" min="10" step="5"><span class="unit">mm</span></div>
+          <div class="hint">모터 RPM = 이송속도×60÷(π×직경)</div>
+        </div>
+        <div class="field">
+          <label>이송물 질량 <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-mass" value="30" min="0.1" step="1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>벨트+롤러 질량 <button class="help-btn" onclick="openHelp('belt_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-belt-mass" value="5" min="0" step="0.5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>전달 효율 η <button class="help-btn" onclick="openHelp('eff')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-eta" value="0.95" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>마찰계수 μ <button class="help-btn" onclick="openHelp('mu')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-mu" value="0.02" min="0" max="1" step="0.001"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>경사각 θ <button class="help-btn" onclick="openHelp('angle')">?</button></label>
+          <div class="input-wrap"><input type="number" id="cv-angle" value="0" min="0" max="45" step="1"><span class="unit">deg</span></div>
+          <div class="hint">수평이면 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 인덱스 -->
+    <div id="fields-index" class="hidden">
+      <div class="section-label">인덱스 테이블 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>테이블 직경 <button class="help-btn" onclick="openHelp('idx_diam')">?</button></label>
+          <div class="input-wrap"><input type="number" id="idx-diam" value="400" min="50" step="10"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>테이블 질량 <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="idx-mass" value="20" min="0.1" step="1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>분할 수 <button class="help-btn" onclick="openHelp('idx_div')">?</button></label>
+          <div class="input-wrap"><input type="number" id="idx-div" value="8" min="2" step="1"><span class="unit">회</span></div>
+        </div>
+        <div class="field">
+          <label>분할당 이동 시간 <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
+          <div class="input-wrap"><input type="number" id="idx-time" value="1.0" min="0.1" step="0.1"><span class="unit">s</span></div>
+        </div>
+        <div class="field full">
+          <label>질량 분포 <button class="help-btn" onclick="openHelp('idx_dist')">?</button></label>
+          <div class="opt-grid col3" style="margin-top:4px">
+            <button class="opt-btn" onclick="sel(0,'idx-dist','0.5',this)"><div class="opt-title">균일 분포</div><div class="sub">솔리드 디스크 α=0.5</div></button>
+            <button class="opt-btn sel" onclick="sel(0,'idx-dist','0.75',this)"><div class="opt-title">일반 테이블</div><div class="sub">중간값 α=0.75</div></button>
+            <button class="opt-btn" onclick="sel(0,'idx-dist','1.0',this)"><div class="opt-title">링 / 외주 집중</div><div class="sub">최대값 α=1.0</div></button>
+          </div>
+        </div>
+        <div class="field">
+          <label>부하측 저항 토크 <button class="help-btn" onclick="openHelp('resist')">?</button></label>
+          <div class="input-wrap"><input type="number" id="idx-resist" value="0" min="0" step="0.1"><span class="unit">N·m</span></div>
+          <div class="hint">마찰·공정 저항. 없으면 0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 회전 부하 -->
+    <div id="fields-rotary" class="hidden">
+      <div class="section-label">회전 부하 사양</div>
+      <div class="grid2">
+        <div class="field">
+          <label>회전체 직경 <button class="help-btn" onclick="openHelp('idx_diam')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rot-diam" value="200" min="10" step="10"><span class="unit">mm</span></div>
+          <div class="hint">척·롤러·스핀들의 대표 직경</div>
+        </div>
+        <div class="field">
+          <label>회전체 질량 <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rot-mass" value="10" min="0.1" step="0.5"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>목표 회전수 <button class="help-btn" onclick="openHelp('speed_field')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rot-rpm" value="1000" min="1" step="10"><span class="unit">rpm</span></div>
+        </div>
+        <div class="field">
+          <label>전달 효율 η <button class="help-btn" onclick="openHelp('eff')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rot-eta" value="0.95" min="0.5" max="1" step="0.01"><span class="unit">—</span></div>
+        </div>
+        <div class="field">
+          <label>부하 저항 토크 <button class="help-btn" onclick="openHelp('resist')">?</button></label>
+          <div class="input-wrap"><input type="number" id="rot-resist" value="0" min="0" step="0.1"><span class="unit">N·m</span></div>
+          <div class="hint">절삭·마찰 저항. 없으면 0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="err-msg" id="err3">값을 입력해주세요</div>
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goBack(3)">← 이전</button>
+      <button class="btn btn-primary" onclick="goNext(3)">다음 단계 →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 : 운전 조건 -->
+  <div id="s4" class="step-wrap">
+    <div class="question">운전 조건을 알려주세요</div>
+    <div class="question-desc">속도·가감속·사이클 타임으로 필요 토크와 실효 토크를 계산합니다.</div>
+    <div class="grid2">
+      <div class="field" id="speed-field">
+        <label id="speed-lbl">목표 이송 속도 <button class="help-btn" onclick="openHelp('speed_field')">?</button></label>
+        <div class="input-wrap"><input type="number" id="op-speed" value="500" min="1" step="10"><span class="unit" id="speed-unit">mm/s</span></div>
+      </div>
+      <div class="field">
+        <label>가속 시간 t<sub>acc</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
+        <div class="input-wrap"><input type="number" id="op-tacc" value="0.3" min="0.01" step="0.05"><span class="unit">s</span></div>
+        <div class="hint">0 → 최대 속도까지의 시간</div>
+      </div>
+      <div class="field">
+        <label>감속 시간 t<sub>dec</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
+        <div class="input-wrap"><input type="number" id="op-tdec" value="0.3" min="0.01" step="0.05"><span class="unit">s</span></div>
+      </div>
+      <div class="field">
+        <label>사이클 타임 <button class="help-btn" onclick="openHelp('tcycle')">?</button></label>
+        <div class="input-wrap"><input type="number" id="op-tcycle" value="3.0" min="0.1" step="0.1"><span class="unit">s</span></div>
+        <div class="hint">1회 동작 전체 시간 (가속+등속+감속+대기)</div>
+      </div>
+    </div>
+    <div class="err-msg" id="err4">운전 조건을 입력해주세요</div>
+
+    <hr class="divider">
+
+    <!-- 브레이크 선택 -->
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">브레이크 필요 여부</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px">수직축·경사축 등 정전 시 낙하 위험이 있는 경우 선택하세요.</div>
+      <div class="opt-grid col3">
+        <button class="opt-btn sel" onclick="selOpt('brake','없음',this)">
+          <div class="opt-title">브레이크 없음</div>
+          <div class="sub">수평축 · 낙하 위험 없음</div>
+        </button>
+        <button class="opt-btn" onclick="selOpt('brake','있음',this)">
+          <div class="opt-title">브레이크 있음</div>
+          <div class="sub">수직축 · 경사축 · 정전 시 보유</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- 입력 전원 선택 -->
+    <div style="margin-bottom:1.25rem">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px">입력 전원</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px">설비의 전원 사양을 선택하세요. 전원에 따라 드라이버 사양이 달라집니다.</div>
+      <div class="opt-grid col3">
+        <button class="opt-btn" onclick="selOpt('voltage','단상 100V',this)">
+          <div class="opt-title">단상 100V</div>
+          <div class="sub">소형 모터 전용 · 주로 750W 이하</div>
+        </button>
+        <button class="opt-btn sel" onclick="selOpt('voltage','단상 200V',this)">
+          <div class="opt-title">단상 200V</div>
+          <div class="sub">가장 일반적 · 750W 이하 권장</div>
+        </button>
+        <button class="opt-btn" onclick="selOpt('voltage','삼상 200V',this)">
+          <div class="opt-title">삼상 200V</div>
+          <div class="sub">중·대형 · 전 용량 대응</div>
+        </button>
+        <button class="opt-btn" onclick="selOpt('voltage','삼상 400V',this)">
+          <div class="opt-title">삼상 400V</div>
+          <div class="sub">대형 설비 · 1kW 이상 권장</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-back" onclick="goBack(4)">← 이전</button>
+      <button class="btn btn-primary" onclick="showResult()">결과 보기 →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="s-result" class="step-wrap">
+    <div class="print-header">
+      <div><div class="ph-title">PartsOn</div><div class="ph-sub">서보모터 선정 계산기 — 계산 결과</div></div>
+      <div class="ph-date" id="servo-print-date"></div>
+    </div>
+    <div style="margin-bottom:1rem">
+      <button class="btn btn-back" onclick="goStep(4)">← 조건 수정하기</button>
+    </div>
+    <div id="result-body"></div>
+    <div class="supplier-section" id="servo-supplier-section" style="display:none"><div class="supplier-section-title">공급사 연결</div><div class="supplier-list" id="servo-supplier-list"></div></div>
+    <div class="cad-section" id="servo-cad-section" style="display:none">
+      <div class="cad-section-title">CAD 도면 다운로드</div>
+      <div class="cad-btns" id="servo-cad-btns"></div>
+      <div class="cad-note">※ 버튼 클릭 후 해당 제조사 페이지에서 모델을 선택해 STEP·DXF 포맷으로 다운로드하세요. 링크가 작동하지 않으면 제조사 홈페이지에서 직접 검색하세요.</div>
+    </div>
+  </div>
+
+</div><!-- /card -->
+
+</main>
+
+<div class="disclaimer">
+  <strong>면책 고지 DISCLAIMER</strong>
+  <li>본 계산기의 모터 DB 및 계산 결과는 참고 목적으로 제공됩니다.</li>
+  <li>실제 선정 시 미쯔비시·파나소닉·LS산전 공식 선정 소프트웨어 및 카탈로그를 반드시 확인하십시오.</li>
+  <li>모터 관성·토크 값은 제조사 시리즈 대표값이며, 세부 모델에 따라 다를 수 있습니다.</li>
+</div>
+<footer>© 2025 PartsOn · 서보모터 선정 계산기 Beta v1.0</footer>
+
+<script>
+/* ───────────────────────────────────────────
+   상태
+─────────────────────────────────────────── */
+const S = {
+  lt: null,   // 부하 형태
+  dt: null,   // 전달 방식
+  'bs-ori': 'h',
+  'rp-ori': 'h',
+  'idx-dist': '0.75',
+  step: 1,
+  maker: '전체', // 제조사 선택
+  brake: '없음', // 브레이크 필요 여부
+  voltage: '단상 200V', // 입력 전원
+};
+
+const STEP_LABELS = ['부하 형태','전달 방식','부하 조건','운전 조건','결과'];
+const TOTAL_STEPS = 5;
+
+function selMaker(maker, btn) {
+  S.maker = maker;
+  document.querySelectorAll('#maker-prefilter .mf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function selOpt(key, val, btn) {
+  S[key] = val;
+  const parent = btn.closest('.opt-grid');
+  parent.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function sel(step, key, val, btn) {
+  S[key] = val;
+  if (step >= 0) {
+    const parent = btn.closest('.opt-grid');
+    parent.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('sel'));
+    btn.classList.add('sel');
+  }
+  // 조건부 필드 표시
+  if (key === 'dt') {
+    document.getElementById('belt-fields').classList.toggle('hidden', val !== 'belt');
+    document.getElementById('gear-fields').classList.toggle('hidden', val !== 'gear' && val !== 'chain');
+  }
+  if (key === 'bs-ori') {
+    document.getElementById('bs-cb-row').classList.toggle('hidden', val !== 'v');
+  }
+}
+
+/* ── 위저드 진행 바 ── */
+function renderStepsBar(cur) {
+  const bar = document.getElementById('steps-bar');
+  let html = '';
+  for (let i = 0; i < TOTAL_STEPS; i++) {
+    const n = i + 1;
+    const cls = n < cur ? 'done' : n === cur ? 'active' : '';
+    const lnCls = n < cur ? 'done' : '';
+    const clickable = n < cur;
+    const cursor = clickable ? 'cursor:pointer' : '';
+    const onclick = clickable ? `onclick="goStep(${n})"` : '';
+    const lblColor = n === cur ? 'color:var(--accent);font-weight:700' : clickable ? 'color:var(--accent);text-decoration:underline;text-underline-offset:2px' : 'color:var(--text3)';
+    html += `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div class="step-circle ${cls}" ${onclick} style="${cursor}">${n < cur ? '✓' : n}</div>
+      <div style="font-size:12px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:64px;${lblColor};${cursor}" ${onclick}>${STEP_LABELS[i]}</div>
+    </div>
+    ${n < TOTAL_STEPS ? `<div class="step-line ${lnCls}" style="margin-top:16px"></div>` : ''}`;
+  }
+  bar.innerHTML = html;
+}
+
+function goStep(n, pushHistory=true) {
+  document.querySelectorAll('.step-wrap').forEach(el => el.classList.remove('active'));
+  const target = n <= 4 ? `s${n}` : 's-result';
+  document.getElementById(target).classList.add('active');
+  S.step = n;
+  renderStepsBar(n);
+  if(pushHistory) history.pushState({srvStep:n}, '');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.addEventListener('popstate', e=>{
+  const n = e.state && e.state.srvStep;
+  if(n) goStep(n, false);
+  else goStep(1, false);
+});
+
+function showErr(id) {
+  const el = document.getElementById(id);
+  if (el) { el.style.display = 'block'; setTimeout(() => el.style.display = 'none', 2500); }
+}
+
+function goNext(step) {
+  if (step === 1) {
+    if (!S.lt) { showErr('err1'); return; }
+    // Step 3 부하 조건 필드 표시
+    ['ballscrew','rack','conveyor','index','rotary'].forEach(t => {
+      const el = document.getElementById(`fields-${t}`);
+      if (el) el.classList.toggle('hidden', S.lt !== t);
+    });
+    // Step 4 속도 라벨
+    const isRot = S.lt === 'rotary' || S.lt === 'index';
+    document.getElementById('speed-lbl').textContent = isRot ? '목표 회전수' : '목표 이송 속도';
+    document.getElementById('speed-unit').textContent = isRot ? 'rpm' : 'mm/s';
+    document.getElementById('speed-field').classList.toggle('hidden', S.lt === 'rotary' || S.lt === 'index');
+  }
+  if (step === 2) {
+    if (!S.dt) { showErr('err2'); return; }
+  }
+  if (step === 3) { /* 기본 유효성 생략 */ }
+  if (step === 4) { showResult(); return; }
+  goStep(step + 1);
+}
+
+function goBack(step) { goStep(step - 1); }
+
+/* ───────────────────────────────────────────
+   모터 DB  (inertia: kg·cm²  torques: N·m)
+─────────────────────────────────────────── */
+const MOTORS = [
+  // 미쯔비시 HG-KR (저관성 — J-series 후속, 국내 주력)
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR13',  power:100,  Tr:0.318, Tmax:0.955, J:0.028, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR23',  power:200,  Tr:0.637, Tmax:1.91,  J:0.072, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.230, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.610, nr:3000, nmax:6000 },
+  // 미쯔비시 HG-SR (중관성 — J-series 후속, 국내 주력)
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:1.59,  Tmax:4.78,  J:1.04,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:3.18,  Tmax:9.55,  J:2.30,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR152', power:1500, Tr:4.78,  Tmax:14.3,  J:4.40,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR202', power:2000, Tr:6.37,  Tmax:19.1,  J:6.00,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR352', power:3500, Tr:11.1,  Tmax:33.4,  J:14.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR502', power:5000, Tr:15.9,  Tmax:47.7,  J:22.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR702', power:7000, Tr:22.3,  Tmax:66.8,  J:40.0,  nr:2000, nmax:3000 },
+  // 파나소닉 MSMF (중관성)
+  { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF102L1',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:2000, nmax:3000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF152L1',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:2000, nmax:3000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF202L1',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:2000, nmax:3000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF302L1',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:2000, nmax:3000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF502L1',  power:5000, Tr:15.9,  Tmax:47.7,  J:25.0,  nr:2000, nmax:3000 },
+  // 파나소닉 MQMF (초저관성)
+  { maker:'파나소닉', series:'MQMF', model:'MQMF012L1',  power:100,  Tr:0.318, Tmax:1.59,  J:0.015, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MQMF', model:'MQMF022L1',  power:200,  Tr:0.637, Tmax:2.07,  J:0.036, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MQMF', model:'MQMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.115, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MQMF', model:'MQMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.420, nr:3000, nmax:5000 },
+  // LS산전 APMC (콤팩트 저관성 — 국내 주력)
+  { maker:'LS산전',  series:'APMC', model:'APMC-S0S',   power:50,   Tr:0.159, Tmax:0.477, J:0.012, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-S1S',   power:100,  Tr:0.318, Tmax:0.955, J:0.025, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-S2S',   power:200,  Tr:0.637, Tmax:1.91,  J:0.065, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-S4S',   power:400,  Tr:1.27,  Tmax:3.82,  J:0.180, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-S7S',   power:750,  Tr:2.39,  Tmax:7.16,  J:0.580, nr:3000, nmax:5000 },
+  // LS산전 APM (표준 중관성 — 국내 주력)
+  { maker:'LS산전',  series:'APM',  model:'APM-SC01A',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC02A',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC04A',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC07A',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC10A',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC15A',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC20A',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-SC30A',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:2000, nmax:3000 },
+];
+
+/* ───────────────────────────────────────────
+   계산 엔진
+─────────────────────────────────────────── */
+const G = 9.81;
+const RHO = 7.85e-6; // kg/mm³
+
+function calcLoad() {
+  const lt = S.lt;
+  const tacc = +document.getElementById('op-tacc').value;
+  const tdec = +document.getElementById('op-tdec').value;
+  const tcycle = +document.getElementById('op-tcycle').value;
+
+  // 전달 방식 파라미터
+  let ratio = 1, eta_drive = 1, J_drive = 0;
+  if (S.dt === 'belt') {
+    const Dd = +document.getElementById('bt-drive').value;
+    const Dn = +document.getElementById('bt-driven').value;
+    const bm = +document.getElementById('bt-mass').value;
+    eta_drive = +document.getElementById('bt-eta').value;
+    ratio = Dn / Dd;
+    J_drive = bm * Math.pow(Dd/2/1000, 2); // kg·m²
+  } else if (S.dt === 'gear' || S.dt === 'chain') {
+    ratio = +document.getElementById('gr-ratio').value;
+    eta_drive = +document.getElementById('gr-eta').value;
+    J_drive = (+document.getElementById('gr-J').value) * 1e-4;
+  }
+
+  let n_motor = 0, J_load = 0, T_drive = 0, alpha_motor = 0;
+  let eta_mech = 1;
+
+  if (lt === 'ballscrew') {
+    const lead = +document.getElementById('bs-lead').value;
+    const ds   = +document.getElementById('bs-diam').value;
+    const Ls   = +document.getElementById('bs-len').value;
+    eta_mech   = +document.getElementById('bs-eta').value;
+    const mass = +document.getElementById('bs-mass').value;
+    const mu   = +document.getElementById('bs-mu').value;
+    const ori  = S['bs-ori'];
+    const cb   = document.getElementById('bs-cb').checked;
+    const Fext = +document.getElementById('bs-extload').value;
+
+    n_motor = (document.getElementById('op-speed').value / lead * 60) * ratio;
+    const r = lead / (2 * Math.PI) / 1000;
+    const J_screw = (Math.PI * RHO / 32) * Math.pow(ds, 4) * Ls * 1e-9;
+    J_load = J_screw + mass * r * r;
+
+    const W = mass * G;
+    const Ff = mu * W;
+    const Fg = (ori === 'v' && !cb) ? W : 0;
+    T_drive = (Fext + Ff + Fg) * (lead/1000) / (2*Math.PI * eta_mech * eta_drive) / ratio;
+
+    const speed = +document.getElementById('op-speed').value;
+    const omega_m = speed/1000 * 2*Math.PI / (lead/1000) * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'rack') {
+    const D    = +document.getElementById('rp-diam').value;
+    const mass = +document.getElementById('rp-mass').value;
+    const rackM= +document.getElementById('rp-rack-mass').value;
+    eta_mech   = +document.getElementById('rp-eta').value;
+    const mu   = +document.getElementById('rp-mu').value;
+    const ori  = S['rp-ori'];
+    const Fext = +document.getElementById('rp-extload').value;
+    const speed = +document.getElementById('op-speed').value;
+
+    const r = D / 2 / 1000;
+    n_motor = speed * 60 / (Math.PI * D) * ratio;
+    J_load  = (mass + rackM) * r * r;
+
+    const totM = mass + rackM;
+    const Ff = mu * totM * G;
+    const Fg = (ori === 'v') ? totM * G : 0;
+    T_drive = (Fext + Ff + Fg) * r / (eta_mech * eta_drive) / ratio;
+
+    const omega_m = speed/1000 / r * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'conveyor') {
+    const D    = +document.getElementById('cv-roller').value;
+    const mass = +document.getElementById('cv-mass').value;
+    const bm   = +document.getElementById('cv-belt-mass').value;
+    eta_mech   = +document.getElementById('cv-eta').value;
+    const mu   = +document.getElementById('cv-mu').value;
+    const ang  = +document.getElementById('cv-angle').value * Math.PI / 180;
+    const speed = +document.getElementById('op-speed').value;
+
+    const r = D / 2 / 1000;
+    n_motor = speed * 60 / (Math.PI * D) * ratio;
+    J_load  = (mass + bm) * r * r;
+
+    const Ff = (mass + bm) * G * Math.cos(ang) * mu;
+    const Fg = (mass + bm) * G * Math.sin(ang);
+    T_drive = (Ff + Fg) * r / (eta_mech * eta_drive) / ratio;
+
+    const omega_m = speed/1000 / r * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'index') {
+    const D    = +document.getElementById('idx-diam').value;
+    const mass = +document.getElementById('idx-mass').value;
+    const div  = +document.getElementById('idx-div').value;
+    const tIdx = +document.getElementById('idx-time').value;
+    const alpha= +S['idx-dist'];
+    const Tres = +document.getElementById('idx-resist').value;
+
+    const theta = 2 * Math.PI / div;
+    const ta = Math.min(tacc, tIdx * 0.4);
+    const omega_max = theta / ((ta + tdec) / 2 + Math.max(0, tIdx - ta - tdec));
+    n_motor = omega_max * ratio * 60 / (2 * Math.PI);
+
+    const r = D / 2 / 1000;
+    J_load  = alpha * mass * r * r;
+    T_drive = Tres / (eta_drive) / ratio;
+    alpha_motor = omega_max * ratio / ta;
+
+  } else if (lt === 'rotary') {
+    const D    = +document.getElementById('rot-diam').value;
+    const mass = +document.getElementById('rot-mass').value;
+    const trpm = +document.getElementById('rot-rpm').value;
+    eta_mech   = +document.getElementById('rot-eta').value;
+    const Tres = +document.getElementById('rot-resist').value;
+
+    n_motor = trpm * ratio;
+    const r = D / 2 / 1000;
+    J_load  = 0.5 * mass * r * r;
+    T_drive = Tres / (eta_mech * eta_drive) / ratio;
+
+    const omega_m = n_motor * 2 * Math.PI / 60;
+    alpha_motor = omega_m / tacc;
+  }
+
+  return { n_motor, J_load, T_drive, alpha_motor, ratio, eta_drive, J_drive, tacc, tdec, tcycle };
+}
+
+function evalMotor(m, p) {
+  const { J_load, J_drive, ratio, T_drive, alpha_motor, n_motor, tacc, tdec, tcycle } = p;
+  const Jm = m.J * 1e-4;
+  const JL = J_load / (ratio * ratio);
+  const Jt = Jm + JL + J_drive;
+  const ir = JL / Jm;
+
+  const T_acc = Jt * alpha_motor;
+  const T_peak = T_drive + T_acc;
+  const T_dec = Math.max(0, T_drive - T_acc);
+  const t_const = Math.max(0, tcycle - tacc - tdec);
+
+  const T_rms = Math.sqrt(
+    (T_peak*T_peak*tacc + T_drive*T_drive*t_const + T_dec*T_dec*tdec) / tcycle
+  );
+
+  const ok_rpm  = n_motor <= m.nmax;
+  const ok_Trms = T_rms <= m.Tr * 0.9;
+  const ok_Tpk  = T_peak <= m.Tmax;
+  const ok_ir   = ir <= 10;
+  const pass = ok_rpm && ok_Trms && ok_Tpk && ok_ir;
+
+  const fails = [];
+  if (!ok_rpm)  fails.push(`RPM 초과(${Math.round(n_motor)} > ${m.nmax})`);
+  if (!ok_Trms) fails.push(`실효토크 초과`);
+  if (!ok_Tpk)  fails.push(`순시토크 초과`);
+  if (!ok_ir)   fails.push(`관성비 과대`);
+
+  return { m, pass, Jm, JL, Jt, ir, T_acc, T_peak, T_rms, T_dec, n_motor, ok_rpm, ok_Trms, ok_Tpk, ok_ir, reason: fails.join(' · ') };
+}
+
+
+/* ───────────────────────────────────────────
+   결과 렌더링 — 제조사 필터 + 모델 네비게이터
+─────────────────────────────────────────── */
+const f1 = v => isFinite(v) ? v.toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:1}) : '—';
+const f2 = v => isFinite(v) ? v.toLocaleString('ko-KR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
+const f3 = v => isFinite(v) ? v.toLocaleString('ko-KR',{minimumFractionDigits:3,maximumFractionDigits:3}) : '—';
+const f0 = v => isFinite(v) ? Math.round(v).toLocaleString('ko-KR') : '—';
+
+function sLabel(cls, text) {
+  return `<div class="safety ${cls}"><span class="dot"></span>${text}</div>`;
+}
+
+/* 결과 전역 상태 */
+let _calcP = null;
+let _allResults = [];
+let _passingList = [];
+let _curIdx = 0;
+let _makerFilter = '전체';
+
+function showResult() {
+  _calcP = calcLoad();
+  _allResults = MOTORS.map(m => evalMotor(m, _calcP));
+  _makerFilter = S.maker || '전체';
+  _curIdx = 0;
+
+  goStep(5);
+  document.getElementById('servo-supplier-section').style.display='none';
+  const body = document.getElementById('result-body');
+  const allPassing = _allResults.filter(r => r.pass).sort((a,b) => a.m.power - b.m.power);
+
+  if (!allPassing.length) {
+    body.innerHTML = `
+      <div class="result-fail">
+        <div class="result-fail-title">조건을 만족하는 서보모터를 찾지 못했습니다</div>
+        <div class="result-fail-desc">
+          필요 RPM: <b>${f0(_calcP.n_motor)} rpm</b><br>
+          감속기 추가(기어 드라이브 전환) 또는 스크류 리드 변경을 검토하세요.<br>
+          관성비가 문제인 경우 감속비를 높이면 개선됩니다.
+        </div>
+      </div>
+      <button class="btn-full" onclick="goStep(1)" style="margin-top:0">← 조건 다시 입력하기</button>`;
+    return;
+  }
+
+  /* 후보 테이블 (전체, 고정) */
+  const passRows = allPassing.slice(0, 12);
+  const failRows = _allResults.filter(r=>!r.pass).sort((a,b)=>a.m.power-b.m.power).slice(0,8);
+  const tblRows = [...passRows, ...failRows].map(r => {
+    const cls = r.pass ? '' : 'fail-row';
+    const rPct = r.T_rms / r.m.Tr * 100;
+    const pPct = r.T_peak / r.m.Tmax * 100;
+    const safeId = 'tbl-' + r.m.model.replace(/[^a-zA-Z0-9]/g,'-');
+    return `<tr class="${cls}" id="${safeId}">
+      <td>${r.m.model}</td>
+      <td>${r.m.maker}</td>
+      <td>${r.m.series}</td>
+      <td>${r.m.power}W</td>
+      <td class="${rPct<=90?'v-ok':rPct<=100?'v-warn':'v-bad'}">${f2(r.T_rms)} / ${f2(r.m.Tr)}</td>
+      <td class="${pPct<=100?'v-ok':'v-bad'}">${f2(r.T_peak)} / ${f2(r.m.Tmax)}</td>
+      <td class="${r.ir<=5?'v-ok':r.ir<=10?'v-warn':'v-bad'}">${f1(r.ir)}</td>
+      <td class="${r.ok_rpm?'v-ok':'v-bad'}">${f0(r.n_motor)}</td>
+      <td>${r.pass?'<span class="v-ok">PASS</span>':'<span class="v-bad">FAIL</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  body.innerHTML = `
+    <!-- 제조사 필터 -->
+    <div class="maker-filter" id="maker-filter">
+      ${['전체','미쯔비시','파나소닉','LS산전'].map(m =>
+        `<button class="mf-btn${_makerFilter===m?' active':''}" onclick="setMakerFilter('${m}',this)">${m}</button>`
+      ).join('')}
+    </div>
+
+    <!-- 모델 네비게이터 -->
+    <div class="model-nav">
+      <button class="model-nav-btn" id="nav-prev" onclick="navigateModel(-1)" title="이전 모델 (더 작은 용량)">◀</button>
+      <div class="model-nav-info">
+        <div class="model-nav-name" id="nav-model">—</div>
+        <div class="model-nav-sub" id="nav-maker">—</div>
+        <div class="model-nav-count" id="nav-count">—</div>
+      </div>
+      <button class="model-nav-btn" id="nav-next" onclick="navigateModel(+1)" title="다음 모델 (더 큰 용량)">▶</button>
+    </div>
+
+    <!-- 동적 결과 카드 -->
+    <div id="result-card"></div>
+
+    <div class="divider"></div>
+
+    <!-- 후보 테이블 (고정) -->
+    <div class="section-title-sm">전체 후보 검토</div>
+    <div class="cand-scroll">
+      <table class="ctbl" style="min-width:700px">
+        <thead><tr>
+          <th>모델</th><th>제조사</th><th>시리즈</th><th>출력</th>
+          <th>실효/정격 (N·m)</th><th>피크/최대 (N·m)</th>
+          <th>관성비</th><th>RPM</th><th>판정</th>
+        </tr></thead>
+        <tbody id="result-tbl-body">${tblRows}</tbody>
+      </table>
+    </div>
+
+    <button class="print-pdf-btn" onclick="doPrint()">📄 PDF 저장 (인쇄)</button>
+    <button class="btn-full" onclick="goStep(1)"
+      style="margin-top:.5rem;background:transparent;color:var(--accent);border:1.5px solid var(--accent)">
+      ← 조건 다시 입력하기
+    </button>
+  `;
+
+  applyMakerFilter('전체');
+}
+
+/* 제조사 필터 적용 */
+function setMakerFilter(maker, btn) {
+  _makerFilter = maker;
+  _curIdx = 0;
+  document.querySelectorAll('.mf-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyMakerFilter(maker);
+}
+
+function applyMakerFilter(maker) {
+  // PASS 먼저, FAIL 나중으로 정렬 (같은 용량 내에서는 PASS 우선)
+  const all = _allResults
+    .filter(r => maker === '전체' || r.m.maker === maker)
+    .sort((a,b) => a.m.power !== b.m.power ? a.m.power - b.m.power : (b.pass ? 1 : -1));
+  _passingList = all;
+
+  if (!_passingList.length) {
+    document.getElementById('result-card').innerHTML =
+      `<div class="warn-banner">${maker} 모델이 없습니다.</div>`;
+    document.getElementById('nav-model').textContent = '—';
+    document.getElementById('nav-maker').textContent = '—';
+    document.getElementById('nav-count').textContent = '모델 없음';
+    document.getElementById('nav-prev').disabled = true;
+    document.getElementById('nav-next').disabled = true;
+    return;
+  }
+  // 첫 인덱스는 첫 번째 PASS 모델로
+  const firstPass = _passingList.findIndex(r => r.pass);
+  _curIdx = firstPass >= 0 ? firstPass : 0;
+  renderResultCard(_curIdx);
+}
+
+/* 모델 네비게이터 */
+function navigateModel(dir) {
+  const next = _curIdx + dir;
+  if (next < 0 || next >= _passingList.length) return;
+  _curIdx = next;
+  renderResultCard(_curIdx);
+}
+
+/* 결과 카드 렌더링 */
+function renderResultCard(idx) {
+  const r = _passingList[idx];
+  const m = r.m;
+  const p = _calcP;
+  const total = _passingList.length;
+  const passCount = _passingList.filter(x => x.pass).length;
+
+  /* 네비게이터 */
+  const statusTag = r.pass
+    ? '<span style="color:var(--ok);font-size:11px;font-weight:700">✓ PASS</span>'
+    : '<span style="color:var(--bad);font-size:11px;font-weight:700">✗ FAIL</span>';
+  document.getElementById('nav-model').innerHTML = m.model + '&nbsp;&nbsp;' + statusTag;
+  document.getElementById('nav-maker').textContent = m.maker + ' · ' + m.series + ' · ' + m.power + 'W';
+  document.getElementById('nav-count').textContent =
+    (idx+1) + ' / ' + total + '개 모델 (적합 ' + passCount + '개)';
+  document.getElementById('nav-prev').disabled = idx === 0;
+  document.getElementById('nav-next').disabled = idx === total - 1;
+
+  /* 테이블 하이라이트 */
+  document.querySelectorAll('#result-tbl-body tr').forEach(tr => tr.classList.remove('rec-row'));
+  const safeId = 'tbl-' + m.model.replace(/[^a-zA-Z0-9]/g,'-');
+  const tblRow = document.getElementById(safeId);
+  if (tblRow) tblRow.classList.add('rec-row');
+
+  /* 부하율 계산 */
+  const rmsRatio = r.T_rms   / m.Tr   * 100;
+  const pkRatio  = r.T_peak  / m.Tmax * 100;
+  const rpmRatio = r.n_motor / m.nmax  * 100;
+  const irPct    = Math.min(100, r.ir / 10 * 100);
+
+  function barColor(pct, ok, warn) {
+    return pct <= ok ? 'var(--ok)' : pct <= warn ? '#D97706' : 'var(--bad)';
+  }
+
+  function metricBar(label, value, unit, pct, okPct, warnPct, subText) {
+    const fill = barColor(pct, okPct, warnPct);
+    const w = Math.min(100, Math.max(0, pct));
+    return `
+    <div class="metric-card">
+      <div class="metric-top">
+        <span class="metric-label">${label}</span>
+        <span class="metric-value" style="color:${fill}">${value}<span class="metric-unit">${unit}</span></span>
+      </div>
+      <div class="metric-bar-bg">
+        <div class="metric-bar-fill" style="width:${w}%;background:${fill}"></div>
+      </div>
+      <div class="metric-sub">${subText}</div>
+    </div>`;
+  }
+
+  /* FAIL 경고 블록 */
+  let failBanner = '';
+  if (!r.pass) {
+    const warns = [];
+    if (!r.ok_rpm)  warns.push({
+      icon:'⚡',
+      title:'회전수 초과',
+      desc:`필요 RPM <b>${f0(r.n_motor)} rpm</b> 이 모터 최고 회전수 <b>${f0(m.nmax)} rpm</b> 을 초과합니다.<br>
+            → 감속비를 높이거나, 스크류 리드를 크게 하여 모터 RPM을 낮추세요.`
+    });
+    if (!r.ok_Tpk)  warns.push({
+      icon:'💥',
+      title:'순시 토크 초과',
+      desc:`가속+구동 피크 토크 <b>${f2(r.T_peak)} N·m</b> 이 최대 토크 <b>${f2(m.Tmax)} N·m</b> 을 초과합니다 (${f1(pkRatio)}%).<br>
+            → 가속 시간을 늘리거나, 감속기를 추가하거나, 더 큰 용량 모터를 선택하세요.`
+    });
+    if (!r.ok_Trms) warns.push({
+      icon:'🌡',
+      title:'연속 부하율 초과 (과열 위험)',
+      desc:`실효 토크 RMS <b>${f2(r.T_rms)} N·m</b> 이 정격 토크의 90% 한계 <b>${f2(m.Tr*0.9)} N·m</b> 를 초과합니다 (${f1(rmsRatio)}%).<br>
+            → 사이클 타임을 늘리거나, 더 큰 용량 모터를 선택하면 열적 여유가 생깁니다.`
+    });
+    if (!r.ok_ir)   warns.push({
+      icon:'⚖',
+      title:'관성비 과대',
+      desc:`부하/모터 관성비 <b>${f2(r.ir)}</b> 이 허용 한계 10을 초과합니다.<br>
+            → 감속기를 추가하면 관성비가 i²배 감소합니다. 또는 더 큰 로터 관성의 모터를 선택하세요.`
+    });
+    failBanner = `
+    <div style="background:var(--bad-bg);border:1.5px solid #FECACA;border-radius:10px;padding:14px 16px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:700;color:var(--bad);margin-bottom:10px">
+        ⛔ 이 모터는 현재 조건에서 사용 불가합니다
+      </div>
+      ${warns.map(w => `
+        <div style="background:#fff;border:1px solid #FECACA;border-radius:8px;padding:10px 12px;margin-bottom:8px">
+          <div style="font-size:12px;font-weight:700;color:var(--bad);margin-bottom:4px">${w.icon} ${w.title}</div>
+          <div style="font-size:12px;color:#6B1A1A;line-height:1.7">${w.desc}</div>
+        </div>
+      `).join('')}
+    </div>`;
+  }
+
+  const heroStyle = r.pass
+    ? 'background:var(--accent-light);border:1.5px solid #B4DCC7'
+    : 'background:#FDF0F0;border:1.5px solid #FECACA';
+  const heroLabelColor = r.pass ? 'color:var(--accent-mid)' : 'color:var(--bad)';
+  const heroMainColor  = r.pass ? 'color:var(--accent)'     : 'color:var(--bad)';
+  const heroSubColor   = r.pass ? 'color:#22654A'           : 'color:#6B1A1A';
+  const heroLabel = r.pass
+    ? ((idx===0 && _makerFilter==='전체') ? '최소 용량 추천 모델' : '적합 모델')
+    : '조건 미달 모델 — 참고용';
+
+  /* 브레이크·전원 정보 */
+  const brakeNeeded = S.brake === '있음';
+  const brakeModelName = brakeNeeded ? m.model + 'B' : null;
+  const voltageWarn = (S.voltage === '단상 100V' || S.voltage === '단상 200V') && m.power > 750;
+
+  const brakeBadge = brakeNeeded
+    ? `<span style="display:inline-block;font-size:11px;background:#1A3A2A;color:#fff;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle">브레이크</span>`
+    : '';
+  const voltageBadge = `<span style="display:inline-block;font-size:11px;background:rgba(0,0,0,0.08);color:var(--text2);padding:2px 8px;border-radius:4px;margin-left:4px;vertical-align:middle">${S.voltage}</span>`;
+  const voltageWarnBanner = voltageWarn
+    ? `<div style="background:#FFF7ED;border:1px solid #FCD34D;border-left:3px solid #F59E0B;border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;color:#92400E;line-height:1.6">
+        ⚠ <b>${S.voltage}</b>는 통상 750W 이하 드라이버에서 지원됩니다. ${m.power}W 용량은 <b>삼상 200V 또는 삼상 400V</b> 드라이버 사양을 확인하세요.
+       </div>`
+    : '';
+  const brakeInfoBox = brakeNeeded
+    ? `<div style="background:var(--accent-light);border:1px solid #B4DCC7;border-radius:8px;padding:9px 12px;margin-top:8px;font-size:12px;color:#166534;line-height:1.6">
+        🔒 브레이크 부착 모델: <b style="font-family:var(--mono)">${brakeModelName}</b><br>
+        <span style="font-size:11px;color:#22654A">※ 브레이크 모델 코드는 제조사·시리즈별로 다를 수 있습니다. 반드시 제조사 카탈로그를 확인하세요.</span>
+       </div>`
+    : '';
+
+  document.getElementById('result-card').innerHTML = `
+    <div style="${heroStyle};border-radius:10px;padding:16px 18px;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;${heroLabelColor};margin-bottom:6px">${heroLabel}</div>
+      <div style="font-size:26px;font-weight:700;font-family:var(--mono);${heroMainColor}">${m.model}${brakeBadge}${voltageBadge}</div>
+      <div style="font-size:13px;margin-top:6px;line-height:1.7;${heroSubColor}">
+        <b>${m.maker} · ${m.series} · ${m.power}W</b><br>
+        정격 토크 ${f2(m.Tr)} N·m &nbsp;|&nbsp; 최대 토크 ${f2(m.Tmax)} N·m
+        &nbsp;|&nbsp; 정격 ${f0(m.nr)} / 최고 ${f0(m.nmax)} rpm<br>
+        로터 관성 ${m.J < 1 ? f3(m.J) : f2(m.J)} kg·cm²
+      </div>
+      ${brakeInfoBox}
+      ${voltageWarnBanner}
+    </div>
+
+    ${failBanner}
+
+    <!-- 4개 부하율 메트릭 바 -->
+    <div class="metric-grid">
+      ${metricBar(
+        '모터 연속 부하율 (열)',
+        f1(rmsRatio), '%', rmsRatio, 80, 100,
+        '실효 토크 ' + f2(r.T_rms) + ' N·m &nbsp;/&nbsp; 정격 ' + f2(m.Tr) + ' N·m' +
+        (rmsRatio>100?' &nbsp;<b style="color:var(--bad)">⚠ 초과</b>':rmsRatio>80?' &nbsp;<span style="color:#D97706">적정</span>':' &nbsp;<span style="color:var(--ok)">여유</span>')
+      )}
+      ${metricBar(
+        '순시 토크 사용률',
+        f1(pkRatio), '%', pkRatio, 70, 100,
+        '피크 ' + f2(r.T_peak) + ' N·m &nbsp;/&nbsp; 최대 ' + f2(m.Tmax) + ' N·m' +
+        '&nbsp;&nbsp;<span style="font-size:10px;color:var(--text3)">(구동 ' + f2(p.T_drive) + ' + 가속 ' + f2(r.T_acc) + ')</span>' +
+        (pkRatio>100?' &nbsp;<b style="color:var(--bad)">⚠ 초과</b>':'')
+      )}
+      ${metricBar(
+        'RPM 사용률',
+        f1(rpmRatio), '%', rpmRatio, 80, 100,
+        '필요 ' + f0(r.n_motor) + ' rpm &nbsp;/&nbsp; 최고 ' + f0(m.nmax) + ' rpm' +
+        (rpmRatio>100?' &nbsp;<b style="color:var(--bad)">⚠ 초과</b>':'')
+      )}
+      ${metricBar(
+        '관성비 (부하/모터)',
+        f2(r.ir), '', irPct, 50, 100,
+        '부하 ' + f3(r.JL*1e4) + ' / 모터 ' + f3(r.Jm*1e4) + ' kg·cm²&nbsp;&nbsp;' +
+        (r.ir<=3?'<span style="color:var(--ok)">고응답</span>':r.ir<=5?'<span style="color:var(--ok)">권장</span>':r.ir<=10?'<span style="color:#D97706">검토필요</span>':'<b style="color:var(--bad)">⚠ 과대</b>')
+      )}
+    </div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">토크 상세</div>
+    <div class="res-grid4" style="margin-bottom:0">
+      <div class="res-item">
+        <div class="r-lbl">구동 토크</div>
+        <div class="r-val">${f2(p.T_drive)}</div>
+        <div class="r-unit">N·m</div>
+      </div>
+      <div class="res-item">
+        <div class="r-lbl">가속 토크</div>
+        <div class="r-val">${f2(r.T_acc)}</div>
+        <div class="r-unit">N·m</div>
+      </div>
+      <div class="res-item">
+        <div class="r-lbl">피크 토크</div>
+        <div class="r-val" style="color:${pkRatio<=100?'var(--ok)':'var(--bad)'}">${f2(r.T_peak)}</div>
+        <div class="r-unit">N·m &nbsp;<span style="font-size:10px">(정격의 ${f1(r.T_peak/m.Tr*100)}%)</span></div>
+      </div>
+      <div class="res-item">
+        <div class="r-lbl">실효 토크 RMS</div>
+        <div class="r-val" style="color:${rmsRatio<=90?'var(--ok)':rmsRatio<=100?'#D97706':'var(--bad)'}">${f2(r.T_rms)}</div>
+        <div class="r-unit">N·m &nbsp;<span style="font-size:10px">(정격의 ${f1(rmsRatio)}%)</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin:12px 0 8px">회전수 &amp; 관성</div>
+    <div class="res-grid3" style="margin-top:0">
+      <div class="res-item">
+        <div class="r-lbl">필요 모터 회전수</div>
+        <div class="r-val" style="color:${rpmRatio<=100?'var(--ok)':'var(--bad)'}">${f0(r.n_motor)}</div>
+        <div class="r-unit">rpm &nbsp;<span style="font-size:10px">(최고의 ${f1(rpmRatio)}%)</span></div>
+      </div>
+      <div class="res-item">
+        <div class="r-lbl">부하 환산 관성 J<sub>L</sub></div>
+        <div class="r-val">${f3(r.JL*1e4)}</div>
+        <div class="r-unit">kg·cm²</div>
+      </div>
+      <div class="res-item">
+        <div class="r-lbl">총 관성 (모터+부하)</div>
+        <div class="r-val">${f3(r.Jt*1e4)}</div>
+        <div class="r-unit">kg·cm²</div>
+      </div>
+    </div>
+
+    <div class="chart-wrap" style="margin-top:12px">
+      <div class="chart-title">가감속 토크 프로파일 (1 사이클)</div>
+      <canvas id="torque-canvas" height="160"></canvas>
+    </div>
+  `;
+
+  setTimeout(() => drawChart(r, p), 30);
+  renderServoSuppliers();
+  renderServoCAD(m.maker, m.series, m.model);
+}
+/* ── 토크 파형 ── */
+function drawChart(r, p) {
+  const canvas = document.getElementById('torque-canvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 640;
+  const H = 160;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const { tacc, tdec, tcycle } = p;
+  const Tpk = r.T_peak, Tdr = p.T_drive, Tdc = r.T_dec;
+  const Tr = r.m.Tr, Tmx = r.m.Tmax;
+  const t_const = Math.max(0, tcycle - tacc - tdec);
+  const Tmax_disp = Math.max(Tmx, Tpk) * 1.2;
+
+  const pad = {t:18,r:16,b:28,l:50};
+  const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+  const tx = t => pad.l + (t/tcycle)*cw;
+  const ty = T => pad.t + ch - (T/Tmax_disp)*ch;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#F4F2ED'; ctx.fillRect(pad.l,pad.t,cw,ch);
+
+  [[Tr,'#1A5C2A','정격'],[Tmx,'#8B1A1A','최대']].forEach(([T,c,lbl]) => {
+    ctx.strokeStyle=c; ctx.lineWidth=1; ctx.setLineDash([5,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l,ty(T)); ctx.lineTo(pad.l+cw,ty(T)); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle=c; ctx.font='10px IBM Plex Mono,monospace';
+    ctx.textAlign='left'; ctx.fillText(`${lbl} ${f2(T)}`, pad.l+4, ty(T)-3);
+  });
+
+  const pts = [
+    {t:0,T:0},{t:0,T:Tpk},{t:tacc,T:Tpk},{t:tacc,T:Tdr},
+    {t:tacc+t_const,T:Tdr},{t:tacc+t_const,T:Tdc},
+    {t:tacc+t_const+tdec,T:Tdc},{t:tacc+t_const+tdec,T:0},{t:tcycle,T:0}
+  ];
+
+  ctx.fillStyle='rgba(26,58,42,0.10)';
+  ctx.beginPath(); ctx.moveTo(tx(0),ty(0));
+  pts.forEach(pt => ctx.lineTo(tx(pt.t),ty(pt.T)));
+  ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='#1A3A2A'; ctx.lineWidth=2; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(tx(pts[0].t),ty(pts[0].T));
+  pts.slice(1).forEach(pt => ctx.lineTo(tx(pt.t),ty(pt.T))); ctx.stroke();
+
+  ctx.strokeStyle='#D8D4CC'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch);
+  ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+
+  ctx.fillStyle='#9E9B96'; ctx.font='10px IBM Plex Mono,monospace'; ctx.textAlign='right';
+  [0,0.5,1.0].forEach(f => {
+    const T=Tmax_disp*f, y=ty(T);
+    ctx.fillText(f2(T), pad.l-4, y+3);
+    if(f>0){ctx.strokeStyle='#E8E5DF';ctx.beginPath();ctx.moveTo(pad.l+1,y);ctx.lineTo(pad.l+cw,y);ctx.stroke();}
+  });
+
+  ctx.textAlign='center'; ctx.fillStyle='#9E9B96';
+  [0,tacc,tacc+t_const,tacc+t_const+tdec,tcycle].forEach(t => {
+    ctx.fillText(f1(t)+'s', tx(t), pad.t+ch+16);
+  });
+
+  ctx.textAlign='left'; ctx.fillStyle='#6B6760';
+  ctx.fillText('N·m', 2, pad.t+8);
+}
+
+/* ══════════ CAD 도면 다운로드 ══════════ */
+const SERVO_CAD_LINKS = {
+  '미쯔비시': {
+    'HG-KR': {
+      links: [
+        { label: '미쯔비시 FA — MELSERVO CAD 다운로드', url: 'https://www.mitsubishielectric.com/fa/download/cad/search.page?mode=cad&kisyu=%2Fservo' },
+      ],
+      hint: '페이지 접속 후 목록에서 "HG-KR" 시리즈를 선택하세요.',
+    },
+    'HG-SR': {
+      links: [
+        { label: '미쯔비시 FA — MELSERVO CAD 다운로드', url: 'https://www.mitsubishielectric.com/fa/download/cad/search.page?mode=cad&kisyu=%2Fservo' },
+      ],
+      hint: '페이지 접속 후 목록에서 "HG-SR" 시리즈를 선택하세요.',
+    },
+  },
+  '파나소닉': {
+    'MSMF': {
+      links: [
+        { label: 'Panasonic Industry — FA 모터 CAD',  url: 'https://industry.panasonic.com/global/en/products/motor/fa-motor/cad' },
+        { label: 'Panasonic — MINAS A6 제품 페이지', url: 'https://industry.panasonic.com/global/en/products/motor/fa-motor/ac-servo/a6' },
+      ],
+      hint: 'CAD 페이지에서 MSMF 모델 검색 후 CAD 탭을 클릭하세요.',
+    },
+    'MQMF': {
+      links: [
+        { label: 'Panasonic Industry — FA 모터 CAD',  url: 'https://industry.panasonic.com/global/en/products/motor/fa-motor/cad' },
+        { label: 'Panasonic — MINAS A6 제품 페이지', url: 'https://industry.panasonic.com/global/en/products/motor/fa-motor/ac-servo/a6' },
+      ],
+      hint: 'CAD 페이지에서 MQMF 모델 검색 후 CAD 탭을 클릭하세요.',
+    },
+  },
+  'LS산전': {
+    'APMC': {
+      links: [
+        { label: 'LS Electric — 서보모터 제품군',    url: 'https://www.ls-electric.com/products/category/Smart_Automation_Solution/Servo!Motion/Servo_Motor' },
+        { label: 'LS Electric America — CAD Data', url: 'https://www.lselectricamerica.com/cad-data/' },
+      ],
+      hint: '제품 페이지에서 APM-C 시리즈 선택 후 도면(CAD) 탭을 클릭하세요.',
+    },
+    'APM': {
+      links: [
+        { label: 'LS Electric — 서보모터 제품군',    url: 'https://www.ls-electric.com/products/category/Smart_Automation_Solution/Servo!Motion/Servo_Motor' },
+        { label: 'LS Electric America — CAD Data', url: 'https://www.lselectricamerica.com/cad-data/' },
+      ],
+      hint: '제품 페이지에서 APM 시리즈 선택 후 도면(CAD) 탭을 클릭하세요.',
+    },
+  },
+};
+function renderServoCAD(maker, series, model) {
+  const sec  = document.getElementById('servo-cad-section');
+  const btns = document.getElementById('servo-cad-btns');
+  if (!sec || !btns) return;
+  sec.style.display = 'block';
+  const info = (SERVO_CAD_LINKS[maker] || {})[series];
+  if (info) {
+    const btnHtml = info.links.map(l => `
+      <a href="${l.url}" target="_blank" rel="noopener" class="cad-btn">
+        <span class="cad-btn-icon">⬇</span>
+        <span>
+          <span style="display:block;font-size:11px;opacity:.7;font-weight:400">${maker} ${series}</span>
+          <span style="display:block;line-height:1.2">${l.label}</span>
+        </span>
+      </a>`).join('');
+    const hintHtml = info.hint
+      ? `<div style="width:100%;margin-top:10px;font-size:11px;color:rgba(255,255,255,.6);line-height:1.6">💡 ${info.hint}</div>`
+      : '';
+    btns.innerHTML = btnHtml + hintHtml;
+  } else {
+    btns.innerHTML = `
+      <a href="https://www.mitsubishielectric.com/fa/download/cad/search.page?mode=cad&kisyu=%2Fservo" target="_blank" rel="noopener" class="cad-btn">
+        <span class="cad-btn-icon">⬇</span>
+        <span>
+          <span style="display:block;font-size:11px;opacity:.7;font-weight:400">${maker} ${series}</span>
+          <span style="display:block;line-height:1.2">공식 CAD 페이지</span>
+        </span>
+      </a>`;
+  }
+}
+
+/* ══════════ 공급사 연결 ══════════ */
+const SERVO_SUPPLIER_KEY = 'partson_servo_suppliers';
+function getServoSuppliers() {
+  try { const r = localStorage.getItem(SERVO_SUPPLIER_KEY); if (r) return JSON.parse(r); } catch(e) {}
+  const d = [{ id:'1', name:'오성오토메이션', phone:'010-9119-2153', email:'scvp1@naver.com', website:'', brands:['미쯔비시','파나소닉','LS산전'], note:'' }];
+  localStorage.setItem(SERVO_SUPPLIER_KEY, JSON.stringify(d));
+  return d;
+}
+function renderServoSuppliers() {
+  const sec  = document.getElementById('servo-supplier-section');
+  const list = document.getElementById('servo-supplier-list');
+  if (!sec || !list) return;
+  const suppliers = getServoSuppliers();
+  sec.style.display = 'block';
+  if (!suppliers.length) { list.innerHTML = '<div class="supplier-empty">등록된 공급사가 없습니다.</div>'; return; }
+  list.innerHTML = suppliers.map(s => {
+    const brands   = s.brands && s.brands.length ? s.brands.join(' · ') : '';
+    const contacts = [];
+    if (s.phone)   contacts.push(`<a href="tel:${s.phone}" class="supplier-lnk">📞 ${s.phone}</a>`);
+    if (s.email)   contacts.push(`<a href="mailto:${s.email}" class="supplier-lnk">✉ ${s.email}</a>`);
+    if (s.website) contacts.push(`<a href="${s.website}" target="_blank" class="supplier-lnk">🌐 홈페이지</a>`);
+    return `<div class="supplier-card-item">
+      <div class="supplier-nm">${s.name}</div>
+      ${brands ? `<div class="supplier-br">${brands}</div>` : ''}
+      <div class="supplier-ct">${contacts.join('')}</div>
+      ${s.note ? `<div class="supplier-nt">${s.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+function doPrint(){
+  document.getElementById('servo-print-date').textContent =
+    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
+  window.print();
+}/* ── 초기화 ── */
+renderStepsBar(1);
+
+/* ── 도움말 팝업 ── */
+const HELP = {
+  lt_ballscrew: { title:'볼스크류', desc:'모터의 회전운동을 직선운동으로 변환하는 이송 메커니즘입니다.\n\n• 너트가 스크류를 따라 직선 이동\n• LM 가이드와 조합하여 가장 널리 사용\n• 리드(mm/rev)로 속도 결정\n• 효율 약 90%, 역구동 가능\n\n관성 계산: 스크류 관성 + 테이블 환산 관성', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="54" width="180" height="10" rx="2" fill="#B4DCC7"/><rect x="10" y="44" width="180" height="9" rx="1" fill="#8BAD9A" opacity="0.4"/><rect x="70" y="30" width="60" height="34" rx="4" fill="#16653A" opacity="0.7"/><text x="100" y="51" font-size="10" fill="white" text-anchor="middle" font-family="monospace">너트(블록)</text><circle cx="14" cy="49" r="10" fill="#1A3A2A" opacity="0.4"/><circle cx="186" cy="49" r="10" fill="#1A3A2A" opacity="0.3"/><line x1="14" y1="30" x2="40" y2="30" stroke="#E05C2A" stroke-width="2"/><polygon points="38,27 46,30 38,33" fill="#E05C2A"/><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">리드 = 1회전당 이동 거리 (mm)</text></svg>` },
+  lt_rack: { title:'랙 &amp; 피니언', desc:'피니언 기어의 회전으로 랙을 직선 이동시키는 메커니즘입니다.\n\n• 장행정(수 m 이상) 이송에 적합\n• 볼스크류보다 강성은 낮지만 스트로크 제한 없음\n• 피니언 피치원 직경으로 속도 결정\n• 백래시 관리 중요\n\n관성 계산: 피니언 관성 + 테이블/랙 환산 관성', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="65" width="180" height="12" rx="2" fill="#8BAD9A" opacity="0.5"/><rect x="18" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="34" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="50" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="66" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="82" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="98" y="56" width="10" height="9" rx="1" fill="#1A3A2A" opacity="0.6"/><circle cx="80" cy="35" r="22" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.8"/><circle cx="80" cy="35" r="8" fill="#16653A" opacity="0.5"/><text x="80" y="39" font-size="9" fill="white" text-anchor="middle" font-family="monospace">피니언</text><line x1="130" y1="65" x2="160" y2="65" stroke="#E05C2A" stroke-width="2"/><polygon points="158,62 166,65 158,68" fill="#E05C2A"/><text x="100" y="92" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">피치원 직경 D로 속도 결정</text></svg>` },
+  lt_conveyor: { title:'컨베이어 / 벨트 이송', desc:'구동 롤러의 회전으로 벨트·컨베이어를 구동하는 메커니즘입니다.\n\n• 물건을 직선 이송하는 설비\n• 수평 또는 경사 설치 가능\n• 롤러 직경으로 속도 결정\n• 벨트와 롤러 질량이 관성에 포함\n\n관성 계산: 롤러 관성 + (이송물+벨트) 환산 관성', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="36" y="44" width="128" height="14" rx="0" fill="#C2D9CC" opacity="0.6"/><ellipse cx="38" cy="51" rx="24" ry="16" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.8"/><ellipse cx="162" cy="51" rx="24" ry="16" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.8"/><circle cx="38" cy="51" r="6" fill="#16653A" opacity="0.5"/><circle cx="162" cy="51" r="6" fill="#16653A" opacity="0.5"/><rect x="60" y="26" width="40" height="18" rx="3" fill="#1A3A2A" opacity="0.4"/><text x="80" y="38" font-size="8" fill="white" text-anchor="middle" font-family="monospace">이송물</text><line x1="24" y1="14" x2="38" y2="30" stroke="#E05C2A" stroke-width="2"/><polygon points="22,14 26,7 30,13" fill="#E05C2A"/><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">구동 롤러 직경으로 속도 결정</text></svg>` },
+  lt_index: { title:'인덱스 테이블', desc:'일정 각도씩 분할 회전하며 정위치를 결정하는 회전 테이블입니다.\n\n• 다분할 정위치 결정 (예: 4분할, 6분할)\n• 각 분할마다 정지 → 가공 → 이동 반복\n• 원판/링 형태의 테이블 관성이 주 부하\n• 질량 분포 계수 α = 0.5(링형) ~ 1.0(원판)\n\n관성 계산: J = α × m × (D/2)²', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><ellipse cx="100" cy="72" rx="70" ry="14" fill="#C2D9CC" opacity="0.4"/><circle cx="100" cy="48" r="42" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.7"/><circle cx="100" cy="48" r="14" fill="none" stroke="#16653A" stroke-width="1.5" opacity="0.4"/><circle cx="100" cy="48" r="5" fill="#16653A" opacity="0.6"/><line x1="100" y1="6" x2="100" y2="48" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="62" y1="25" x2="100" y2="48" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="62" y1="71" x2="100" y2="48" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="138" y1="25" x2="100" y2="48" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><line x1="138" y1="71" x2="100" y2="48" stroke="#1A3A2A" stroke-width="1.5" opacity="0.4"/><path d="M 132 22 A 36 36 0 0 1 138 40" stroke="#E05C2A" stroke-width="2" fill="none"/><polygon points="138,40 144,33 136,33" fill="#E05C2A"/></svg>` },
+  lt_rotary: { title:'회전 부하 (척·스핀들)', desc:'모터가 회전체(척, 롤러, 스핀들 등)를 직접 구동하는 메커니즘입니다.\n\n• 공작기계 주축, 권취기, 롤러 등\n• 원통형 질량의 관성이 주 부하\n• 부하 저항 토크(절삭력 등)를 별도 입력\n• 직결 또는 감속기를 통해 연결\n\n관성 계산: J = 0.5 × m × (D/2)²', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="100" cy="50" r="38" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.7"/><circle cx="100" cy="50" r="20" fill="none" stroke="#16653A" stroke-width="1.5" opacity="0.4"/><circle cx="100" cy="50" r="7" fill="#16653A" opacity="0.5"/><line x1="20" y1="50" x2="40" y2="50" stroke="#1A3A2A" stroke-width="5" opacity="0.4" stroke-linecap="round"/><line x1="160" y1="50" x2="180" y2="50" stroke="#1A3A2A" stroke-width="5" opacity="0.4" stroke-linecap="round"/><path d="M 128 20 A 34 34 0 0 1 134 38" stroke="#E05C2A" stroke-width="2.5" fill="none"/><polygon points="134,38 142,31 133,31" fill="#E05C2A"/><text x="100" y="96" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">J = 0.5 × m × r² [kg·m²]</text></svg>` },
+  lead:   { title:'볼스크류 리드',    desc:'모터 1회전당 너트(부하)의 이동 거리입니다.\n리드가 클수록 빠르지만 토크가 더 필요합니다.\n리드 = v_max × 60 ÷ 모터 최대 RPM 으로 역산 가능',  svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="42" width="180" height="8" rx="2" fill="#B4DCC7"/><rect x="10" y="34" width="180" height="7" rx="1" fill="#8BAD9A" opacity="0.4"/><rect x="80" y="26" width="40" height="22" rx="3" fill="#16653A" opacity="0.7"/><line x1="80" y1="15" x2="120" y2="15" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="80" y1="10" x2="80" y2="20" stroke="#E05C2A" stroke-width="2"/><line x1="120" y1="10" x2="120" y2="20" stroke="#E05C2A" stroke-width="2"/><text x="100" y="8" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">Lead (리드)</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">모터 1회전 = 리드 mm 이동</text></svg>` },
+  load_mass: { title:'이동 하중 (테이블+워크)', desc:'볼스크류가 이송해야 하는 총 질량입니다.\n테이블 무게 + 워크(공작물) 무게를 더한 값을 입력합니다.\n모르면 테이블 카탈로그 질량 + 최대 공작물 질량으로 추정하세요.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="58" width="180" height="10" rx="2" fill="#B4DCC7"/><rect x="40" y="36" width="120" height="22" rx="3" fill="#16653A" opacity="0.65"/><text x="100" y="51" font-size="9" fill="white" text-anchor="middle" font-family="monospace">테이블</text><rect x="65" y="16" width="70" height="20" rx="2" fill="#1A3A2A" opacity="0.4"/><text x="100" y="29" font-size="9" fill="white" text-anchor="middle" font-family="monospace">워크</text><polygon points="96,36 100,44 104,36" fill="#E05C2A"/><text x="108" y="42" font-size="12" fill="#E05C2A" font-family="monospace" font-weight="bold">W</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">W = 테이블 + 워크 [kg]</text></svg>` },
+  len:    { title:'지지간 거리 (유효 길이)', desc:'볼스크류의 양쪽 지지 베어링 사이의 거리입니다.\n유효 길이 = 스트로크 + 양단 여유 거리 (너트·지지부 포함)\n길수록 임계 회전수가 낮아지고 좌굴 하중이 줄어듭니다.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="48" width="180" height="8" rx="2" fill="#B4DCC7"/><rect x="8" y="36" width="14" height="32" rx="2" fill="#1A3A2A" opacity="0.6"/><rect x="178" y="36" width="14" height="32" rx="2" fill="#1A3A2A" opacity="0.6"/><line x1="22" y1="26" x2="178" y2="26" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="22" y1="21" x2="22" y2="31" stroke="#E05C2A" stroke-width="2"/><line x1="178" y1="21" x2="178" y2="31" stroke="#E05C2A" stroke-width="2"/><text x="100" y="18" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">지지간 거리 L</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">길수록 임계회전수↓ · 좌굴하중↓</text></svg>` },
+  diam:   { title:'스크류 외경',       desc:'볼스크류 나사의 공칭 외경입니다.\n외경이 클수록 강성↑, 회전 관성↑, 허용 회전수↓.\n일반 권장: 스트로크(mm) ÷ 30 이상의 외경을 선택하세요.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="44" width="180" height="16" rx="5" fill="#B4DCC7"/><line x1="100" y1="28" x2="100" y2="44" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="100" y1="60" x2="100" y2="76" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="165" y1="44" x2="165" y2="60" stroke="#E05C2A" stroke-width="1.5"/><line x1="160" y1="44" x2="170" y2="44" stroke="#E05C2A" stroke-width="2"/><line x1="160" y1="60" x2="170" y2="60" stroke="#E05C2A" stroke-width="2"/><text x="175" y="55" font-size="11" fill="#E05C2A" font-family="monospace">d</text><text x="100" y="92" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">외경 d (mm) — 클수록 강성↑</text></svg>` },
+  extload:{ title:'외부 하중',         desc:'모터가 추가로 이겨내야 하는 외력입니다.\n절삭력, 프레스 하중, 스프링 반력 등이 해당됩니다.\n없으면 0을 입력하세요. 단위는 N(뉴턴)입니다.\n1 kgf ≈ 9.81 N', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="58" width="180" height="10" rx="2" fill="#B4DCC7"/><rect x="70" y="36" width="60" height="22" rx="3" fill="#16653A" opacity="0.7"/><line x1="140" y1="47" x2="170" y2="47" stroke="#E05C2A" stroke-width="2.5"/><polygon points="158,43 168,47 158,51" fill="#E05C2A"/><text x="100" y="31" font-size="10" fill="#E05C2A" text-anchor="middle" font-family="monospace">← 절삭력 / 저항력</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">없으면 0 입력. 단위: N (1kgf≈9.81N)</text></svg>` },
+  pitch:  { title:'피니언 피치원 직경', desc:'피니언 기어의 피치원(기준원) 직경입니다.\n이송 속도 = π × D × 모터RPM ÷ 60\nD가 클수록 속도↑, 필요 토크↑, 위치 분해능↓', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="80" cy="50" r="36" fill="none" stroke="#16653A" stroke-width="2" opacity="0.7" stroke-dasharray="4,2"/><circle cx="80" cy="50" r="28" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.9"/><circle cx="80" cy="50" r="6" fill="#16653A" opacity="0.6"/><line x1="80" y1="50" x2="108" y2="50" stroke="#E05C2A" stroke-width="1.5"/><line x1="80" y1="45" x2="80" y2="55" stroke="#E05C2A" stroke-width="2"/><line x1="108" y1="45" x2="108" y2="55" stroke="#E05C2A" stroke-width="2"/><text x="94" y="42" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">D/2</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">피치원 직경 D [mm]</text></svg>` },
+  rack_mass:{ title:'랙 질량',          desc:'이동하는 랙(rack gear) 자체의 질량입니다.\n랙은 피니언과 맞물려 직선 이동하므로 그 질량이 관성에 포함됩니다.\n카탈로그 또는 CAD 모델에서 확인하세요.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="52" width="180" height="24" rx="3" fill="#8BAD9A" opacity="0.5"/><rect x="18" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="36" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="54" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="72" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="90" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><rect x="108" y="40" width="12" height="12" rx="1" fill="#1A3A2A" opacity="0.6"/><line x1="10" y1="33" x2="190" y2="33" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><text x="100" y="29" font-size="10" fill="#E05C2A" text-anchor="middle" font-family="monospace">← 랙 전체 질량 →</text><text x="100" y="92" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">직선 이동하는 랙 기어 질량 [kg]</text></svg>` },
+  roller: { title:'구동 롤러 직경',     desc:'컨베이어를 구동하는 롤러의 직경입니다.\n이송 속도 = π × D × 모터RPM ÷ 60\nD가 클수록 속도↑, 필요 토크↑', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><ellipse cx="100" cy="50" r="36" ry="36" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.7"/><circle cx="100" cy="50" r="8" fill="#16653A" opacity="0.5"/><line x1="100" y1="14" x2="100" y2="50" stroke="#E05C2A" stroke-width="1.5"/><line x1="96" y1="14" x2="104" y2="14" stroke="#E05C2A" stroke-width="2"/><line x1="96" y1="50" x2="104" y2="50" stroke="#E05C2A" stroke-width="2"/><text x="115" y="35" font-size="11" fill="#E05C2A" font-family="monospace">D/2</text><text x="100" y="92" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">롤러 직경 D [mm]</text></svg>` },
+  belt_mass:{ title:'벨트+롤러 질량',   desc:'컨베이어 벨트와 피동 롤러들의 합산 질량입니다.\n이 질량도 관성에 포함됩니다.\n모르면 총 이송물 질량의 20~30% 정도로 추정하세요.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="36" y="44" width="128" height="14" rx="0" fill="#C2D9CC" opacity="0.7"/><ellipse cx="38" cy="51" rx="22" ry="14" fill="none" stroke="#16653A" stroke-width="2" opacity="0.7"/><ellipse cx="162" cy="51" rx="22" ry="14" fill="none" stroke="#16653A" stroke-width="2" opacity="0.5"/><text x="100" y="30" font-size="10" fill="#E05C2A" text-anchor="middle" font-family="monospace">← 벨트+롤러 질량 포함 →</text><line x1="36" y1="34" x2="164" y2="34" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">모르면 이송물 질량의 20~30% 추정</text></svg>` },
+  angle:  { title:'경사각 θ',           desc:'컨베이어의 설치 경사 각도입니다.\n수평이면 0°, 경사가 있으면 해당 각도를 입력합니다.\n경사각이 클수록 중력 성분이 증가하여 필요 토크가 커집니다.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><line x1="10" y1="85" x2="190" y2="85" stroke="#B4DCC7" stroke-width="2"/><line x1="10" y1="85" x2="150" y2="25" stroke="#16653A" stroke-width="2.5" stroke-linecap="round"/><path d="M 50 85 A 40 40 0 0 0 36 57" stroke="#E05C2A" stroke-width="2" fill="none"/><text x="52" y="72" font-size="12" fill="#E05C2A" font-family="monospace">θ</text><text x="100" y="96" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">수평=0° · 경사각 클수록 토크↑</text></svg>` },
+  idx_diam:{ title:'테이블 직경',        desc:'인덱스 테이블의 외경입니다.\n직경이 클수록 관성이 4제곱 비례로 증가합니다.\n(J ∝ D²)', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="100" cy="50" r="40" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.7"/><circle cx="100" cy="50" r="6" fill="#16653A" opacity="0.5"/><line x1="100" y1="50" x2="140" y2="50" stroke="#E05C2A" stroke-width="1.5"/><line x1="100" y1="45" x2="100" y2="55" stroke="#E05C2A" stroke-width="2"/><line x1="140" y1="45" x2="140" y2="55" stroke="#E05C2A" stroke-width="2"/><text x="120" y="42" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">D/2</text><text x="100" y="96" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">직경↑ → 관성 크게 증가 (D²에 비례)</text></svg>` },
+  idx_div: { title:'분할 수',            desc:'인덱스 테이블의 1사이클 분할 횟수입니다.\n예: 4분할 = 90°씩 4번 회전\n분할 수가 많을수록 1분할당 회전각이 작아집니다.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="100" cy="50" r="38" fill="none" stroke="#16653A" stroke-width="2" opacity="0.7"/><circle cx="100" cy="50" r="5" fill="#16653A" opacity="0.6"/><line x1="100" y1="12" x2="100" y2="50" stroke="#1A3A2A" stroke-width="1.5" opacity="0.5"/><line x1="138" y1="50" x2="100" y2="50" stroke="#1A3A2A" stroke-width="1.5" opacity="0.5"/><line x1="100" y1="88" x2="100" y2="50" stroke="#1A3A2A" stroke-width="1.5" opacity="0.5"/><line x1="62" y1="50" x2="100" y2="50" stroke="#1A3A2A" stroke-width="1.5" opacity="0.5"/><text x="115" y="25" font-size="9" fill="#E05C2A" font-family="monospace">①</text><text x="142" y="55" font-size="9" fill="#E05C2A" font-family="monospace">②</text><text x="110" y="88" font-size="9" fill="#E05C2A" font-family="monospace">③</text><text x="52" y="55" font-size="9" fill="#E05C2A" font-family="monospace">④</text><text x="100" y="96" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">4분할 = 90°씩 4번 회전</text></svg>` },
+  idx_dist:{ title:'질량 분포 (α 계수)', desc:'테이블 질량의 분포 형태입니다.\n관성 J = α × m × (D/2)²\n• 솔리드 디스크 α=0.5 (질량이 균일 분포)\n• 일반 테이블 α=0.75 (중간값)\n• 링/외주 집중 α=1.0 (질량이 외주에 집중)', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="50" cy="50" r="30" fill="#16653A" opacity="0.6"/><text x="50" y="80" font-size="9" fill="#1A3A2A" text-anchor="middle" font-family="monospace">α=0.5</text><circle cx="120" cy="50" r="30" fill="none" stroke="#16653A" stroke-width="8" opacity="0.6"/><circle cx="120" cy="50" r="16" fill="#fff"/><text x="120" y="80" font-size="9" fill="#1A3A2A" text-anchor="middle" font-family="monospace">α=0.75</text><circle cx="185" cy="50" r="28" fill="none" stroke="#16653A" stroke-width="12" opacity="0.6"/><text x="185" y="80" font-size="9" fill="#1A3A2A" text-anchor="middle" font-family="monospace">α=1.0</text></svg>` },
+  resist: { title:'부하 저항 토크',     desc:'모터가 극복해야 하는 저항 토크입니다.\n절삭력, 공정 저항, 마찰 토크 등이 해당됩니다.\n없으면 0을 입력합니다. 단위는 N·m 입니다.', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><circle cx="100" cy="50" r="35" fill="none" stroke="#16653A" stroke-width="2.5" opacity="0.7"/><circle cx="100" cy="50" r="8" fill="#16653A" opacity="0.5"/><path d="M 128 22 A 32 32 0 0 0 128 78" stroke="#E05C2A" stroke-width="2.5" fill="none" stroke-linecap="round"/><polygon points="124,76 134,82 132,72" fill="#E05C2A"/><text x="148" y="55" font-size="11" fill="#E05C2A" font-family="monospace">T_r</text><text x="100" y="92" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">없으면 0 입력 [N·m]</text></svg>` },
+  speed_field:{ title:'목표 이송 속도', desc:'부하가 이동해야 하는 최대 속도입니다.\n볼스크류/랙&피니언/컨베이어는 mm/s, 회전 부하는 rpm으로 입력합니다.\n이 속도에 맞는 모터 RPM = 속도 × 60 ÷ 리드(또는 π×D)', svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><polyline points="10,80 45,80 75,25 155,25 185,80" stroke="#16653A" stroke-width="2.5" fill="none"/><line x1="10" y1="85" x2="190" y2="85" stroke="#B4DCC7" stroke-width="1.5"/><line x1="45" y1="25" x2="155" y2="25" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><text x="100" y="18" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">목표 이송 속도 (최대)</text><text x="190" y="92" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="monospace">시간</text></svg>` },
+  screw_d:{ title:'스크류 외경',      desc:'볼스크류 나사의 외경(공칭 지름)입니다.\n외경이 클수록 강성은 높지만 관성도 증가합니다.\n일반적으로 스트로크의 1/30 이상 권장',             svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="10" y="42" width="180" height="16" rx="4" fill="#B4DCC7"/><line x1="100" y1="25" x2="100" y2="42" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="100" y1="58" x2="100" y2="75" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="165" y1="42" x2="165" y2="58" stroke="#E05C2A" stroke-width="1.5"/><line x1="160" y1="42" x2="170" y2="42" stroke="#E05C2A" stroke-width="2"/><line x1="160" y1="58" x2="170" y2="58" stroke="#E05C2A" stroke-width="2"/><text x="175" y="53" font-size="11" fill="#E05C2A" font-family="monospace">d</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">스크류 외경 (mm)</text></svg>` },
+  eff:    { title:'전달 효율 η',      desc:'볼스크류의 기계 전달 효율입니다.\n마찰 손실로 인해 실제 출력 = 모터 출력 × η 입니다.\n· 볼스크류: 0.85~0.95\n· 기어 감속기: 0.9~0.97\n· 벨트: 0.94~0.98\n· 체인: 0.90~0.95',  svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="20" y="30" width="70" height="40" rx="4" fill="#16653A" opacity="0.7"/><text x="55" y="55" font-size="12" fill="white" text-anchor="middle" font-family="monospace">Motor</text><line x1="90" y1="50" x2="110" y2="50" stroke="#E05C2A" stroke-width="2"/><rect x="110" y="38" width="20" height="24" rx="3" fill="#8BAD9A"/><text x="120" y="54" font-size="8" fill="white" text-anchor="middle" font-family="monospace">η</text><line x1="130" y1="50" x2="150" y2="50" stroke="#E05C2A" stroke-width="2"/><rect x="150" y="30" width="30" height="40" rx="4" fill="#1A3A2A" opacity="0.4"/><text x="165" y="55" font-size="9" fill="#1A3A2A" text-anchor="middle" font-family="monospace">LOAD</text><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">출력 = 입력 × η</text></svg>` },
+  mu:     { title:'마찰계수 μ',       desc:'이송 기구의 마찰 계수입니다.\n· LM 가이드: 0.003~0.005 (일반적으로 0.003)\n· 슬라이드 도브테일: 0.1~0.3\n· 정밀 볼부시: 0.005~0.01\nLM 가이드 사용 시 0.003을 권장합니다.',          svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><rect x="20" y="60" width="160" height="14" rx="3" fill="#B4DCC7"/><rect x="70" y="38" width="60" height="22" rx="3" fill="#16653A" opacity="0.7"/><line x1="100" y1="30" x2="120" y2="30" stroke="#E05C2A" stroke-width="2"/><polygon points="118,27 125,30 118,33" fill="#E05C2A"/><text x="100" y="90" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">LM 가이드 권장: μ = 0.003</text></svg>` },
+  tacc:   { title:'가감속 시간 t_acc', desc:'정지→최대 속도 에 걸리는 시간입니다.\n짧을수록 피크 토크가 커집니다.\n· 일반 기계: 0.1~0.3초\n· 정밀 위치 결정: 0.05~0.15초',                      svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><polyline points="10,85 50,25 150,25 190,85" stroke="#16653A" stroke-width="2.5" fill="none"/><line x1="10" y1="90" x2="190" y2="90" stroke="#B4DCC7" stroke-width="1.5"/><line x1="10" y1="25" x2="190" y2="25" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><line x1="50" y1="85" x2="50" y2="95" stroke="#E05C2A" stroke-width="2"/><text x="30" y="100" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">t_acc</text><text x="100" y="18" font-size="10" fill="#16653A" text-anchor="middle" font-family="monospace">v_max</text></svg>` },
+  tcycle: { title:'사이클 타임',      desc:'1회 동작 전체 사이클 시간입니다.\n사이클 타임 = 가속 + 등속 + 감속 + 정지(대기) 시간\n실효 토크(RMS) 계산의 기준이 됩니다.\n사이클 타임이 짧을수록 모터에 더 큰 부하가 걸립니다.',  svg:`<svg width="200" height="100" viewBox="0 0 200 100" fill="none"><polyline points="10,80 35,25 85,25 110,80 130,80 155,25 190,80" stroke="#16653A" stroke-width="2" fill="none" stroke-dasharray="0"/><line x1="10" y1="88" x2="190" y2="88" stroke="#B4DCC7" stroke-width="1.5"/><line x1="10" y1="84" x2="10" y2="92" stroke="#E05C2A" stroke-width="2"/><line x1="130" y1="84" x2="130" y2="92" stroke="#E05C2A" stroke-width="2"/><line x1="10" y1="96" x2="130" y2="96" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><text x="70" y="100" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">T_cycle</text></svg>` },
+};
+function openHelp(key) {
+  const h = HELP[key]; if (!h) return;
+  document.getElementById('help-popup-title').textContent = h.title;
+  document.getElementById('help-popup-svg').innerHTML = h.svg;
+  document.getElementById('help-popup-desc').innerHTML = h.desc.replace(/\n/g,'<br>');
+  document.getElementById('help-overlay').style.display = 'flex';
+}
+function closeHelp(e) {
+  if (!e || e.target === document.getElementById('help-overlay'))
+    document.getElementById('help-overlay').style.display = 'none';
+}
+</script>
+
+<!-- 도움말 팝업 오버레이 -->
+<div id="help-overlay" onclick="closeHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:300px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <span id="help-popup-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span>
+      <button onclick="closeHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button>
+    </div>
+    <div id="help-popup-svg" style="text-align:center;margin-bottom:10px"></div>
+    <p id="help-popup-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+</body>
+</html>

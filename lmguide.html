@@ -1,0 +1,1185 @@
+﻿<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartsOn Linear — LM Guide 수명 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F4F2ED; --surface: #FFFFFF;
+    --border: #D8D4CC; --border-light: #E8E5DF;
+    --text-primary: #1A1814; --text-secondary: #6B6760; --text-muted: #9E9B96;
+    --accent: #1A3A2A; --accent-light: #E8F0EC; --accent-mid: #2D6B4A;
+    --warn: #8B4A1A; --warn-bg: #FDF3EB;
+    --danger: #8B1A1A; --danger-bg: #FDF0F0;
+    --success: #1A5C2A; --success-bg: #EBF5EE;
+    --load-color: #E05C2A;
+    --font: 'IBM Plex Sans KR', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+  header { background: var(--accent); color: #fff; padding: 2.5rem 2rem 2rem; position: relative; overflow: hidden; }
+  header::after { content: 'LM'; position: absolute; right: -10px; top: -20px; font-family: var(--mono); font-size: 140px; font-weight: 500; color: rgba(255,255,255,0.05); line-height: 1; pointer-events: none; }
+  .header-inner { max-width: 720px; margin: 0 auto; }
+  header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.3px; margin-bottom: 6px; }
+  header p { font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 300; }
+  .badge { display: inline-block; font-size: 11px; font-family: var(--mono); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); padding: 3px 8px; border-radius: 3px; margin-bottom: 14px; letter-spacing: 0.5px; }
+  .header-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .header-logo-mark { flex-shrink: 0; }
+  .header-logo-type { display: flex; flex-direction: column; gap: 2px; }
+  .header-logo-brand { font-family: var(--mono); font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.92); letter-spacing: 0.3px; }
+  .header-logo-ver { font-size: 10px; font-family: var(--mono); color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+  main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .tab-wrap { display: flex; margin-bottom: 1.25rem; background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 4px; }
+  .tab-btn { flex: 1; border: none; background: transparent; font-family: var(--font); font-size: 13px; color: var(--text-secondary); padding: 9px 0; border-radius: 7px; cursor: pointer; transition: all 0.15s; }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
+  .tab-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 1.25rem; padding: 0 0.25rem; }
+  .card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light); }
+  .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+  .input-group.full { grid-column: 1 / -1; }
+  .input-group label { font-size: 13px; color: var(--text-secondary); }
+  .input-hint { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .input-row { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: #FAFAF8; transition: border-color 0.15s; }
+  .input-row:focus-within { border-color: var(--accent-mid); background: #fff; }
+  .input-row input, .input-row select { border: none; outline: none; background: transparent; font-family: var(--mono); font-size: 15px; color: var(--text-primary); padding: 9px 12px; flex: 1; width: 100%; }
+  .input-row select { cursor: pointer; }
+  .input-row .unit-tag { font-family: var(--mono); font-size: 12px; color: var(--text-muted); padding: 0 10px 0 0; white-space: nowrap; }
+  .section-divider { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin: 1.25rem 0 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-light); }
+  .calc-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 13px; font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 1rem; letter-spacing: 0.2px; transition: background 0.15s, transform 0.1s; }
+  .calc-btn:hover { background: var(--accent-mid); }
+  .calc-btn:active { transform: scale(0.99); }
+
+  /* ── 방향 선택 그림 ── */
+  .direction-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+  .dir-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; border: 1.5px solid var(--border-light); border-radius: 8px; background: #FAFAF8; cursor: pointer; transition: all 0.15s; }
+  .dir-item:hover { border-color: var(--accent-mid); background: var(--accent-light); }
+  .dir-item.active { border-color: var(--accent); background: var(--accent-light); }
+  .dir-item.active .dir-label { color: var(--accent); font-weight: 500; }
+  .dir-label { font-size: 11px; color: var(--text-secondary); text-align: center; line-height: 1.4; }
+
+  /* ── 모멘트 팝업 ── */
+  .help-btn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--border); color: var(--text-secondary); font-size: 10px; font-weight: 500; cursor: pointer; border: none; margin-left: 5px; transition: background 0.15s; flex-shrink: 0; }
+  .help-btn:hover { background: var(--accent-mid); color: #fff; }
+  .beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+  .beginner-tip strong{color:#92400E}
+  .beginner-tip details{cursor:pointer}
+  .beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+  .beginner-tip summary::-webkit-details-marker{display:none}
+  .beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+  .beginner-tip details[open] summary::before{transform:rotate(90deg)}
+  .beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+  .beginner-tip .tip-body p{margin-bottom:6px}
+  .moment-popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; }
+  .moment-popup-overlay.open { display: flex; }
+  .moment-popup { background: var(--surface); border-radius: 14px; padding: 1.5rem; max-width: 320px; width: 90%; }
+  .popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .popup-title { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .popup-close { border: none; background: var(--bg); border-radius: 6px; padding: 4px 10px; font-size: 13px; cursor: pointer; color: var(--text-secondary); }
+  .popup-close:hover { background: var(--border-light); }
+  .popup-svg-wrap { display: flex; justify-content: center; background: var(--bg); border-radius: 10px; padding: 1.25rem; margin-bottom: 0.75rem; }
+  .popup-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.7; text-align: center; }
+  .popup-legend { display: flex; gap: 12px; justify-content: center; margin-top: 10px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; }
+  .popup-legend .lg-item { display: flex; align-items: center; gap: 4px; }
+  .popup-legend .lg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── 속도 프리뷰 ── */
+  .speed-preview { background: var(--bg); border-radius: 8px; padding: 1rem; margin-top: 10px; }
+  .speed-preview-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); margin-bottom: 10px; letter-spacing: 0.5px; }
+  .speed-bars { display: flex; align-items: flex-end; gap: 2px; height: 36px; margin-bottom: 8px; width: 100%; }
+  .speed-bar-accel { background: var(--accent-mid); opacity: 0.5; border-radius: 2px 2px 0 0; min-width: 6px; height: 36px; }
+  .speed-bar-const { background: var(--accent); border-radius: 2px 2px 0 0; min-width: 6px; height: 36px; }
+  .speed-bar-decel { background: var(--accent-mid); opacity: 0.5; border-radius: 2px 2px 0 0; min-width: 6px; height: 36px; }
+  .speed-labels { display: flex; justify-content: space-between; font-size: 10px; font-family: var(--mono); color: var(--text-muted); }
+  .speed-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+  .speed-info-item { text-align: center; }
+  .speed-info-item .si-val { font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--text-primary); }
+  .speed-info-item .si-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* ── 범례 ── */
+  .svg-legend { display: flex; gap: 14px; margin-top: 10px; font-size: 11px; color: var(--text-muted); font-family: var(--mono); flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── 결과 ── */
+  .result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1rem; }
+  .result-grid.four { grid-template-columns: repeat(4, 1fr); }
+  .result-grid.five { grid-template-columns: repeat(5, 1fr); }
+  .result-item { background: var(--bg); border-radius: 8px; padding: 1rem; }
+  .result-item .r-label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-family: var(--mono); }
+  .result-item .r-val { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+  .result-item .r-unit { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
+  .recommend-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: var(--accent-light); border-radius: 8px; border: 1px solid #C2D9CC; margin-bottom: 10px; }
+  .recommend-row .rec-label { font-size: 11px; color: var(--accent-mid); font-family: var(--mono); margin-bottom: 3px; }
+  .recommend-row .rec-model { font-size: 16px; font-weight: 500; color: var(--accent); }
+  .recommend-row .rec-specs { font-size: 11px; color: var(--text-secondary); font-family: var(--mono); text-align: right; line-height: 1.8; }
+  .safety-row { display: flex; align-items: center; gap: 8px; padding: 10px 1rem; border-radius: 8px; font-size: 14px; margin-bottom: 6px; }
+  .safety-row .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .safety-ok   { background: var(--success-bg); color: var(--success); }
+  .safety-ok .dot   { background: var(--success); }
+  .safety-warn { background: var(--warn-bg);    color: var(--warn);    }
+  .safety-warn .dot { background: var(--warn); }
+  .safety-bad  { background: var(--danger-bg);  color: var(--danger);  }
+  .safety-bad .dot  { background: var(--danger); }
+  .compare-section { margin-top: 1.25rem; }
+  .compare-header { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-light); }
+  .size-selector { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .size-btn { border: 1px solid var(--border); border-radius: 6px; padding: 7px 16px; background: #FAFAF8; font-family: var(--mono); font-size: 13px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+  .size-btn:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .size-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 500; }
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .compare-table th { font-family: var(--mono); font-size: 12px; color: var(--text-muted); font-weight: 400; text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border-light); }
+  .compare-table td { padding: 10px 10px; border-bottom: 1px solid var(--border-light); font-family: var(--mono); }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr.recommended-row td { font-weight: 500; }
+  .compare-table tr.selected-row td { background: var(--accent-light); }
+  .tag { display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-family: var(--font); vertical-align: middle; }
+  .tag-recommend { background: var(--accent-light); color: var(--accent); }
+  .tag-selected  { background: #E8F0FB; color: #1A3A6A; }
+  .verdict-ok   { color: var(--success); }
+  .verdict-warn { color: var(--warn); }
+  .verdict-bad  { color: var(--danger); }
+  .note { font-size: 11px; color: var(--text-muted); margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-light); line-height: 1.6; }
+  .hidden { display: none; }
+  /* ── 메이커별 C100 참고표 ── */
+  .maker-detail-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 0.75rem; }
+  .maker-detail-table th { font-family: var(--mono); font-size: 10px; color: var(--text-muted); font-weight: 400; text-align: center; padding: 5px 6px; border-bottom: 1px solid var(--border-light); background: var(--bg); }
+  .maker-detail-table th:first-child { text-align: left; }
+  .maker-detail-table td { padding: 7px 6px; border-bottom: 1px solid var(--border-light); font-family: var(--mono); font-size: 11px; text-align: center; color: var(--text-secondary); }
+  .maker-detail-table td:first-child { text-align: left; color: var(--text-muted); font-size: 10px; }
+  .maker-detail-table tr.avg-row td { font-weight: 600; color: var(--accent); background: var(--accent-light); }
+  .maker-detail-table tr.avg-row td:first-child { color: var(--accent); }
+  .maker-detail-section { margin-top: 1rem; }
+  .maker-toggle-btn { border: 1px solid var(--border-light); background: var(--bg); border-radius: 7px; padding: 8px 14px; font-family: var(--font); font-size: 12px; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; width: 100%; text-align: left; }
+  .maker-toggle-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); color: var(--accent); }
+  .maker-detail-header { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .notice-mini{background:#FEF2F2;border:1px solid #FECACA;border-left:3px solid #EF4444;border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#7F1D1D;line-height:1.6}
+  .notice-mini strong{color:#DC2626}
+  footer { text-align: center; font-size: 11px; color: var(--text-muted); padding: 2rem; font-family: var(--mono); }
+  .footer-disclaimer { max-width: 720px; margin: 0 auto 1rem; padding: 1rem 1.25rem; background: var(--surface); border: 1px solid var(--border-light); border-radius: 8px; text-align: left; line-height: 1.8; font-size: 10.5px; color: var(--text-muted); font-family: var(--font); }
+  .footer-disclaimer strong { color: var(--text-secondary); font-weight: 600; display: block; margin-bottom: 6px; font-family: var(--mono); letter-spacing: 0.5px; font-size: 10px; }
+  .footer-disclaimer li { margin-bottom: 3px; list-style: none; padding-left: 1em; text-indent: -1em; }
+  .footer-disclaimer li::before { content: "· "; color: var(--accent-mid); }
+  /* ── 공급사 섹션 ── */
+  .supplier-section { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light); }
+  .supplier-section-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.75rem; }
+  .supplier-list { display: flex; flex-direction: column; gap: 10px; }
+  .supplier-card { background: var(--bg); border: 1px solid var(--border-light); border-radius: 8px; padding: 1rem 1.25rem; }
+  .supplier-name { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+  .supplier-brands { font-size: 11px; font-family: var(--mono); color: var(--accent-mid); margin-bottom: 8px; }
+  .supplier-contacts { display: flex; gap: 14px; flex-wrap: wrap; }
+  .supplier-contact-link { font-size: 12px; color: var(--text-secondary); text-decoration: none; font-family: var(--mono); }
+  .supplier-contact-link:hover { color: var(--accent); text-decoration: underline; }
+  .supplier-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+  .supplier-empty { font-size: 13px; color: var(--text-muted); text-align: center; padding: 1.25rem; background: var(--bg); border-radius: 8px; }
+  /* ── 공통 내비게이션 ── */
+  .partson-nav { background: #0f2419; padding: 0 1.5rem; display: flex; align-items: center; gap: 0; }
+  .partson-nav .nav-brand { font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,0.5); padding: 12px 16px 12px 0; border-right: 1px solid rgba(255,255,255,0.1); margin-right: 4px; }
+  .partson-nav a { display: inline-block; padding: 12px 16px; font-size: 13px; color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.15s; }
+  .partson-nav a:hover { color: #fff; }
+  .partson-nav a.active { color: #fff; border-bottom: 2px solid #4ade80; }
+  @media (max-width: 500px) {
+    .input-grid { grid-template-columns: 1fr; }
+    .result-grid, .result-grid.four, .result-grid.five { grid-template-columns: 1fr 1fr; }
+    .direction-grid { grid-template-columns: repeat(2, 1fr); }
+    .moment-guide { grid-template-columns: 1fr; }
+    header::after { display: none; }
+  }
+
+/* ── PDF 출력 ── */
+.print-header{display:none}
+.print-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#1A3A2A;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin:1rem 0;font-family:inherit;transition:background .15s}
+.print-pdf-btn:hover{background:#2D6B4A}
+/* ── CAD 도면 다운로드 ── */
+.cad-section{margin-top:1.25rem;background:var(--accent);border-radius:12px;padding:1.25rem 1.5rem}
+.cad-section-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
+.cad-section-title::before{content:'';display:inline-block;width:4px;height:18px;background:#4ade80;border-radius:2px;flex-shrink:0}
+.cad-btns{display:flex;flex-wrap:wrap;gap:10px}
+.cad-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border:none;border-radius:8px;background:rgba(255,255,255,0.15);font-size:13px;font-weight:600;color:#fff;text-decoration:none;transition:all .18s}
+.cad-btn:hover{background:rgba(255,255,255,0.28);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cad-btn:active{transform:translateY(0)}
+.cad-btn-icon{font-size:16px;flex-shrink:0}
+.cad-note{font-size:11px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6}
+.cad-note a{color:#4ade80}
+@media print{
+  @page{size:A4;margin:12mm 14mm 12mm 14mm}
+  .partson-nav,header,footer,.disclaimer,.print-pdf-btn,.tab-bar,nav{display:none!important}
+  .card.hidden{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}
+  .ph-title{font-size:18px;font-weight:700;color:#1A3A2A}
+  .ph-sub{font-size:12px;color:#6B6760;margin-top:2px}
+  .ph-date{font-size:11px;color:#9E9B96;text-align:right}
+  body{background:#fff!important;font-size:12px}
+  main{padding:0!important;max-width:100%!important}
+  .input-section,.input-card,.form-section{display:none!important}
+  table{break-inside:avoid;font-size:11px}
+  a{color:inherit!important;text-decoration:none!important}
+}
+</style>
+</head>
+<body>
+<!-- 내비게이션 -->
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <a href="lmguide.html" class="active">LM Guide</a>
+  <a href="ballscrew.html">볼스크류 선정</a>
+  <a href="bearing.html">베어링 선정</a>
+  <a href="servo_motor.html">서보모터 선정</a>
+  <a href="screwjack.html">스크류잭 선정</a>
+</nav>
+<header>
+  <div class="header-inner">
+    <div class="header-logo">
+      <svg class="header-logo-mark" width="44" height="30" viewBox="0 0 44 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Rail base -->
+        <rect x="0" y="20" width="44" height="8" rx="2.5" fill="rgba(255,255,255,0.2)"></rect>
+        <!-- Rail rib -->
+        <rect x="2" y="18" width="40" height="3" rx="1" fill="rgba(255,255,255,0.13)"></rect>
+        <!-- Carriage block -->
+        <rect x="13" y="8" width="18" height="15" rx="2.5" fill="rgba(255,255,255,0.9)"></rect>
+        <!-- Load arrow shaft -->
+        <line x1="22" y1="1" x2="22" y2="7" stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round"></line>
+        <!-- Load arrow head -->
+        <polygon points="22,9 19,4 25,4" fill="rgba(255,255,255,0.55)"></polygon>
+      </svg>
+      <div class="header-logo-type">
+        <div class="header-logo-brand">PartsOn Linear</div>
+        <div class="header-logo-ver">BETA v0.9</div>
+      </div>
+    </div>
+    <h1>LM Guide 수명 계산기</h1>
+    <p>Bosch Rexroth · THK · HIWIN · TBI · PMI 5개사 평균 C₁₀₀ 기준 · ISO 14728-1 · 100,000 m</p>
+  </div>
+</header>
+
+<main>
+  <div class="tab-wrap">
+    <button class="tab-btn active" onclick="switchTab(&#39;simple&#39;,this)">Simple — 기본 계산</button>
+    <button class="tab-btn" onclick="switchTab(&#39;advanced&#39;,this)">Advanced — 정밀 계산</button>
+  </div>
+
+  <!-- ══ Simple 탭 ══ -->
+  <div id="tab-simple" class="">
+    <div class="notice-mini">
+      <strong>⚠️ 참고용 도구입니다.</strong> 본 계산기는 ISO 281 및 제조사 공개 데이터를 기반으로 한 <strong>참고용</strong>이며, 실제 설계·발주에는 사용할 수 없습니다. 반드시 제조사 카탈로그와 자격 있는 엔지니어의 검토를 거치세요.
+    </div>
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 LM Guide가 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>LM Guide(선형 가이드)란?</strong></p>
+          <p>레일과 블록(슬라이더)으로 구성된 직선 이송 부품입니다. 블록이 레일 위를 정밀하게 미끄러지며, 공작기계·자동화 설비의 이송축에 널리 사용됩니다.</p>
+          <p><strong>수명 계산의 핵심 3가지:</strong></p>
+          <p>① <strong>하중 F</strong> — 블록에 실리는 테이블+워크 무게 (kgf)</p>
+          <p>② <strong>스트로크 ST</strong> — 한 번 이동하는 거리 (mm). 길수록 수명↓</p>
+          <p>③ <strong>속도 V</strong> — 이동 속도 (mm/s). 빠를수록 하중계수↑</p>
+          <p><strong>수명을 늘리려면?</strong></p>
+          <p>• 블록 수를 늘린다 → 개당 하중 분산 → 수명 대폭 증가</p>
+          <p>• 한 사이즈 큰 LM Guide 선택 → 정격 하중 증가</p>
+          <p>• 스트로크를 최소화 → 이동 거리 감소</p>
+        </div>
+      </details>
+    </div>
+    <p class="tab-desc">하중 조건과 운용 환경을 입력해 빠르게 수명을 확인합니다.</p>
+    <div class="card">
+      <div class="card-title">입력 조건</div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <div class="input-row"><input type="number" id="s-load" value="50" min="1"><span class="unit-tag">kgf</span></div>
+        </div>
+        <div class="input-group">
+          <label>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <div class="input-row"><input type="number" id="s-stroke" value="500" min="1"><span class="unit-tag">mm</span></div>
+        </div>
+        <div class="input-group">
+          <label>블록 수량 <button class="help-btn" onclick="openPopup('blocks')">?</button></label>
+          <div class="input-row"><input type="number" id="s-blocks" value="1" min="1" max="16"><span class="unit-tag">개</span></div>
+        </div>
+        <div class="input-group">
+          <label>SET 수량 <button class="help-btn" onclick="openPopup('sets')">?</button></label>
+          <div class="input-row"><input type="number" id="s-sets" value="1" min="1" max="10"><span class="unit-tag">set</span></div>
+        </div>
+        <div class="input-group">
+          <label>이동 속도 <button class="help-btn" onclick="openPopup('speed')">?</button></label>
+          <div class="input-row"><input type="number" id="s-speed" value="300" min="1"><span class="unit-tag">mm/s</span></div>
+        </div>
+        <div class="input-group">
+          <label>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
+          <div class="input-row"><input type="number" id="s-hours" value="8" min="1" max="24"><span class="unit-tag">시간/일</span></div>
+        </div>
+        <div class="input-group full">
+          <label>설치 방향</label>
+          <div class="input-row">
+            <select id="s-direction" onchange="updateDirActive(&#39;s&#39;,this.value)">
+              <option value="1.0">수평</option>
+              <option value="1.2">수직 — 하향 하중</option>
+              <option value="1.5">수직 — 측면 하중</option>
+              <option value="1.3">경사 (45°)</option>
+            </select>
+          </div>
+          <!-- 방향 그림 -->
+          <div class="direction-grid" id="s-dir-grid">
+            <div class="dir-item active" id="s-dir-1.0" onclick="selectDir(&#39;s&#39;,&#39;1.0&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none">
+                <rect x="2" y="30" width="56" height="7" rx="2" fill="#C2D9CC"></rect>
+                <rect x="20" y="20" width="20" height="14" rx="2" fill="#1A3A2A"></rect>
+                <line x1="30" y1="5" x2="30" y2="19" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line>
+                <polygon points="30,20 27,14 33,14" fill="#E05C2A"></polygon>
+                <line x1="44" y1="27" x2="55" y2="27" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line>
+                <polygon points="56,27 51,25 51,29" fill="#2D6B4A"></polygon>
+              </svg>
+              <div class="dir-label">수평</div>
+            </div>
+            <div class="dir-item" id="s-dir-1.2" onclick="selectDir(&#39;s&#39;,&#39;1.2&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none">
+                <rect x="26" y="2" width="8" height="52" rx="2" fill="#C2D9CC"></rect>
+                <rect x="18" y="18" width="16" height="18" rx="2" fill="#1A3A2A"></rect>
+                <line x1="30" y1="4" x2="30" y2="17" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line>
+                <polygon points="30,18 27,12 33,12" fill="#E05C2A"></polygon>
+                <line x1="40" y1="32" x2="40" y2="43" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line>
+                <polygon points="40,44 37,39 43,39" fill="#2D6B4A"></polygon>
+              </svg>
+              <div class="dir-label">수직<br>하향</div>
+            </div>
+            <div class="dir-item" id="s-dir-1.5" onclick="selectDir(&#39;s&#39;,&#39;1.5&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none">
+                <rect x="26" y="2" width="8" height="52" rx="2" fill="#C2D9CC"></rect>
+                <rect x="18" y="18" width="16" height="18" rx="2" fill="#1A3A2A"></rect>
+                <line x1="6" y1="27" x2="17" y2="27" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line>
+                <polygon points="18,27 12,24 12,30" fill="#E05C2A"></polygon>
+                <line x1="40" y1="32" x2="40" y2="43" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line>
+                <polygon points="40,44 37,39 43,39" fill="#2D6B4A"></polygon>
+              </svg>
+              <div class="dir-label">수직<br>측면</div>
+            </div>
+            <div class="dir-item" id="s-dir-1.3" onclick="selectDir(&#39;s&#39;,&#39;1.3&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none">
+                <rect x="2" y="26" width="56" height="7" rx="2" fill="#C2D9CC" transform="rotate(-45 30 30)"></rect>
+                <rect x="20" y="18" width="20" height="14" rx="2" fill="#1A3A2A" transform="rotate(-45 30 25)"></rect>
+                <line x1="30" y1="4" x2="30" y2="15" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line>
+                <polygon points="30,16 27,10 33,10" fill="#E05C2A"></polygon>
+                <text x="40" y="50" font-size="9" fill="#9E9B96" font-family="IBM Plex Mono">45°</text>
+              </svg>
+              <div class="dir-label">경사<br>45°</div>
+            </div>
+          </div>
+          <div class="svg-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#E05C2A"></div>하중 방향</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2D6B4A"></div>이동 방향</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#C2D9CC"></div>레일</div>
+          </div>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcSimple()">수명 계산하기</button>
+    </div>
+
+    <div class="card hidden" id="s-result-card">
+      <div class="print-header">
+        <div><div class="ph-title">PartsOn</div><div class="ph-sub">LM Guide 선정 계산기 — 계산 결과</div></div>
+        <div class="ph-date" id="lm-print-date"></div>
+      </div>
+      <div class="card-title">계산 결과</div>
+      <div class="result-grid four">
+        <div class="result-item"><div class="r-label">예상 수명</div><div class="r-val" id="s-res-km">378,426</div><div class="r-unit">km</div></div>
+        <div class="result-item"><div class="r-label">사용 기간</div><div class="r-val" id="s-res-year">184.6</div><div class="r-unit" id="s-res-year-unit">년</div></div>
+        <div class="result-item"><div class="r-label">안전율 (C₀/P)</div><div class="r-val" id="s-res-ratio">24.4</div><div class="r-unit">배</div></div>
+        <div class="result-item"><div class="r-label">등가 하중</div><div class="r-val" id="s-res-pload">60.0</div><div class="r-unit">kgf</div></div>
+      </div>
+      <div class="recommend-row">
+        <div><div class="rec-label">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="s-rec-model">size 15</div></div>
+        <div class="rec-specs" id="s-rec-specs">예상 수명 378,426 km<br>184.6년 · 안전율 24.4배</div>
+      </div>
+      <div class="safety-row safety-ok" id="s-safety-row"><div class="dot"></div><span id="s-safety-text">적합 — 안전율 및 수명 기준 충족</span></div>
+      <div class="compare-section">
+        <div class="compare-header">사이즈별 비교 검토</div>
+        <div class="size-selector" id="s-size-selector"><button class="size-btn active">size 15</button><button class="size-btn active">size 20</button><button class="size-btn">size 25</button><button class="size-btn">size 30</button><button class="size-btn">size 35</button><button class="size-btn">size 45</button></div>
+        <table class="compare-table"><thead><tr><th>사이즈</th><th>수명 (km)</th><th>사용 기간</th><th>안전율</th><th>판정</th></tr></thead><tbody id="s-compare-body"><tr class="recommended-row"><td>size 15<span class="tag tag-recommend">추천</span></td><td>378,426</td><td>184.6년</td><td>24.4배</td><td class="verdict-ok">적합</td></tr><tr class="selected-row"><td>size 20<span class="tag tag-selected">검토</span></td><td>2,519,671</td><td>1229.2년</td><td>48.9배</td><td class="verdict-ok">적합</td></tr></tbody></table>
+      </div>
+      <div class="maker-detail-section">
+        <button class="maker-toggle-btn" onclick="toggleMakerTable(&#39;s&#39;)">📊 메이커별 C₁₀₀ 참고 데이터 닫기 ▴</button>
+        <div id="s-maker-table-wrap" class="">
+          <table class="maker-detail-table">
+            <thead><tr><th>메이커 / 시리즈</th><th>size 15</th><th>size 20</th><th>size 25</th><th>size 30</th><th>size 35</th><th>size 45</th></tr></thead>
+            <tbody>
+              <tr><td>Bosch Rexroth NRTVG</td><td>1,005</td><td>2,385</td><td>2,916</td><td>3,722</td><td>5,280</td><td>8,807</td></tr>
+              <tr><td>THK HSR</td><td>830</td><td>1,380</td><td>1,910</td><td>2,890</td><td>3,760</td><td>6,010</td></tr>
+              <tr><td>HIWIN HGH-CA</td><td>1,160</td><td>1,810</td><td>2,159</td><td>3,338</td><td>4,820</td><td>7,902</td></tr>
+              <tr><td>TBI TRH-FN</td><td>815</td><td>1,590</td><td>2,040</td><td>2,946</td><td>3,934</td><td>6,626</td></tr>
+              <tr><td>PMI MSA-S</td><td>867</td><td>1,632</td><td>2,040</td><td>3,160</td><td>4,283</td><td>6,934</td></tr>
+              <tr class="avg-row"><td>5개사 평균 ★</td><td id="s-avg-15">935</td><td id="s-avg-20">1,759</td><td id="s-avg-25">2,213</td><td id="s-avg-30">3,211</td><td id="s-avg-35">4,415</td><td id="s-avg-45">7,256</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">단위: kgf · ISO 14728-1 기준 C₁₀₀ (100,000 m 수명 기준). TBI·PMI는 50km 기준값 ÷ 1.26 환산 적용.</div>
+        </div>
+      </div>
+      <div class="note">※ 최대속도의 65% 평균속도 적용 (간이 계산). 정밀 계산은 Advanced 탭을 이용하세요.</div>
+      <div class="supplier-section hidden" id="s-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="s-supplier-list"></div>
+      </div>
+      <div class="cad-section hidden" id="s-cad-section">
+        <div class="cad-section-title">CAD 도면 다운로드</div>
+        <div class="cad-btns" id="s-cad-btns"></div>
+        <div class="cad-note">※ 버튼 클릭 후 해당 제조사 페이지에서 사이즈를 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+      <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
+    </div>
+  </div>
+
+  <!-- ══ Advanced 탭 ══ -->
+  <div id="tab-advanced" class="hidden">
+    <p class="tab-desc">가감속 정밀 계산 · 모멘트 하중 · 가동기간까지 포함한 정밀 계산입니다.</p>
+
+    <div class="card">
+      <div class="card-title">기본 조건</div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <div class="input-row"><input type="number" id="a-load" value="50" min="1"><span class="unit-tag">kgf</span></div>
+        </div>
+        <div class="input-group">
+          <label>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <div class="input-row"><input type="number" id="a-stroke" value="500" min="1" oninput="updateSpeedPreview()"><span class="unit-tag">mm</span></div>
+        </div>
+        <div class="input-group">
+          <label>블록 수량 <button class="help-btn" onclick="openPopup('blocks')">?</button></label>
+          <div class="input-row"><input type="number" id="a-blocks" value="1" min="1" max="16"><span class="unit-tag">개</span></div>
+        </div>
+        <div class="input-group">
+          <label>SET 수량 <button class="help-btn" onclick="openPopup('sets')">?</button></label>
+          <div class="input-row"><input type="number" id="a-sets" value="1" min="1" max="10"><span class="unit-tag">set</span></div>
+        </div>
+        <div class="input-group">
+          <label>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
+          <div class="input-row"><input type="number" id="a-hours" value="8" min="1" max="24"><span class="unit-tag">시간/일</span></div>
+        </div>
+        <div class="input-group">
+          <label>왕복 횟수</label>
+          <div class="input-row"><input type="number" id="a-cycles" value="" min="1" placeholder="미입력 가능"><span class="unit-tag">/시간</span></div>
+        </div>
+        <div class="input-group full">
+          <label>설치 방향</label>
+          <div class="input-row">
+            <select id="a-direction" onchange="updateDirActive(&#39;a&#39;,this.value)">
+              <option value="1.0">수평</option>
+              <option value="1.2">수직 — 하향 하중</option>
+              <option value="1.5">수직 — 측면 하중</option>
+              <option value="1.3">경사 (45°)</option>
+            </select>
+          </div>
+          <div class="direction-grid" id="a-dir-grid">
+            <div class="dir-item active" id="a-dir-1.0" onclick="selectDir(&#39;a&#39;,&#39;1.0&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none"><rect x="2" y="30" width="56" height="7" rx="2" fill="#C2D9CC"></rect><rect x="20" y="20" width="20" height="14" rx="2" fill="#1A3A2A"></rect><line x1="30" y1="5" x2="30" y2="19" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line><polygon points="30,20 27,14 33,14" fill="#E05C2A"></polygon><line x1="44" y1="27" x2="55" y2="27" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line><polygon points="56,27 51,25 51,29" fill="#2D6B4A"></polygon></svg>
+              <div class="dir-label">수평</div>
+            </div>
+            <div class="dir-item" id="a-dir-1.2" onclick="selectDir(&#39;a&#39;,&#39;1.2&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#C2D9CC"></rect><rect x="18" y="18" width="16" height="18" rx="2" fill="#1A3A2A"></rect><line x1="30" y1="4" x2="30" y2="17" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line><polygon points="30,18 27,12 33,12" fill="#E05C2A"></polygon><line x1="40" y1="32" x2="40" y2="43" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line><polygon points="40,44 37,39 43,39" fill="#2D6B4A"></polygon></svg>
+              <div class="dir-label">수직<br>하향</div>
+            </div>
+            <div class="dir-item" id="a-dir-1.5" onclick="selectDir(&#39;a&#39;,&#39;1.5&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#C2D9CC"></rect><rect x="18" y="18" width="16" height="18" rx="2" fill="#1A3A2A"></rect><line x1="6" y1="27" x2="17" y2="27" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line><polygon points="18,27 12,24 12,30" fill="#E05C2A"></polygon><line x1="40" y1="32" x2="40" y2="43" stroke="#2D6B4A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"></line><polygon points="40,44 37,39 43,39" fill="#2D6B4A"></polygon></svg>
+              <div class="dir-label">수직<br>측면</div>
+            </div>
+            <div class="dir-item" id="a-dir-1.3" onclick="selectDir(&#39;a&#39;,&#39;1.3&#39;)">
+              <svg width="60" height="56" viewBox="0 0 60 56" fill="none"><rect x="2" y="26" width="56" height="7" rx="2" fill="#C2D9CC" transform="rotate(-45 30 30)"></rect><rect x="20" y="18" width="20" height="14" rx="2" fill="#1A3A2A" transform="rotate(-45 30 25)"></rect><line x1="30" y1="4" x2="30" y2="15" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"></line><polygon points="30,16 27,10 33,10" fill="#E05C2A"></polygon><text x="40" y="50" font-size="9" fill="#9E9B96" font-family="IBM Plex Mono">45°</text></svg>
+              <div class="dir-label">경사<br>45°</div>
+            </div>
+          </div>
+          <div class="svg-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#E05C2A"></div>하중 방향</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2D6B4A"></div>이동 방향</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#C2D9CC"></div>레일</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">속도 조건 — 가감속 정밀 계산</div>
+      <div class="input-grid">
+        <div class="input-group">
+          <label>최대 속도 (V) <button class="help-btn" onclick="openPopup('speed')">?</button></label>
+          <div class="input-row"><input type="number" id="a-speed" value="800" min="1" oninput="updateSpeedPreview()"><span class="unit-tag">mm/s</span></div>
+        </div>
+        <div class="input-group">
+          <label>가감속 시간 (tn) <button class="help-btn" onclick="openPopup('tn')">?</button></label>
+          <div class="input-row"><input type="number" id="a-tn" value="0.08" min="0" step="0.01" oninput="updateSpeedPreview()"><span class="unit-tag">sec</span></div>
+        </div>
+      </div>
+      <div class="speed-preview">
+        <div class="speed-preview-title">속도 프로파일 미리보기</div>
+        <div class="speed-bars" id="speed-bars" style="display: flex; width: 100%;"><div class="speed-bar-accel" style="flex: 32 1 0%;"></div><div class="speed-bar-const" style="flex: 436 1 0%;"></div><div class="speed-bar-decel" style="flex: 32 1 0%;"></div></div>
+        <div class="speed-labels"><span>가속</span><span>등속</span><span>감속</span></div>
+        <div class="speed-info-grid">
+          <div class="speed-info-item"><div class="si-val" id="sp-accel-dist">32.0</div><div class="si-label">가속 거리 (mm)</div></div>
+          <div class="speed-info-item"><div class="si-val" id="sp-const-dist">436.0</div><div class="si-label">등속 거리 (mm)</div></div>
+          <div class="speed-info-item"><div class="si-val" id="sp-avg-speed">709.2</div><div class="si-label">평균 속도 (mm/s)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">모멘트 조건</div>
+
+      <div class="input-grid">
+        <div class="input-group">
+          <label>레일 스팬 (RS) <button class="help-btn" onclick="openPopup(&#39;rs&#39;)">?</button></label>
+          <div class="input-row"><input type="number" id="a-rail-dist" value="0" min="0"><span class="unit-tag">mm</span></div>
+          <span class="input-hint">0 입력 시 미적용</span>
+        </div>
+        <div class="input-group">
+          <label>블록 스팬 (BS1) <button class="help-btn" onclick="openPopup(&#39;bs1&#39;)">?</button></label>
+          <div class="input-row"><input type="number" id="a-block-dist" value="0" min="0"><span class="unit-tag">mm</span></div>
+          <span class="input-hint">0 입력 시 미적용</span>
+        </div>
+        <div class="input-group">
+          <label>하중 작용점 높이 (Br) <button class="help-btn" onclick="openPopup(&#39;br&#39;)">?</button></label>
+          <div class="input-row"><input type="number" id="a-height" value="0" min="0"><span class="unit-tag">mm</span></div>
+          <span class="input-hint">0 입력 시 미적용</span>
+        </div>
+        <div class="input-group">
+          <label>편심 거리 (Bt) <button class="help-btn" onclick="openPopup(&#39;bt&#39;)">?</button></label>
+          <div class="input-row"><input type="number" id="a-eccentric" value="0" min="0"><span class="unit-tag">mm</span></div>
+          <span class="input-hint">0 입력 시 미적용</span>
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calcAdvanced()">정밀 계산하기</button>
+    </div>
+
+    <div class="card hidden" id="a-result-card">
+      <div class="print-header">
+        <div><div class="ph-title">PartsOn</div><div class="ph-sub">LM Guide 선정 계산기 — 계산 결과 (정밀)</div></div>
+        <div class="ph-date" id="lm-print-date2"></div>
+      </div>
+      <div class="card-title">계산 결과</div>
+      <div class="result-grid five">
+        <div class="result-item"><div class="r-label">예상 수명</div><div class="r-val" id="a-res-km">—</div><div class="r-unit">km</div></div>
+        <div class="result-item"><div class="r-label">사용 기간</div><div class="r-val" id="a-res-year">—</div><div class="r-unit" id="a-res-year-unit">년</div></div>
+        <div class="result-item"><div class="r-label">가동 시간</div><div class="r-val" id="a-res-hours">—</div><div class="r-unit">시간</div></div>
+        <div class="result-item"><div class="r-label">안전율 (C₀/P)</div><div class="r-val" id="a-res-ratio">—</div><div class="r-unit">배</div></div>
+        <div class="result-item"><div class="r-label">평균 속도</div><div class="r-val" id="a-res-avgspeed">—</div><div class="r-unit">mm/s</div></div>
+      </div>
+      <div class="result-grid four">
+        <div class="result-item"><div class="r-label">등가 하중 (P)</div><div class="r-val" id="a-res-mload">—</div><div class="r-unit">kgf</div></div>
+        <div class="result-item"><div class="r-label">블록 1개당 하중</div><div class="r-val" id="a-res-pload">—</div><div class="r-unit">kgf</div></div>
+        <div class="result-item"><div class="r-label">모멘트 My</div><div class="r-val" id="a-res-my">—</div><div class="r-unit">kgf·mm</div></div>
+        <div class="result-item"><div class="r-label">모멘트 Mz</div><div class="r-val" id="a-res-mz">—</div><div class="r-unit">kgf·mm</div></div>
+      </div>
+      <div class="recommend-row">
+        <div><div class="rec-label">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="a-rec-model">—</div></div>
+        <div class="rec-specs" id="a-rec-specs">—</div>
+      </div>
+      <div class="safety-row" id="a-safety-row"><div class="dot"></div><span id="a-safety-text">—</span></div>
+      <div class="compare-section">
+        <div class="compare-header">사이즈별 비교 검토</div>
+        <div class="size-selector" id="a-size-selector"></div>
+        <table class="compare-table"><thead><tr><th>사이즈</th><th>수명 (km)</th><th>사용 기간</th><th>가동 시간</th><th>안전율</th><th>판정</th></tr></thead><tbody id="a-compare-body"></tbody></table>
+      </div>
+      <div class="maker-detail-section">
+        <button class="maker-toggle-btn" onclick="toggleMakerTable(&#39;a&#39;)">📊 메이커별 C₁₀₀ 참고 데이터 보기 ▾</button>
+        <div id="a-maker-table-wrap" class="hidden">
+          <table class="maker-detail-table">
+            <thead><tr><th>메이커 / 시리즈</th><th>size 15</th><th>size 20</th><th>size 25</th><th>size 30</th><th>size 35</th><th>size 45</th></tr></thead>
+            <tbody>
+              <tr><td>Bosch Rexroth NRTVG</td><td>1,005</td><td>2,385</td><td>2,916</td><td>3,722</td><td>5,280</td><td>8,807</td></tr>
+              <tr><td>THK HSR</td><td>830</td><td>1,380</td><td>1,910</td><td>2,890</td><td>3,760</td><td>6,010</td></tr>
+              <tr><td>HIWIN HGH-CA</td><td>1,160</td><td>1,810</td><td>2,159</td><td>3,338</td><td>4,820</td><td>7,902</td></tr>
+              <tr><td>TBI TRH-FN</td><td>815</td><td>1,590</td><td>2,040</td><td>2,946</td><td>3,934</td><td>6,626</td></tr>
+              <tr><td>PMI MSA-S</td><td>867</td><td>1,632</td><td>2,040</td><td>3,160</td><td>4,283</td><td>6,934</td></tr>
+              <tr class="avg-row"><td>5개사 평균 ★</td><td id="a-avg-15">—</td><td id="a-avg-20">—</td><td id="a-avg-25">—</td><td id="a-avg-30">—</td><td id="a-avg-35">—</td><td id="a-avg-45">—</td></tr>
+            </tbody>
+          </table>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px;">단위: kgf · ISO 14728-1 기준 C₁₀₀ (100,000 m 수명 기준). TBI·PMI는 50km 기준값 ÷ 1.26 환산 적용.</div>
+        </div>
+      </div>
+      <div class="note">※ Bosch Rexroth NRTVG · THK HSR · HIWIN HGH · TBI TRH · PMI MSA 5개사 C₁₀₀ 평균값 기준 (ISO 14728-1). 최종 선정은 제조사 카탈로그로 검증하시기 바랍니다.</div>
+      <div class="supplier-section hidden" id="a-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="a-supplier-list"></div>
+      </div>
+      <div class="cad-section hidden" id="a-cad-section">
+        <div class="cad-section-title">📐 CAD 도면 다운로드</div>
+        <div class="cad-btns" id="a-cad-btns"></div>
+        <div class="cad-note">※ TraceParts에서 사이즈를 직접 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+    </div>
+  </div>
+</main>
+<!-- ── 모멘트 팝업 오버레이 ── -->
+<div class="moment-popup-overlay" id="moment-overlay" onclick="closePopup(event)">
+  <div class="moment-popup">
+    <div class="popup-header">
+      <div class="popup-title" id="popup-title">—</div>
+      <button class="popup-close" onclick="closePopup()">닫기</button>
+    </div>
+    <div class="popup-svg-wrap" id="popup-svg"></div>
+    <div class="popup-desc" id="popup-desc"></div>
+    <div class="popup-legend">
+      <div class="lg-item"><div class="lg-dot" style="background:#E05C2A"></div>측정 치수</div>
+      <div class="lg-item"><div class="lg-dot" style="background:#C2D9CC"></div>레일</div>
+      <div class="lg-item"><div class="lg-dot" style="background:#1A3A2A;opacity:0.7"></div>블록</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-disclaimer">
+  <strong>⚠ 면책 고지 / DISCLAIMER</strong>
+  <ul>
+    <li>본 계산기는 참고용이며, 계산 결과를 근거로 한 설계·구매 결정에 대해 PartsOn은 법적 책임을 지지 않습니다.</li>
+    <li>C₁₀₀ 값은 각 제조사 공개 카탈로그 기준이며, 제품 개정에 따라 실제 값과 다를 수 있습니다. TBI·PMI 일부 데이터는 환산값이 포함되어 있습니다.</li>
+    <li>본 계산은 이상적인 설치 조건을 가정합니다. 진동·충격·오염·열·편하중 등 실제 환경 요인은 반영되지 않으며, 윤활 상태 및 설치 정밀도에 따라 실제 수명은 크게 달라질 수 있습니다.</li>
+    <li>최종 부품 선정은 반드시 제조사 카탈로그 및 전문가 검토를 거치시기 바랍니다.</li>
+    <li>본 서비스는 BETA 버전으로 계산식 및 데이터는 지속 업데이트될 수 있습니다.</li>
+  </ul>
+</div>
+<footer>PartsOn Linear · beta v0.9 · Bosch Rexroth NRTVG · THK HSR · HIWIN HGH · TBI TRH · PMI MSA 5개사 평균 기준</footer>
+
+<script>
+/* ──────────────────────────────────────────────
+   5개사 카탈로그 기준 C₁₀₀ 평균값 (ISO 14728-1)
+   Bosch Rexroth NRTVG  /  THK HSR
+   HIWIN HGH-CA          /  TBI TRH-FN
+   PMI MSA-S
+   단위: kgf  (원본 N ÷ 9.81, 소수 반올림)
+────────────────────────────────────────────── */
+const MAKER_DATA = {
+  // C100(kgf) per maker — standard normal block
+  rexroth: [ 1005, 2385, 2916, 3722, 5280, 8807 ],  // NRTVG FNS/SNS
+  thk:     [  830, 1380, 1910, 2890, 3760, 6010 ],  // HSR (standard)
+  hiwin:   [ 1160, 1810, 2159, 3338, 4820, 7902 ],  // HGH-CA
+  tbi:     [  815, 1590, 2040, 2946, 3934, 6626 ],  // TRH-FN (C50→C100 ÷1.26)
+  pmi:     [  867, 1632, 2040, 3160, 4283, 6934 ],  // MSA-S  (C50→C100 ÷1.26)
+};
+const MAKER_C0 = {
+  rexroth: [ 1295, 3038, 3660, 4903, 8247,13456 ],
+  thk:     [ 1100, 1906, 2701, 4138, 5556, 9328 ],
+  hiwin:   [ 1731, 2828, 3669, 5040, 7060,11954 ],
+  tbi:     [ 1600, 3500, 4500, 6500, 9000,16000 ],  // 추정 (C0 ≈ C100×1.6~1.8)
+  pmi:     [ 1600, 3400, 4400, 6200, 8700,15000 ],  // 추정
+};
+
+// 5개사 평균 계산
+const SIZES = [15, 20, 25, 30, 35, 45];
+const MODELS = SIZES.map((size, i) => {
+  const keys = Object.keys(MAKER_DATA);
+  const avgC100 = Math.round(keys.reduce((s, k) => s + MAKER_DATA[k][i], 0) / keys.length);
+  const avgC0   = Math.round(keys.reduce((s, k) => s + MAKER_C0[k][i],   0) / keys.length);
+  return { size, C100: avgC100, C0: avgC0 };
+});
+
+const MIN_YEARS = 5;
+
+/* ── 방향 선택 ── */
+function selectDir(tab, val) {
+  document.querySelectorAll('#' + tab + '-dir-grid .dir-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab + '-dir-' + val).classList.add('active');
+  document.getElementById(tab + '-direction').value = val;
+}
+function updateDirActive(tab, val) {
+  document.querySelectorAll('#' + tab + '-dir-grid .dir-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(tab + '-dir-' + val);
+  if (el) el.classList.add('active');
+}
+
+/* ── 속도 프리뷰 ── */
+function calcAvgSpeed(V, stroke, tn) {
+  const accelDist = 0.5 * V * tn;
+  const decelDist = accelDist;
+  const constDist = Math.max(0, stroke - accelDist - decelDist);
+  const tripTime  = tn + (constDist > 0 ? constDist / V : 0) + tn;
+  const avgSpeed  = stroke / tripTime;
+  return { avgSpeed, accelDist, constDist, decelDist, tripTime };
+}
+function updateSpeedPreview() {
+  const V = parseFloat(document.getElementById("a-speed").value) || 0;
+  const stroke = parseFloat(document.getElementById("a-stroke").value) || 0;
+  const tn = parseFloat(document.getElementById("a-tn").value) || 0;
+  if (!V || !stroke || !tn) return;
+  const { avgSpeed, accelDist, constDist } = calcAvgSpeed(V, stroke, tn);
+  document.getElementById("sp-accel-dist").textContent = accelDist.toFixed(1);
+  document.getElementById("sp-const-dist").textContent = constDist.toFixed(1);
+  document.getElementById("sp-avg-speed").textContent  = avgSpeed.toFixed(1);
+  const total  = accelDist * 2 + constDist;
+  const barsEl = document.getElementById("speed-bars");
+  barsEl.innerHTML = '';
+  barsEl.style.display = 'flex';
+  barsEl.style.width   = '100%';
+  const makeBar = (dist, cls) => {
+    const d = document.createElement('div');
+    d.className = cls;
+    d.style.flex = String(Math.max(dist, total * 0.04));
+    barsEl.appendChild(d);
+  };
+  if (total > 0) {
+    makeBar(accelDist, 'speed-bar-accel');
+    makeBar(constDist, 'speed-bar-const');
+    makeBar(accelDist, 'speed-bar-decel');
+  }
+}
+
+/* ── 공통 함수 ── */
+function getfw(speed) {
+  if (speed <= 50)  return 1.0;
+  if (speed <= 300) return 1.2;
+  if (speed <= 600) return 1.5;
+  return 1.8;
+}
+function getVerdict(ratio, years) {
+  if (ratio < 3)         return { cls:'verdict-bad',  text:'부적합' };
+  if (ratio < 4)         return { cls:'verdict-warn', text:'주의' };
+  if (years < MIN_YEARS) return { cls:'verdict-warn', text:'수명 부족' };
+  return                        { cls:'verdict-ok',   text:'적합' };
+}
+function renderSafety(prefix, ratio, years) {
+  const row = document.getElementById(prefix + "safety-row");
+  const txt = document.getElementById(prefix + "safety-text");
+  row.className = "safety-row";
+  const v = getVerdict(ratio, years);
+  if (v.text === '적합')      { row.classList.add("safety-ok");   txt.textContent = "적합 — 안전율 및 수명 기준 충족"; }
+  else if (v.text === '수명 부족') { row.classList.add("safety-warn"); txt.textContent = "주의 — 안전율은 충족하나 수명이 " + MIN_YEARS + "년 미만입니다"; }
+  else if (v.text === '주의') { row.classList.add("safety-warn"); txt.textContent = "주의 — 안전율이 권장 기준(4배)보다 낮습니다"; }
+  else                        { row.classList.add("safety-bad");  txt.textContent = "부적합 — 상위 사이즈 또는 블록 수 증가를 권장합니다"; }
+}
+function formatYears(y) { return y >= 1 ? y.toFixed(1) + '년' : (y*12).toFixed(1) + '개월'; }
+function formatHours(h) { if (!h) return '—'; return h >= 10000 ? Math.round(h/1000) + 'k h' : Math.round(h).toLocaleString() + ' h'; }
+
+function toggleMakerTable(prefix) {
+  const wrap = document.getElementById(prefix + '-maker-table-wrap');
+  const btn  = wrap.previousElementSibling;
+  const isHidden = wrap.classList.contains('hidden');
+  wrap.classList.toggle('hidden', !isHidden);
+  btn.textContent = isHidden
+    ? '📊 메이커별 C₁₀₀ 참고 데이터 닫기 ▴'
+    : '📊 메이커별 C₁₀₀ 참고 데이터 보기 ▾';
+  // 평균값 채우기 (처음 열 때)
+  if (isHidden) {
+    MODELS.forEach(m => {
+      const el = document.getElementById(prefix + '-avg-' + m.size);
+      if (el) el.textContent = m.C100.toLocaleString();
+    });
+  }
+}
+
+function selectModel(P, speed, hours, mode, tn, stroke) {
+  for (let m of MODELS) {
+    const L10_km = Math.pow(m.C100 / P, 3) * 100;
+    let years;
+    if (mode === 'advanced' && tn && stroke) {
+      const { avgSpeed } = calcAvgSpeed(speed, stroke, tn);
+      years = (L10_km / ((avgSpeed * 3600 * hours) / 1e6)) / 365;
+    } else {
+      years = (L10_km / ((speed * 0.65 * 3600 * hours) / 1e6)) / 365;
+    }
+    if (m.C0 / P >= 4.0 && years >= MIN_YEARS) return m;
+  }
+  return MODELS[MODELS.length - 1];
+}
+
+/* ── 비교 테이블 ── */
+let selectedSizes = { simple: new Set(), advanced: new Set() };
+let lastParams    = { simple: null, advanced: null };
+
+function buildCompareTable(prefix, params) {
+  if (!params) return;
+  const idPfx = prefix === 'simple' ? 's' : 'a';
+
+  // 사이즈 선택 버튼
+  const sel = document.getElementById(idPfx + "-size-selector");
+  sel.innerHTML = '';
+  MODELS.forEach(m => {
+    const btn = document.createElement('button');
+    const isRec = m.size === params.recommendedSize;
+    const isSel = selectedSizes[prefix].has(m.size);
+    btn.className = 'size-btn' + (isRec || isSel ? ' active' : '');
+    btn.textContent = 'size ' + m.size;
+    btn.onclick = () => {
+      if (m.size === params.recommendedSize) return; // 추천 사이즈는 항상 표시
+      if (selectedSizes[prefix].has(m.size)) {
+        selectedSizes[prefix].delete(m.size);
+      } else {
+        selectedSizes[prefix].add(m.size);
+      }
+      buildCompareTable(prefix, params);
+    };
+    sel.appendChild(btn);
+  });
+
+  // 테이블 렌더 — 추천 사이즈 + 선택된 사이즈, size 오름차순 정렬
+  const tbody = document.getElementById(idPfx + "-compare-body");
+  tbody.innerHTML = '';
+  const toShow = [...new Set([params.recommendedSize, ...selectedSizes[prefix]])].sort((a, b) => a - b);
+
+  toShow.forEach(size => {
+    const m = MODELS.find(x => x.size === size);
+    if (!m) return;
+    const L10_km = Math.pow(m.C100 / params.P, 3) * 100;
+    let years, opHours = null;
+    if (prefix === 'advanced' && params.avgSpeed) {
+      years   = (L10_km / ((params.avgSpeed * 3600 * params.hours) / 1e6)) / 365;
+      opHours = L10_km / ((params.avgSpeed * 3600) / 1e6);
+    } else {
+      years = (L10_km / ((params.speed * 0.65 * 3600 * params.hours) / 1e6)) / 365;
+    }
+    const ratio = m.C0 / params.P;
+    const v     = getVerdict(ratio, years);
+    const isRec = size === params.recommendedSize;
+    const tr    = document.createElement('tr');
+    tr.className = isRec ? 'recommended-row' : (selectedSizes[prefix].has(size) ? 'selected-row' : '');
+    let sl = 'size ' + size;
+    if (isRec) sl += '<span class="tag tag-recommend">추천</span>';
+    else if (selectedSizes[prefix].has(size)) sl += '<span class="tag tag-selected">검토</span>';
+    if (prefix === 'advanced') {
+      tr.innerHTML = `<td>${sl}</td><td>${Math.round(L10_km).toLocaleString()}</td><td>${formatYears(years)}</td><td>${formatHours(opHours)}</td><td>${ratio.toFixed(1)}배</td><td class="${v.cls}">${v.text}</td>`;
+    } else {
+      tr.innerHTML = `<td>${sl}</td><td>${Math.round(L10_km).toLocaleString()}</td><td>${formatYears(years)}</td><td>${ratio.toFixed(1)}배</td><td class="${v.cls}">${v.text}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+/* ── Simple 계산 ── */
+function calcSimple() {
+  const load = parseFloat(document.getElementById("s-load").value);
+  const speed = parseFloat(document.getElementById("s-speed").value);
+  const hours = parseFloat(document.getElementById("s-hours").value);
+  const blocks = parseInt(document.getElementById("s-blocks").value) || 1;
+  const sets = parseInt(document.getElementById("s-sets").value) || 1;
+  const dirFactor = parseFloat(document.getElementById("s-direction").value);
+  const fw = getfw(speed);
+  const P  = (load / (blocks * sets)) * dirFactor * fw;
+  const sel = selectModel(P, speed, hours, 'simple');
+  const L10_km = Math.pow(sel.C100 / P, 3) * 100;
+  const years  = (L10_km / ((speed * 0.65 * 3600 * hours) / 1e6)) / 365;
+  const ratio  = sel.C0 / P;
+  document.getElementById("s-res-pload").textContent = P.toFixed(1);
+  document.getElementById("s-res-km").textContent    = Math.round(L10_km).toLocaleString();
+  document.getElementById("s-res-ratio").textContent = ratio.toFixed(1);
+  if (years >= 1) { document.getElementById("s-res-year").textContent = years.toFixed(1); document.getElementById("s-res-year-unit").textContent = "년"; }
+  else            { document.getElementById("s-res-year").textContent = (years*12).toFixed(1); document.getElementById("s-res-year-unit").textContent = "개월"; }
+  document.getElementById("s-rec-model").textContent = "size " + sel.size;
+  document.getElementById("s-rec-specs").innerHTML   = "예상 수명 " + Math.round(L10_km).toLocaleString() + " km<br>" + formatYears(years) + " · 안전율 " + ratio.toFixed(1) + "배";
+  // 평균값 (이미 초기화된 경우 대비)
+  MODELS.forEach(m => {
+    const el = document.getElementById('s-avg-' + m.size);
+    if (el) el.textContent = m.C100.toLocaleString();
+  });
+  renderSafety("s-", ratio, years);
+  selectedSizes.simple = new Set();
+  lastParams.simple = { P, speed, hours, recommendedSize: sel.size };
+  buildCompareTable('simple', lastParams.simple);
+  document.getElementById("s-result-card").classList.remove("hidden");
+  renderSuppliers(sel.size, 's');
+  renderCAD(sel.size, 's');
+  document.getElementById("s-result-card").scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+/* ── Advanced 계산 ── */
+function calcAdvanced() {
+  const load      = parseFloat(document.getElementById("a-load").value);
+  const speed     = parseFloat(document.getElementById("a-speed").value);
+  const stroke    = parseFloat(document.getElementById("a-stroke").value);
+  const tn        = parseFloat(document.getElementById("a-tn").value);
+  const hours     = parseFloat(document.getElementById("a-hours").value);
+  const blocks    = parseInt(document.getElementById("a-blocks").value) || 1;
+  const sets      = parseInt(document.getElementById("a-sets").value) || 1;
+  const dirFactor = parseFloat(document.getElementById("a-direction").value);
+  const blockDist = parseFloat(document.getElementById("a-block-dist").value) || 0;
+  const railDist  = parseFloat(document.getElementById("a-rail-dist").value) || 0;
+  const height    = parseFloat(document.getElementById("a-height").value) || 0;
+  const eccentric = parseFloat(document.getElementById("a-eccentric").value) || 0;
+  const { avgSpeed, accelDist, constDist } = calcAvgSpeed(speed, stroke, tn);
+  const fw = getfw(speed);
+  const totalBlocks = blocks * sets;
+  const pload = (load / totalBlocks) * dirFactor * fw;
+  const My  = load * height;
+  const Mz  = load * eccentric;
+  const Fmy = blockDist > 0 ? (2 * My) / (blockDist * totalBlocks) : 0;
+  const Fmz = railDist  > 0 ? (2 * Mz) / (railDist  * totalBlocks) : 0;
+  const P   = pload + Fmy + Fmz;
+  const sel = selectModel(P, speed, hours, 'advanced', tn, stroke);
+  const L10_km   = Math.pow(sel.C100 / P, 3) * 100;
+  const kmPerDay = (avgSpeed * 3600 * hours) / 1e6;
+  const years    = (L10_km / kmPerDay) / 365;
+  const opHours  = L10_km / ((avgSpeed * 3600) / 1e6);
+  const ratio    = sel.C0 / P;
+  document.getElementById("a-res-pload").textContent    = pload.toFixed(1);
+  document.getElementById("a-res-mload").textContent    = P.toFixed(1);
+  document.getElementById("a-res-avgspeed").textContent = avgSpeed.toFixed(1);
+  document.getElementById("a-res-km").textContent       = Math.round(L10_km).toLocaleString();
+  document.getElementById("a-res-ratio").textContent    = ratio.toFixed(1);
+  document.getElementById("a-res-my").textContent       = Math.round(My).toLocaleString();
+  document.getElementById("a-res-mz").textContent       = Math.round(Mz).toLocaleString();
+  document.getElementById("a-res-hours").textContent    = Math.round(opHours).toLocaleString();
+  if (years >= 1) { document.getElementById("a-res-year").textContent = years.toFixed(1); document.getElementById("a-res-year-unit").textContent = "년"; }
+  else            { document.getElementById("a-res-year").textContent = (years*12).toFixed(1); document.getElementById("a-res-year-unit").textContent = "개월"; }
+  document.getElementById("a-rec-model").textContent = "size " + sel.size;
+  document.getElementById("a-rec-specs").innerHTML   = "예상 수명 " + Math.round(L10_km).toLocaleString() + " km<br>" + formatYears(years) + " · 안전율 " + ratio.toFixed(1) + "배";
+  renderSafety("a-", ratio, years);
+  selectedSizes.advanced = new Set();
+  lastParams.advanced = { P, speed, avgSpeed, hours, recommendedSize: sel.size };
+  buildCompareTable('advanced', lastParams.advanced);
+  document.getElementById("a-result-card").classList.remove("hidden");
+  renderSuppliers(sel.size, 'a');
+  renderCAD(sel.size, 'a');
+  document.getElementById("a-result-card").scrollIntoView({ behavior:"smooth", block:"nearest" });
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-simple').classList.toggle('hidden', tab !== 'simple');
+  document.getElementById('tab-advanced').classList.toggle('hidden', tab !== 'advanced');
+}
+
+/* ── 모멘트 팝업 ── */
+const POPUPS = {
+  load: {
+    title: '하중 (F)',
+    desc: 'LM Guide 블록에 작용하는 수직 하중입니다.\n테이블 + 워크(공작물) 무게의 합계를 입력합니다.\n여러 블록에 분산되더라도 총 하중을 입력하세요.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="68" width="180" height="6" rx="2" fill="#C2D9CC"/>
+      <rect x="10" y="58" width="180" height="9" rx="1" fill="#8BAD9A" opacity="0.4"/>
+      <rect x="30" y="40" width="50" height="20" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="120" y="40" width="50" height="20" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="50" y="16" width="100" height="24" rx="3" fill="#1A3A2A" opacity="0.35"/>
+      <text x="100" y="32" font-size="10" fill="#1A3A2A" text-anchor="middle" font-family="monospace">테이블+워크</text>
+      <line x1="100" y1="40" x2="100" y2="16" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <polygon points="96,40 100,48 104,40" fill="#E05C2A"/>
+      <text x="108" y="46" font-size="12" fill="#E05C2A" font-family="monospace" font-weight="bold">F</text>
+      <text x="100" y="100" font-size="10" fill="#9E9B96" text-anchor="middle" font-family="monospace">F = 테이블 + 워크 [kgf]</text>
+    </svg>`
+  },
+  speed: {
+    title: '이동 속도 (V)',
+    desc: 'LM Guide 블록의 이동 속도입니다.\n최대 속도 기준으로 입력하세요.\n속도가 높을수록 하중계수가 증가합니다.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="62" width="180" height="6" rx="2" fill="#C2D9CC"/>
+      <rect x="10" y="54" width="180" height="7" rx="1" fill="#8BAD9A" opacity="0.4"/>
+      <rect x="20" y="38" width="40" height="18" rx="2" fill="#1A3A2A" opacity="0.5"/>
+      <rect x="110" y="38" width="40" height="18" rx="2" fill="#1A3A2A" opacity="0.8"/>
+      <line x1="60" y1="47" x2="110" y2="47" stroke="#E05C2A" stroke-width="2"/>
+      <polygon points="100,44 110,47 100,50" fill="#E05C2A"/>
+      <text x="85" y="36" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">V (mm/s)</text>
+      <text x="100" y="100" font-size="10" fill="#9E9B96" text-anchor="middle" font-family="monospace">이동 속도가 높을수록 하중계수↑</text>
+    </svg>`
+  },
+  stroke: {
+    title: '스트로크 (ST)',
+    desc: '블록이 한 번에 이동하는 거리입니다.\n왕복 시 편도 거리를 입력합니다.\n수명 계산의 주요 인자입니다.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="60" width="180" height="6" rx="2" fill="#C2D9CC"/>
+      <rect x="10" y="52" width="180" height="7" rx="1" fill="#8BAD9A" opacity="0.4"/>
+      <rect x="20" y="36" width="34" height="18" rx="2" fill="#1A3A2A" opacity="0.45"/>
+      <rect x="130" y="36" width="34" height="18" rx="2" fill="#1A3A2A" opacity="0.75"/>
+      <line x1="20" y1="24" x2="164" y2="24" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <line x1="20" y1="19" x2="20" y2="29" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="164" y1="19" x2="164" y2="29" stroke="#E05C2A" stroke-width="2"/>
+      <text x="92" y="16" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">ST (스트로크)</text>
+      <text x="100" y="100" font-size="10" fill="#9E9B96" text-anchor="middle" font-family="monospace">편도 이동 거리 [mm]</text>
+    </svg>`
+  },
+  blocks: {
+    title: '블록 수량',
+    desc: '1개의 레일 SET에 사용하는 블록(슬라이더)의 총 개수입니다.\n블록이 많을수록 개당 하중이 줄어 수명이 늘어납니다.\n일반적으로 1SET에 2~4개를 사용합니다.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="65" width="180" height="6" rx="2" fill="#C2D9CC"/>
+      <rect x="10" y="57" width="180" height="7" rx="1" fill="#8BAD9A" opacity="0.4"/>
+      <rect x="20" y="40" width="32" height="19" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="62" y="40" width="32" height="19" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="106" y="40" width="32" height="19" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="150" y="40" width="32" height="19" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <text x="36" y="33" font-size="9" fill="#E05C2A" text-anchor="middle" font-family="monospace">①</text>
+      <text x="78" y="33" font-size="9" fill="#E05C2A" text-anchor="middle" font-family="monospace">②</text>
+      <text x="122" y="33" font-size="9" fill="#E05C2A" text-anchor="middle" font-family="monospace">③</text>
+      <text x="166" y="33" font-size="9" fill="#E05C2A" text-anchor="middle" font-family="monospace">④</text>
+      <text x="100" y="100" font-size="10" fill="#9E9B96" text-anchor="middle" font-family="monospace">블록 수 ↑ → 개당 하중 ↓ → 수명 ↑</text>
+    </svg>`
+  },
+  sets: {
+    title: 'SET 수량',
+    desc: '레일+블록 조합(SET)의 수입니다.\n레일이 2개 병렬이면 2 SET입니다.\nSET 수가 많을수록 하중 분산 효과가 커집니다.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="42" width="180" height="5" rx="1" fill="#C2D9CC"/>
+      <rect x="10" y="70" width="180" height="5" rx="1" fill="#C2D9CC"/>
+      <rect x="50" y="32" width="30" height="22" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="120" y="32" width="30" height="22" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="50" y="60" width="30" height="22" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="120" y="60" width="30" height="22" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <text x="30" y="47" font-size="9" fill="#E05C2A" font-family="monospace">SET 1</text>
+      <text x="30" y="75" font-size="9" fill="#E05C2A" font-family="monospace">SET 2</text>
+      <text x="100" y="100" font-size="10" fill="#9E9B96" text-anchor="middle" font-family="monospace">레일 2개 병렬 → 2 SET</text>
+    </svg>`
+  },
+  hours: {
+    title: '일일 가동 시간',
+    desc: '하루 중 실제 운전되는 시간입니다.\n수명을 연 단위로 환산할 때 사용됩니다.\n· 1교대(8h) · 2교대(16h) · 3교대(24h)',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <circle cx="100" cy="52" r="38" fill="none" stroke="#C2D9CC" stroke-width="3"/>
+      <circle cx="100" cy="52" r="4" fill="#1A3A2A" opacity="0.6"/>
+      <line x1="100" y1="52" x2="100" y2="22" stroke="#1A3A2A" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+      <line x1="100" y1="52" x2="122" y2="65" stroke="#1A3A2A" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <path d="M 100 14 A 38 38 0 0 1 138 52" stroke="#E05C2A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <text x="100" y="102" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">1교대=8h · 2교대=16h</text>
+    </svg>`
+  },
+  tn: {
+    title: '가감속 시간 (tn)',
+    desc: '정지 → 최고속, 또는 최고속 → 정지까지 걸리는 시간입니다.\n짧을수록 동하중계수가 커집니다.\n일반 기계: 0.05~0.2초',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <polyline points="10,90 50,25 150,25 190,90" stroke="#1A3A2A" stroke-width="2.5" fill="none"/>
+      <line x1="10" y1="95" x2="190" y2="95" stroke="#C2D9CC" stroke-width="1.5"/>
+      <line x1="10" y1="90" x2="50" y2="90" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="50" y1="85" x2="50" y2="95" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="10" y1="85" x2="10" y2="95" stroke="#E05C2A" stroke-width="2"/>
+      <text x="30" y="108" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">tn</text>
+      <text x="100" y="18" font-size="10" fill="#1A3A2A" text-anchor="middle" font-family="monospace">V_max (최고 속도)</text>
+    </svg>`
+  },
+  rs: {
+    title: '레일 스팬 (RS)',
+    desc: '두 레일 사이의 중심 간 거리입니다.\n레일이 1개인 경우 0으로 입력하세요.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="25" width="150" height="7" rx="2" fill="#C2D9CC"/>
+      <rect x="10" y="68" width="150" height="7" rx="2" fill="#C2D9CC"/>
+      <rect x="55" y="15" width="28" height="27" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="55" y="58" width="28" height="27" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <line x1="175" y1="28" x2="175" y2="71" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <line x1="170" y1="28" x2="180" y2="28" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="170" y1="71" x2="180" y2="71" stroke="#E05C2A" stroke-width="2"/>
+      <text x="175" y="53" font-size="11" fill="#E05C2A" font-family="IBM Plex Mono" text-anchor="middle">RS</text>
+    </svg>`
+  },
+  bs1: {
+    title: '블록 스팬 (BS1)',
+    desc: '이동 방향으로 나란히 배치된\n두 블록 사이의 중심 간 거리입니다.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="52" width="180" height="7" rx="2" fill="#C2D9CC"/>
+      <rect x="20" y="36" width="30" height="28" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <rect x="80" y="36" width="30" height="28" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <line x1="20" y1="22" x2="110" y2="22" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <line x1="20" y1="17" x2="20" y2="27" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="110" y1="17" x2="110" y2="27" stroke="#E05C2A" stroke-width="2"/>
+      <text x="65" y="14" font-size="11" fill="#E05C2A" font-family="IBM Plex Mono" text-anchor="middle">BS1</text>
+    </svg>`
+  },
+  br: {
+    title: '하중 작용점 높이 (Br)',
+    desc: '레일 중심에서 하중(무게중심)이\n작용하는 높이까지의 거리입니다.',
+    svg: `<svg width="200" height="120" viewBox="0 0 200 120" fill="none">
+      <rect x="10" y="70" width="180" height="7" rx="2" fill="#C2D9CC"/>
+      <rect x="70" y="52" width="60" height="26" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <circle cx="100" cy="28" r="7" fill="#E05C2A"/>
+      <line x1="100" y1="35" x2="100" y2="51" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="118" y1="28" x2="148" y2="28" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="118" y1="73" x2="148" y2="73" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="144" y1="28" x2="144" y2="73" stroke="#E05C2A" stroke-width="1.5"/>
+      <line x1="140" y1="28" x2="148" y2="28" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="140" y1="73" x2="148" y2="73" stroke="#E05C2A" stroke-width="2"/>
+      <text x="152" y="54" font-size="11" fill="#E05C2A" font-family="IBM Plex Mono">Br</text>
+    </svg>`
+  },
+  bt: {
+    title: '편심 거리 (Bt)',
+    desc: '레일 중심선 대비 하중(무게중심)이\n가로 방향으로 치우친 거리입니다.\n중심에 있으면 0을 입력하세요.',
+    svg: `<svg width="200" height="110" viewBox="0 0 200 110" fill="none">
+      <rect x="10" y="60" width="180" height="7" rx="2" fill="#C2D9CC"/>
+      <rect x="60" y="42" width="60" height="26" rx="2" fill="#1A3A2A" opacity="0.7"/>
+      <circle cx="140" cy="30" r="7" fill="#E05C2A"/>
+      <line x1="90" y1="30" x2="90" y2="41" stroke="#9E9B96" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="90" y1="18" x2="140" y2="18" stroke="#E05C2A" stroke-width="1.5"/>
+      <line x1="90" y1="14" x2="90" y2="22" stroke="#E05C2A" stroke-width="2"/>
+      <line x1="136" y1="14" x2="144" y2="22" stroke="#E05C2A" stroke-width="2"/>
+      <text x="108" y="14" font-size="11" fill="#E05C2A" font-family="IBM Plex Mono" text-anchor="middle">Bt</text>
+      <text x="90" y="108" font-size="10" fill="#9E9B96" font-family="IBM Plex Mono" text-anchor="middle">중심선</text>
+    </svg>`
+  }
+};
+
+function openPopup(key) {
+  const p = POPUPS[key];
+  if (!p) return;
+  document.getElementById('popup-title').textContent = p.title;
+  document.getElementById('popup-svg').innerHTML     = p.svg;
+  document.getElementById('popup-desc').innerHTML    = p.desc.replace(/\n/g, '<br>');
+  document.getElementById('moment-overlay').classList.add('open');
+}
+function closePopup(e) {
+  if (!e || e.target === document.getElementById('moment-overlay')) {
+    document.getElementById('moment-overlay').classList.remove('open');
+  }
+}
+
+updateSpeedPreview();
+
+/* ── 공급사 연결 ── */
+const SUPPLIER_KEY = 'partson_lm_suppliers';
+
+function getSuppliers() {
+  try {
+    const raw = localStorage.getItem(SUPPLIER_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  const defaults = [
+    { id:'1', name:'오성오토메이션', phone:'010-9119-2153', email:'scvp1@naver.com', website:'', brands:['Bosch','TBI'], sizes:[15,20,25,30,35,45], note:'' }
+  ];
+  localStorage.setItem(SUPPLIER_KEY, JSON.stringify(defaults));
+  return defaults;
+}
+
+function renderSuppliers(size, prefix) {
+  const suppliers = getSuppliers();
+  const matching = suppliers.filter(s => !s.sizes || s.sizes.length === 0 || s.sizes.includes(size));
+  const listEl = document.getElementById(prefix + '-supplier-list');
+  const sectionEl = document.getElementById(prefix + '-supplier-section');
+  if (!listEl || !sectionEl) return;
+  sectionEl.classList.remove('hidden');
+  if (matching.length === 0) {
+    listEl.innerHTML = '<div class="supplier-empty">등록된 공급사가 없습니다.</div>';
+    return;
+  }
+  listEl.innerHTML = matching.map(s => {
+    const brands = s.brands && s.brands.length ? s.brands.join(' · ') : '';
+    const contacts = [];
+    if (s.phone) contacts.push(`<a href="tel:${s.phone}" class="supplier-contact-link">📞 ${s.phone}</a>`);
+    if (s.email) contacts.push(`<a href="mailto:${s.email}" class="supplier-contact-link">✉ ${s.email}</a>`);
+    if (s.website) contacts.push(`<a href="${s.website}" target="_blank" class="supplier-contact-link">🌐 홈페이지</a>`);
+    return `<div class="supplier-card">
+      <div class="supplier-name">${s.name}</div>
+      ${brands ? `<div class="supplier-brands">${brands}</div>` : ''}
+      <div class="supplier-contacts">${contacts.join('')}</div>
+      ${s.note ? `<div class="supplier-note">${s.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+/* ── CAD 도면 다운로드 ── */
+const TRACEPARTS_LM = [
+  { maker: 'THK HSR',             url: 'https://www.3dfindit.com/en/cad-bim-library/manufacturer/thk-coltd/linear-motion-systems/lm-guide/lm-guide-gk-product/hsr?path=thk/linear_motion_systems/lm_guide/lm_guide_gk_product/hsr' },
+  { maker: 'HIWIN HGH',           url: 'https://www.hiwinsupport.com/cad_download/' },
+  { maker: 'Bosch Rexroth NRTVG', url: 'https://www.traceparts.com/en/search/bosch-rexroth-linear-motion-technology?CatalogPath=BOSCH_LINEAR:F_BOSCH_LINEAR' },
+  { maker: 'TBI TRH',             url: 'https://tbi-embedded.partcommunity.com/3d-cad-models/trh-trh-series-is-the-world-standard-ball-type-linear-slide-rail-tbi-motion?info=tbi/linear_slides/tr_series_models/trh/trh-f/trh_asmtab.prj' },
+  { maker: 'PMI MSA',             url: 'https://www.pmi-amt.com/en/supports/cad' },
+];
+function renderCAD(size, prefix) {
+  const sec  = document.getElementById(prefix + '-cad-section');
+  const btns = document.getElementById(prefix + '-cad-btns');
+  if (!sec || !btns) return;
+  sec.classList.remove('hidden');
+  btns.innerHTML = TRACEPARTS_LM.map(m => `
+    <a href="${m.url}" target="_blank" rel="noopener" class="cad-btn">
+      <span class="cad-btn-icon">⬇</span>
+      <span>
+        <span style="display:block;font-size:11px;opacity:.7;font-weight:400">${m.maker}</span>
+        <span style="display:block;line-height:1.2">size ${size}</span>
+      </span>
+    </a>`).join('');
+}
+function lmDoPrint(){
+  const d = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
+  ['lm-print-date','lm-print-date2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=d;});
+  window.print();
+}
+</script>
+</body></html>

@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartsOn — 공급사 관리</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F4F2ED; --surface: #FFFFFF;
+    --border: #D8D4CC; --border-light: #E8E5DF;
+    --text-primary: #1A1814; --text-secondary: #6B6760; --text-muted: #9E9B96;
+    --accent: #1A3A2A; --accent-light: #E8F0EC; --accent-mid: #2D6B4A;
+    --danger: #8B1A1A; --danger-bg: #FDF0F0;
+    --font: 'IBM Plex Sans KR', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text-primary); min-height: 100vh; }
+
+  /* ── 로그인 ── */
+  .login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  .login-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 16px; padding: 2.5rem 2rem; width: 100%; max-width: 360px; text-align: center; }
+  .login-logo { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--accent); margin-bottom: 6px; }
+  .login-title { font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+  .login-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 2rem; }
+  .login-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; font-family: var(--mono); font-size: 14px; outline: none; background: #FAFAF8; margin-bottom: 12px; }
+  .login-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .login-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 12px; font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; }
+  .login-btn:hover { background: var(--accent-mid); }
+  .login-error { font-size: 12px; color: var(--danger); margin-top: 8px; min-height: 16px; }
+
+  /* ── 헤더 ── */
+  header { background: var(--accent); color: #fff; padding: 1.5rem 2rem; }
+  .header-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .header-brand { font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,0.7); }
+  .header-title { font-size: 16px; font-weight: 500; }
+  .logout-btn { border: 1px solid rgba(255,255,255,0.3); background: transparent; color: rgba(255,255,255,0.8); border-radius: 6px; padding: 6px 14px; font-family: var(--font); font-size: 12px; cursor: pointer; }
+  .logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+  /* ── 메인 ── */
+  main { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-title { font-size: 13px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; }
+  .add-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; }
+  .add-btn:hover { background: var(--accent-mid); }
+
+  /* ── 공급사 카드 ── */
+  .supplier-list { display: flex; flex-direction: column; gap: 10px; }
+  .supplier-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .supplier-info { flex: 1; }
+  .supplier-name { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .supplier-brands { font-size: 11px; font-family: var(--mono); color: var(--accent-mid); margin-bottom: 6px; }
+  .supplier-meta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .supplier-meta span { font-size: 12px; font-family: var(--mono); color: var(--text-secondary); }
+  .supplier-sizes { font-size: 11px; font-family: var(--mono); color: var(--text-muted); margin-top: 6px; }
+  .supplier-note { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .card-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .edit-btn { border: 1px solid var(--border); background: var(--bg); border-radius: 6px; padding: 6px 14px; font-family: var(--font); font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+  .edit-btn:hover { border-color: var(--accent-mid); color: var(--accent); }
+  .del-btn { border: 1px solid var(--border); background: var(--bg); border-radius: 6px; padding: 6px 14px; font-family: var(--font); font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+  .del-btn:hover { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); font-size: 14px; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-light); }
+
+  /* ── 모달 ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; padding: 1rem; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 16px; padding: 2rem; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 16px; font-weight: 500; margin-bottom: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .form-group label { font-size: 12px; color: var(--text-secondary); }
+  .form-input { border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-family: var(--mono); font-size: 13px; outline: none; background: #FAFAF8; width: 100%; }
+  .form-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .form-hint { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .size-check-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .size-check-label { display: flex; align-items: center; gap: 5px; font-size: 12px; font-family: var(--mono); color: var(--text-secondary); cursor: pointer; background: #FAFAF8; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; transition: all 0.15s; }
+  .size-check-label:has(input:checked) { background: var(--accent-light); border-color: var(--accent); color: var(--accent); font-weight: 500; }
+  .size-check-label input { display: none; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+  .save-btn { flex: 1; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 12px; font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; }
+  .save-btn:hover { background: var(--accent-mid); }
+  .cancel-btn { border: 1px solid var(--border); background: transparent; border-radius: 8px; padding: 12px 20px; font-family: var(--font); font-size: 14px; color: var(--text-secondary); cursor: pointer; }
+  .cancel-btn:hover { background: var(--bg); }
+
+  /* ── 비밀번호 변경 ── */
+  .pw-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); }
+  .pw-section-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 1rem; }
+  .pw-row { display: flex; gap: 10px; align-items: center; }
+  .pw-input { flex: 1; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-family: var(--mono); font-size: 13px; outline: none; background: #FAFAF8; }
+  .pw-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .pw-save-btn { background: var(--accent); color: #fff; border: none; border-radius: 7px; padding: 9px 18px; font-family: var(--font); font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .pw-save-btn:hover { background: var(--accent-mid); }
+  .pw-msg { font-size: 12px; margin-top: 6px; min-height: 16px; }
+
+  /* ── 탭 ── */
+  .tab-wrap { display: flex; background: var(--surface); border: 1px solid var(--border-light); border-radius: 10px; padding: 4px; margin-bottom: 1.25rem; }
+  .tab-btn { flex: 1; border: none; background: transparent; font-family: var(--font); font-size: 13px; color: var(--text-secondary); padding: 9px 0; border-radius: 7px; cursor: pointer; transition: all 0.15s; }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ── 로그인 화면 ── -->
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">PartsOn Linear</div>
+    <div class="login-title">공급사 관리</div>
+    <div class="login-sub">관리자 비밀번호를 입력하세요</div>
+    <input type="password" id="pw-input" class="login-input" placeholder="비밀번호" onkeydown="if(event.key==='Enter') login()">
+    <button class="login-btn" onclick="login()">로그인</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ── 관리 화면 ── -->
+<div id="admin-screen" class="hidden">
+  <header>
+    <div class="header-inner">
+      <div>
+        <div class="header-brand">PartsOn Linear</div>
+        <div class="header-title">공급사 관리</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">로그아웃</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="tab-wrap">
+      <button class="tab-btn active" onclick="switchTab('lm', this)">LM Guide 공급사</button>
+      <button class="tab-btn" onclick="switchTab('bs', this)">Ball Screw 공급사</button>
+      <button class="tab-btn" onclick="switchTab('brg', this)">베어링 공급사</button>
+      <button class="tab-btn" onclick="switchTab('servo', this)">서보모터 공급사</button>
+    </div>
+    <div class="section-header">
+      <div class="section-title" id="tab-label">LM Guide 공급사</div>
+      <button class="add-btn" onclick="openForm()">+ 공급사 추가</button>
+    </div>
+    <div class="supplier-list" id="supplier-list"></div>
+
+    <!-- 비밀번호 변경 -->
+    <div class="pw-section">
+      <div class="pw-section-title">비밀번호 변경</div>
+      <div class="pw-row">
+        <input type="password" class="pw-input" id="new-pw" placeholder="새 비밀번호 입력">
+        <input type="password" class="pw-input" id="new-pw2" placeholder="확인">
+        <button class="pw-save-btn" onclick="changePw()">변경</button>
+      </div>
+      <div class="pw-msg" id="pw-msg"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ── 추가/수정 모달 ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this) closeForm()">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">공급사 추가</div>
+
+    <div class="form-group">
+      <label>회사명 *</label>
+      <input type="text" class="form-input" id="f-name" placeholder="예: 오성오토메이션">
+    </div>
+    <div class="form-group">
+      <label>전화번호</label>
+      <input type="text" class="form-input" id="f-phone" placeholder="예: 010-0000-0000">
+    </div>
+    <div class="form-group">
+      <label>이메일</label>
+      <input type="text" class="form-input" id="f-email" placeholder="예: example@naver.com">
+    </div>
+    <div class="form-group">
+      <label>홈페이지</label>
+      <input type="text" class="form-input" id="f-website" placeholder="예: https://...">
+    </div>
+    <div class="form-group">
+      <label>취급 브랜드</label>
+      <input type="text" class="form-input" id="f-brands" placeholder="예: Bosch, TBI, HIWIN">
+      <div class="form-hint">쉼표(,)로 구분해서 입력</div>
+    </div>
+    <div class="form-group" id="size-group">
+      <label>취급 사이즈 (LM Guide)</label>
+      <div class="size-check-wrap">
+        <label class="size-check-label"><input type="checkbox" name="sz" value="15"> size 15</label>
+        <label class="size-check-label"><input type="checkbox" name="sz" value="20"> size 20</label>
+        <label class="size-check-label"><input type="checkbox" name="sz" value="25"> size 25</label>
+        <label class="size-check-label"><input type="checkbox" name="sz" value="30"> size 30</label>
+        <label class="size-check-label"><input type="checkbox" name="sz" value="35"> size 35</label>
+        <label class="size-check-label"><input type="checkbox" name="sz" value="45"> size 45</label>
+      </div>
+      <div class="form-hint">체크 없으면 모든 사이즈에 표시됩니다</div>
+    </div>
+    <div class="form-group">
+      <label>메모</label>
+      <input type="text" class="form-input" id="f-note" placeholder="예: 경기 남부 지역 전담">
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" onclick="closeForm()">취소</button>
+      <button class="save-btn" onclick="saveSupplier()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEYS = { lm: 'partson_lm_suppliers', bs: 'partson_bs_suppliers', brg: 'partson_brg_suppliers', servo: 'partson_servo_suppliers' };
+const LABELS = { lm: 'LM Guide 공급사', bs: 'Ball Screw 공급사', brg: '베어링 공급사', servo: '서보모터 공급사' };
+const PW_KEY = 'partson_admin_pw';
+const DEFAULT_PW = 'partsON1';
+
+let currentTab = 'lm';
+let editingId = null;
+
+function switchTab(tab, el) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-label').textContent = LABELS[tab];
+  // 사이즈 옵션은 LM Guide만
+  document.getElementById('size-group').style.display = tab === 'lm' ? '' : 'none';
+  renderList();
+}
+
+/* ── 인증 ── */
+function getStoredPw() {
+  return localStorage.getItem(PW_KEY) || DEFAULT_PW;
+}
+function login() {
+  const val = document.getElementById('pw-input').value;
+  if (val === getStoredPw()) {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('admin-screen').classList.remove('hidden');
+    renderList();
+  } else {
+    document.getElementById('login-error').textContent = '비밀번호가 틀렸습니다.';
+    document.getElementById('pw-input').value = '';
+  }
+}
+function logout() {
+  document.getElementById('admin-screen').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('pw-input').value = '';
+}
+function changePw() {
+  const a = document.getElementById('new-pw').value.trim();
+  const b = document.getElementById('new-pw2').value.trim();
+  const msg = document.getElementById('pw-msg');
+  if (!a) { msg.style.color = 'var(--danger)'; msg.textContent = '비밀번호를 입력하세요.'; return; }
+  if (a !== b) { msg.style.color = 'var(--danger)'; msg.textContent = '비밀번호가 일치하지 않습니다.'; return; }
+  localStorage.setItem(PW_KEY, a);
+  msg.style.color = 'var(--accent-mid)';
+  msg.textContent = '비밀번호가 변경되었습니다.';
+  document.getElementById('new-pw').value = '';
+  document.getElementById('new-pw2').value = '';
+}
+
+/* ── 데이터 ── */
+function getSuppliers() {
+  const key = KEYS[currentTab];
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  const defaults = [
+    { id:'1', name:'오성오토메이션', phone:'010-9119-2153', email:'scvp1@naver.com', website:'', brands:['Bosch','TBI'], sizes:[15,20,25,30,35,45], note:'' }
+  ];
+  localStorage.setItem(key, JSON.stringify(defaults));
+  return defaults;
+}
+function saveSuppliers(list) {
+  localStorage.setItem(KEYS[currentTab], JSON.stringify(list));
+}
+
+/* ── 목록 렌더 ── */
+function renderList() {
+  const list = getSuppliers();
+  const el = document.getElementById('supplier-list');
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state">등록된 공급사가 없습니다.<br>위 버튼으로 추가하세요.</div>';
+    return;
+  }
+  el.innerHTML = list.map(s => {
+    const brands = s.brands && s.brands.length ? s.brands.join(' · ') : '—';
+    const sizes = s.sizes && s.sizes.length ? s.sizes.map(x => 'size '+x).join(', ') : '전체 사이즈';
+    const sizeRow = currentTab === 'lm' ? `<div class="supplier-sizes">취급 사이즈: ${sizes}</div>` : '';
+    return `<div class="supplier-card">
+      <div class="supplier-info">
+        <div class="supplier-name">${s.name}</div>
+        <div class="supplier-brands">${brands}</div>
+        <div class="supplier-meta">
+          ${s.phone ? `<span>📞 ${s.phone}</span>` : ''}
+          ${s.email ? `<span>✉ ${s.email}</span>` : ''}
+          ${s.website ? `<span>🌐 ${s.website}</span>` : ''}
+        </div>
+        ${sizeRow}
+        ${s.note ? `<div class="supplier-note">${s.note}</div>` : ''}
+      </div>
+      <div class="card-actions">
+        <button class="edit-btn" onclick="openForm('${s.id}')">수정</button>
+        <button class="del-btn" onclick="deleteSupplier('${s.id}')">삭제</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── 폼 ── */
+function openForm(id) {
+  editingId = id || null;
+  document.getElementById('modal-title').textContent = id ? '공급사 수정' : '공급사 추가';
+
+  if (id) {
+    const s = getSuppliers().find(x => x.id === id);
+    if (!s) return;
+    document.getElementById('f-name').value = s.name;
+    document.getElementById('f-phone').value = s.phone || '';
+    document.getElementById('f-email').value = s.email || '';
+    document.getElementById('f-website').value = s.website || '';
+    document.getElementById('f-brands').value = s.brands ? s.brands.join(', ') : '';
+    document.getElementById('f-note').value = s.note || '';
+    document.querySelectorAll('input[name="sz"]').forEach(cb => {
+      cb.checked = s.sizes && s.sizes.includes(parseInt(cb.value));
+    });
+  } else {
+    document.getElementById('f-name').value = '';
+    document.getElementById('f-phone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-website').value = '';
+    document.getElementById('f-brands').value = '';
+    document.getElementById('f-note').value = '';
+    document.querySelectorAll('input[name="sz"]').forEach(cb => cb.checked = false);
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeForm() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+}
+function saveSupplier() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('회사명을 입력하세요.'); return; }
+
+  const sizes = [...document.querySelectorAll('input[name="sz"]:checked')].map(cb => parseInt(cb.value));
+  const brands = document.getElementById('f-brands').value.split(',').map(b => b.trim()).filter(Boolean);
+
+  const entry = {
+    id: editingId || String(Date.now()),
+    name,
+    phone: document.getElementById('f-phone').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    website: document.getElementById('f-website').value.trim(),
+    brands,
+    sizes,
+    note: document.getElementById('f-note').value.trim()
+  };
+
+  const list = getSuppliers();
+  if (editingId) {
+    const idx = list.findIndex(x => x.id === editingId);
+    if (idx !== -1) list[idx] = entry;
+  } else {
+    list.push(entry);
+  }
+  saveSuppliers(list);
+  renderList();
+  closeForm();
+}
+function deleteSupplier(id) {
+  if (!confirm('이 공급사를 삭제하시겠습니까?')) return;
+  const list = getSuppliers().filter(x => x.id !== id);
+  saveSuppliers(list);
+  renderList();
+}
+</script>
+</body>
+</html>

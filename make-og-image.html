@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OG Image Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #888; display: flex; flex-direction: column; align-items: center; padding: 40px; gap: 20px; font-family: sans-serif; }
+    canvas { display: block; box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    button {
+      padding: 14px 36px; font-size: 16px; background: #1A3A2A; color: white;
+      border: none; border-radius: 8px; cursor: pointer; font-weight: 600;
+    }
+    button:hover { background: #2D6B4A; }
+    p { color: white; font-size: 14px; margin: 0; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1200" height="630"></canvas>
+  <button onclick="download()">og-image.png 저장</button>
+  <p>저장 후 이 파일은 삭제해도 됩니다.</p>
+
+  <script>
+    // 폰트 로딩 후 렌더링
+    document.fonts.ready.then(draw);
+
+    function draw() {
+      const c = document.getElementById('c');
+      const ctx = c.getContext('2d');
+      const W = 1200, H = 630;
+
+      // ── 배경 그라디언트 ──
+      const bg = ctx.createLinearGradient(0, 0, W, H);
+      bg.addColorStop(0, '#1A3A2A');
+      bg.addColorStop(0.55, '#2D6B4A');
+      bg.addColorStop(1, '#1A3A2A');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // ── 배경 패턴 (격자 도트) ──
+      ctx.fillStyle = 'rgba(255,255,255,0.04)';
+      for (let x = 40; x < W; x += 60) {
+        for (let y = 40; y < H; y += 60) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // ── 우측 장식 원형 ──
+      ctx.save();
+      ctx.globalAlpha = 0.07;
+      ctx.strokeStyle = '#F4F2ED';
+      ctx.lineWidth = 60;
+      ctx.beginPath();
+      ctx.arc(1050, 100, 300, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(1050, 100, 180, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // ── 좌측 하단 장식 ──
+      ctx.save();
+      ctx.globalAlpha = 0.05;
+      ctx.strokeStyle = '#F4F2ED';
+      ctx.lineWidth = 40;
+      ctx.beginPath();
+      ctx.arc(80, 550, 200, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // ── 상단 로고 배지 ──
+      // 배지 배경
+      const bx = 80, by = 72, bw = 160, bh = 40, br = 8;
+      ctx.fillStyle = 'rgba(244,242,237,0.15)';
+      roundRect(ctx, bx, by, bw, bh, br);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(244,242,237,0.35)';
+      ctx.lineWidth = 1;
+      roundRect(ctx, bx, by, bw, bh, br);
+      ctx.stroke();
+
+      ctx.fillStyle = '#F4F2ED';
+      ctx.font = "500 15px 'IBM Plex Sans KR'";
+      ctx.textAlign = 'center';
+      ctx.fillText('⚙ PartsOn Platform', bx + bw / 2, by + 26);
+
+      // ── 메인 타이틀 ──
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = "700 82px 'IBM Plex Sans KR'";
+      ctx.fillText('PartsOn', 80, 230);
+
+      // 타이틀 언더라인 (포인트)
+      const grad2 = ctx.createLinearGradient(80, 0, 480, 0);
+      grad2.addColorStop(0, '#A8D5B5');
+      grad2.addColorStop(1, 'rgba(168,213,181,0)');
+      ctx.fillStyle = grad2;
+      ctx.fillRect(80, 245, 400, 4);
+
+      // ── 서브타이틀 ──
+      ctx.fillStyle = 'rgba(244,242,237,0.85)';
+      ctx.font = "400 30px 'IBM Plex Sans KR'";
+      ctx.fillText('자동화 부품 선정 플랫폼', 80, 305);
+
+      // ── 슬로건 박스 ──
+      const sx = 80, sy = 345, sw = 640, sh = 72, sr = 12;
+      ctx.fillStyle = 'rgba(168,213,181,0.15)';
+      roundRect(ctx, sx, sy, sw, sh, sr);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(168,213,181,0.4)';
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, sx, sy, sw, sh, sr);
+      ctx.stroke();
+
+      ctx.fillStyle = '#A8D5B5';
+      ctx.font = "500 22px 'IBM Plex Sans KR'";
+      ctx.fillText('"데이터로 고르고, 공급사와 바로 연결"', sx + 24, sy + 44);
+
+      // ── 하단 기능 태그 3개 ──
+      const tags = ['LM Guide 수명 계산', '볼스크류 선정', '베어링 선정'];
+      let tx = 80;
+      tags.forEach(tag => {
+        ctx.font = "400 17px 'IBM Plex Sans KR'";
+        const tw = ctx.measureText(tag).width + 36;
+        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+        roundRect(ctx, tx, 462, tw, 38, 19);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.textAlign = 'center';
+        ctx.fillText(tag, tx + tw / 2, 486);
+        ctx.textAlign = 'left';
+        tx += tw + 14;
+      });
+
+      // ── 하단 URL ──
+      ctx.fillStyle = 'rgba(244,242,237,0.4)';
+      ctx.font = "400 16px 'IBM Plex Mono', monospace";
+      ctx.textAlign = 'left';
+      ctx.fillText('partson.netlify.app', 80, 580);
+
+      // ── 우측 하단 아이콘 영역 ──
+      // 기어 아이콘 대신 텍스트 심볼
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      roundRect(ctx, 960, 400, 160, 160, 20);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('⚙', 1040, 498);
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    function download() {
+      const c = document.getElementById('c');
+      const a = document.createElement('a');
+      a.download = 'og-image.png';
+      a.href = c.toDataURL('image/png');
+      a.click();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1508 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PartsOn Linear — 볼스크류 + LM Guide 선정 계산기</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F7F5;
+  --card:#FFFFFF;
+  --border:#E8E5DF;
+  --border-light:#F0EEEB;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
+  --accent-bright:#00C853;
+  --text:#0F0E0C;
+  --text2:#5A5752;
+  --text3:#8E8B86;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'Pretendard',sans-serif;
+  --font-display:'Space Grotesk',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --ease-out:cubic-bezier(0.23,1,0.32,1);
+  --ease-in-out:cubic-bezier(0.77,0,0.175,1);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.input-wrap input,.input-wrap select{font-family:var(--mono)}
+.result-hero-main{font-family:var(--mono)}
+.check-val{font-family:var(--mono)}
+.r-val{font-family:var(--mono)}
+
+/* ── 헤더 ── */
+header{background:linear-gradient(135deg,var(--accent) 0%,#0F2818 100%);color:#fff;padding:1.5rem 1.5rem 1.25rem;box-shadow:0 4px 16px rgba(26,58,42,.12)}
+.hdr{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px;font-family:var(--font-display)}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 탭 바 ── */
+.tab-bar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.tab-inner{max-width:720px;margin:0 auto;display:flex}
+.app-tab{flex:1;border:none;background:transparent;font-size:14px;font-weight:500;color:var(--text2);padding:14px 0;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s var(--ease-out);font-family:var(--font-display)}
+.app-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── 레이아웃 ── */
+main{max-width:720px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 공통 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:box-shadow .3s var(--ease-out)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem;font-family:var(--font-display)}
+
+/* ── 입력 ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid1{display:grid;grid-template-columns:1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:all .2s var(--ease-out)}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff;box-shadow:0 0 0 3px rgba(45,107,74,.08)}
+.input-wrap input,.input-wrap select{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+
+.notice-mini{background:#FEF2F2;border:1px solid #FECACA;border-left:3px solid #EF4444;border-radius:8px;padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#7F1D1D;line-height:1.6}
+.notice-mini strong{color:#DC2626}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}
+.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .3s var(--ease-out)}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+/* ── 볼스크류 위저드 ── */
+.steps-bar{display:flex;align-items:center;gap:0;margin-bottom:1.5rem}
+.step-node{display:flex;align-items:center;gap:0;flex:1}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .3s var(--ease-out)}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .4s var(--ease-out)}
+.step-line.done{background:var(--accent)}
+.step-label{font-size:10px;color:var(--text3);margin-top:4px;text-align:center;white-space:nowrap}
+
+.step-wrap{display:none}.step-wrap.active{display:block;animation:fadeInUp .4s var(--ease-out)}
+
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px;font-family:var(--font-display)}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* 선택 카드 */
+.opt-grid{display:grid;gap:8px}
+.opt-grid.col2{grid-template-columns:1fr 1fr}
+.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s var(--ease-out);position:relative}
+.opt-btn svg rect,.opt-btn svg circle,.opt-btn svg ellipse,.opt-btn svg line,.opt-btn svg polygon,.opt-btn svg path{transition:all .15s}
+.opt-btn.sel svg rect,.opt-btn.sel svg circle,.opt-btn.sel svg ellipse{fill:rgba(255,255,255,0.85)!important}
+.opt-btn.sel svg line,.opt-btn.sel svg polygon,.opt-btn.sel svg path{stroke:rgba(255,255,255,0.9)!important;fill:rgba(255,255,255,0.9)}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light);transform:translateY(-2px);box-shadow:0 4px 12px rgba(26,58,42,.08)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:14px;font-weight:600;font-family:var(--font-display)}
+.sub{font-size:12px;color:var(--text2);margin-top:2px;font-weight:400}
+
+/* 네비게이션 버튼 */
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:var(--font-display);transition:all .2s var(--ease-out)}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}
+.btn-primary:hover{background:var(--accent-mid);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.15)}
+.btn-back{background:transparent;color:var(--text2)}
+.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.btn-full{width:100%;height:46px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font-display);margin-top:1rem;transition:all .2s var(--ease-out)}
+.btn-full:hover{background:var(--accent-mid);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.15)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+
+/* ── 결과 ── */
+.result-hero{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.result-hero-main{font-size:26px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.result-hero-sub{font-size:13px;color:#22654A;margin-top:4px;line-height:1.7}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--bg);border-radius:9px;padding:12px 14px;border:1px solid var(--border)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:4px;font-family:var(--font-display)}
+.check-val{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500}
+.ok .check-val{color:var(--ok)}.ok .check-judge{color:var(--ok)}
+.warn .check-val{color:var(--warn)}.warn .check-judge{color:var(--warn)}
+.bad .check-val{color:var(--bad)}.bad .check-judge{color:var(--bad)}
+
+.alts{margin-top:10px}
+.alt-label{font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:500;font-family:var(--font-display)}
+.alt-item{font-size:13px;color:var(--text2);padding:8px 12px;border:1px solid var(--border);border-radius:7px;background:#fff;margin-bottom:4px;font-variant-numeric:tabular-nums}
+
+.warn-banner{background:#FFF7ED;border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+
+/* LM 추천 박스 */
+.lm-rec-box{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.lm-rec-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:3px;font-family:var(--font-display)}
+.lm-rec-desc{font-size:12px;color:#22654A}
+.btn-goto-lm{width:100%;height:42px;background:#fff;color:var(--accent);border:1.5px solid var(--accent);border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-display);transition:all .2s var(--ease-out)}
+.btn-goto-lm:hover{background:var(--accent);color:#fff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.12)}
+.btn-restart{width:100%;height:38px;border:none;background:none;font-size:13px;color:var(--text3);cursor:pointer;text-decoration:underline;margin-top:8px;font-family:var(--font);transition:color .2s var(--ease-out)}
+
+/* 비교 테이블 */
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);font-family:var(--font-display)}
+.d-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem}
+.d-btn{border:1.5px solid var(--border);border-radius:7px;padding:6px 14px;background:#fff;font-size:13px;color:var(--text2);cursor:pointer;font-weight:500;transition:all .2s var(--ease-out);font-family:var(--font)}
+.d-btn:hover{border-color:var(--accent-mid);color:var(--accent)}
+.d-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* LM 가이드 비교 테이블 (HTML table 유지) */
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:7px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+table.ctbl tr.sel-row td{background:#EFF6FF}
+/* 볼스크류 비교 — CSS Grid (컬럼 정렬 보장) */
+.cmp-grid{display:grid;grid-template-columns:44px 96px 58px 100px 72px 62px 72px 78px 72px 60px;min-width:714px;font-size:13px}
+.cg-h{padding:6px 10px;font-size:11px;font-weight:600;color:var(--text3);background:var(--bg);border-bottom:2px solid var(--border);white-space:nowrap;display:flex;align-items:center}
+.cg-d{padding:9px 10px;border-bottom:1px solid var(--border);white-space:nowrap;font-variant-numeric:tabular-nums;display:flex;align-items:center}
+.cg-rec{background:#F0FDF4;font-weight:700}
+.cg-sel{background:#EFF6FF}
+.cg-sep{grid-column:1/-1;height:2px;background:var(--border)}
+.tag-rec{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;background:var(--accent-light);color:var(--accent);font-weight:600;margin-left:5px;vertical-align:middle}
+.tag-sel{display:inline-block;font-size:10px;padding:1px 5px;border-radius:4px;background:#DBEAFE;color:#1D4ED8;font-weight:600;margin-left:5px;vertical-align:middle}
+.v-ok{color:var(--ok)}.v-warn{color:var(--warn)}.v-bad{color:var(--bad)}
+
+/* ── LM 가이드 ── */
+.lm-tabs{display:flex;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:4px;margin-bottom:1rem}
+.lm-tab{flex:1;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--text2);padding:9px 0;border-radius:7px;cursor:pointer;transition:all .2s var(--ease-out);font-family:var(--font)}
+.lm-tab:hover{color:var(--text)}
+.lm-tab.active{background:var(--accent);color:#fff}
+
+.dir-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.dir-card{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border:2px solid var(--border);border-radius:9px;background:#FAFBFC;cursor:pointer;transition:all .2s var(--ease-out)}
+.dir-card:hover{border-color:var(--accent-mid);background:var(--accent-light);transform:scale(1.02)}
+.dir-card.active{border-color:var(--accent);background:var(--accent-light)}
+.dir-card.active .dir-lbl{color:var(--accent);font-weight:600}
+.dir-lbl{font-size:11px;color:var(--text2);text-align:center;line-height:1.4}
+.svg-legend{display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text3)}
+.leg{display:flex;align-items:center;gap:4px}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.speed-prev{background:var(--bg);border-radius:9px;padding:14px;margin-top:10px}
+.sp-title{font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;font-family:var(--font-display)}
+.sp-bars{display:flex;align-items:flex-end;gap:2px;height:32px;margin-bottom:6px}
+.sp-accel{background:var(--accent-mid);opacity:.45;border-radius:2px 2px 0 0;min-width:4px}
+.sp-const{background:var(--accent);border-radius:2px 2px 0 0;min-width:4px}
+.sp-decel{background:var(--accent-mid);opacity:.45;border-radius:2px 2px 0 0;min-width:4px}
+.sp-lbls{display:flex;justify-content:space-between;font-size:10px;color:var(--text3)}
+.sp-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;text-align:center}
+.sp-val{font-size:14px;font-weight:700;color:var(--text)}
+.sp-lbl{font-size:10px;color:var(--text3);margin-top:1px}
+
+.res-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem}
+.res-grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:.75rem}
+.res-grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:.75rem}
+.res-item{background:var(--bg);border-radius:9px;padding:12px 10px}
+.r-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px;font-family:var(--font-display)}
+.r-val{font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.r-unit{font-size:11px;color:var(--text2);margin-top:4px}
+
+.rec-row{display:flex;align-items:center;justify-content:space-between;background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.rec-lbl{font-size:11px;color:#22654A;font-weight:600;margin-bottom:3px}
+.rec-model{font-size:17px;font-weight:700;color:var(--accent);font-family:var(--font-display)}
+.rec-specs{font-size:12px;color:var(--text2);text-align:right;line-height:1.8}
+.safety{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:500;margin-bottom:8px}
+.safety .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.s-ok{background:var(--ok-bg);color:var(--ok)}.s-ok .dot{background:var(--ok)}
+.s-warn{background:var(--warn-bg);color:var(--warn)}.s-warn .dot{background:var(--warn)}
+.s-bad{background:var(--bad-bg);color:var(--bad)}.s-bad .dot{background:var(--bad)}
+
+.maker-toggle{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;color:var(--text2);cursor:pointer;text-align:left;font-family:var(--font);transition:all .2s var(--ease-out);margin-top:12px}
+.maker-toggle:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent-mid)}
+.maker-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.maker-table th{font-size:10px;color:var(--text3);font-weight:600;text-align:center;padding:5px 6px;border-bottom:1px solid var(--border);background:var(--bg)}
+.maker-table th:first-child{text-align:left}
+.maker-table td{padding:7px 6px;border-bottom:1px solid var(--border);text-align:center;color:var(--text2);font-size:11px;font-variant-numeric:tabular-nums}
+.maker-table td:first-child{text-align:left;color:var(--text3)}
+.maker-table tr.avg-row td{font-weight:700;color:var(--ok);background:var(--ok-bg)}
+.maker-table tr.avg-row td:first-child{color:var(--ok)}
+.hidden{display:none!important}
+
+/* 팝업 */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+.popup-overlay.open{display:flex}
+.popup-box{background:#fff;border-radius:14px;padding:1.5rem;max-width:320px;width:92%}
+.popup-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.popup-ttl{font-size:15px;font-weight:700;font-family:var(--font-display)}
+.popup-close{border:none;background:var(--bg);border-radius:7px;padding:5px 12px;font-size:13px;cursor:pointer;color:var(--text2);font-family:var(--font);transition:all .2s var(--ease-out)}
+.popup-close:hover{background:var(--border)}
+.popup-img{display:flex;justify-content:center;background:var(--bg);border-radius:9px;padding:1.25rem;margin-bottom:.75rem}
+.popup-desc{font-size:13px;color:var(--text2);line-height:1.7;text-align:center}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:all .2s var(--ease-out);vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff;transform:scale(1.1)}
+
+/* 면책 */
+.disclaimer{max-width:720px;margin:0 auto 1rem;padding:1rem 1.25rem;background:#fff;border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--text3);line-height:1.8}
+.disclaimer strong{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.5px;display:block;margin-bottom:5px}
+.disclaimer li{list-style:none;padding-left:1em;text-indent:-1em}
+.disclaimer li::before{content:'· ';color:var(--accent-mid)}
+footer{text-align:center;font-size:11px;color:var(--text3);padding:1.5rem}
+
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+@media(max-width:500px){
+  .grid2,.checks,.res-grid4,.res-grid5{grid-template-columns:1fr 1fr}
+  .res-grid3{grid-template-columns:1fr 1fr}
+  .opt-grid.col3{grid-template-columns:1fr 1fr}
+  .dir-grid{grid-template-columns:repeat(2,1fr)}
+  .r-val{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+  /* ── 공통 내비게이션 ── */
+  .partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0;box-shadow:0 2px 12px rgba(15,36,25,.15)}
+  .partson-nav .nav-brand{font-family:var(--font-display);font-size:13px;color:rgba(255,255,255,0.7);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px;font-weight:600;transition:color .2s var(--ease-out)}
+  .partson-nav .nav-brand:hover{color:#fff}
+  .partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:all .2s var(--ease-out);font-family:var(--font);position:relative}
+  .partson-nav a:hover{color:#fff;transform:translateY(-1px)}
+  .partson-nav a.active{color:#fff;border-bottom:2px solid var(--accent-bright)}
+  /* ── 공급사 섹션 ── */
+  .supplier-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+  .supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);font-family:var(--font-display)}
+  .supplier-list{display:flex;flex-direction:column;gap:10px}
+  .supplier-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+  .supplier-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;font-family:var(--font-display)}
+  .supplier-brands{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+  .supplier-contacts{display:flex;gap:14px;flex-wrap:wrap}
+  .supplier-contact-link{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace;transition:color .2s var(--ease-out)}
+  .supplier-contact-link:hover{color:var(--accent);text-decoration:underline}
+  .supplier-note{font-size:11px;color:var(--text3);margin-top:4px}
+  .supplier-empty{font-size:13px;color:var(--text3);text-align:center;padding:1.25rem}
+
+/* ── CAD 도면 다운로드 ── */
+.cad-section{margin-top:1rem;background:var(--accent);border-radius:12px;padding:1.25rem 1.5rem}
+.cad-section-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:.9rem;display:flex;align-items:center;gap:8px;font-family:var(--font-display)}
+.cad-section-title::before{content:'';display:inline-block;width:4px;height:18px;background:#4ade80;border-radius:2px;flex-shrink:0}
+.cad-btns{display:flex;flex-wrap:wrap;gap:10px}
+.cad-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border:none;border-radius:8px;background:rgba(255,255,255,0.15);font-size:13px;font-weight:600;color:#fff;text-decoration:none;transition:all .2s var(--ease-out);font-family:var(--font-display)}
+.cad-btn:hover{background:rgba(255,255,255,0.28);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cad-btn:active{transform:translateY(0)}
+.cad-btn-icon{font-size:16px;flex-shrink:0}
+.cad-note{font-size:11px;color:rgba(255,255,255,.6);margin-top:10px;line-height:1.6}
+.cad-note a{color:#4ade80}
+/* ── PDF 출력 ── */
+.print-header{display:none}
+.print-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#1A3A2A;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin:1rem 0;font-family:var(--font-display);transition:all .2s var(--ease-out)}
+.print-pdf-btn:hover{background:#2D6B4A;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,58,42,.2)}
+@media print{
+  @page{size:A4;margin:12mm 14mm 12mm 14mm}
+  .partson-nav,header,footer,.disclaimer,.print-pdf-btn,.tab-bar,nav,.btn-back,.btn-restart,.btn-goto-lm{display:none!important}
+  #steps-bar,#s1,#s2,#s3,#s4,#s5{display:none!important}
+  .step-wrap:not(#s-result){display:none!important}
+  .card.hidden{display:none!important}
+  .print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}
+  .ph-title{font-size:18px;font-weight:700;color:#1A3A2A;font-family:var(--font-display)}
+  .ph-sub{font-size:12px;color:#6B6760;margin-top:2px}
+  .ph-date{font-size:11px;color:#9E9B96;text-align:right}
+  body{background:#fff!important;font-size:12px}
+  main{padding:0!important;max-width:100%!important}
+  #s-result{display:block!important}
+  .cg-d,.cg-h{font-size:10px}
+  .cmp-grid{min-width:unset!important;overflow:hidden}
+  table{font-size:10px;break-inside:avoid}
+  a{color:inherit!important;text-decoration:none!important}
+  .checks{grid-template-columns:1fr 1fr!important}
+  /* LM 결과 카드도 */
+  #s-result-card:not(.hidden),#a-result-card:not(.hidden){display:block!important}
+}
+</style>
+</head>
+<body>
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <a href="lmguide.html">LM Guide</a>
+  <a href="ballscrew.html" class="active">볼스크류 선정</a>
+  <a href="bearing.html">베어링 선정</a>
+  <a href="servo_motor.html">서보모터 선정</a>
+  <a href="screwjack.html">스크류잭 선정</a>
+</nav>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">⚙</div>
+    <div>
+      <h1>볼스크류 + LM 가이드 선정 계산기</h1>
+      <p>PartsOn Linear · Beta v0.4 &nbsp;|&nbsp; Bosch Rexroth · THK · HIWIN · TBI · PMI 5개사 평균</p>
+    </div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab-inner">
+    <button class="app-tab active" onclick="switchApp('bs',this)">볼스크류 선정</button>
+    <button class="app-tab" onclick="switchApp('lm',this)">LM 가이드 수명 계산</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ════════ 볼스크류 위저드 ════════ -->
+<div id="app-bs">
+  <!-- 진행 표시 -->
+  <div style="display:flex;flex-direction:column;margin-bottom:1.25rem" id="steps-bar">
+    <!-- JS로 렌더링 -->
+  </div>
+
+  <div class="card">
+    <!-- STEP 1 : 방향 -->
+    <div id="s1" class="step-wrap active">
+      <div class="notice-mini">
+        <strong>⚠️ 참고용 도구입니다.</strong> 본 계산기는 ISO 3408 및 제조사 공개 데이터를 기반으로 한 <strong>참고용</strong>이며, 실제 설계·발주에는 사용할 수 없습니다. 반드시 제조사 카탈로그와 자격 있는 엔지니어의 검토를 거치세요.
+      </div>
+      <div class="beginner-tip">
+        <details>
+          <summary>💡 볼스크류가 처음이세요? — 30초 가이드 펼치기</summary>
+          <div class="tip-body">
+            <p><strong>볼스크류란?</strong></p>
+            <p>모터의 회전운동을 직선운동으로 변환하는 정밀 이송 부품입니다. 나사축(스크류)과 너트 사이에 볼이 구르며 이동합니다.</p>
+            <p><strong>선정의 핵심 용어:</strong></p>
+            <p>① <strong>리드 (Lead)</strong> — 모터 1회전당 너트가 이동하는 거리. 리드가 클수록 속도↑, 토크 필요↑</p>
+            <p>② <strong>외경 (Diameter)</strong> — 나사 외경. 클수록 강성↑, 허용 회전수↓</p>
+            <p>③ <strong>사이즈 표기</strong> — 예: 25×10 = 외경 25mm, 리드 10mm</p>
+            <p><strong>선정 순서:</strong></p>
+            <p>방향 → 하중/스트로크 → 속도 → 목표 수명 → 지지 방식 → 결과</p>
+            <p>모르는 값은 기본값으로 두고 결과를 먼저 확인하세요.</p>
+          </div>
+        </details>
+      </div>
+      <div class="question">설치 방향이 어떻게 되나요?</div>
+      <div class="question-desc">하중 계산 방식과 볼스크류 사이즈 선정에 영향을 줍니다.</div>
+      <div class="opt-grid col3">
+        <button class="opt-btn" onclick="bsSel(1,'dir','horizontal',this)">
+          <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="5" y="27" width="70" height="6" rx="2" fill="#C2D9CC"/><rect x="5" y="21" width="70" height="5" rx="1" fill="#8BAD9A" opacity="0.5"/><rect x="28" y="15" width="24" height="18" rx="3" fill="#1A3A2A" opacity="0.75"/><line x1="8" y1="9" x2="22" y2="9" stroke="#E05C2A" stroke-width="2"/><polygon points="22,6 28,9 22,12" fill="#E05C2A"/><circle cx="5" cy="24" r="5" fill="#1A3A2A" opacity="0.4"/><circle cx="75" cy="24" r="5" fill="#1A3A2A" opacity="0.3"/></svg>
+          <div class="opt-title">수평</div><div class="sub">테이블 좌우 이동</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(1,'dir','vertical',this)">
+          <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><rect x="37" y="5" width="6" height="40" rx="2" fill="#C2D9CC"/><rect x="31" y="5" width="5" height="40" rx="1" fill="#8BAD9A" opacity="0.5"/><rect x="20" y="16" width="24" height="16" rx="3" fill="#1A3A2A" opacity="0.75"/><line x1="64" y1="18" x2="64" y2="9" stroke="#E05C2A" stroke-width="2"/><polygon points="61,9 64,3 67,9" fill="#E05C2A"/><circle cx="40" cy="5" r="4" fill="#1A3A2A" opacity="0.4"/><circle cx="40" cy="45" r="4" fill="#1A3A2A" opacity="0.3"/></svg>
+          <div class="opt-title">수직</div><div class="sub">상하, 중력 영향</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(1,'dir','incline',this)">
+          <svg width="80" height="50" viewBox="0 0 80 50" fill="none" style="display:block;margin:0 auto 6px"><line x1="8" y1="42" x2="72" y2="10" stroke="#C2D9CC" stroke-width="7" stroke-linecap="round"/><line x1="6" y1="40" x2="70" y2="8" stroke="#8BAD9A" stroke-width="5" opacity="0.5"/><rect x="30" y="17" width="20" height="14" rx="3" fill="#1A3A2A" opacity="0.75" transform="rotate(-28 40 24)"/><line x1="10" y1="15" x2="20" y2="9" stroke="#E05C2A" stroke-width="2"/><polygon points="20,6 26,11 18,13" fill="#E05C2A"/></svg>
+          <div class="opt-title">경사</div><div class="sub">각도가 있는 축</div>
+        </button>
+      </div>
+      <div id="incline-row" style="display:none;margin-top:12px">
+        <div class="field" style="max-width:180px">
+          <label>경사각 θ (도)</label>
+          <div class="input-wrap"><input type="number" id="bs-angle" value="30" min="1" max="89"><span class="unit">°</span></div>
+        </div>
+      </div>
+      <div class="err-msg" id="err1">방향을 선택해주세요</div>
+      <div class="nav-row"><button class="btn btn-primary" onclick="bsNext(1)">다음 단계 →</button></div>
+    </div>
+
+    <!-- STEP 2 : 하중/스트로크 -->
+    <div id="s2" class="step-wrap">
+      <div class="question">이동 하중과 스트로크를 알려주세요</div>
+      <div class="question-desc">볼스크류가 움직여야 하는 총 무게(테이블 + 워크)와 이동 거리입니다.</div>
+      <div class="grid2">
+        <div class="field">
+          <label>이동 하중 W <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-W" placeholder="예: 50" min="0.1" step="0.1"><span class="unit">kg</span></div>
+        </div>
+        <div class="field">
+          <label>스트로크 S <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-S" placeholder="예: 500" min="10" step="10"><span class="unit">mm</span></div>
+        </div>
+        <div class="field full">
+          <label>양단 여유 거리</label>
+          <div class="input-wrap"><input type="number" id="bs-extra" value="100" min="20" step="10"><span class="unit">mm</span></div>
+          <div class="hint">너트 길이 + 양쪽 지지부 여유의 합계입니다. 일반 산업기계는 100 mm, 정밀·고속 축은 150 mm 권장.<br>스크류 유효 길이 = 스트로크 + 양단 여유 거리</div>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:8px">※ 마찰계수 μ = 0.003 (LM 가이드 기준) 적용 · 수직 축은 중력 하중 자동 반영</div>
+      <div class="err-msg" id="err2">하중과 스트로크를 입력해주세요</div>
+      <div class="nav-row">
+        <button class="btn btn-back" onclick="bsBack(2)">← 이전</button>
+        <button class="btn btn-primary" onclick="bsNext(2)">다음 단계 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 : 속도 -->
+    <div id="s3" class="step-wrap">
+      <div class="question">속도 조건을 알려주세요</div>
+      <div class="question-desc">최대 이동 속도와 가감속 시간입니다. 리드 선정에 직접 영향을 줍니다.</div>
+      <div class="grid2">
+        <div class="field">
+          <label>최대 속도 v_max <button class="help-btn" onclick="openPopup('vmax')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-vmax" placeholder="예: 500" min="1" step="10"><span class="unit">mm/s</span></div>
+        </div>
+        <div class="field">
+          <label>가감속 시간 t_acc <button class="help-btn" onclick="openPopup('tacc')">?</button></label>
+          <div class="input-wrap"><input type="number" id="bs-tacc" placeholder="예: 0.2" min="0.01" step="0.01"><span class="unit">s</span></div>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:8px">※ 허용 rpm = Dn 한계 70,000 ÷ 외경(mm) · 최소 리드 = 최대 속도 × 60 ÷ 허용 rpm</div>
+      <div class="err-msg" id="err3">속도를 입력해주세요</div>
+      <div class="nav-row">
+        <button class="btn btn-back" onclick="bsBack(3)">← 이전</button>
+        <button class="btn btn-primary" onclick="bsNext(3)">다음 단계 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 : 수명 -->
+    <div id="s4" class="step-wrap">
+      <div class="question">요구 수명은 어느 정도 필요한가요? <button class="help-btn" onclick="openPopup('life')">?</button></div>
+      <div class="question-desc">설비 교체 없이 운전해야 하는 목표 수명입니다.</div>
+      <div class="opt-grid col2" style="margin-bottom:12px">
+        <button class="opt-btn" onclick="bsSel(4,'life','10000',this)">
+          <div class="opt-title">1만 시간</div><div class="sub">일반 산업용 기준</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(4,'life','20000',this)">
+          <div class="opt-title">2만 시간</div><div class="sub">장기 운전 설비</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(4,'life','30000',this)">
+          <div class="opt-title">3만 시간</div><div class="sub">고가동률 설비</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(4,'life','custom',this)">
+          <div class="opt-title">직접 입력</div><div class="sub">시간 단위</div>
+        </button>
+      </div>
+      <div id="life-custom" style="display:none;margin-bottom:12px">
+        <div class="field" style="max-width:200px">
+          <label>요구 수명 (hr)</label>
+          <div class="input-wrap"><input type="number" id="bs-life-val" value="15000" min="1000" step="1000"><span class="unit">hr</span></div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:4px">
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px">일일 가동 시간 <span style="font-size:11px;font-weight:400;color:var(--text3)">(수명을 "년"으로 환산할 때 사용)</span></div>
+        <div class="opt-grid col3" style="margin-bottom:0">
+          <button class="opt-btn" onclick="bsSelHday('8',this)"><div class="opt-title">8시간</div><div class="sub">1교대</div></button>
+          <button class="opt-btn" onclick="bsSelHday('16',this)"><div class="opt-title">16시간</div><div class="sub">2교대</div></button>
+          <button class="opt-btn" onclick="bsSelHday('24',this)"><div class="opt-title">24시간</div><div class="sub">연속 가동</div></button>
+        </div>
+        <div style="margin-top:8px;max-width:180px">
+          <div class="field">
+            <label style="font-size:12px;color:var(--text3)">직접 입력 (시간/일)</label>
+            <div class="input-wrap"><input type="number" id="bs-hday" value="8" min="1" max="24" step="1" oninput="BS.h_day=parseFloat(this.value)||8"><span class="unit">h/일</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="err-msg" id="err4">수명을 선택해주세요</div>
+      <div class="nav-row">
+        <button class="btn btn-back" onclick="bsBack(4)">← 이전</button>
+        <button class="btn btn-primary" onclick="bsNext(4)">다음 단계 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5 : 지지 방식 -->
+    <div id="s5" class="step-wrap">
+      <div class="question">스크류 양쪽 끝을 어떻게 고정하나요?</div>
+      <div class="question-desc">고정 방식이 좌굴 강도와 위험속도에 영향을 줍니다.</div>
+      <div class="opt-grid">
+        <button class="opt-btn" onclick="bsSel(5,'support','1.4286',this)">
+          <div class="opt-title">한쪽 고정 + 반대쪽 베어링 지지</div>
+          <div class="sub">가장 일반적 — 모터 측 고정, 반대측 지지 (K=0.7)</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(5,'support','2.0',this)">
+          <div class="opt-title">양쪽 모두 고정</div>
+          <div class="sub">고강성 / 고속 용도 — 열팽창 대응 필요 (K=0.5)</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(5,'support','1.0',this)">
+          <div class="opt-title">양쪽 베어링 지지</div>
+          <div class="sub">단거리 / 저하중 용도</div>
+        </button>
+        <button class="opt-btn" onclick="bsSel(5,'support','0.5',this)">
+          <div class="opt-title">한쪽만 고정 (반대쪽 자유)</div>
+          <div class="sub">짧은 스트로크, 간단한 구조</div>
+        </button>
+      </div>
+      <div class="err-msg" id="err5">지지 방식을 선택해주세요</div>
+      <div class="nav-row">
+        <button class="btn btn-back" onclick="bsBack(5)">← 이전</button>
+        <button class="btn btn-primary" onclick="bsShowResult()">결과 보기 →</button>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="s-result" class="step-wrap">
+      <div class="print-header">
+        <div><div class="ph-title">PartsOn</div><div class="ph-sub">볼스크류 선정 계산기 — 계산 결과</div></div>
+        <div class="ph-date" id="bs-print-date"></div>
+      </div>
+      <div style="margin-bottom:1rem">
+        <button class="btn btn-back" onclick="bsGoStep(5)">← 조건 수정하기</button>
+      </div>
+      <div id="bs-result-body"></div>
+      <div class="supplier-section hidden" id="bs-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="bs-supplier-list"></div>
+      </div>
+      <div class="cad-section" id="bs-cad-section" style="display:none">
+        <div class="cad-section-title">CAD 도면 다운로드</div>
+        <div class="cad-btns" id="bs-cad-btns"></div>
+        <div class="cad-note">※ TraceParts에서 사이즈를 직접 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+      <button class="print-pdf-btn" onclick="bsDoPrint()">📄 PDF 저장 (인쇄)</button>
+      <button class="btn-restart" onclick="bsRestart()">↺ 처음부터 다시 선정하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ LM 가이드 수명 계산기 ════════ -->
+<div id="app-lm" style="display:none">
+  <div class="lm-tabs">
+    <button class="lm-tab active" onclick="lmTab('simple',this)">Simple — 기본 계산</button>
+    <button class="lm-tab" onclick="lmTab('advanced',this)">Advanced — 정밀 계산</button>
+  </div>
+
+  <!-- Simple -->
+  <div id="lm-simple">
+    <div class="card">
+      <div class="section-label">입력 조건</div>
+      <div class="grid2">
+        <div class="field">
+          <label>하중</label>
+          <div class="input-wrap"><input type="number" id="s-load" value="50" min="1"><span class="unit">kgf</span></div>
+        </div>
+        <div class="field">
+          <label>스트로크 (ST)</label>
+          <div class="input-wrap"><input type="number" id="s-stroke" value="500" min="1"><span class="unit">mm</span></div>
+        </div>
+        <div class="field">
+          <label>블록 수량</label>
+          <div class="input-wrap"><input type="number" id="s-blocks" value="1" min="1" max="16"><span class="unit">개</span></div>
+        </div>
+        <div class="field">
+          <label>SET 수량</label>
+          <div class="input-wrap"><input type="number" id="s-sets" value="1" min="1" max="10"><span class="unit">set</span></div>
+        </div>
+        <div class="field">
+          <label>이동 속도</label>
+          <div class="input-wrap"><input type="number" id="s-speed" value="300" min="1"><span class="unit">mm/s</span></div>
+        </div>
+        <div class="field">
+          <label>일일 가동 시간</label>
+          <div class="input-wrap"><input type="number" id="s-hours" value="8" min="1" max="24"><span class="unit">시간/일</span></div>
+        </div>
+        <div class="field full">
+          <label>설치 방향</label>
+          <div class="input-wrap">
+            <select id="s-direction" onchange="updateDirActive('s',this.value)">
+              <option value="1.0">수평</option>
+              <option value="1.2">수직 — 하향 하중</option>
+              <option value="1.5">수직 — 측면 하중</option>
+              <option value="1.3">경사 (45°)</option>
+            </select>
+          </div>
+          <div class="dir-grid" id="s-dir-grid">
+            <div class="dir-card active" id="s-dir-1.0" onclick="selectDir('s','1.0')">
+              <svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="2" y="30" width="56" height="7" rx="2" fill="#B4DCC7"/><rect x="20" y="20" width="20" height="14" rx="2" fill="#16653A"/><line x1="30" y1="5" x2="30" y2="19" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,20 27,14 33,14" fill="#E05C2A"/><line x1="44" y1="27" x2="55" y2="27" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="56,27 51,25 51,29" fill="#22A05A"/></svg>
+              <div class="dir-lbl">수평</div>
+            </div>
+            <div class="dir-card" id="s-dir-1.2" onclick="selectDir('s','1.2')">
+              <svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#B4DCC7"/><rect x="18" y="18" width="16" height="18" rx="2" fill="#16653A"/><line x1="30" y1="4" x2="30" y2="17" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,18 27,12 33,12" fill="#E05C2A"/><line x1="40" y1="32" x2="40" y2="43" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="40,44 37,39 43,39" fill="#22A05A"/></svg>
+              <div class="dir-lbl">수직<br>하향</div>
+            </div>
+            <div class="dir-card" id="s-dir-1.5" onclick="selectDir('s','1.5')">
+              <svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#B4DCC7"/><rect x="18" y="18" width="16" height="18" rx="2" fill="#16653A"/><line x1="6" y1="27" x2="17" y2="27" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="18,27 12,24 12,30" fill="#E05C2A"/><line x1="40" y1="32" x2="40" y2="43" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="40,44 37,39 43,39" fill="#22A05A"/></svg>
+              <div class="dir-lbl">수직<br>측면</div>
+            </div>
+            <div class="dir-card" id="s-dir-1.3" onclick="selectDir('s','1.3')">
+              <svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="2" y="26" width="56" height="7" rx="2" fill="#B4DCC7" transform="rotate(-45 30 30)"/><rect x="20" y="18" width="20" height="14" rx="2" fill="#16653A" transform="rotate(-45 30 25)"/><line x1="30" y1="4" x2="30" y2="15" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,16 27,10 33,10" fill="#E05C2A"/><text x="40" y="50" font-size="9" fill="#9CA3AF" font-family="monospace">45°</text></svg>
+              <div class="dir-lbl">경사<br>45°</div>
+            </div>
+          </div>
+          <div class="svg-legend"><div class="leg"><div class="leg-dot" style="background:#E05C2A"></div>하중 방향</div><div class="leg"><div class="leg-dot" style="background:#22A05A"></div>이동 방향</div><div class="leg"><div class="leg-dot" style="background:#B4DCC7"></div>레일</div></div>
+        </div>
+      </div>
+      <button class="btn-full" onclick="calcSimple()">수명 계산하기</button>
+    </div>
+
+    <div class="card hidden" id="s-result-card">
+      <div class="section-label">계산 결과</div>
+      <div class="res-grid4">
+        <div class="res-item"><div class="r-lbl">예상 수명</div><div class="r-val" id="s-res-km">—</div><div class="r-unit">km</div></div>
+        <div class="res-item"><div class="r-lbl">사용 기간</div><div class="r-val" id="s-res-year">—</div><div class="r-unit" id="s-res-year-unit">년</div></div>
+        <div class="res-item"><div class="r-lbl">안전율 (C₀/P)</div><div class="r-val" id="s-res-ratio">—</div><div class="r-unit">배</div></div>
+        <div class="res-item"><div class="r-lbl">등가 하중</div><div class="r-val" id="s-res-pload">—</div><div class="r-unit">kgf</div></div>
+      </div>
+      <div class="rec-row">
+        <div><div class="rec-lbl">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="s-rec-model">—</div></div>
+        <div class="rec-specs" id="s-rec-specs">—</div>
+      </div>
+      <div class="safety" id="s-safety-row"><div class="dot"></div><span id="s-safety-text">—</span></div>
+      <div style="margin-top:1rem">
+        <div class="section-title-sm">사이즈별 비교 검토</div>
+        <div class="d-btns" id="s-size-selector"></div>
+        <div style="overflow-x:auto">
+          <table class="ctbl"><thead><tr><th>사이즈</th><th>수명 (km)</th><th>사용 기간</th><th>안전율</th><th>판정</th></tr></thead><tbody id="s-compare-body"></tbody></table>
+        </div>
+      </div>
+      <button class="maker-toggle" onclick="toggleMaker('s')">📊 메이커별 C₁₀₀ 참고 데이터 보기 ▾</button>
+      <div id="s-maker-wrap" class="hidden">
+        <table class="maker-table"><thead><tr><th>메이커 / 시리즈</th><th>15</th><th>20</th><th>25</th><th>30</th><th>35</th><th>45</th></tr></thead>
+        <tbody>
+          <tr><td>Bosch Rexroth NRTVG</td><td>1,005</td><td>2,385</td><td>2,916</td><td>3,722</td><td>5,280</td><td>8,807</td></tr>
+          <tr><td>THK HSR</td><td>830</td><td>1,380</td><td>1,910</td><td>2,890</td><td>3,760</td><td>6,010</td></tr>
+          <tr><td>HIWIN HGH-CA</td><td>1,160</td><td>1,810</td><td>2,159</td><td>3,338</td><td>4,820</td><td>7,902</td></tr>
+          <tr><td>TBI TRH-FN</td><td>815</td><td>1,590</td><td>2,040</td><td>2,946</td><td>3,934</td><td>6,626</td></tr>
+          <tr><td>PMI MSA-S</td><td>867</td><td>1,632</td><td>2,040</td><td>3,160</td><td>4,283</td><td>6,934</td></tr>
+          <tr class="avg-row"><td>5개사 평균 ★</td><td id="s-avg-15">—</td><td id="s-avg-20">—</td><td id="s-avg-25">—</td><td id="s-avg-30">—</td><td id="s-avg-35">—</td><td id="s-avg-45">—</td></tr>
+        </tbody></table>
+        <div class="hint" style="margin-top:6px">단위: kgf · ISO 14728-1 기준 C₁₀₀. TBI·PMI는 50km 기준값 ÷ 1.26 환산 적용.</div>
+      </div>
+      <div class="hint" style="margin-top:12px">※ 최대속도의 65% 평균속도 적용 (간이 계산). 정밀 계산은 Advanced 탭을 이용하세요.</div>
+      <div class="supplier-section hidden" id="s-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="s-supplier-list"></div>
+      </div>
+      <div class="cad-section hidden" id="s-cad-section">
+        <div class="cad-section-title">CAD 도면 다운로드</div>
+        <div class="cad-btns" id="s-cad-btns"></div>
+        <div class="cad-note">※ TraceParts에서 사이즈를 직접 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced -->
+  <div id="lm-advanced" class="hidden">
+    <div class="card">
+      <div class="section-label">기본 조건</div>
+      <div class="grid2">
+        <div class="field"><label>하중</label><div class="input-wrap"><input type="number" id="a-load" value="50" min="1"><span class="unit">kgf</span></div></div>
+        <div class="field"><label>스트로크 (ST)</label><div class="input-wrap"><input type="number" id="a-stroke" value="500" min="1" oninput="updateSpeedPreview()"><span class="unit">mm</span></div></div>
+        <div class="field"><label>블록 수량</label><div class="input-wrap"><input type="number" id="a-blocks" value="1" min="1" max="16"><span class="unit">개</span></div></div>
+        <div class="field"><label>SET 수량</label><div class="input-wrap"><input type="number" id="a-sets" value="1" min="1" max="10"><span class="unit">set</span></div></div>
+        <div class="field"><label>일일 가동 시간</label><div class="input-wrap"><input type="number" id="a-hours" value="8" min="1" max="24"><span class="unit">시간/일</span></div></div>
+        <div class="field"><label>왕복 횟수</label><div class="input-wrap"><input type="number" id="a-cycles" value="" min="1" placeholder="미입력 가능"><span class="unit">/hr</span></div></div>
+        <div class="field full">
+          <label>설치 방향</label>
+          <div class="input-wrap"><select id="a-direction" onchange="updateDirActive('a',this.value)"><option value="1.0">수평</option><option value="1.2">수직 — 하향 하중</option><option value="1.5">수직 — 측면 하중</option><option value="1.3">경사 (45°)</option></select></div>
+          <div class="dir-grid" id="a-dir-grid">
+            <div class="dir-card active" id="a-dir-1.0" onclick="selectDir('a','1.0')"><svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="2" y="30" width="56" height="7" rx="2" fill="#B4DCC7"/><rect x="20" y="20" width="20" height="14" rx="2" fill="#16653A"/><line x1="30" y1="5" x2="30" y2="19" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,20 27,14 33,14" fill="#E05C2A"/><line x1="44" y1="27" x2="55" y2="27" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="56,27 51,25 51,29" fill="#22A05A"/></svg><div class="dir-lbl">수평</div></div>
+            <div class="dir-card" id="a-dir-1.2" onclick="selectDir('a','1.2')"><svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#B4DCC7"/><rect x="18" y="18" width="16" height="18" rx="2" fill="#16653A"/><line x1="30" y1="4" x2="30" y2="17" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,18 27,12 33,12" fill="#E05C2A"/><line x1="40" y1="32" x2="40" y2="43" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="40,44 37,39 43,39" fill="#22A05A"/></svg><div class="dir-lbl">수직<br>하향</div></div>
+            <div class="dir-card" id="a-dir-1.5" onclick="selectDir('a','1.5')"><svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="26" y="2" width="8" height="52" rx="2" fill="#B4DCC7"/><rect x="18" y="18" width="16" height="18" rx="2" fill="#16653A"/><line x1="6" y1="27" x2="17" y2="27" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="18,27 12,24 12,30" fill="#E05C2A"/><line x1="40" y1="32" x2="40" y2="43" stroke="#22A05A" stroke-width="1.5" stroke-dasharray="3,2" stroke-linecap="round"/><polygon points="40,44 37,39 43,39" fill="#22A05A"/></svg><div class="dir-lbl">수직<br>측면</div></div>
+            <div class="dir-card" id="a-dir-1.3" onclick="selectDir('a','1.3')"><svg width="54" height="50" viewBox="0 0 60 56" fill="none"><rect x="2" y="26" width="56" height="7" rx="2" fill="#B4DCC7" transform="rotate(-45 30 30)"/><rect x="20" y="18" width="20" height="14" rx="2" fill="#16653A" transform="rotate(-45 30 25)"/><line x1="30" y1="4" x2="30" y2="15" stroke="#E05C2A" stroke-width="2" stroke-linecap="round"/><polygon points="30,16 27,10 33,10" fill="#E05C2A"/><text x="40" y="50" font-size="9" fill="#9CA3AF" font-family="monospace">45°</text></svg><div class="dir-lbl">경사<br>45°</div></div>
+          </div>
+          <div class="svg-legend"><div class="leg"><div class="leg-dot" style="background:#E05C2A"></div>하중 방향</div><div class="leg"><div class="leg-dot" style="background:#22A05A"></div>이동 방향</div><div class="leg"><div class="leg-dot" style="background:#B4DCC7"></div>레일</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">속도 조건 — 가감속 정밀 계산</div>
+      <div class="grid2">
+        <div class="field"><label>최대 속도 (V)</label><div class="input-wrap"><input type="number" id="a-speed" value="800" min="1" oninput="updateSpeedPreview()"><span class="unit">mm/s</span></div></div>
+        <div class="field"><label>가감속 시간 (tn)</label><div class="input-wrap"><input type="number" id="a-tn" value="0.08" min="0" step="0.01" oninput="updateSpeedPreview()"><span class="unit">sec</span></div></div>
+      </div>
+      <div class="speed-prev">
+        <div class="sp-title">속도 프로파일 미리보기</div>
+        <div class="sp-bars" id="speed-bars"></div>
+        <div class="sp-lbls"><span>가속</span><span>등속</span><span>감속</span></div>
+        <div class="sp-info">
+          <div><div class="sp-val" id="sp-accel-dist">—</div><div class="sp-lbl">가속 거리 (mm)</div></div>
+          <div><div class="sp-val" id="sp-const-dist">—</div><div class="sp-lbl">등속 거리 (mm)</div></div>
+          <div><div class="sp-val" id="sp-avg-speed">—</div><div class="sp-lbl">평균 속도 (mm/s)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">모멘트 조건</div>
+      <div class="grid2">
+        <div class="field"><label>레일 스팬 (RS) <button class="help-btn" onclick="openPopup('rs')">?</button></label><div class="input-wrap"><input type="number" id="a-rail-dist" value="0" min="0"><span class="unit">mm</span></div><div class="hint">0 입력 시 미적용</div></div>
+        <div class="field"><label>블록 스팬 (BS1) <button class="help-btn" onclick="openPopup('bs1')">?</button></label><div class="input-wrap"><input type="number" id="a-block-dist" value="0" min="0"><span class="unit">mm</span></div><div class="hint">0 입력 시 미적용</div></div>
+        <div class="field"><label>하중 작용점 높이 (Br) <button class="help-btn" onclick="openPopup('br')">?</button></label><div class="input-wrap"><input type="number" id="a-height" value="0" min="0"><span class="unit">mm</span></div><div class="hint">0 입력 시 미적용</div></div>
+        <div class="field"><label>편심 거리 (Bt) <button class="help-btn" onclick="openPopup('bt')">?</button></label><div class="input-wrap"><input type="number" id="a-eccentric" value="0" min="0"><span class="unit">mm</span></div><div class="hint">0 입력 시 미적용</div></div>
+      </div>
+      <button class="btn-full" onclick="calcAdvanced()">정밀 계산하기</button>
+    </div>
+
+    <div class="card hidden" id="a-result-card">
+      <div class="section-label">계산 결과</div>
+      <div class="res-grid5">
+        <div class="res-item"><div class="r-lbl">예상 수명</div><div class="r-val" id="a-res-km">—</div><div class="r-unit">km</div></div>
+        <div class="res-item"><div class="r-lbl">사용 기간</div><div class="r-val" id="a-res-year">—</div><div class="r-unit" id="a-res-year-unit">년</div></div>
+        <div class="res-item"><div class="r-lbl">가동 시간</div><div class="r-val" id="a-res-hours">—</div><div class="r-unit">시간</div></div>
+        <div class="res-item"><div class="r-lbl">안전율 (C₀/P)</div><div class="r-val" id="a-res-ratio">—</div><div class="r-unit">배</div></div>
+        <div class="res-item"><div class="r-lbl">평균 속도</div><div class="r-val" id="a-res-avgspeed">—</div><div class="r-unit">mm/s</div></div>
+      </div>
+      <div class="res-grid4">
+        <div class="res-item"><div class="r-lbl">등가 하중 (P)</div><div class="r-val" id="a-res-mload">—</div><div class="r-unit">kgf</div></div>
+        <div class="res-item"><div class="r-lbl">블록 1개당 하중</div><div class="r-val" id="a-res-pload">—</div><div class="r-unit">kgf</div></div>
+        <div class="res-item"><div class="r-lbl">모멘트 My</div><div class="r-val" id="a-res-my">—</div><div class="r-unit">kgf·mm</div></div>
+        <div class="res-item"><div class="r-lbl">모멘트 Mz</div><div class="r-val" id="a-res-mz">—</div><div class="r-unit">kgf·mm</div></div>
+      </div>
+      <div class="rec-row"><div><div class="rec-lbl">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="a-rec-model">—</div></div><div class="rec-specs" id="a-rec-specs">—</div></div>
+      <div class="safety" id="a-safety-row"><div class="dot"></div><span id="a-safety-text">—</span></div>
+      <div style="margin-top:1rem">
+        <div class="section-title-sm">사이즈별 비교 검토</div>
+        <div class="d-btns" id="a-size-selector"></div>
+        <div style="overflow-x:auto">
+          <table class="ctbl"><thead><tr><th>사이즈</th><th>수명 (km)</th><th>사용 기간</th><th>가동 시간</th><th>안전율</th><th>판정</th></tr></thead><tbody id="a-compare-body"></tbody></table>
+        </div>
+      </div>
+      <button class="maker-toggle" onclick="toggleMaker('a')">📊 메이커별 C₁₀₀ 참고 데이터 보기 ▾</button>
+      <div id="a-maker-wrap" class="hidden">
+        <table class="maker-table"><thead><tr><th>메이커 / 시리즈</th><th>15</th><th>20</th><th>25</th><th>30</th><th>35</th><th>45</th></tr></thead>
+        <tbody>
+          <tr><td>Bosch Rexroth NRTVG</td><td>1,005</td><td>2,385</td><td>2,916</td><td>3,722</td><td>5,280</td><td>8,807</td></tr>
+          <tr><td>THK HSR</td><td>830</td><td>1,380</td><td>1,910</td><td>2,890</td><td>3,760</td><td>6,010</td></tr>
+          <tr><td>HIWIN HGH-CA</td><td>1,160</td><td>1,810</td><td>2,159</td><td>3,338</td><td>4,820</td><td>7,902</td></tr>
+          <tr><td>TBI TRH-FN</td><td>815</td><td>1,590</td><td>2,040</td><td>2,946</td><td>3,934</td><td>6,626</td></tr>
+          <tr><td>PMI MSA-S</td><td>867</td><td>1,632</td><td>2,040</td><td>3,160</td><td>4,283</td><td>6,934</td></tr>
+          <tr class="avg-row"><td>5개사 평균 ★</td><td id="a-avg-15">—</td><td id="a-avg-20">—</td><td id="a-avg-25">—</td><td id="a-avg-30">—</td><td id="a-avg-35">—</td><td id="a-avg-45">—</td></tr>
+        </tbody></table>
+        <div class="hint" style="margin-top:6px">단위: kgf · ISO 14728-1 기준 C₁₀₀. TBI·PMI는 50km 기준값 ÷ 1.26 환산 적용.</div>
+      </div>
+      <div class="hint" style="margin-top:12px">※ Bosch Rexroth · THK · HIWIN · TBI · PMI 5개사 C₁₀₀ 평균값 기준 (ISO 14728-1). 최종 선정은 제조사 카탈로그로 검증하시기 바랍니다.</div>
+      <div class="supplier-section hidden" id="a-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="a-supplier-list"></div>
+      </div>
+      <div class="cad-section hidden" id="a-cad-section">
+        <div class="cad-section-title">CAD 도면 다운로드</div>
+        <div class="cad-btns" id="a-cad-btns"></div>
+        <div class="cad-note">※ TraceParts에서 사이즈를 직접 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- 모멘트 팝업 -->
+<div class="popup-overlay" id="popup-overlay" onclick="closePopup(event)">
+  <div class="popup-box">
+    <div class="popup-hdr"><div class="popup-ttl" id="popup-title">—</div><button class="popup-close" onclick="closePopup()">닫기</button></div>
+    <div class="popup-img" id="popup-svg"></div>
+    <div class="popup-desc" id="popup-desc"></div>
+  </div>
+</div>
+
+<div class="disclaimer" style="margin-top:0">
+  <strong>⚠ 면책 고지 / DISCLAIMER</strong>
+  <ul>
+    <li>본 계산기는 참고용이며, 계산 결과를 근거로 한 설계·구매 결정에 대해 PartsOn은 법적 책임을 지지 않습니다.</li>
+    <li>C₁₀₀ 값은 각 제조사 공개 카탈로그 기준이며, 제품 개정에 따라 실제 값과 다를 수 있습니다.</li>
+    <li>최종 부품 선정은 반드시 제조사 카탈로그 및 전문가 검토를 거치시기 바랍니다.</li>
+  </ul>
+</div>
+<footer>PartsOn Linear · Beta v0.4 · 볼스크류 + LM Guide 통합 선정 계산기</footer>
+
+<script>
+/* ══════════════════════════════════
+   볼스크류 위저드
+══════════════════════════════════ */
+const BS={dir:null,angle:30,W:null,S:null,extra:100,vmax:null,tacc:null,life:null,h_day:8,support:null};
+
+/* ── 볼스크류 카탈로그 데이터 ──────────────────────────
+   C(N): 동정격하중, C0(N): 정정격하중, dr(mm): 골지름
+   출처: THK BNT / HIWIN FSI / TBI SFU / Bosch Rexroth 4개사 평균 (그라운드 등급)
+──────────────────────────────────────────────────── */
+const BS_DATA={
+  '16x5' :{C:9700,  C0:16000, dr:13.5},
+  '16x10':{C:8300,  C0:13200, dr:13.5},
+  '20x5' :{C:14000, C0:24000, dr:16.9},
+  '20x10':{C:15200, C0:23300, dr:16.9},
+  '20x20':{C:10800, C0:15800, dr:16.9},
+  '25x5' :{C:22000, C0:42000, dr:21.5},
+  '25x10':{C:24200, C0:40500, dr:21.5},
+  '25x20':{C:19500, C0:31000, dr:21.5},
+  '32x10':{C:39500, C0:73600, dr:27.3},
+  '32x20':{C:33300, C0:60500, dr:27.3},
+  '40x10':{C:52700, C0:103500,dr:34.0},
+  '40x20':{C:46100, C0:88800, dr:34.0},
+  '50x10':{C:76300, C0:161600,dr:43.0},
+  '50x20':{C:65500, C0:134600,dr:43.0},
+  '63x10':{C:103700,C0:221000,dr:55.0},
+  '63x20':{C:90700, C0:194500,dr:55.0},
+};
+const BS_DIAMS=[16,20,25,32,40,50,63];
+const DN_LIMIT=70000;
+const STEP_LABELS=['방향','하중·스트로크','속도','수명','지지 방식'];
+
+function renderStepsBar(cur){
+  const bar=document.getElementById('steps-bar');
+  bar.innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;align-items:flex-start;gap:0';
+  for(let i=1;i<=5;i++){
+    const clickable=i<cur;
+    // 원+라벨을 묶는 컬럼
+    const col=document.createElement('div');
+    col.style.cssText='display:flex;flex-direction:column;align-items:center;flex-shrink:0';
+    const circ=document.createElement('div');
+    circ.className='step-circle'+(i<cur?' done':i===cur?' active':'');
+    circ.textContent=i<cur?'✓':i;
+    if(clickable){
+      circ.style.cursor='pointer';
+      circ.title=STEP_LABELS[i-1]+' 단계로 이동';
+      circ.onclick=()=>bsGoStep(i);
+    }
+    col.appendChild(circ);
+    const lbl=document.createElement('div');
+    const baseStyle='font-size:12px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:64px';
+    if(clickable){
+      lbl.style.cssText=baseStyle+';color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px';
+      lbl.onclick=()=>bsGoStep(i);
+    } else if(i===cur){
+      lbl.style.cssText=baseStyle+';color:var(--accent);font-weight:700';
+    } else {
+      lbl.style.cssText=baseStyle+';color:var(--text3)';
+    }
+    lbl.textContent=STEP_LABELS[i-1];
+    col.appendChild(lbl);
+    wrap.appendChild(col);
+    // 원과 원 사이의 연결선 (마지막 스텝 제외)
+    if(i<5){const line=document.createElement('div');line.className='step-line'+(i<cur?' done':'');line.style.cssText='margin-top:16px';wrap.appendChild(line);}
+  }
+  bar.appendChild(wrap);
+}
+
+function switchApp(t,el){
+  document.getElementById('app-bs').style.display=t==='bs'?'block':'none';
+  document.getElementById('app-lm').style.display=t==='lm'?'block':'none';
+  document.querySelectorAll('.app-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function bsSelHday(val,el){
+  BS.h_day=parseFloat(val)||8;
+  document.getElementById('bs-hday').value=val;
+  document.querySelectorAll('#s4 .opt-grid .opt-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function bsSel(step,key,val,el){
+  BS[key]=val;
+  document.querySelectorAll('#s'+step+' .opt-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  if(key==='dir') document.getElementById('incline-row').style.display=val==='incline'?'block':'none';
+  if(key==='life') document.getElementById('life-custom').style.display=val==='custom'?'block':'none';
+}
+
+function showErr(id){const e=document.getElementById(id);e.style.display='block';setTimeout(()=>e.style.display='none',2500);}
+
+function bsNext(step){
+  if(step===1){if(!BS.dir){showErr('err1');return;}if(BS.dir==='incline')BS.angle=parseFloat(document.getElementById('bs-angle').value)||30;}
+  if(step===2){const W=parseFloat(document.getElementById('bs-W').value),S=parseFloat(document.getElementById('bs-S').value);if(!W||!S){showErr('err2');return;}BS.W=W;BS.S=S;BS.extra=parseFloat(document.getElementById('bs-extra').value)||100;}
+  if(step===3){const v=parseFloat(document.getElementById('bs-vmax').value),t=parseFloat(document.getElementById('bs-tacc').value);if(!v||!t){showErr('err3');return;}BS.vmax=v;BS.tacc=t;}
+  if(step===4){if(!BS.life){showErr('err4');return;}if(BS.life==='custom')BS.life=String(parseFloat(document.getElementById('bs-life-val').value)||20000);BS.h_day=parseFloat(document.getElementById('bs-hday').value)||8;}
+  bsGoStep(step+1);
+}
+function bsBack(step){bsGoStep(step-1);}
+function bsGoStep(n, pushHistory=true){
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById(n<=5?'s'+n:'s-result').classList.add('active');
+  if(n<=5)renderStepsBar(n);
+  if(pushHistory) history.pushState({bsStep:n}, '');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate', e=>{
+  const n = e.state && e.state.bsStep;
+  if(n) bsGoStep(n, false);
+  else bsGoStep(1, false);
+});
+function bsShowResult(){if(!BS.support){showErr('err5');return;}bsGoStep(6);bsRender();}
+
+function bsCalcFa(W,dir,ang){
+  const g=9.81,mu=0.003;
+  const a=(BS.vmax/1000)/BS.tacc;
+  const Fi=W*a;
+  if(dir==='horizontal')return W*g*mu+Fi;
+  if(dir==='vertical')return W*g+Fi;
+  const rad=ang*Math.PI/180;
+  return W*g*(Math.sin(rad)+mu*Math.cos(rad))+Fi;
+}
+
+function bsFindBest(Fa,S,vmax,Lreq,kFactor){
+  const results=[];
+  for(const [key,dat] of Object.entries(BS_DATA)){
+    const parts=key.split('x');
+    const d0=parseInt(parts[0]),lead=parseInt(parts[1]);
+    const {C,C0,dr}=dat;
+    const nAllowed=DN_LIMIT/d0;
+    const nm_op=vmax*60/lead;
+    if(nm_op>nAllowed*1.05)continue; // 허용 rpm 5% 초과 시 스킵
+    // 가감속 프로파일로 평균속도 계산 (사다리꼴)
+    const accelDist=0.5*vmax*BS.tacc;
+    const constDist=Math.max(0,S-2*accelDist);
+    const tripTime=BS.tacc+(constDist>0?constDist/vmax:0)+BS.tacc;
+    const avgSpeed=tripTime>0?S/tripTime:vmax*0.65;
+    const nm_avg=avgSpeed*60/lead;
+    const Fa_safe=Math.max(Fa,10);
+    // 수명 계산 (ISO 3408-5)
+    const L10=(C/Fa_safe)**3;
+    const L10h=L10*1e6/(60*Math.max(nm_avg,1));
+    // 좌굴 하중 계산 (실제 골지름 사용)
+    const dr_m=dr/1000,Ls=(S+BS.extra)/1000;
+    const E=206e9,I=Math.PI*dr_m**4/64;
+    const Fb_N=kFactor**2*Math.PI**2*E*I/Ls**2;
+    const buckSF=Fb_N/Fa_safe;
+    // 임계속도 검증
+    const Dn=d0*nm_op;
+    // 정적 안전율
+    const statSF=C0/Fa_safe;
+    const lifeOk=L10h>=Lreq, buckOk=buckSF>=3.5, dnsOk=Dn<=DN_LIMIT, statOk=statSF>=3.0;
+    const penalty=(lifeOk?0:2000)+(buckOk?0:1000)+(dnsOk?0:500)+(statOk?0:500);
+    const tiebreak=(d0/63)*10+(lead/40)*1;
+    // 가속 토크 계산용 스크류 관성 (kg·m²)
+    const rho=7800,Ltot=(S+BS.extra+200)/1000;
+    const J_screw=(Math.PI/2)*rho*Ltot*(dr_m/2)**4;
+    const J_table=BS.W*(lead/1000/(2*Math.PI))**2;
+    const J_total=J_screw+J_table;
+    const alpha=(nm_op*2*Math.PI/60)/BS.tacc;
+    const T_run=Fa_safe*(lead/1000)/(2*Math.PI*0.9);
+    const T_acc=J_total*alpha;
+    const T_total=T_run+T_acc;
+    const P_kW=T_total*(nm_op*2*Math.PI/60)/1000;
+    results.push({d0,lead,nm_op,nm_avg,nm_allowed:nAllowed,L10h,Fb_N,buckSF,Dn,statSF,lifeOk,buckOk,dnsOk,statOk,score:penalty+tiebreak,C,C0,dr,Ls,allOk:lifeOk&&buckOk&&dnsOk&&statOk,T_run,T_acc,T_total,P_kW,J_screw,J_table});
+  }
+  results.sort((a,b)=>a.score-b.score);
+  return results;
+}
+
+function bsRender(){
+  const Fa=bsCalcFa(BS.W,BS.dir,BS.angle);
+  const Lreq=parseFloat(BS.life),kFactor=parseFloat(BS.support);
+  const combos=bsFindBest(Fa,BS.S,BS.vmax,Lreq,kFactor);
+  if(!combos.length){document.getElementById('bs-result-body').innerHTML='<div class="warn-banner">⚠ <strong>조건을 만족하는 볼스크류가 없습니다.</strong><br>속도가 너무 높거나 하중이 너무 큰 경우입니다. 조건을 다시 검토해 주세요.</div>';return;}
+  const bestOk=combos.find(c=>c.allOk);
+  const r=bestOk||combos[0];
+  const noOk=!bestOk;
+  const lifeClass=r.lifeOk?'ok':r.L10h>=Lreq*0.7?'warn':'bad';
+  const buckClass=r.buckOk?'ok':r.buckSF>=2?'warn':'bad';
+  const dnsClass=r.dnsOk?'ok':r.Dn<=DN_LIMIT*1.1?'warn':'bad';
+  const statClass=r.statOk?'ok':'warn';
+  const supportLabel={'0.5':'한쪽 고정-자유','1.0':'양쪽 지지','1.4286':'고정-지지 (K=0.7)','2.0':'양쪽 고정 (K=0.5)'}[BS.support]||'';
+  const lifeYears=r.L10h/(BS.h_day*365);
+  const lifeYearsStr=lifeYears>=1?lifeYears.toFixed(1)+'년':(lifeYears*12).toFixed(1)+'개월';
+  const lifeHrStr=r.L10h>=99999?'>100,000':Math.round(r.L10h).toLocaleString();
+  const Fa_kgf=Fa/9.81;
+  let lmSize='';
+  if(Fa_kgf<150)lmSize='size 15 또는 20';else if(Fa_kgf<400)lmSize='size 25 또는 30';else if(Fa_kgf<900)lmSize='size 35 또는 45';else lmSize='size 55 이상';
+  const lmLoad=Math.round(Fa*1.5);
+  const alts=combos.filter(c=>(c.d0!==r.d0||c.lead!==r.lead)&&(noOk?true:c.allOk)).slice(0,4);
+
+  document.getElementById('bs-result-body').innerHTML=`
+    ${noOk?'<div class="warn-banner">⚠ <strong>입력 조건을 완전히 만족하는 볼스크류가 없습니다.</strong><br>아래는 현재 카탈로그 범위 내 가장 근접한 조합입니다. 하중 저감, 수명 조건 완화, 또는 멀티너트 사양 검토를 권장합니다.</div>':''}
+    <div class="section-label" style="margin-bottom:.5rem">${noOk?'근접 조합 (조건 미충족)':'⭐ 추천 볼스크류'}</div>
+    <div class="result-hero">
+      <div class="result-hero-main">φ${r.d0} × 리드 ${r.lead} mm</div>
+      <div class="result-hero-sub">지지: ${supportLabel} &nbsp;·&nbsp; 유효 길이 ≈ ${Math.round(r.Ls*1000)} mm &nbsp;·&nbsp; 골지름 ${r.dr} mm<br>운전 ${Math.round(r.nm_op)} rpm &nbsp;·&nbsp; 허용 상한 ${Math.round(r.nm_allowed)} rpm</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div class="check-card ${lifeClass}">
+        <div class="check-label">수명 L₁₀</div>
+        <div class="check-val">${lifeHrStr} <span style="font-size:13px;font-weight:500">hr</span></div>
+        <div class="check-judge">${r.lifeOk?'✓ 충분':r.L10h>=Lreq*0.7?'△ 주의':'✗ 부족'} (요구 ${Lreq.toLocaleString()} hr)</div>
+        <div style="font-size:12px;margin-top:4px;opacity:.85">≈ <strong>${lifeYearsStr}</strong> (${BS.h_day}h/일 기준)</div>
+      </div>
+      <div class="check-card ${buckClass}">
+        <div class="check-label">좌굴 안전율</div>
+        <div class="check-val">${r.buckSF.toFixed(1)} <span style="font-size:13px;font-weight:500">배</span></div>
+        <div class="check-judge">${r.buckOk?'✓ 양호':r.buckSF>=2?'△ 주의':'✗ 위험'} (권장 ≥ 3.5)</div>
+        <div style="font-size:12px;margin-top:4px;opacity:.85">좌굴 하중 ${(r.Fb_N/1000).toFixed(1)} kN</div>
+      </div>
+      <div class="check-card ${dnsClass}">
+        <div class="check-label">Dn 값 (임계속도)</div>
+        <div class="check-val">${Math.round(r.Dn).toLocaleString()}</div>
+        <div class="check-judge">${r.dnsOk?'✓ 안전':'✗ 한계 초과'} (한계 ${DN_LIMIT.toLocaleString()})</div>
+        <div style="font-size:12px;margin-top:4px;opacity:.85">여유율 ${((1-r.Dn/DN_LIMIT)*100).toFixed(0)}%</div>
+      </div>
+      <div class="check-card ${statClass}">
+        <div class="check-label">정적 안전율 (C₀/P)</div>
+        <div class="check-val">${r.statSF.toFixed(1)} <span style="font-size:13px;font-weight:500">배</span></div>
+        <div class="check-judge">${r.statOk?'✓ 양호':'△ 낮음'} (권장 ≥ 3.0)</div>
+        <div style="font-size:12px;margin-top:4px;opacity:.85">C₀ = ${(r.C0/1000).toFixed(1)} kN</div>
+      </div>
+    </div>
+    <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-bottom:12px">
+      <div class="section-title-sm" style="margin-bottom:10px">🔧 모터 용량 추정</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+        <div style="text-align:center">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">구동 토크</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text)">${r.T_run.toFixed(2)}</div>
+          <div style="font-size:11px;color:var(--text2)">N·m</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:4px">가속 토크</div>
+          <div style="font-size:18px;font-weight:700;color:var(--text)">${r.T_acc.toFixed(2)}</div>
+          <div style="font-size:11px;color:var(--text2)">N·m</div>
+        </div>
+        <div style="text-align:center;background:var(--accent-light);border-radius:8px;padding:4px 0">
+          <div style="font-size:11px;color:var(--accent-mid);margin-bottom:4px;font-weight:600">필요 동력</div>
+          <div style="font-size:18px;font-weight:700;color:var(--accent)">${r.P_kW.toFixed(3)}</div>
+          <div style="font-size:11px;color:var(--accent-mid)">kW</div>
+        </div>
+      </div>
+      <div class="hint" style="margin-top:8px">※ 구동 토크: 효율 90% 적용 · 가속 토크: 스크류+테이블 관성 합산 · 실제 모터는 안전율 1.5~2.0× 여유 권장</div>
+    </div>
+    ${alts.length?`<div class="alts"><div class="alt-label">다른 후보 조합</div>${alts.map(a=>{const aYrs=(a.L10h/(BS.h_day*365));const aYrsStr=aYrs>=1?aYrs.toFixed(1)+'년':(aYrs*12).toFixed(1)+'개월';return`<div class="alt-item">φ${a.d0}×L${a.lead} &nbsp;|&nbsp; ${a.L10h>=99999?'>100k':Math.round(a.L10h).toLocaleString()}hr (≈${aYrsStr}) &nbsp;|&nbsp; 좌굴 ${a.buckSF.toFixed(1)}배 &nbsp;|&nbsp; ${Math.round(a.nm_op)}rpm &nbsp;|&nbsp; ${a.T_total.toFixed(2)}N·m &nbsp;|&nbsp; ${a.P_kW.toFixed(2)}kW</div>`}).join('')}</div>`:''}
+    <div class="divider"></div>
+    <div class="section-label" style="margin-bottom:.5rem">📐 추천 LM 가이드 (개략)</div>
+    <div class="lm-rec-box">
+      <div class="lm-rec-title">${lmSize}, 2열 2개 (총 4개 블록)</div>
+      <div class="lm-rec-desc">등가 하중 ≈ ${Fa_kgf.toFixed(0)} kgf 기준 개략 추천 · 정밀 수명 선정이 필요하면 아래 버튼을 눌러주세요</div>
+    </div>
+    <button class="btn-goto-lm" onclick="goLM(${lmLoad},${BS.S})">LM 가이드 수명 계산기에서 자세히 선정하기 →</button>
+    <div class="divider"></div>
+    <div class="section-title-sm">사이즈 비교 검토</div>
+    <div class="d-btns" id="bs-d-btns"></div>
+    <div style="overflow-x:auto"><div class="cmp-grid" id="bs-cmp-grid">
+      <div class="cg-h"></div><div class="cg-h">외경 × 리드</div><div class="cg-h">C (kN)</div>
+      <div class="cg-h">수명 (hr)</div><div class="cg-h">수명 (년)</div><div class="cg-h">좌굴 SF</div>
+      <div class="cg-h">Dn</div><div class="cg-h">토크 N·m</div><div class="cg-h">동력 kW</div><div class="cg-h">판정</div>
+    </div></div>
+    <div class="hint" style="margin-top:10px">※ C값: THK BNT · HIWIN FSI · TBI SFU · Bosch Rexroth 4개사 그라운드 등급 평균 · ISO 3408-5 준거 · 실제 골지름(dr) 카탈로그값 적용</div>
+  `;
+  bsBuildCompare(combos,r,Fa,Lreq);
+  renderBSSuppliers();
+  renderBSCAD(r.d0, r.lead);
+}
+
+let bsSelectedD=new Set();
+let bsLastCompare=null;
+
+function bsBuildCompare(combos,rec,Fa,Lreq){
+  bsLastCompare={combos,rec,Fa,Lreq};
+  bsSelectedD=new Set();
+  const dBtns=document.getElementById('bs-d-btns');
+  if(!dBtns)return;
+  dBtns.innerHTML='';
+  BS_DIAMS.forEach(d0=>{
+    if(!combos.some(c=>c.d0===d0))return;
+    const btn=document.createElement('button');
+    btn.className='d-btn'+(d0===rec.d0?' active':'');
+    btn.textContent='φ'+d0;
+    btn.dataset.d=d0;
+    btn.onclick=()=>{
+      if(d0===rec.d0)return;
+      if(bsSelectedD.has(d0))bsSelectedD.delete(d0);else bsSelectedD.add(d0);
+      bsRenderCompareTable();
+    };
+    dBtns.appendChild(btn);
+  });
+  bsRenderCompareTable();
+}
+
+function bsRenderCompareTable(){
+  if(!bsLastCompare)return;
+  const{combos,rec,Fa,Lreq}=bsLastCompare;
+  const eta=0.9;
+  const showD=[rec.d0,...bsSelectedD].sort((a,b)=>a-b);
+  // 직경 버튼 active 갱신
+  document.querySelectorAll('#bs-d-btns .d-btn').forEach(btn=>{
+    const d=parseInt(btn.dataset.d);
+    btn.classList.toggle('active',d===rec.d0||bsSelectedD.has(d));
+  });
+  const grid=document.getElementById('bs-cmp-grid');
+  if(!grid)return;
+  // 헤더(처음 10개) 유지하고 나머지 삭제
+  while(grid.children.length>10)grid.removeChild(grid.lastChild);
+
+  function addCell(html,extraClass=''){
+    const d=document.createElement('div');
+    d.className='cg-d'+(extraClass?' '+extraClass:'');
+    d.innerHTML=html;
+    grid.appendChild(d);
+  }
+  showD.forEach((d0,di)=>{
+    const rows=combos.filter(c=>c.d0===d0).sort((a,b)=>a.lead-b.lead);
+    rows.forEach(c=>{
+      const isRec=c.d0===rec.d0&&c.lead===rec.lead;
+      const isSel=bsSelectedD.has(d0);
+      const rowCls=isRec?'cg-rec':isSel?'cg-sel':'';
+      const life=c.L10h>=99999?'>100,000':Math.round(c.L10h).toLocaleString();
+      const lifeYrs=(c.L10h/(BS.h_day*365));
+      const lifeYrsStr=lifeYrs>=1?lifeYrs.toFixed(1)+'년':(lifeYrs*12).toFixed(1)+'개월';
+      const verdict=c.allOk?'✓ 적합':!c.lifeOk&&!c.buckOk?'✗ 수명+좌굴':!c.lifeOk?'✗ 수명부족':!c.buckOk?'✗ 좌굴위험':'✗ Dn초과';
+      const vClass=c.allOk?'v-ok':c.buckSF>=2&&c.L10h>=Lreq*0.5?'v-warn':'v-bad';
+      addCell(isRec?'<span class="tag-rec" style="margin:0">추천</span>':'',rowCls);
+      addCell(`φ${c.d0}×${c.lead}`,rowCls);
+      addCell(`${(c.C/1000).toFixed(1)}`,rowCls);
+      addCell(`${life} hr`,rowCls);
+      addCell(`${lifeYrsStr}`,rowCls);
+      addCell(`${parseFloat(c.buckSF).toFixed(1)}`,rowCls);
+      addCell(`${Math.round(c.Dn).toLocaleString()}`,rowCls);
+      addCell(`${c.T_total.toFixed(2)}`,rowCls);
+      addCell(`${c.P_kW.toFixed(3)}`,rowCls);
+      addCell(`<span class="${vClass}">${verdict}</span>`,rowCls);
+    });
+    if(di<showD.length-1){
+      const sep=document.createElement('div');
+      sep.className='cg-sep';
+      grid.appendChild(sep);
+    }
+  });
+}
+
+function goLM(F,S){
+  const kgf=(F/9.81).toFixed(1);
+  document.getElementById('s-load').value=kgf;
+  document.getElementById('s-stroke').value=S;
+  switchApp('lm',document.querySelectorAll('.app-tab')[1]);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function bsRestart(){
+  Object.keys(BS).forEach(k=>BS[k]=null);BS.angle=30;BS.extra=100;
+  document.querySelectorAll('.step-wrap .opt-btn').forEach(e=>e.classList.remove('sel'));
+  document.getElementById('incline-row').style.display='none';
+  document.getElementById('life-custom').style.display='none';
+  ['bs-W','bs-S','bs-vmax','bs-tacc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  bsGoStep(1);
+}
+
+/* ══════════════════════════════════
+   LM 가이드
+══════════════════════════════════ */
+const MAKER_DATA={
+  rexroth:[1005,2385,2916,3722,5280,8807],
+  thk:[830,1380,1910,2890,3760,6010],
+  hiwin:[1160,1810,2159,3338,4820,7902],
+  tbi:[815,1590,2040,2946,3934,6626],
+  pmi:[867,1632,2040,3160,4283,6934]
+};
+const MAKER_C0={
+  rexroth:[1295,3038,3660,4903,8247,13456],
+  thk:[1100,1906,2701,4138,5556,9328],
+  hiwin:[1731,2828,3669,5040,7060,11954],
+  tbi:[1600,3500,4500,6500,9000,16000],
+  pmi:[1600,3400,4400,6200,8700,15000]
+};
+const LM_SIZES=[15,20,25,30,35,45];
+const MODELS=LM_SIZES.map((size,i)=>{
+  const keys=Object.keys(MAKER_DATA);
+  const avgC100=Math.round(keys.reduce((s,k)=>s+MAKER_DATA[k][i],0)/keys.length);
+  const avgC0=Math.round(keys.reduce((s,k)=>s+MAKER_C0[k][i],0)/keys.length);
+  return{size,C100:avgC100,C0:avgC0};
+});
+const MIN_YEARS=5;
+
+function lmTab(t,el){
+  document.getElementById('lm-simple').classList.toggle('hidden',t!=='simple');
+  document.getElementById('lm-advanced').classList.toggle('hidden',t!=='advanced');
+  document.querySelectorAll('.lm-tab').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+}
+function selectDir(tab,val){
+  document.querySelectorAll('#'+tab+'-dir-grid .dir-card').forEach(el=>el.classList.remove('active'));
+  document.getElementById(tab+'-dir-'+val).classList.add('active');
+  document.getElementById(tab+'-direction').value=val;
+}
+function updateDirActive(tab,val){
+  document.querySelectorAll('#'+tab+'-dir-grid .dir-card').forEach(el=>el.classList.remove('active'));
+  const el=document.getElementById(tab+'-dir-'+val);
+  if(el)el.classList.add('active');
+}
+function calcAvgSpeed(V,stroke,tn){
+  const accelDist=0.5*V*tn,decelDist=accelDist;
+  const constDist=Math.max(0,stroke-accelDist-decelDist);
+  const tripTime=tn+(constDist>0?constDist/V:0)+tn;
+  return{avgSpeed:stroke/tripTime,accelDist,constDist,decelDist,tripTime};
+}
+function updateSpeedPreview(){
+  const V=parseFloat(document.getElementById('a-speed').value)||0;
+  const stroke=parseFloat(document.getElementById('a-stroke').value)||0;
+  const tn=parseFloat(document.getElementById('a-tn').value)||0;
+  if(!V||!stroke||!tn)return;
+  const{avgSpeed,accelDist,constDist}=calcAvgSpeed(V,stroke,tn);
+  document.getElementById('sp-accel-dist').textContent=accelDist.toFixed(1);
+  document.getElementById('sp-const-dist').textContent=constDist.toFixed(1);
+  document.getElementById('sp-avg-speed').textContent=avgSpeed.toFixed(1);
+  const total=accelDist*2+constDist;
+  const barsEl=document.getElementById('speed-bars');
+  barsEl.innerHTML='';
+  if(total>0){
+    const make=(dist,cls)=>{const d=document.createElement('div');d.className=cls;d.style.flex=String(Math.max(dist,total*0.04));d.style.minWidth='4px';barsEl.appendChild(d);};
+    make(accelDist,'sp-accel');make(constDist,'sp-const');make(accelDist,'sp-decel');
+  }
+}
+function getfw(speed){if(speed<=50)return 1.0;if(speed<=300)return 1.2;if(speed<=600)return 1.5;return 1.8;}
+function getVerdict(ratio,years){
+  if(ratio<3)return{cls:'v-bad',text:'부적합'};
+  if(ratio<4)return{cls:'v-warn',text:'주의'};
+  if(years<MIN_YEARS)return{cls:'v-warn',text:'수명 부족'};
+  return{cls:'v-ok',text:'적합'};
+}
+function renderSafety(prefix,ratio,years){
+  const row=document.getElementById(prefix+'safety-row'),txt=document.getElementById(prefix+'safety-text');
+  row.className='safety';
+  const v=getVerdict(ratio,years);
+  if(v.text==='적합'){row.classList.add('s-ok');txt.textContent='적합 — 안전율 및 수명 기준 충족';}
+  else if(v.text==='수명 부족'){row.classList.add('s-warn');txt.textContent='주의 — 안전율은 충족하나 수명이 '+MIN_YEARS+'년 미만입니다';}
+  else if(v.text==='주의'){row.classList.add('s-warn');txt.textContent='주의 — 안전율이 권장 기준(4배)보다 낮습니다';}
+  else{row.classList.add('s-bad');txt.textContent='부적합 — 상위 사이즈 또는 블록 수 증가를 권장합니다';}
+}
+function formatYears(y){return y>=1?y.toFixed(1)+'년':(y*12).toFixed(1)+'개월';}
+function formatHours(h){if(!h)return'—';return h>=10000?Math.round(h/1000)+'k h':Math.round(h).toLocaleString()+' h';}
+function toggleMaker(pfx){
+  const wrap=document.getElementById(pfx+'-maker-wrap'),btn=wrap.previousElementSibling;
+  const isHidden=wrap.classList.contains('hidden');
+  wrap.classList.toggle('hidden',!isHidden);
+  btn.textContent=isHidden?'📊 메이커별 C₁₀₀ 참고 데이터 닫기 ▴':'📊 메이커별 C₁₀₀ 참고 데이터 보기 ▾';
+  if(isHidden)MODELS.forEach(m=>{const el=document.getElementById(pfx+'-avg-'+m.size);if(el)el.textContent=m.C100.toLocaleString();});
+}
+function selectModel(P,speed,hours,mode,tn,stroke){
+  for(let m of MODELS){
+    const L10_km=Math.pow(m.C100/P,3)*100;
+    let years;
+    if(mode==='advanced'&&tn&&stroke){const{avgSpeed}=calcAvgSpeed(speed,stroke,tn);years=(L10_km/((avgSpeed*3600*hours)/1e6))/365;}
+    else{years=(L10_km/((speed*0.65*3600*hours)/1e6))/365;}
+    if(m.C0/P>=4.0&&years>=MIN_YEARS)return m;
+  }
+  return MODELS[MODELS.length-1];
+}
+let selectedSizes={simple:new Set(),advanced:new Set()};
+let lastParams={simple:null,advanced:null};
+
+function buildCompareTable(prefix,params){
+  if(!params)return;
+  const idPfx=prefix==='simple'?'s':'a';
+  const sel=document.getElementById(idPfx+'-size-selector');
+  sel.innerHTML='';
+  MODELS.forEach(m=>{
+    const btn=document.createElement('button');
+    const isRec=m.size===params.recommendedSize,isSel=selectedSizes[prefix].has(m.size);
+    btn.className='d-btn'+(isRec||isSel?' active':'');
+    btn.textContent='size '+m.size;
+    btn.onclick=()=>{
+      if(m.size===params.recommendedSize)return;
+      if(selectedSizes[prefix].has(m.size))selectedSizes[prefix].delete(m.size);else selectedSizes[prefix].add(m.size);
+      buildCompareTable(prefix,params);
+    };
+    sel.appendChild(btn);
+  });
+  const tbody=document.getElementById(idPfx+'-compare-body');tbody.innerHTML='';
+  const toShow=[...new Set([params.recommendedSize,...selectedSizes[prefix]])].sort((a,b)=>a-b);
+  toShow.forEach(size=>{
+    const m=MODELS.find(x=>x.size===size);if(!m)return;
+    const L10_km=Math.pow(m.C100/params.P,3)*100;
+    let years,opHours=null;
+    if(prefix==='advanced'&&params.avgSpeed){years=(L10_km/((params.avgSpeed*3600*params.hours)/1e6))/365;opHours=L10_km/((params.avgSpeed*3600)/1e6);}
+    else{years=(L10_km/((params.speed*0.65*3600*params.hours)/1e6))/365;}
+    const ratio=m.C0/params.P,v=getVerdict(ratio,years),isRec=size===params.recommendedSize;
+    const tr=document.createElement('tr');
+    tr.className=isRec?'rec-row':(selectedSizes[prefix].has(size)?'sel-row':'');
+    let sl='size '+size;
+    if(isRec)sl+='<span class="tag-rec">추천</span>';
+    else if(selectedSizes[prefix].has(size))sl+='<span class="tag-sel">검토</span>';
+    if(prefix==='advanced'){tr.innerHTML=`<td>${sl}</td><td>${Math.round(L10_km).toLocaleString()}</td><td>${formatYears(years)}</td><td>${formatHours(opHours)}</td><td>${ratio.toFixed(1)}배</td><td class="${v.cls}">${v.text}</td>`;}
+    else{tr.innerHTML=`<td>${sl}</td><td>${Math.round(L10_km).toLocaleString()}</td><td>${formatYears(years)}</td><td>${ratio.toFixed(1)}배</td><td class="${v.cls}">${v.text}</td>`;}
+    tbody.appendChild(tr);
+  });
+}
+
+function calcSimple(){
+  const load=parseFloat(document.getElementById('s-load').value);
+  const speed=parseFloat(document.getElementById('s-speed').value);
+  const hours=parseFloat(document.getElementById('s-hours').value);
+  const blocks=parseInt(document.getElementById('s-blocks').value)||1;
+  const sets=parseInt(document.getElementById('s-sets').value)||1;
+  const dirFactor=parseFloat(document.getElementById('s-direction').value);
+  const fw=getfw(speed);
+  const P=(load/(blocks*sets))*dirFactor*fw;
+  const sel=selectModel(P,speed,hours,'simple');
+  const L10_km=Math.pow(sel.C100/P,3)*100;
+  const years=(L10_km/((speed*0.65*3600*hours)/1e6))/365;
+  const ratio=sel.C0/P;
+  document.getElementById('s-res-pload').textContent=P.toFixed(1);
+  document.getElementById('s-res-km').textContent=Math.round(L10_km).toLocaleString();
+  document.getElementById('s-res-ratio').textContent=ratio.toFixed(1);
+  if(years>=1){document.getElementById('s-res-year').textContent=years.toFixed(1);document.getElementById('s-res-year-unit').textContent='년';}
+  else{document.getElementById('s-res-year').textContent=(years*12).toFixed(1);document.getElementById('s-res-year-unit').textContent='개월';}
+  document.getElementById('s-rec-model').textContent='size '+sel.size;
+  document.getElementById('s-rec-specs').innerHTML='예상 수명 '+Math.round(L10_km).toLocaleString()+' km<br>'+formatYears(years)+' · 안전율 '+ratio.toFixed(1)+'배';
+  MODELS.forEach(m=>{const el=document.getElementById('s-avg-'+m.size);if(el)el.textContent=m.C100.toLocaleString();});
+  renderSafety('s-',ratio,years);
+  selectedSizes.simple=new Set();
+  lastParams.simple={P,speed,hours,recommendedSize:sel.size};
+  buildCompareTable('simple',lastParams.simple);
+  document.getElementById('s-result-card').classList.remove('hidden');
+  renderSuppliers(sel.size, 's');
+  renderCAD(sel.size, 's');
+  document.getElementById('s-result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function calcAdvanced(){
+  const load=parseFloat(document.getElementById('a-load').value);
+  const speed=parseFloat(document.getElementById('a-speed').value);
+  const stroke=parseFloat(document.getElementById('a-stroke').value);
+  const tn=parseFloat(document.getElementById('a-tn').value);
+  const hours=parseFloat(document.getElementById('a-hours').value);
+  const blocks=parseInt(document.getElementById('a-blocks').value)||1;
+  const sets=parseInt(document.getElementById('a-sets').value)||1;
+  const dirFactor=parseFloat(document.getElementById('a-direction').value);
+  const blockDist=parseFloat(document.getElementById('a-block-dist').value)||0;
+  const railDist=parseFloat(document.getElementById('a-rail-dist').value)||0;
+  const height=parseFloat(document.getElementById('a-height').value)||0;
+  const eccentric=parseFloat(document.getElementById('a-eccentric').value)||0;
+  const{avgSpeed}=calcAvgSpeed(speed,stroke,tn);
+  const fw=getfw(speed);
+  const totalBlocks=blocks*sets;
+  const pload=(load/totalBlocks)*dirFactor*fw;
+  const My=load*height,Mz=load*eccentric;
+  const Fmy=blockDist>0?(2*My)/(blockDist*totalBlocks):0;
+  const Fmz=railDist>0?(2*Mz)/(railDist*totalBlocks):0;
+  const P=pload+Fmy+Fmz;
+  const sel=selectModel(P,speed,hours,'advanced',tn,stroke);
+  const L10_km=Math.pow(sel.C100/P,3)*100;
+  const kmPerDay=(avgSpeed*3600*hours)/1e6;
+  const years=(L10_km/kmPerDay)/365;
+  const opHours=L10_km/((avgSpeed*3600)/1e6);
+  const ratio=sel.C0/P;
+  document.getElementById('a-res-pload').textContent=pload.toFixed(1);
+  document.getElementById('a-res-mload').textContent=P.toFixed(1);
+  document.getElementById('a-res-avgspeed').textContent=avgSpeed.toFixed(1);
+  document.getElementById('a-res-km').textContent=Math.round(L10_km).toLocaleString();
+  document.getElementById('a-res-ratio').textContent=ratio.toFixed(1);
+  document.getElementById('a-res-my').textContent=Math.round(My).toLocaleString();
+  document.getElementById('a-res-mz').textContent=Math.round(Mz).toLocaleString();
+  document.getElementById('a-res-hours').textContent=Math.round(opHours).toLocaleString();
+  if(years>=1){document.getElementById('a-res-year').textContent=years.toFixed(1);document.getElementById('a-res-year-unit').textContent='년';}
+  else{document.getElementById('a-res-year').textContent=(years*12).toFixed(1);document.getElementById('a-res-year-unit').textContent='개월';}
+  document.getElementById('a-rec-model').textContent='size '+sel.size;
+  document.getElementById('a-rec-specs').innerHTML='예상 수명 '+Math.round(L10_km).toLocaleString()+' km<br>'+formatYears(years)+' · 안전율 '+ratio.toFixed(1)+'배';
+  renderSafety('a-',ratio,years);
+  selectedSizes.advanced=new Set();
+  lastParams.advanced={P,speed,avgSpeed,hours,recommendedSize:sel.size};
+  buildCompareTable('advanced',lastParams.advanced);
+  document.getElementById('a-result-card').classList.remove('hidden');
+  renderSuppliers(sel.size, 'a');
+  renderCAD(sel.size, 'a');
+  document.getElementById('a-result-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+/* 팝업 */
+const POPUPS={
+  rs:{title:'레일 스팬 (RS)',desc:'두 레일 사이의 중심 간 거리입니다.\n레일이 1개인 경우 0으로 입력하세요.',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="10" y="62" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="10" y="42" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="30" y="32" width="28" height="42" rx="2" fill="#16653A" opacity="0.7"/><rect x="142" y="32" width="28" height="42" rx="2" fill="#16653A" opacity="0.7"/><line x1="30" y1="90" x2="170" y2="90" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="30" y1="85" x2="30" y2="95" stroke="#E05C2A" stroke-width="2"/><line x1="170" y1="85" x2="170" y2="95" stroke="#E05C2A" stroke-width="2"/><text x="100" y="107" font-size="11" fill="#E05C2A" font-family="monospace" text-anchor="middle">RS</text></svg>`},
+  bs1:{title:'블록 스팬 (BS1)',desc:'이동 방향으로 나란히 배치된\n두 블록 사이의 중심 간 거리입니다.',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="10" y="52" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="20" y="36" width="30" height="28" rx="2" fill="#16653A" opacity="0.7"/><rect x="80" y="36" width="30" height="28" rx="2" fill="#16653A" opacity="0.7"/><line x1="20" y1="22" x2="110" y2="22" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="20" y1="17" x2="20" y2="27" stroke="#E05C2A" stroke-width="2"/><line x1="110" y1="17" x2="110" y2="27" stroke="#E05C2A" stroke-width="2"/><text x="65" y="14" font-size="11" fill="#E05C2A" font-family="monospace" text-anchor="middle">BS1</text></svg>`},
+  br:{title:'하중 작용점 높이 (Br)',desc:'레일 중심에서 하중(무게중심)이\n작용하는 높이까지의 거리입니다.',svg:`<svg width="200" height="120" viewBox="0 0 200 120" fill="none"><rect x="10" y="70" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="70" y="52" width="60" height="26" rx="2" fill="#16653A" opacity="0.7"/><circle cx="100" cy="28" r="7" fill="#E05C2A"/><line x1="100" y1="35" x2="100" y2="51" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="118" y1="28" x2="148" y2="28" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="118" y1="73" x2="148" y2="73" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="144" y1="28" x2="144" y2="73" stroke="#E05C2A" stroke-width="1.5"/><line x1="140" y1="28" x2="148" y2="28" stroke="#E05C2A" stroke-width="2"/><line x1="140" y1="73" x2="148" y2="73" stroke="#E05C2A" stroke-width="2"/><text x="152" y="54" font-size="11" fill="#E05C2A" font-family="monospace">Br</text></svg>`},
+  load:{title:'이동 하중 W',desc:'볼스크류가 이송해야 하는 총 중량입니다.\n테이블 무게 + 워크(공작물) 무게를 합산하세요.\n모르면 테이블 카탈로그 질량 + 최대 가공물 질량을 기입합니다.',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="40" y="52" width="120" height="14" rx="3" fill="#B4DCC7"/><rect x="60" y="30" width="80" height="22" rx="3" fill="#16653A" opacity="0.7"/><text x="100" y="46" font-size="11" fill="white" text-anchor="middle" font-weight="bold" font-family="monospace">테이블</text><rect x="72" y="10" width="56" height="20" rx="2" fill="#1A3A2A" opacity="0.4"/><text x="100" y="24" font-size="10" fill="white" text-anchor="middle" font-family="monospace">워크(W_load)</text><line x1="164" y1="10" x2="164" y2="66" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="159" y1="10" x2="169" y2="10" stroke="#E05C2A" stroke-width="2"/><line x1="159" y1="66" x2="169" y2="66" stroke="#E05C2A" stroke-width="2"/><text x="170" y="42" font-size="11" fill="#E05C2A" font-family="monospace">W</text><text x="100" y="100" font-size="11" fill="#6B7280" text-anchor="middle" font-family="monospace">W = 테이블 + 워크 [kg]</text></svg>`},
+  stroke:{title:'스트로크 S',desc:'볼스크류 1회 이동하는 거리입니다.\n가공 영역 전체를 커버하는 거리를 입력하세요.\n유효 길이 = 스트로크 + 양단 여유 거리',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="10" y="52" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="20" y="36" width="30" height="24" rx="2" fill="#16653A" opacity="0.4"/><rect x="120" y="36" width="30" height="24" rx="2" fill="#16653A" opacity="0.7"/><line x1="20" y1="22" x2="150" y2="22" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="4,2"/><line x1="20" y1="17" x2="20" y2="27" stroke="#E05C2A" stroke-width="2"/><line x1="150" y1="17" x2="150" y2="27" stroke="#E05C2A" stroke-width="2"/><polygon points="60,19 20,22 60,25" fill="#E05C2A"/><polygon points="110,19 150,22 110,25" fill="#E05C2A"/><text x="85" y="14" font-size="11" fill="#E05C2A" font-family="monospace" text-anchor="middle">S (스트로크)</text><text x="35" y="75" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">시작</text><text x="135" y="75" font-size="10" fill="#16653A" text-anchor="middle" font-family="monospace">끝</text></svg>`},
+  vmax:{title:'최대 속도 v_max',desc:'이송축의 최고 이동 속도입니다.\n이 속도에 맞는 모터 RPM과 볼스크류 리드가 결정됩니다.\n리드 = v_max × 60 / (모터 최대 RPM)',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><polyline points="10,90 40,90 70,30 140,30 170,90 190,90" stroke="#16653A" stroke-width="2.5" fill="none"/><line x1="10" y1="95" x2="190" y2="95" stroke="#B4DCC7" stroke-width="1.5"/><line x1="10" y1="10" x2="10" y2="95" stroke="#B4DCC7" stroke-width="1.5"/><text x="100" y="22" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">v_max</text><line x1="40" y1="30" x2="170" y2="30" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><text x="190" y="100" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="monospace">시간</text><text x="12" y="12" font-size="9" fill="#9CA3AF" font-family="monospace">속도</text></svg>`},
+  tacc:{title:'가감속 시간 t_acc',desc:'정지 상태에서 최대 속도에 도달하는 시간입니다.\n짧을수록 가속 토크(피크 토크)가 커집니다.\n일반 산업 기계: 0.1~0.3초 권장',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><polyline points="10,90 50,30 150,30 190,90" stroke="#16653A" stroke-width="2.5" fill="none"/><line x1="10" y1="95" x2="190" y2="95" stroke="#B4DCC7" stroke-width="1.5"/><line x1="10" y1="30" x2="190" y2="30" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><line x1="10" y1="90" x2="50" y2="90" stroke="#E05C2A" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="10" y1="90" x2="10" y2="30" stroke="#E05C2A" stroke-width="1" stroke-dasharray="3,2"/><line x1="50" y1="85" x2="50" y2="95" stroke="#E05C2A" stroke-width="2"/><text x="30" y="108" font-size="11" fill="#E05C2A" text-anchor="middle" font-family="monospace">t_acc</text><text x="150" y="22" font-size="10" fill="#16653A" text-anchor="middle" font-family="monospace">등속 구간</text></svg>`},
+  life:{title:'목표 수명 (L10)',desc:'볼스크류의 기본 정격 수명 목표값입니다.\n전체 동일 조건 중 90%가 이 시간까지 고장 없이 사용 가능한 시간을 의미합니다.\n· 일반 산업기계: 10,000h\n· 장기 운전 설비: 20,000h\n· 정밀 설비: 30,000h 이상',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="20" y="30" width="160" height="50" rx="6" fill="#F0FDF4"/><rect x="20" y="30" width="160" height="50" rx="6" fill="none" stroke="#B4DCC7" stroke-width="1.5"/><text x="100" y="58" font-size="18" fill="#16653A" text-anchor="middle" font-weight="bold" font-family="monospace">10,000 h</text><text x="100" y="72" font-size="10" fill="#6B7280" text-anchor="middle" font-family="monospace">일반 산업기계 기준</text><text x="100" y="100" font-size="10" fill="#9CA3AF" text-anchor="middle" font-family="monospace">90%의 제품이 이 시간까지 사용 가능</text></svg>`},
+  bt:{title:'편심 거리 (Bt)',desc:'레일 중심선 대비 하중(무게중심)이\n가로 방향으로 치우친 거리입니다.\n중심에 있으면 0을 입력하세요.',svg:`<svg width="200" height="110" viewBox="0 0 200 110" fill="none"><rect x="10" y="60" width="180" height="7" rx="2" fill="#B4DCC7"/><rect x="60" y="42" width="60" height="26" rx="2" fill="#16653A" opacity="0.7"/><circle cx="140" cy="30" r="7" fill="#E05C2A"/><line x1="90" y1="30" x2="90" y2="41" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="3,2"/><line x1="90" y1="18" x2="140" y2="18" stroke="#E05C2A" stroke-width="1.5"/><line x1="90" y1="14" x2="90" y2="22" stroke="#E05C2A" stroke-width="2"/><line x1="136" y1="14" x2="144" y2="22" stroke="#E05C2A" stroke-width="2"/><text x="108" y="14" font-size="11" fill="#E05C2A" font-family="monospace" text-anchor="middle">Bt</text><text x="90" y="108" font-size="10" fill="#9CA3AF" font-family="monospace" text-anchor="middle">중심선</text></svg>`}
+};
+function openPopup(key){
+  const p=POPUPS[key];if(!p)return;
+  document.getElementById('popup-title').textContent=p.title;
+  document.getElementById('popup-svg').innerHTML=p.svg;
+  document.getElementById('popup-desc').innerHTML=p.desc.replace(/\n/g,'<br>');
+  document.getElementById('popup-overlay').classList.add('open');
+}
+function closePopup(e){if(!e||e.target===document.getElementById('popup-overlay'))document.getElementById('popup-overlay').classList.remove('open');}
+
+/* 초기화 */
+renderStepsBar(1);
+updateSpeedPreview();
+
+/* ── 공급사 연결 ── */
+const LM_KEY = 'partson_lm_suppliers';
+const BS_KEY = 'partson_bs_suppliers';
+
+function _getSuppliers(key, defaultBrands) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  const defaults = [
+    { id:'1', name:'오성오토메이션', phone:'010-9119-2153', email:'scvp1@naver.com', website:'', brands: defaultBrands, sizes:[], note:'' }
+  ];
+  localStorage.setItem(key, JSON.stringify(defaults));
+  return defaults;
+}
+
+function _renderSupplierSection(sectionId, listId, suppliers) {
+  const section = document.getElementById(sectionId);
+  const list = document.getElementById(listId);
+  if (!section || !list) return;
+  section.classList.remove('hidden');
+  if (!suppliers.length) {
+    list.innerHTML = '<div class="supplier-empty">등록된 공급사가 없습니다.</div>';
+    return;
+  }
+  list.innerHTML = suppliers.map(s => {
+    const brands = s.brands && s.brands.length ? s.brands.join(' · ') : '';
+    const contacts = [];
+    if (s.phone) contacts.push(`<a href="tel:${s.phone}" class="supplier-contact-link">📞 ${s.phone}</a>`);
+    if (s.email) contacts.push(`<a href="mailto:${s.email}" class="supplier-contact-link">✉ ${s.email}</a>`);
+    if (s.website) contacts.push(`<a href="${s.website}" target="_blank" class="supplier-contact-link">🌐 홈페이지</a>`);
+    return `<div class="supplier-card">
+      <div class="supplier-name">${s.name}</div>
+      ${brands ? `<div class="supplier-brands">${brands}</div>` : ''}
+      <div class="supplier-contacts">${contacts.join('')}</div>
+      ${s.note ? `<div class="supplier-note">${s.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// LM 가이드 공급사 (사이즈 필터 적용)
+function renderSuppliers(size, prefix) {
+  const all = _getSuppliers(LM_KEY, ['Bosch','TBI']);
+  const filtered = all.filter(s => !s.sizes || s.sizes.length === 0 || s.sizes.includes(size));
+  _renderSupplierSection(prefix + '-supplier-section', prefix + '-supplier-list', filtered);
+}
+
+// 볼스크류 공급사 (전체 표시)
+function renderBSSuppliers() {
+  const all = _getSuppliers(BS_KEY, ['Bosch','TBI']);
+  _renderSupplierSection('bs-supplier-section', 'bs-supplier-list', all);
+}
+/* ── CAD 도면 다운로드 ── */
+const TRACEPARTS_BS = [
+  { maker: 'THK',           url: 'https://www.3dfindit.com/en/cad-bim-library/manufacturer/thk-coltd/feed-screw/ball-screw/ball-screw?path=thk/fed_screw/ball_screw/ball_screw' },
+  { maker: 'HIWIN',         url: 'https://www.hiwinsupport.com/cad_download/' },
+  { maker: 'Bosch Rexroth', url: 'https://www.boschrexroth.com/en/us/downloads/cad-files/' },
+  { maker: 'TBI',           url: 'https://tbi-embedded.partcommunity.com/3d-cad-models/' },
+];
+const TRACEPARTS_LM = [
+  { maker: 'THK HSR',             url: 'https://www.3dfindit.com/en/cad-bim-library/manufacturer/thk-coltd/linear-motion-systems/lm-guide/lm-guide-gk-product/hsr?path=thk/linear_motion_systems/lm_guide/lm_guide_gk_product/hsr' },
+  { maker: 'HIWIN HGH',           url: 'https://www.hiwinsupport.com/cad_download/' },
+  { maker: 'Bosch Rexroth NRTVG', url: 'https://www.traceparts.com/en/search/bosch-rexroth-linear-motion-technology?CatalogPath=BOSCH_LINEAR:F_BOSCH_LINEAR' },
+  { maker: 'TBI TRH',             url: 'https://tbi-embedded.partcommunity.com/3d-cad-models/trh-trh-series-is-the-world-standard-ball-type-linear-slide-rail-tbi-motion?info=tbi/linear_slides/tr_series_models/trh/trh-f/trh_asmtab.prj' },
+  { maker: 'PMI MSA',             url: 'https://www.pmi-amt.com/en/supports/cad' },
+];
+function renderBSCAD(d0, lead) {
+  const sec  = document.getElementById('bs-cad-section');
+  const btns = document.getElementById('bs-cad-btns');
+  if (!sec || !btns) return;
+  sec.style.display = 'block';
+  btns.innerHTML = TRACEPARTS_BS.map(m => `
+    <a href="${m.url}" target="_blank" rel="noopener" class="cad-btn">
+      <span class="cad-btn-icon">⬇</span>
+      <span>
+        <span style="display:block;font-size:11px;opacity:.7;font-weight:400">${m.maker}</span>
+        <span style="display:block;line-height:1.2">φ${d0}×L${lead}</span>
+      </span>
+    </a>`).join('');
+}
+function renderCAD(size, prefix) {
+  const sec  = document.getElementById(prefix + '-cad-section');
+  const btns = document.getElementById(prefix + '-cad-btns');
+  if (!sec || !btns) return;
+  sec.classList.remove('hidden');
+  btns.innerHTML = TRACEPARTS_LM.map(m => `
+    <a href="${m.url}" target="_blank" rel="noopener" class="cad-btn">
+      <span class="cad-btn-icon">⬇</span>
+      <span>
+        <span style="display:block;font-size:11px;opacity:.7;font-weight:400">${m.maker}</span>
+        <span style="display:block;line-height:1.2">size ${size}</span>
+      </span>
+    </a>`).join('');
+}
+function bsDoPrint(){
+  document.getElementById('bs-print-date').textContent =
+    new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
+  window.print();
+}
+</script>
+</body>
+</html>
