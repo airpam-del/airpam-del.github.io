@@ -627,7 +627,7 @@ const ETA_SCREW_SINGLE = {
 // 시스템 레이아웃 토크 배율
 const LAYOUTS = {
   1: [{ label:'단독',        mult:1.0 }],
-  2: [{ label:'직렬 I형',    mult:2.1 }, { label:'T형',         mult:2.4 }],
+  2: [{ label:'A형',          mult:2.1 }, { label:'T형',         mult:2.4 }],
   4: [{ label:'H형',         mult:4.9 }, { label:'직렬 I형',    mult:3.6 }, { label:'T형',   mult:3.5 }],
   6: [{ label:'복합',        mult:7.1 }],
 };
@@ -768,13 +768,14 @@ function renderLayoutOpts() {
   // ── 레이아웃별 SVG ───────────────────────────
   const svgs = {
     2: {
-      // B형: [잭1]─MA1─[잭2]─[G]─[M]  / 잭 스템 ↓
-      '직렬 I형': `<svg class="layout-svg" viewBox="0 0 290 88" xmlns="http://www.w3.org/2000/svg">
+      // A형: [잭1]─MA1─[잭2]─[G]─[M]  / 잭 스템 ↓
+      'A형': `<svg class="layout-svg" viewBox="0 0 290 88" xmlns="http://www.w3.org/2000/svg">
         ${J(52,44)} ${st(52,53,52,78)}
         ${sh(68,44,100,44)} ${ma(68,100,39,'MA1')}
         ${J(116,44)} ${st(116,53,116,78)}
         ${sh(132,44,152,44)}
-        ${G(161,44)} ${sh(170,44,184,44)}
+        <rect x="152" y="35" width="18" height="18" rx="1.5" fill="#ddeee5" stroke="#2D6B4A" stroke-width="1.5"/>
+        ${sh(170,44,184,44)}
         ${M(197,44)}
         ${st(36,44,8,44)}
       </svg>`,
