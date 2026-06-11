@@ -82,15 +82,22 @@
   .cancel-btn:hover { background: var(--bg); }
 
   /* ── 방문자 통계 ── */
-  .token-setup { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
-  .token-setup-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
-  .token-setup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
-  .token-setup-desc a { color: var(--accent-mid); }
-  .token-row { display: flex; gap: 8px; }
-  .token-input { flex: 1; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-family: var(--mono); font-size: 12px; outline: none; background: #FAFAF8; }
-  .token-input:focus { border-color: var(--accent-mid); background: #fff; }
-  .token-save-btn { background: var(--accent); color: #fff; border: none; border-radius: 7px; padding: 9px 18px; font-family: var(--font); font-size: 13px; cursor: pointer; white-space: nowrap; }
-  .token-save-btn:hover { background: var(--accent-mid); }
+  .ga-setup { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+  .ga-setup-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .ga-setup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
+  .ga-setup-desc a { color: var(--accent-mid); }
+  .ga-setup-desc ol { padding-left: 1.2rem; margin-top: 6px; }
+  .ga-setup-desc li { margin-bottom: 4px; }
+  .ga-field-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .ga-field-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+  .ga-input { border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-family: var(--mono); font-size: 12px; outline: none; background: #FAFAF8; width: 100%; }
+  .ga-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .ga-signin-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: #fff; border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 16px; font-family: var(--font); font-size: 14px; font-weight: 500; color: var(--text-primary); cursor: pointer; transition: all .2s; }
+  .ga-signin-btn:hover { border-color: var(--accent-mid); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  .ga-signin-btn svg { flex-shrink: 0; }
+  .ga-signout-row { display: flex; align-items: center; justify-content: space-between; padding: .75rem 1rem; background: var(--accent-light); border-radius: 8px; margin-bottom: 1rem; font-size: 13px; }
+  .ga-signout-btn { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 5px 12px; font-size: 12px; color: var(--text-muted); cursor: pointer; font-family: var(--font); }
+  .ga-signout-btn:hover { border-color: var(--danger); color: var(--danger); }
   .token-clear-btn { background: transparent; border: 1px solid var(--border); border-radius: 7px; padding: 9px 14px; font-family: var(--font); font-size: 12px; color: var(--text-muted); cursor: pointer; }
   .stats-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
   .stat-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.25rem; }
@@ -136,6 +143,8 @@
   .tab-btn.active { background: var(--accent); color: #fff; font-weight: 500; }
   .hidden { display: none !important; }
 </style>
+<!-- Google Identity Services (OAuth2) -->
+<script src="https://accounts.google.com/gsi/client" async></script>
 </head>
 <body>
 
@@ -183,23 +192,42 @@
 
     <!-- 방문자 통계 영역 -->
     <div id="stats-area" class="hidden">
-      <div class="token-setup" id="token-setup-box">
-        <div class="token-setup-title">🔑 GitHub Personal Access Token 설정</div>
-        <div class="token-setup-desc">
-          GitHub 트래픽 API를 사용해 방문자 데이터를 불러옵니다.<br>
-          <a href="https://github.com/settings/tokens/new?scopes=repo&description=PartsOn+Analytics" target="_blank">여기서 토큰 발급</a> →
-          <b>Repository → Contents: Read-only</b> 또는 classic token의 <b>repo</b> 체크 후 복사
+
+      <!-- GA4 설정 -->
+      <div class="ga-setup" id="ga-setup-box">
+        <div class="ga-setup-title">📊 Google Analytics 4 연결</div>
+        <div class="ga-setup-desc">
+          GA4 Reporting API로 방문자 데이터를 불러옵니다.
+          <ol>
+            <li><a href="https://console.cloud.google.com/apis/library/analyticsdata.googleapis.com" target="_blank">Google Analytics Data API</a> 활성화</li>
+            <li>OAuth 2.0 클라이언트 ID 생성 (웹 애플리케이션, 승인된 출처에 <code>https://airpam-del.github.io</code> 추가)</li>
+            <li>GA4 속성 ID는 <a href="https://analytics.google.com" target="_blank">analytics.google.com</a> → 관리 → 속성 설정에서 확인</li>
+          </ol>
         </div>
-        <div class="token-row">
-          <input type="password" class="token-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-          <button class="token-save-btn" onclick="saveToken()">저장 &amp; 불러오기</button>
+        <div class="ga-field-row">
+          <div class="ga-field-label">GA4 속성 ID (숫자만, 예: 123456789)</div>
+          <input type="text" class="ga-input" id="ga-property-input" placeholder="GA4 Property ID">
         </div>
+        <div class="ga-field-row">
+          <div class="ga-field-label">OAuth 2.0 클라이언트 ID</div>
+          <input type="text" class="ga-input" id="ga-client-input" placeholder="xxxxxxxxxx.apps.googleusercontent.com">
+        </div>
+        <button class="ga-signin-btn" id="ga-signin-btn" onclick="gaSignIn()">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Google 계정으로 로그인
+        </button>
+      </div>
+
+      <!-- 로그인 완료 상태 -->
+      <div id="ga-signed-in-row" class="ga-signout-row hidden">
+        <span id="ga-user-info" style="font-size:13px;color:var(--accent)"></span>
+        <button class="ga-signout-btn" onclick="gaSignOut()">로그아웃</button>
       </div>
 
       <div id="stats-content" class="hidden">
         <div class="stats-summary" id="stats-summary"></div>
         <div class="chart-section">
-          <div class="chart-title">일별 방문 현황 (최근 14일)</div>
+          <div class="chart-title">일별 방문 현황 (최근 30일)</div>
           <div class="bar-chart" id="bar-chart"></div>
           <div class="bar-legend">
             <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>페이지뷰</div>
@@ -207,19 +235,15 @@
           </div>
         </div>
         <div class="stats-grid2">
-          <div class="top-list" id="top-pages">
-            <div class="chart-title">인기 페이지</div>
-          </div>
-          <div class="top-list" id="top-refs">
-            <div class="chart-title">유입 경로</div>
-          </div>
+          <div class="top-list" id="top-pages"><div class="chart-title">인기 페이지</div></div>
+          <div class="top-list" id="top-refs"><div class="chart-title">유입 경로</div></div>
         </div>
         <div style="text-align:right;margin-top:.5rem">
-          <button class="token-clear-btn" onclick="clearToken()">토큰 삭제</button>
+          <button class="token-clear-btn" onclick="gaReset()">설정 초기화</button>
         </div>
       </div>
 
-      <div id="stats-loading" class="stats-loading hidden">데이터 불러오는 중...</div>
+      <div id="stats-loading" class="stats-loading hidden">GA4 데이터 불러오는 중...</div>
       <div id="stats-error" class="stats-error hidden"></div>
     </div>
 
@@ -291,8 +315,10 @@ const KEYS = { lm: 'partson_lm_suppliers', bs: 'partson_bs_suppliers', brg: 'par
 const LABELS = { lm: 'LM Guide 공급사', bs: 'Ball Screw 공급사', brg: '베어링 공급사', servo: '서보모터 공급사' };
 const PW_KEY = 'partson_admin_pw';
 const DEFAULT_PW = 'partsON1';
-const TOKEN_KEY = 'partson_gh_token';
-const GH_REPO = 'airpam-del/airpam-del.github.io';
+const GA_PROP_KEY   = 'partson_ga_property';
+const GA_CLIENT_KEY = 'partson_ga_client';
+let gaTokenClient = null;
+let gaAccessToken = null;
 
 let currentTab = 'lm';
 let editingId = null;
@@ -315,115 +341,196 @@ function switchTab(tab, el) {
   renderList();
 }
 
-// ── 방문자 통계 ──────────────────────────────
-function saveToken() {
-  const t = document.getElementById('gh-token-input').value.trim();
-  if (!t) { alert('토큰을 입력하세요.'); return; }
-  localStorage.setItem(TOKEN_KEY, t);
-  loadStats(t);
-}
-function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
-  document.getElementById('stats-content').classList.add('hidden');
-  document.getElementById('token-setup-box').classList.remove('hidden');
-  document.getElementById('gh-token-input').value = '';
-}
+// ── GA4 방문자 통계 ──────────────────────────
 function initStats() {
-  const t = localStorage.getItem(TOKEN_KEY);
-  if (t) {
-    document.getElementById('token-setup-box').classList.add('hidden');
-    loadStats(t);
-  } else {
-    document.getElementById('token-setup-box').classList.remove('hidden');
-    document.getElementById('stats-content').classList.add('hidden');
-  }
+  const prop   = localStorage.getItem(GA_PROP_KEY);
+  const client = localStorage.getItem(GA_CLIENT_KEY);
+  if (prop)   document.getElementById('ga-property-input').value = prop;
+  if (client) document.getElementById('ga-client-input').value   = client;
+  // 저장된 설정 있으면 로그인 버튼 활성화, 없으면 설정창 표시
+  document.getElementById('ga-setup-box').classList.remove('hidden');
+  document.getElementById('stats-content').classList.add('hidden');
+  document.getElementById('ga-signed-in-row').classList.add('hidden');
 }
-async function ghFetch(token, path) {
-  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/${path}`, {
-    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+
+function gaSignIn() {
+  const prop   = document.getElementById('ga-property-input').value.trim();
+  const client = document.getElementById('ga-client-input').value.trim();
+  if (!prop)   { alert('GA4 속성 ID를 입력하세요.'); return; }
+  if (!client) { alert('OAuth 클라이언트 ID를 입력하세요.'); return; }
+  localStorage.setItem(GA_PROP_KEY,   prop);
+  localStorage.setItem(GA_CLIENT_KEY, client);
+
+  if (!window.google) {
+    showStatsError('Google Identity Services 라이브러리를 불러오는 중입니다. 잠시 후 다시 시도하세요.');
+    return;
+  }
+  gaTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: client,
+    scope: 'https://www.googleapis.com/auth/analytics.readonly',
+    callback: (resp) => {
+      if (resp.error) { showStatsError('Google 로그인 실패: ' + resp.error); return; }
+      gaAccessToken = resp.access_token;
+      const email = resp.email || '연결됨';
+      document.getElementById('ga-user-info').textContent = '✓ Google Analytics 연결됨';
+      document.getElementById('ga-signed-in-row').classList.remove('hidden');
+      document.getElementById('ga-setup-box').classList.add('hidden');
+      loadGA4Stats(prop, gaAccessToken);
+    },
   });
-  if (!res.ok) throw new Error(`GitHub API 오류 (${res.status}): ${res.statusText}`);
+  gaTokenClient.requestAccessToken();
+}
+
+function gaSignOut() {
+  if (gaAccessToken && window.google) {
+    google.accounts.oauth2.revoke(gaAccessToken);
+  }
+  gaAccessToken = null;
+  document.getElementById('ga-signed-in-row').classList.add('hidden');
+  document.getElementById('ga-setup-box').classList.remove('hidden');
+  document.getElementById('stats-content').classList.add('hidden');
+}
+
+function gaReset() {
+  localStorage.removeItem(GA_PROP_KEY);
+  localStorage.removeItem(GA_CLIENT_KEY);
+  gaSignOut();
+  document.getElementById('ga-property-input').value = '';
+  document.getElementById('ga-client-input').value   = '';
+}
+
+function showStatsError(msg) {
+  const el = document.getElementById('stats-error');
+  el.innerHTML = msg;
+  el.classList.remove('hidden');
+  document.getElementById('stats-loading').classList.add('hidden');
+  document.getElementById('stats-content').classList.add('hidden');
+}
+
+async function ga4Report(propertyId, token, body) {
+  const res = await fetch(
+    `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
+    { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.error?.message || `API 오류 ${res.status}`);
+  }
   return res.json();
 }
-async function loadStats(token) {
+
+async function loadGA4Stats(propertyId, token) {
   const loading = document.getElementById('stats-loading');
   const error   = document.getElementById('stats-error');
   const content = document.getElementById('stats-content');
   loading.classList.remove('hidden');
   error.classList.add('hidden');
   content.classList.add('hidden');
+
   try {
-    const [views, paths, refs] = await Promise.all([
-      ghFetch(token, 'traffic/views'),
-      ghFetch(token, 'traffic/popular/paths'),
-      ghFetch(token, 'traffic/referrers'),
+    const [daily, pages, sources] = await Promise.all([
+      // 일별 데이터 (30일)
+      ga4Report(propertyId, token, {
+        dateRanges: [{ startDate: '29daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'date' }],
+        metrics:    [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+        orderBys:   [{ dimension: { dimensionName: 'date' } }],
+        limit: 30,
+      }),
+      // 인기 페이지
+      ga4Report(propertyId, token, {
+        dateRanges: [{ startDate: '29daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'pagePath' }],
+        metrics:    [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+        orderBys:   [{ metric: { metricName: 'screenPageViews' }, desc: true }],
+        limit: 8,
+      }),
+      // 유입 경로
+      ga4Report(propertyId, token, {
+        dateRanges: [{ startDate: '29daysAgo', endDate: 'today' }],
+        dimensions: [{ name: 'sessionDefaultChannelGroup' }],
+        metrics:    [{ name: 'sessions' }, { name: 'activeUsers' }],
+        orderBys:   [{ metric: { metricName: 'sessions' }, desc: true }],
+        limit: 8,
+      }),
     ]);
+
     loading.classList.add('hidden');
-    renderStats(views, paths, refs);
+    renderGA4Stats(daily, pages, sources);
     content.classList.remove('hidden');
   } catch(e) {
     loading.classList.add('hidden');
-    error.classList.remove('hidden');
-    error.innerHTML = `데이터 불러오기 실패: ${e.message}<br><small>토큰 권한(repo)을 확인하거나 토큰을 재발급하세요.</small>`;
+    showStatsError(`데이터 불러오기 실패: ${e.message}<br><small>속성 ID와 OAuth 권한을 확인하세요.</small>`);
   }
 }
-function renderStats(views, paths, refs) {
+
+function renderGA4Stats(daily, pages, sources) {
+  const rows = daily.rows || [];
+  const totalViews = rows.reduce((s, r) => s + parseInt(r.metricValues[0].value), 0);
+  const totalUsers = rows.reduce((s, r) => s + parseInt(r.metricValues[1].value), 0);
+  const todayRow   = rows.at(-1);
+  const todayUsers = todayRow ? parseInt(todayRow.metricValues[1].value) : 0;
+
   // 요약 카드
   document.getElementById('stats-summary').innerHTML = `
     <div class="stat-card">
-      <div class="stat-label">TOTAL VIEWS (14일)</div>
-      <div class="stat-value">${views.count.toLocaleString()}</div>
+      <div class="stat-label">PAGE VIEWS (30일)</div>
+      <div class="stat-value">${totalViews.toLocaleString()}</div>
       <div class="stat-sub">페이지뷰 합계</div>
     </div>
     <div class="stat-card">
-      <div class="stat-label">UNIQUE VISITORS (14일)</div>
-      <div class="stat-value">${views.uniques.toLocaleString()}</div>
-      <div class="stat-sub">순방문자 합계</div>
+      <div class="stat-label">ACTIVE USERS (30일)</div>
+      <div class="stat-value">${totalUsers.toLocaleString()}</div>
+      <div class="stat-sub">활성 사용자</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">TODAY</div>
-      <div class="stat-value">${(views.views.at(-1)?.uniques ?? 0).toLocaleString()}</div>
-      <div class="stat-sub">오늘 순방문자</div>
+      <div class="stat-value">${todayUsers.toLocaleString()}</div>
+      <div class="stat-sub">오늘 방문자</div>
     </div>`;
 
   // 막대 차트
-  const days = views.views.slice(-14);
-  const maxV = Math.max(...days.map(d => d.count), 1);
-  document.getElementById('bar-chart').innerHTML = days.map(d => {
-    const date  = new Date(d.timestamp);
-    const label = `${date.getMonth()+1}/${date.getDate()}`;
-    const hV = Math.round((d.count / maxV) * 100);
-    const hU = Math.round((d.uniques / maxV) * 100);
-    return `<div class="bar-col" title="${label} — 뷰: ${d.count}, 방문: ${d.uniques}">
-      <div class="bar-wrap">
-        <div class="bar-views" style="height:${hV}px"></div>
-      </div>
-      <div class="bar-wrap" style="width:60%;margin-top:-${hV}px">
-        <div class="bar-uniq" style="height:${hU}px;opacity:.7"></div>
-      </div>
+  const maxV = Math.max(...rows.map(r => parseInt(r.metricValues[0].value)), 1);
+  document.getElementById('bar-chart').innerHTML = rows.map(r => {
+    const d = r.dimensionValues[0].value; // YYYYMMDD
+    const label = `${parseInt(d.slice(4,6))}/${parseInt(d.slice(6,8))}`;
+    const views = parseInt(r.metricValues[0].value);
+    const users = parseInt(r.metricValues[1].value);
+    const hV = Math.max(Math.round((views / maxV) * 100), 2);
+    const hU = Math.max(Math.round((users / maxV) * 100), 2);
+    return `<div class="bar-col" title="${label} — 뷰: ${views}, 방문자: ${users}">
+      <div class="bar-wrap"><div class="bar-views" style="height:${hV}px"></div></div>
+      <div class="bar-wrap" style="width:60%;margin-top:-${hV}px"><div class="bar-uniq" style="height:${hU}px;opacity:.7"></div></div>
       <div class="bar-date">${label}</div>
     </div>`;
   }).join('');
 
   // 인기 페이지
-  const pageRows = paths.slice(0, 8).map((p, i) => {
-    const name = p.path.replace('/', '') || 'index.html';
+  const pageRows = (pages.rows || []).map((r, i) => {
+    const path  = r.dimensionValues[0].value;
+    const views = parseInt(r.metricValues[0].value);
+    const users = parseInt(r.metricValues[1].value);
     return `<div class="top-row">
       <div class="top-rank">${i+1}</div>
-      <div class="top-path" title="${p.path}">${name}</div>
-      <div class="top-count">${p.count.toLocaleString()}</div>
-      <div class="top-uniq">(${p.uniques}명)</div>
+      <div class="top-path" title="${path}">${path || '/'}</div>
+      <div class="top-count">${views.toLocaleString()}</div>
+      <div class="top-uniq">(${users}명)</div>
     </div>`;
   }).join('') || '<div style="padding:1rem;font-size:12px;color:var(--text-muted)">데이터 없음</div>';
   document.getElementById('top-pages').innerHTML = `<div class="chart-title">인기 페이지</div>${pageRows}`;
 
   // 유입 경로
-  const refRows = refs.slice(0, 8).map((r, i) => `<div class="top-row">
-    <div class="top-rank">${i+1}</div>
-    <div class="top-path" title="${r.referrer}">${r.referrer || '직접 방문'}</div>
-    <div class="top-count">${r.count.toLocaleString()}</div>
-    <div class="top-uniq">(${r.uniques}명)</div>
-  </div>`).join('') || '<div style="padding:1rem;font-size:12px;color:var(--text-muted)">데이터 없음</div>';
+  const refRows = (sources.rows || []).map((r, i) => {
+    const src     = r.dimensionValues[0].value || '직접 방문';
+    const sessions = parseInt(r.metricValues[0].value);
+    const users    = parseInt(r.metricValues[1].value);
+    return `<div class="top-row">
+      <div class="top-rank">${i+1}</div>
+      <div class="top-path">${src}</div>
+      <div class="top-count">${sessions.toLocaleString()}</div>
+      <div class="top-uniq">(${users}명)</div>
+    </div>`;
+  }).join('') || '<div style="padding:1rem;font-size:12px;color:var(--text-muted)">데이터 없음</div>';
   document.getElementById('top-refs').innerHTML = `<div class="chart-title">유입 경로</div>${refRows}`;
 }
 
