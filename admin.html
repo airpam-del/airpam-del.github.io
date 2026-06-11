@@ -81,6 +81,44 @@
   .cancel-btn { border: 1px solid var(--border); background: transparent; border-radius: 8px; padding: 12px 20px; font-family: var(--font); font-size: 14px; color: var(--text-secondary); cursor: pointer; }
   .cancel-btn:hover { background: var(--bg); }
 
+  /* ── 방문자 통계 ── */
+  .token-setup { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.25rem; }
+  .token-setup-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .token-setup-desc { font-size: 12px; color: var(--text-muted); line-height: 1.7; margin-bottom: 1rem; }
+  .token-setup-desc a { color: var(--accent-mid); }
+  .token-row { display: flex; gap: 8px; }
+  .token-input { flex: 1; border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; font-family: var(--mono); font-size: 12px; outline: none; background: #FAFAF8; }
+  .token-input:focus { border-color: var(--accent-mid); background: #fff; }
+  .token-save-btn { background: var(--accent); color: #fff; border: none; border-radius: 7px; padding: 9px 18px; font-family: var(--font); font-size: 13px; cursor: pointer; white-space: nowrap; }
+  .token-save-btn:hover { background: var(--accent-mid); }
+  .token-clear-btn { background: transparent; border: 1px solid var(--border); border-radius: 7px; padding: 9px 14px; font-family: var(--font); font-size: 12px; color: var(--text-muted); cursor: pointer; }
+  .stats-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.25rem; }
+  .stat-label { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: .5px; margin-bottom: 4px; }
+  .stat-value { font-size: 24px; font-weight: 500; color: var(--accent); font-family: var(--mono); line-height: 1.2; }
+  .stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .chart-section { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .chart-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 1rem; padding-bottom: .6rem; border-bottom: 1px solid var(--border-light); }
+  .bar-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: 8px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+  .bar-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .bar-views { width: 100%; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; transition: height .3s; }
+  .bar-uniq { width: 60%; background: #4ade80; border-radius: 3px 3px 0 0; min-height: 2px; }
+  .bar-date { font-size: 9px; font-family: var(--mono); color: var(--text-muted); text-align: center; white-space: nowrap; }
+  .bar-legend { display: flex; gap: 16px; margin-top: 10px; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .top-list { background: var(--surface); border: 1px solid var(--border-light); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .top-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border-light); font-size: 13px; }
+  .top-row:last-child { border-bottom: none; }
+  .top-rank { font-family: var(--mono); font-size: 11px; color: var(--text-muted); width: 20px; text-align: center; flex-shrink: 0; }
+  .top-path { flex: 1; font-family: var(--mono); font-size: 12px; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-count { font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 500; flex-shrink: 0; }
+  .top-uniq { font-size: 11px; color: var(--text-muted); font-family: var(--mono); flex-shrink: 0; margin-left: 4px; }
+  .stats-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .stats-loading { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 13px; }
+  .stats-error { text-align: center; padding: 2rem; color: var(--danger); font-size: 13px; background: var(--danger-bg); border-radius: 10px; }
+
   /* ── 비밀번호 변경 ── */
   .pw-section { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); }
   .pw-section-title { font-size: 11px; font-family: var(--mono); color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 1rem; }
@@ -131,12 +169,59 @@
       <button class="tab-btn" onclick="switchTab('bs', this)">Ball Screw 공급사</button>
       <button class="tab-btn" onclick="switchTab('brg', this)">베어링 공급사</button>
       <button class="tab-btn" onclick="switchTab('servo', this)">서보모터 공급사</button>
+      <button class="tab-btn" onclick="switchTab('stats', this)">📊 방문자 통계</button>
     </div>
-    <div class="section-header">
-      <div class="section-title" id="tab-label">LM Guide 공급사</div>
-      <button class="add-btn" onclick="openForm()">+ 공급사 추가</button>
+
+    <!-- 공급사 관리 영역 -->
+    <div id="supplier-area">
+      <div class="section-header">
+        <div class="section-title" id="tab-label">LM Guide 공급사</div>
+        <button class="add-btn" onclick="openForm()">+ 공급사 추가</button>
+      </div>
+      <div class="supplier-list" id="supplier-list"></div>
     </div>
-    <div class="supplier-list" id="supplier-list"></div>
+
+    <!-- 방문자 통계 영역 -->
+    <div id="stats-area" class="hidden">
+      <div class="token-setup" id="token-setup-box">
+        <div class="token-setup-title">🔑 GitHub Personal Access Token 설정</div>
+        <div class="token-setup-desc">
+          GitHub 트래픽 API를 사용해 방문자 데이터를 불러옵니다.<br>
+          <a href="https://github.com/settings/tokens/new?scopes=repo&description=PartsOn+Analytics" target="_blank">여기서 토큰 발급</a> →
+          <b>Repository → Contents: Read-only</b> 또는 classic token의 <b>repo</b> 체크 후 복사
+        </div>
+        <div class="token-row">
+          <input type="password" class="token-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+          <button class="token-save-btn" onclick="saveToken()">저장 &amp; 불러오기</button>
+        </div>
+      </div>
+
+      <div id="stats-content" class="hidden">
+        <div class="stats-summary" id="stats-summary"></div>
+        <div class="chart-section">
+          <div class="chart-title">일별 방문 현황 (최근 14일)</div>
+          <div class="bar-chart" id="bar-chart"></div>
+          <div class="bar-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>페이지뷰</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>순방문자</div>
+          </div>
+        </div>
+        <div class="stats-grid2">
+          <div class="top-list" id="top-pages">
+            <div class="chart-title">인기 페이지</div>
+          </div>
+          <div class="top-list" id="top-refs">
+            <div class="chart-title">유입 경로</div>
+          </div>
+        </div>
+        <div style="text-align:right;margin-top:.5rem">
+          <button class="token-clear-btn" onclick="clearToken()">토큰 삭제</button>
+        </div>
+      </div>
+
+      <div id="stats-loading" class="stats-loading hidden">데이터 불러오는 중...</div>
+      <div id="stats-error" class="stats-error hidden"></div>
+    </div>
 
     <!-- 비밀번호 변경 -->
     <div class="pw-section">
@@ -206,6 +291,8 @@ const KEYS = { lm: 'partson_lm_suppliers', bs: 'partson_bs_suppliers', brg: 'par
 const LABELS = { lm: 'LM Guide 공급사', bs: 'Ball Screw 공급사', brg: '베어링 공급사', servo: '서보모터 공급사' };
 const PW_KEY = 'partson_admin_pw';
 const DEFAULT_PW = 'partsON1';
+const TOKEN_KEY = 'partson_gh_token';
+const GH_REPO = 'airpam-del/airpam-del.github.io';
 
 let currentTab = 'lm';
 let editingId = null;
@@ -214,10 +301,130 @@ function switchTab(tab, el) {
   currentTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+
+  const isStats = tab === 'stats';
+  document.getElementById('supplier-area').classList.toggle('hidden', isStats);
+  document.getElementById('stats-area').classList.toggle('hidden', !isStats);
+
+  if (isStats) {
+    initStats();
+    return;
+  }
   document.getElementById('tab-label').textContent = LABELS[tab];
-  // 사이즈 옵션은 LM Guide만
   document.getElementById('size-group').style.display = tab === 'lm' ? '' : 'none';
   renderList();
+}
+
+// ── 방문자 통계 ──────────────────────────────
+function saveToken() {
+  const t = document.getElementById('gh-token-input').value.trim();
+  if (!t) { alert('토큰을 입력하세요.'); return; }
+  localStorage.setItem(TOKEN_KEY, t);
+  loadStats(t);
+}
+function clearToken() {
+  localStorage.removeItem(TOKEN_KEY);
+  document.getElementById('stats-content').classList.add('hidden');
+  document.getElementById('token-setup-box').classList.remove('hidden');
+  document.getElementById('gh-token-input').value = '';
+}
+function initStats() {
+  const t = localStorage.getItem(TOKEN_KEY);
+  if (t) {
+    document.getElementById('token-setup-box').classList.add('hidden');
+    loadStats(t);
+  } else {
+    document.getElementById('token-setup-box').classList.remove('hidden');
+    document.getElementById('stats-content').classList.add('hidden');
+  }
+}
+async function ghFetch(token, path) {
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/${path}`, {
+    headers: { Authorization: `token ${token}`, Accept: 'application/vnd.github+json' }
+  });
+  if (!res.ok) throw new Error(`GitHub API 오류 (${res.status}): ${res.statusText}`);
+  return res.json();
+}
+async function loadStats(token) {
+  const loading = document.getElementById('stats-loading');
+  const error   = document.getElementById('stats-error');
+  const content = document.getElementById('stats-content');
+  loading.classList.remove('hidden');
+  error.classList.add('hidden');
+  content.classList.add('hidden');
+  try {
+    const [views, paths, refs] = await Promise.all([
+      ghFetch(token, 'traffic/views'),
+      ghFetch(token, 'traffic/popular/paths'),
+      ghFetch(token, 'traffic/referrers'),
+    ]);
+    loading.classList.add('hidden');
+    renderStats(views, paths, refs);
+    content.classList.remove('hidden');
+  } catch(e) {
+    loading.classList.add('hidden');
+    error.classList.remove('hidden');
+    error.innerHTML = `데이터 불러오기 실패: ${e.message}<br><small>토큰 권한(repo)을 확인하거나 토큰을 재발급하세요.</small>`;
+  }
+}
+function renderStats(views, paths, refs) {
+  // 요약 카드
+  document.getElementById('stats-summary').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">TOTAL VIEWS (14일)</div>
+      <div class="stat-value">${views.count.toLocaleString()}</div>
+      <div class="stat-sub">페이지뷰 합계</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">UNIQUE VISITORS (14일)</div>
+      <div class="stat-value">${views.uniques.toLocaleString()}</div>
+      <div class="stat-sub">순방문자 합계</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">TODAY</div>
+      <div class="stat-value">${(views.views.at(-1)?.uniques ?? 0).toLocaleString()}</div>
+      <div class="stat-sub">오늘 순방문자</div>
+    </div>`;
+
+  // 막대 차트
+  const days = views.views.slice(-14);
+  const maxV = Math.max(...days.map(d => d.count), 1);
+  document.getElementById('bar-chart').innerHTML = days.map(d => {
+    const date  = new Date(d.timestamp);
+    const label = `${date.getMonth()+1}/${date.getDate()}`;
+    const hV = Math.round((d.count / maxV) * 100);
+    const hU = Math.round((d.uniques / maxV) * 100);
+    return `<div class="bar-col" title="${label} — 뷰: ${d.count}, 방문: ${d.uniques}">
+      <div class="bar-wrap">
+        <div class="bar-views" style="height:${hV}px"></div>
+      </div>
+      <div class="bar-wrap" style="width:60%;margin-top:-${hV}px">
+        <div class="bar-uniq" style="height:${hU}px;opacity:.7"></div>
+      </div>
+      <div class="bar-date">${label}</div>
+    </div>`;
+  }).join('');
+
+  // 인기 페이지
+  const pageRows = paths.slice(0, 8).map((p, i) => {
+    const name = p.path.replace('/', '') || 'index.html';
+    return `<div class="top-row">
+      <div class="top-rank">${i+1}</div>
+      <div class="top-path" title="${p.path}">${name}</div>
+      <div class="top-count">${p.count.toLocaleString()}</div>
+      <div class="top-uniq">(${p.uniques}명)</div>
+    </div>`;
+  }).join('') || '<div style="padding:1rem;font-size:12px;color:var(--text-muted)">데이터 없음</div>';
+  document.getElementById('top-pages').innerHTML = `<div class="chart-title">인기 페이지</div>${pageRows}`;
+
+  // 유입 경로
+  const refRows = refs.slice(0, 8).map((r, i) => `<div class="top-row">
+    <div class="top-rank">${i+1}</div>
+    <div class="top-path" title="${r.referrer}">${r.referrer || '직접 방문'}</div>
+    <div class="top-count">${r.count.toLocaleString()}</div>
+    <div class="top-uniq">(${r.uniques}명)</div>
+  </div>`).join('') || '<div style="padding:1rem;font-size:12px;color:var(--text-muted)">데이터 없음</div>';
+  document.getElementById('top-refs').innerHTML = `<div class="chart-title">유입 경로</div>${refRows}`;
 }
 
 /* ── 인증 ── */
