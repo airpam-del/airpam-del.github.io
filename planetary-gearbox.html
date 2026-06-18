@@ -60,14 +60,14 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 
 /* ── 위저드 진행 바 ── */
 .steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
-.step-node{display:flex;flex-direction:column;align-items:center;flex:1}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0}
 .step-row{display:flex;align-items:center;width:100%}
-.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;line-height:1}
 .step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
 .step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
 .step-line{flex:1;height:2px;background:var(--border);transition:background .2s}
 .step-line.done{background:var(--accent)}
-.step-label{font-size:10px;color:var(--text3);margin-top:4px;text-align:center;white-space:nowrap}
+.step-label{font-size:10px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;width:100%;padding:0 2px}
 .step-label.active{color:var(--accent);font-weight:600}
 
 /* ── 위저드 스텝 ── */
@@ -85,12 +85,21 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 
 /* ── 입력 그룹 ── */
 .input-group{margin-bottom:1.1rem}
-.input-group label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
 .input-wrap{position:relative}
 .input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
 .input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
 .input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
 .input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+
+/* ── ? 툴팁 ── */
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;position:relative;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.55;padding:.55rem .8rem;border-radius:8px;white-space:normal;width:220px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup,.tip-btn:focus + .tip-popup{display:block}
+@media(max-width:480px){.tip-popup{left:0;transform:none}}
 
 /* ── 체크박스 ── */
 .check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
@@ -227,7 +236,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
     <div class="question-desc">감속기에 요구되는 부하 토크와 운전 조건을 입력하세요.</div>
 
     <div class="input-group">
-      <label>부하 토크 T_load</label>
+      <label>부하 토크 T_load
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 출력축에 걸리는 실제 부하 토크입니다.<br>예) 볼스크류 구동 토크, 컨베이어 저항 토크 등.<br>부하 계수(Kf)를 곱하기 전의 값을 입력하세요.</div></span>
+      </label>
       <div class="input-wrap">
         <input type="number" id="t-load" min="0.1" step="0.1" placeholder="예: 50" value="">
         <span class="input-unit">N·m</span>
@@ -235,7 +246,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
     </div>
 
     <div class="input-group">
-      <label>입력 회전수 n_input (모터 출력 축)</label>
+      <label>입력 회전수 n_input
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 입력축(모터 출력축)의 회전수입니다.<br>서보모터 정격 회전수를 기준으로 입력하세요.<br>출력 회전수 = n_input ÷ 감속비</div></span>
+      </label>
       <div class="input-wrap">
         <input type="number" id="n-input" min="1" step="100" placeholder="예: 3000" value="">
         <span class="input-unit">rpm</span>
@@ -243,7 +256,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
     </div>
 
     <div class="input-group">
-      <label>감속비 i</label>
+      <label>감속비 i
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">입력 회전수 ÷ 출력 회전수입니다.<br>예) 모터 3000 rpm → 출력 300 rpm 이면 감속비 10.<br>원하는 값이 없으면 인접한 표준값을 선택하세요.</div></span>
+      </label>
       <div class="input-wrap">
         <select id="ratio">
           <option value="">-- 선택 --</option>
@@ -261,11 +276,12 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
           <option value="100">100</option>
         </select>
       </div>
-      <div class="input-hint">원하는 출력 회전수가 없으면 인접한 표준 감속비를 선택하세요.</div>
     </div>
 
     <div class="input-group">
-      <label>요구 수명 L_h</label>
+      <label>요구 수명 L_h
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기가 보장해야 하는 최소 운전 시간입니다.<br>일반 산업기계: 10,000~20,000 h<br>24시간 연속 가동: 20,000 h 이상 권장.<br>계산기는 L10h(10% 파손 수명)를 기준으로 비교합니다.</div></span>
+      </label>
       <div class="input-wrap">
         <input type="number" id="lh" min="1000" step="1000" placeholder="예: 20000" value="">
         <span class="input-unit">h</span>
@@ -273,7 +289,10 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
     </div>
 
     <div class="input-group">
-      <label>부하 관성 모멘트 J_load <span style="font-size:11px;color:var(--text3)">(선택 — 정밀 관성비 확인용)</span></label>
+      <label>부하 관성 모멘트 J_load
+        <span style="font-size:11px;color:var(--text3);font-weight:400">(선택)</span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">모터축으로 환산한 부하 관성입니다.<br>입력하면 관성비(JL/JM)를 추정해 드립니다.<br>불확실하면 비워두어도 선정에 지장 없습니다.<br>단위: kg·m²  (예: 0.003)</div></span>
+      </label>
       <div class="input-wrap">
         <input type="number" id="j-load" min="0" step="0.0001" placeholder="빈칸 가능" value="">
         <span class="input-unit">kg·m²</span>
@@ -292,7 +311,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
     <div class="question">정밀도 요구사항 선택</div>
     <div class="question-desc">백래시 허용 범위와 부하 특성을 선택하세요.</div>
 
-    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem">백래시 허용 범위</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem">백래시 허용 범위
+      <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">백래시(Backlash)는 감속기 출력축의 유격입니다.<br>값이 작을수록 위치결정 정밀도가 높습니다.<br>· ≤1 arcmin: 로봇·반도체 (고가)<br>· ≤3 arcmin: 일반 서보 위치제어<br>· ≤5 arcmin: 범용 자동화 (경제적)</div></span>
+    </div>
     <div class="choice-grid" id="bl-grid">
       <div class="choice-card" data-bl="1" onclick="selBl(this)">
         <div class="choice-title">고정밀 ≤ 1 arcmin</div>
@@ -308,7 +329,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
       </div>
     </div>
 
-    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem;margin-top:1rem">부하 특성</div>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem;margin-top:1rem;display:flex;align-items:center;gap:.4rem">부하 특성
+      <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">부하 계수 Kf는 충격·진동을 반영한 안전 계수입니다.<br>설계 토크 = T_load × Kf 로 계산됩니다.<br>· 1.0: 정속·연속 운전 (컨베이어)<br>· 1.25: 간헐·반복 운전 (포장기)<br>· 1.5: 충격 하중 발생 (프레스, 용접기)</div></span>
+    </div>
     <div class="choice-grid" id="kf-grid">
       <div class="choice-card" data-kf="1.0" onclick="selKf(this)">
         <div class="choice-title">균일 부하 (Kf = 1.0)</div>
