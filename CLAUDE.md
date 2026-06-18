@@ -23,6 +23,7 @@ PartsOn 배포/
 ├── ballscrew.html      — 볼스크류 + LM Guide 선정 계산기 (5단계 위저드 + LM Guide 탭)
 ├── bearing.html        — 베어링 선정 계산기 (5단계 위저드)
 ├── servo_motor.html    — 서보모터 선정 계산기 (5단계 위저드, 2026-05-29 신규)
+├── planetary-gearbox.html — 유성 감속기 선정 계산기 (5단계 위저드, 2026-06-18 신규)
 ├── admin.html          — 공급사 관리 페이지 (비밀번호 보호)
 ├── logo.png            — 원본 로고 (흰 배경 PNG)
 ├── logo-white.png      — 가공 로고 (흰색 실루엣, 투명 배경 — 네비바 사용)
@@ -149,6 +150,16 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 **스텝 바 클릭 네비게이션**: 완료된 스텝(✓)만 클릭 가능. `renderStepsBar(cur)` 에서 `onclick="goStep(n)"` 동적 삽입.
 
 **설치 방향 버튼 (`bs-ori`, `rp-ori`)**: `sel()` 함수 `step=0`으로 호출. `if (step >= 0)` 조건으로 sel 클래스 항상 적용.
+
+### planetary-gearbox.html — 유성 감속기 선정 계산기
+
+- **위저드 구조**: 5단계 (조건 입력 → 정밀도 → 메이커 → 결과 → 비교·선정)
+- **메이커 DB**: Neugart PLE/PLN, Apex Dynamics AB/AD, Shimpo VRSF/VRL (총 31개 시리즈)
+- **필터링**: 감속비 일치 + 백래시 ≤ 허용값 + 정격 토크 ≥ 설계 토크 (= T_load × Kf)
+- **수명 계산**: L10h ≈ 20,000 × (T_rated / T_design)^(10/3) [h]
+- **판정**: ok(적합) / warn(수명 미달) / bad(rpm 초과)
+- **상태 객체 `S`**: `{ step, tLoad, nInput, ratio, lh, jLoad, blMax, kf, makers, results, picked }`
+- **데이터**: `PG_DATA` 객체 내 인라인 (별도 JS 파일 없음)
 
 ## 작업 이력
 

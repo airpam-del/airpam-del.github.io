@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유성 감속기 선정 계산기 — PartsOn Linear</title>
+<meta name="description" content="유성 감속기를 무료로 선정하세요. Neugart, Apex Dynamics, Shimpo(Nidec) 3사 동시 비교. 백래시·수명·효율 자동 계산.">
+<meta name="keywords" content="유성 감속기 선정, 감속기 계산기, Neugart, Apex Dynamics, Shimpo, 플래니터리 기어박스, 백래시">
+<meta property="og:title" content="유성 감속기 선정 계산기 — PartsOn Linear">
+<meta property="og:description" content="Neugart·Apex Dynamics·Shimpo 3사 유성 감속기 동시 비교. 토크·백래시·수명 자동 계산.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/planetary-gearbox.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://partson.co.kr/planetary-gearbox.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val,.check-val{font-family:var(--mono)}
+
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+
+/* ── 헤더 ── */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 레이아웃 ── */
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* ── 위저드 진행 바 ── */
+.steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1}
+.step-row{display:flex;align-items:center;width:100%}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .2s}
+.step-line.done{background:var(--accent)}
+.step-label{font-size:10px;color:var(--text3);margin-top:4px;text-align:center;white-space:nowrap}
+.step-label.active{color:var(--accent);font-weight:600}
+
+/* ── 위저드 스텝 ── */
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 선택 카드 ── */
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;background:#fff;text-align:left}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:12px;color:var(--text2)}
+
+/* ── 입력 그룹 ── */
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:block;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+
+/* ── 체크박스 ── */
+.check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.check-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.check-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.check-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.check-item .ci-title{font-size:14px;font-weight:600;color:var(--text)}
+.check-item .ci-sub{font-size:12px;color:var(--text2)}
+
+/* ── 버튼 ── */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+
+/* ── 안내 박스 ── */
+.info-box{background:#F0F6FF;border:1px solid #BDD5F5;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1A3A5C;margin-bottom:1.25rem;line-height:1.6}
+.warn-box{background:var(--warn-bg);border:1px solid #F0C5A0;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 결과 카드 ── */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;position:relative;overflow:hidden;transition:box-shadow .2s}
+.result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.result-card.ok-card{border-color:#6DBF8A}
+.result-card.warn-card{border-color:#F0B060}
+.result-card.bad-card{border-color:#D98080}
+.rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem}
+.rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.rc-series{font-size:12px;color:var(--text2);margin-bottom:.75rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem}
+.rc-badge.ok{background:var(--ok-bg);color:var(--ok)}
+.rc-badge.warn{background:var(--warn-bg);color:var(--warn)}
+.rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
+.rc-rows{display:flex;flex-direction:column;gap:.4rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2)}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rc-row-val.good{color:var(--ok)}
+.rc-row-val.caution{color:#8B6A1A}
+.rc-row-val.bad{color:var(--bad)}
+.rc-divider{height:1px;background:var(--border-light);margin:.5rem 0}
+
+/* ── 비교 테이블 ── */
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .75rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.cmp-table tr:hover td{background:#FAFAF8}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.low-bl{color:var(--ok);font-weight:700}
+
+/* ── 선택 버튼 ── */
+.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
+.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+
+/* ── 선정 요약 ── */
+#summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.sum-title{font-size:16px;font-weight:700;color:var(--ok);margin-bottom:.75rem}
+.sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid rgba(0,0,0,.06);padding:.2rem 0}
+.sum-row span:last-child{font-family:var(--mono);font-weight:600;color:var(--text)}
+.maker-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.maker-link{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;padding:.35rem .75rem;border-radius:6px;background:#fff;border:1px solid var(--border);color:var(--accent);text-decoration:none;transition:all .15s}
+.maker-link:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* ── 무결과 ── */
+.no-result{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
+.no-result-icon{font-size:40px;margin-bottom:.75rem}
+
+/* ── 면책 고지 ── */
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+
+/* ── 인쇄 ── */
+.print-header{display:none}
+@media print{
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .step-wrap{display:block!important}
+  .step-wrap:not(.active){display:none!important}
+  .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
+}
+
+/* ── 반응형 ── */
+@media(max-width:600px){
+  .choice-grid{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:1fr}
+  .sum-rows{grid-template-columns:1fr}
+  .partson-nav a{padding:10px 10px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- 내비게이션 -->
+<nav class="partson-nav">
+  <span class="nav-brand">PartsOn</span>
+  <a href="index.html">홈</a>
+  <a href="lmguide.html">LM Guide</a>
+  <a href="ballscrew.html">볼스크류</a>
+  <a href="bearing.html">베어링</a>
+  <a href="servo_motor.html">서보모터</a>
+  <a href="screwjack.html">스크류잭</a>
+  <a href="planetary-gearbox.html" class="active">유성 감속기</a>
+</nav>
+
+<!-- 헤더 -->
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">⚙️</div>
+    <div>
+      <h1>유성 감속기 선정 계산기</h1>
+      <p>Neugart · Apex Dynamics · Shimpo(Nidec) 3사 동시 비교 — 토크·백래시·수명 자동 계산</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 인쇄 헤더 -->
+  <div class="print-header">
+    <span style="font-weight:700">PartsOn — 유성 감속기 선정 계산기</span>
+    <span id="print-date"></span>
+  </div>
+
+  <!-- 스텝 바 -->
+  <div class="steps-bar" id="steps-bar"></div>
+
+  <!-- Step 1: 애플리케이션 조건 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1</div>
+    <div class="question">애플리케이션 조건 입력</div>
+    <div class="question-desc">감속기에 요구되는 부하 토크와 운전 조건을 입력하세요.</div>
+
+    <div class="input-group">
+      <label>부하 토크 T_load</label>
+      <div class="input-wrap">
+        <input type="number" id="t-load" min="0.1" step="0.1" placeholder="예: 50" value="">
+        <span class="input-unit">N·m</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>입력 회전수 n_input (모터 출력 축)</label>
+      <div class="input-wrap">
+        <input type="number" id="n-input" min="1" step="100" placeholder="예: 3000" value="">
+        <span class="input-unit">rpm</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>감속비 i</label>
+      <div class="input-wrap">
+        <select id="ratio">
+          <option value="">-- 선택 --</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="7">7</option>
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="25">25</option>
+          <option value="35">35</option>
+          <option value="50">50</option>
+          <option value="70">70</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+      <div class="input-hint">원하는 출력 회전수가 없으면 인접한 표준 감속비를 선택하세요.</div>
+    </div>
+
+    <div class="input-group">
+      <label>요구 수명 L_h</label>
+      <div class="input-wrap">
+        <input type="number" id="lh" min="1000" step="1000" placeholder="예: 20000" value="">
+        <span class="input-unit">h</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>부하 관성 모멘트 J_load <span style="font-size:11px;color:var(--text3)">(선택 — 정밀 관성비 확인용)</span></label>
+      <div class="input-wrap">
+        <input type="number" id="j-load" min="0" step="0.0001" placeholder="빈칸 가능" value="">
+        <span class="input-unit">kg·m²</span>
+      </div>
+    </div>
+
+    <div class="btn-nav">
+      <span></span>
+      <button class="btn btn-primary" onclick="goStep(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 정밀도 요구사항 -->
+  <div class="step-wrap card" id="step-2">
+    <div class="section-label">Step 2</div>
+    <div class="question">정밀도 요구사항 선택</div>
+    <div class="question-desc">백래시 허용 범위와 부하 특성을 선택하세요.</div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem">백래시 허용 범위</div>
+    <div class="choice-grid" id="bl-grid">
+      <div class="choice-card" data-bl="1" onclick="selBl(this)">
+        <div class="choice-title">고정밀 ≤ 1 arcmin</div>
+        <div class="choice-sub">반도체 · 로봇 관절</div>
+      </div>
+      <div class="choice-card" data-bl="3" onclick="selBl(this)">
+        <div class="choice-title">중간 정밀 ≤ 3 arcmin</div>
+        <div class="choice-sub">일반 서보 위치결정</div>
+      </div>
+      <div class="choice-card" data-bl="5" onclick="selBl(this)">
+        <div class="choice-title">표준 ≤ 5 arcmin</div>
+        <div class="choice-sub">범용 자동화</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem;margin-top:1rem">부하 특성</div>
+    <div class="choice-grid" id="kf-grid">
+      <div class="choice-card" data-kf="1.0" onclick="selKf(this)">
+        <div class="choice-title">균일 부하 (Kf = 1.0)</div>
+        <div class="choice-sub">컨베이어 · 정속 구동</div>
+      </div>
+      <div class="choice-card" data-kf="1.25" onclick="selKf(this)">
+        <div class="choice-title">중간 충격 (Kf = 1.25)</div>
+        <div class="choice-sub">포장기 · 픽앤플레이스</div>
+      </div>
+      <div class="choice-card" data-kf="1.5" onclick="selKf(this)">
+        <div class="choice-title">큰 충격 (Kf = 1.5)</div>
+        <div class="choice-sub">프레스 · 충격 부하</div>
+      </div>
+    </div>
+    <div class="info-box">부하 계수 Kf는 피크 토크 계산에 적용됩니다. 불확실하면 '중간 충격'을 선택하세요.</div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 메이커 선택 -->
+  <div class="step-wrap card" id="step-3">
+    <div class="section-label">Step 3</div>
+    <div class="question">비교할 메이커 선택</div>
+    <div class="question-desc">2개 이상 선택 시 나란히 비교됩니다.</div>
+
+    <div class="check-group">
+      <label class="check-item sel" id="mk-neugart">
+        <input type="checkbox" checked onchange="toggleMaker(this,'neugart')">
+        <div>
+          <div class="ci-title">Neugart (독일)</div>
+          <div class="ci-sub">PLE / PLN / PLFN 시리즈 — Economy &amp; Precision Line</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-apex">
+        <input type="checkbox" checked onchange="toggleMaker(this,'apex')">
+        <div>
+          <div class="ci-title">Apex Dynamics (대만)</div>
+          <div class="ci-sub">AB / AD 시리즈 — Standard &amp; High Precision</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-shimpo">
+        <input type="checkbox" checked onchange="toggleMaker(this,'shimpo')">
+        <div>
+          <div class="ci-title">Shimpo / Nidec (일본)</div>
+          <div class="ci-sub">VRSF / VRL 시리즈 — Economy &amp; Standard Precision</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 결과 -->
+  <div class="step-wrap card" id="step-4">
+    <div class="section-label">Step 4</div>
+    <div class="question">계산 결과</div>
+    <div class="question-desc" id="result-desc"></div>
+
+    <div id="result-grid" class="result-grid"></div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(3)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(5)">비교 테이블 →</button>
+    </div>
+  </div>
+
+  <!-- Step 5: 상세 비교 & 선정 -->
+  <div class="step-wrap card" id="step-5">
+    <div class="section-label">Step 5</div>
+    <div class="question">상세 비교 및 선정</div>
+
+    <div id="summary-box">
+      <div class="sum-title">✅ 선정 결과</div>
+      <div class="sum-rows" id="sum-rows"></div>
+    </div>
+
+    <div class="cmp-table-wrap">
+      <table class="cmp-table" id="cmp-table">
+        <thead>
+          <tr>
+            <th>메이커</th>
+            <th>모델</th>
+            <th>감속비</th>
+            <th>정격 토크 (N·m)</th>
+            <th>백래시 (arcmin)</th>
+            <th>예상 수명 (h)</th>
+            <th>효율 (%)</th>
+            <th>판정</th>
+            <th>선택</th>
+          </tr>
+        </thead>
+        <tbody id="cmp-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="maker-links">
+      <a href="https://www.neugart.com/en/gearboxes" target="_blank" rel="noopener" class="maker-link">🔗 Neugart 카탈로그</a>
+      <a href="https://apexdynamicsusa.com" target="_blank" rel="noopener" class="maker-link">🔗 Apex Dynamics</a>
+      <a href="https://www.nidec-dtc.com" target="_blank" rel="noopener" class="maker-link">🔗 Shimpo / Nidec</a>
+    </div>
+
+    <div class="disclaimer">⚠️ 면책 고지: 이 계산기는 초기 선정용입니다. 최종 선정은 메이커 카탈로그 및 기술 담당자 확인 후 결정하세요. 수명 계산은 카탈로그 기준(정격 10,000 h 또는 20,000 h 기반 비율 추정)이며 실제 환경 조건에 따라 달라질 수 있습니다.</div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(4)">← 이전</button>
+      <button class="btn btn-ghost" onclick="doPrint()">📄 PDF 저장 (인쇄)</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════
+   제품 데이터
+═══════════════════════════════════ */
+const PG_DATA = {
+  neugart: {
+    name: 'Neugart',
+    series: [
+      // PLE 시리즈 (Economy Line)
+      { series:'PLE040', ratios:[3,4,5,7,10], torqueRange:[5,9],   maxRpm:10000, bl:22, eff:97, stage:1 },
+      { series:'PLE060', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[18,36], maxRpm:8000,  bl:22, eff:97, stage:2 },
+      { series:'PLE080', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[40,75], maxRpm:6000,  bl:22, eff:97, stage:2 },
+      { series:'PLE120', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[120,190],maxRpm:4000, bl:22, eff:97, stage:2 },
+      { series:'PLE160', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[230,450],maxRpm:3000, bl:22, eff:97, stage:2 },
+      // PLN 시리즈 (Precision Line)
+      { series:'PLN070', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[22,48],  maxRpm:8000,  bl:1,  eff:97, stage:2 },
+      { series:'PLN090', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[55,110], maxRpm:6000,  bl:1,  eff:97, stage:2 },
+      { series:'PLN115', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[130,260],maxRpm:4000,  bl:1,  eff:97, stage:2 },
+      { series:'PLN142', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[280,600],maxRpm:3000,  bl:1,  eff:97, stage:2 },
+    ]
+  },
+  apex: {
+    name: 'Apex Dynamics',
+    series: [
+      // AB 시리즈 (Standard Backlash, 1단)
+      { series:'AB042', ratios:[3,4,5,7,10], torqueRange:[14,14],  maxRpm:6000, bl:5, eff:97, stage:1 },
+      { series:'AB060', ratios:[3,4,5,7,10], torqueRange:[40,40],  maxRpm:5000, bl:5, eff:97, stage:1 },
+      { series:'AB090', ratios:[3,4,5,7,10], torqueRange:[120,120],maxRpm:4000, bl:5, eff:97, stage:1 },
+      { series:'AB115', ratios:[3,4,5,7,10], torqueRange:[250,250],maxRpm:3500, bl:5, eff:97, stage:1 },
+      { series:'AB142', ratios:[3,4,5,7,10], torqueRange:[500,500],maxRpm:3000, bl:5, eff:97, stage:1 },
+      // AB 2단
+      { series:'AB042-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[14,14],  maxRpm:6000, bl:7, eff:94, stage:2 },
+      { series:'AB060-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[40,40],  maxRpm:5000, bl:7, eff:94, stage:2 },
+      { series:'AB090-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[120,120],maxRpm:4000, bl:7, eff:94, stage:2 },
+      { series:'AB115-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[250,250],maxRpm:3500, bl:7, eff:94, stage:2 },
+      { series:'AB142-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[500,500],maxRpm:3000, bl:7, eff:94, stage:2 },
+      // AD 시리즈 (High Precision, 1단)
+      { series:'AD042', ratios:[4,5,7,10], torqueRange:[14,14],  maxRpm:6000, bl:3, eff:97, stage:1 },
+      { series:'AD060', ratios:[4,5,7,10], torqueRange:[40,40],  maxRpm:5000, bl:3, eff:97, stage:1 },
+      { series:'AD090', ratios:[4,5,7,10], torqueRange:[120,120],maxRpm:4000, bl:3, eff:97, stage:1 },
+      { series:'AD115', ratios:[4,5,7,10], torqueRange:[250,250],maxRpm:3500, bl:3, eff:97, stage:1 },
+      { series:'AD142', ratios:[4,5,7,10], torqueRange:[500,500],maxRpm:3000, bl:3, eff:97, stage:1 },
+      // AD 2단
+      { series:'AD042-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[14,14],  maxRpm:6000, bl:5, eff:94, stage:2 },
+      { series:'AD060-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[40,40],  maxRpm:5000, bl:5, eff:94, stage:2 },
+      { series:'AD090-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[120,120],maxRpm:4000, bl:5, eff:94, stage:2 },
+      { series:'AD115-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[250,250],maxRpm:3500, bl:5, eff:94, stage:2 },
+      { series:'AD142-2', ratios:[16,21,25,31,35,40,50,61,70,91,100], torqueRange:[500,500],maxRpm:3000, bl:5, eff:94, stage:2 },
+    ]
+  },
+  shimpo: {
+    name: 'Shimpo / Nidec',
+    series: [
+      // VRSF 시리즈 (Economy)
+      { series:'VRSF-B', ratios:[3,4,5,7,9,11,15,21,27,33,45,81], torqueRange:[10,20],   maxRpm:5000, bl:15, eff:95, stage:2 },
+      { series:'VRSF-C', ratios:[3,4,5,7,9,11,15,21,27,33,45,81], torqueRange:[25,50],   maxRpm:4500, bl:15, eff:95, stage:2 },
+      { series:'VRSF-D', ratios:[3,4,5,7,9,11,15,21,27,33,45,81], torqueRange:[60,91],   maxRpm:4000, bl:15, eff:95, stage:2 },
+      { series:'VRSF-E', ratios:[3,4,5,7,9,11,15,21,27,33,45,81], torqueRange:[120,274], maxRpm:3500, bl:15, eff:95, stage:2 },
+      // VRL 시리즈 (Standard Precision)
+      { series:'VRL-050', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[30,60],   maxRpm:5000, bl:5, eff:96, stage:2 },
+      { series:'VRL-070', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[80,160],  maxRpm:4500, bl:5, eff:96, stage:2 },
+      { series:'VRL-090', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[180,360], maxRpm:4000, bl:5, eff:96, stage:2 },
+      { series:'VRL-115', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[400,800], maxRpm:3000, bl:5, eff:96, stage:2 },
+    ]
+  }
+};
+
+/* ═══════════════════════════════════
+   상태
+═══════════════════════════════════ */
+let S = {
+  step: 1,
+  tLoad: null,
+  nInput: null,
+  ratio: null,
+  lh: null,
+  jLoad: null,
+  blMax: null,    // arcmin
+  kf: null,
+  makers: { neugart: true, apex: true, shimpo: true },
+  results: [],
+  picked: null,
+};
+
+/* ═══════════════════════════════════
+   스텝 바
+═══════════════════════════════════ */
+const STEP_LABELS = ['조건 입력','정밀도','메이커','결과','비교·선정'];
+function renderStepsBar(cur) {
+  const bar = document.getElementById('steps-bar');
+  bar.innerHTML = STEP_LABELS.map((lbl, i) => {
+    const n = i + 1;
+    const isDone = n < cur;
+    const isActive = n === cur;
+    const circClass = isDone ? 'done' : isActive ? 'active' : '';
+    const lineClass = isDone ? 'done' : '';
+    const lblClass = isActive ? 'active' : '';
+    const onclick = isDone ? `onclick="goStep(${n})"` : '';
+    const lineHtml = n < 5 ? `<div class="step-line ${lineClass}"></div>` : '';
+    return `<div class="step-node">
+      <div class="step-row">
+        <div class="step-circle ${circClass}" ${onclick}>${isDone ? '✓' : n}</div>
+        ${lineHtml}
+      </div>
+      <div class="step-label ${lblClass}">${lbl}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════
+   스텝 이동
+═══════════════════════════════════ */
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
+  if (n > S.step + 1 && n !== S.step) {
+    // allow going back freely
+  }
+  S.step = n;
+  document.querySelectorAll('.step-wrap').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === n);
+  });
+  renderStepsBar(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep1() {
+  const tl = parseFloat(document.getElementById('t-load').value);
+  const ni = parseFloat(document.getElementById('n-input').value);
+  const r  = parseFloat(document.getElementById('ratio').value);
+  const lh = parseFloat(document.getElementById('lh').value);
+  if (!tl || tl <= 0) { alert('부하 토크를 입력하세요.'); return false; }
+  if (!ni || ni <= 0) { alert('입력 회전수를 입력하세요.'); return false; }
+  if (!r)             { alert('감속비를 선택하세요.'); return false; }
+  if (!lh || lh <= 0) { alert('요구 수명을 입력하세요.'); return false; }
+  S.tLoad  = tl;
+  S.nInput = ni;
+  S.ratio  = r;
+  S.lh     = lh;
+  S.jLoad  = parseFloat(document.getElementById('j-load').value) || null;
+  return true;
+}
+
+function validateStep2() {
+  if (!S.blMax) { alert('백래시 허용 범위를 선택하세요.'); return false; }
+  if (!S.kf)    { alert('부하 특성을 선택하세요.'); return false; }
+  return true;
+}
+
+/* ═══════════════════════════════════
+   선택 함수
+═══════════════════════════════════ */
+function selBl(el) {
+  document.querySelectorAll('#bl-grid .choice-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.blMax = parseFloat(el.dataset.bl);
+}
+
+function selKf(el) {
+  document.querySelectorAll('#kf-grid .choice-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.kf = parseFloat(el.dataset.kf);
+}
+
+function toggleMaker(cb, key) {
+  S.makers[key] = cb.checked;
+  const label = document.getElementById('mk-' + key);
+  if (label) label.classList.toggle('sel', cb.checked);
+}
+
+/* ═══════════════════════════════════
+   계산 실행
+═══════════════════════════════════ */
+function runCalc() {
+  const activeMakers = Object.keys(S.makers).filter(k => S.makers[k]);
+  if (activeMakers.length === 0) { alert('메이커를 하나 이상 선택하세요.'); return; }
+
+  const tDesign = S.tLoad * S.kf;
+  const nOutput = S.nInput / S.ratio;
+
+  S.results = [];
+
+  for (const makerKey of activeMakers) {
+    const maker = PG_DATA[makerKey];
+    for (const s of maker.series) {
+      if (!s.ratios.includes(S.ratio)) continue;
+      if (s.bl > S.blMax) continue;                // 백래시 필터
+      const ratedTorque = s.torqueRange[1];         // 최대 정격 토크 기준
+      if (ratedTorque < tDesign) continue;          // 토크 부족
+
+      // 입력 rpm 초과 확인
+      const rpmOk = S.nInput <= s.maxRpm;
+
+      // 수명 추정: 정격 조건(카탈로그) 대비 실제 부하 비율로 L10h 추정
+      // 기준 수명 L_base: 유성 감속기 카탈로그 기준 20,000h
+      const L_base = 20000;
+      const torqueRatio = tDesign / ratedTorque; // 0~1
+      // L10h ≈ L_base * (T_rated / T_design)^(10/3)
+      const L10h = Math.round(L_base * Math.pow(1 / torqueRatio, 10/3));
+
+      const lifeOk = L10h >= S.lh;
+
+      // 관성비 (J_load 입력 시)
+      let irStr = null;
+      if (S.jLoad !== null) {
+        // 대표 기어박스 관성 — 각 프레임 추정값 (없으면 0으로 처리)
+        const J_gb = 0; // 카탈로그에 따라 다름
+        const ir = (S.jLoad + J_gb) / (S.ratio * S.ratio * 0.0001); // 기준 모터 J = 0.0001 kg·m² 가정
+        irStr = ir.toFixed(2);
+      }
+
+      const overall = (!rpmOk) ? 'bad' : (!lifeOk) ? 'warn' : 'ok';
+
+      S.results.push({
+        makerKey, makerName: maker.name,
+        series: s.series,
+        ratio: S.ratio,
+        ratedTorque,
+        tDesign,
+        bl: s.bl,
+        L10h,
+        lifeOk,
+        rpmOk,
+        eff: s.eff,
+        overall,
+        irStr,
+      });
+    }
+  }
+
+  // 정렬: ok → warn → bad, 토크 오름차순
+  const order = { ok: 0, warn: 1, bad: 2 };
+  S.results.sort((a, b) => order[a.overall] - order[b.overall] || a.ratedTorque - b.ratedTorque);
+
+  renderResults();
+  buildCompareTable();
+  goStep(4);
+}
+
+/* ═══════════════════════════════════
+   결과 카드 렌더
+═══════════════════════════════════ */
+function renderResults() {
+  const tDesign = S.tLoad * S.kf;
+  const desc = document.getElementById('result-desc');
+  desc.textContent = `설계 토크 ${tDesign.toFixed(1)} N·m (= ${S.tLoad} × Kf ${S.kf}), 감속비 ${S.ratio}, 요구 수명 ${S.lh.toLocaleString()} h 기준`;
+
+  const grid = document.getElementById('result-grid');
+  if (S.results.length === 0) {
+    grid.innerHTML = `<div class="no-result" style="grid-column:1/-1"><div class="no-result-icon">🔍</div><div>조건에 맞는 모델이 없습니다.<br>백래시 기준을 완화하거나 다른 감속비를 시도해보세요.</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = S.results.map((r, i) => {
+    const badgeClass = r.overall;
+    const cardClass  = r.overall + '-card';
+    const badgeText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토 필요' : '❌ 부적합';
+    const lifeClass  = r.lifeOk ? 'good' : 'bad';
+    const lifeIcon   = r.lifeOk ? '✅' : '⚠️';
+    const blClass    = r.bl <= 1 ? 'good' : r.bl <= 3 ? '' : '';
+
+    let irRow = '';
+    if (r.irStr !== null) {
+      irRow = `<div class="rc-row"><span class="rc-row-label">관성비 (추정)</span><span class="rc-row-val">${r.irStr}</span></div>`;
+    }
+
+    return `<div class="result-card ${cardClass}">
+      <div class="rc-maker">${r.makerName}</div>
+      <div class="rc-model">${r.series}</div>
+      <div class="rc-series">감속비 ${r.ratio} · 효율 ${r.eff}%</div>
+      <div class="rc-badge ${badgeClass}">${badgeText}</div>
+      <div class="rc-rows">
+        <div class="rc-row"><span class="rc-row-label">정격 출력 토크</span><span class="rc-row-val">${r.ratedTorque} N·m</span></div>
+        <div class="rc-row"><span class="rc-row-label">설계 토크 대비</span><span class="rc-row-val">${((r.tDesign/r.ratedTorque)*100).toFixed(0)}% 사용</span></div>
+        <div class="rc-divider"></div>
+        <div class="rc-row"><span class="rc-row-label">백래시</span><span class="rc-row-val ${r.bl <= 1 ? 'good' : ''}">≤ ${r.bl} arcmin${r.bl <= 1 ? ' ▼' : ''}</span></div>
+        <div class="rc-row"><span class="rc-row-label">예상 수명</span><span class="rc-row-val ${lifeClass}">${lifeIcon} ${r.L10h >= 1e6 ? '> 1M' : r.L10h.toLocaleString()} h</span></div>
+        <div class="rc-row"><span class="rc-row-label">최대 입력 rpm 적합</span><span class="rc-row-val ${r.rpmOk ? 'good' : 'bad'}">${r.rpmOk ? '✅' : '❌'}</span></div>
+        ${irRow}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════
+   비교 테이블
+═══════════════════════════════════ */
+function buildCompareTable() {
+  const tbody = document.getElementById('cmp-tbody');
+  if (S.results.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:1.5rem">결과 없음</td></tr>';
+    return;
+  }
+  tbody.innerHTML = S.results.map((r, i) => {
+    const tagClass = r.overall === 'ok' ? 'tag-ok' : r.overall === 'warn' ? 'tag-warn' : 'tag-bad';
+    const tagText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토' : '❌ 부적합';
+    const blCls    = r.bl <= 1 ? ' class="low-bl"' : '';
+    const lifeTxt  = r.L10h >= 1e6 ? '> 1,000,000' : r.L10h.toLocaleString();
+    return `<tr>
+      <td>${r.makerName}</td>
+      <td class="mono">${r.series}</td>
+      <td class="mono">${r.ratio}</td>
+      <td class="mono">${r.ratedTorque}</td>
+      <td class="mono"${blCls}>≤ ${r.bl}</td>
+      <td class="mono">${lifeTxt}</td>
+      <td class="mono">${r.eff}</td>
+      <td><span class="${tagClass}">${tagText}</span></td>
+      <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})">선택</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function pickModel(idx) {
+  S.picked = S.results[idx];
+  document.querySelectorAll('.select-btn').forEach((b, i) => b.classList.toggle('picked', i === idx));
+
+  const r = S.picked;
+  const box = document.getElementById('summary-box');
+  box.style.display = 'block';
+  const rows = [
+    ['메이커', r.makerName],
+    ['모델 시리즈', r.series],
+    ['감속비', r.ratio],
+    ['정격 출력 토크', r.ratedTorque + ' N·m'],
+    ['설계 토크', r.tDesign.toFixed(1) + ' N·m'],
+    ['백래시', '≤ ' + r.bl + ' arcmin'],
+    ['예상 수명', (r.L10h >= 1e6 ? '> 1,000,000' : r.L10h.toLocaleString()) + ' h'],
+    ['효율', r.eff + ' %'],
+  ];
+  if (r.irStr !== null) rows.push(['관성비 (추정)', r.irStr]);
+  document.getElementById('sum-rows').innerHTML = rows.map(([k, v]) =>
+    `<div class="sum-row"><span>${k}</span><span>${v}</span></div>`
+  ).join('');
+
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ═══════════════════════════════════
+   인쇄
+═══════════════════════════════════ */
+function doPrint() {
+  document.getElementById('print-date').textContent = '계산일: ' + new Date().toLocaleDateString('ko-KR');
+  window.print();
+}
+
+/* ═══════════════════════════════════
+   초기화
+═══════════════════════════════════ */
+renderStepsBar(1);
+</script>
+</body>
+</html>
