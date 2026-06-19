@@ -24,6 +24,7 @@ PartsOn 배포/
 ├── bearing.html        — 베어링 선정 계산기 (5단계 위저드)
 ├── servo_motor.html    — 서보모터 선정 계산기 (5단계 위저드, 2026-05-29 신규)
 ├── planetary-gearbox.html — 유성 감속기 선정 계산기 (5단계 위저드, 2026-06-18 신규)
+├── cycloidal-gearbox.html — 사이클로이드 감속기 선정 계산기 (5단계 위저드, 2026-06-19 신규)
 ├── admin.html          — 공급사 관리 페이지 (비밀번호 보호)
 ├── logo.png            — 원본 로고 (흰 배경 PNG)
 ├── logo-white.png      — 가공 로고 (흰색 실루엣, 투명 배경 — 네비바 사용)
@@ -150,6 +151,17 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 **스텝 바 클릭 네비게이션**: 완료된 스텝(✓)만 클릭 가능. `renderStepsBar(cur)` 에서 `onclick="goStep(n)"` 동적 삽입.
 
 **설치 방향 버튼 (`bs-ori`, `rp-ori`)**: `sel()` 함수 `step=0`으로 호출. `if (step >= 0)` 조건으로 sel 클래스 항상 적용.
+
+### cycloidal-gearbox.html — 사이클로이드 감속기 선정 계산기
+
+- **위저드 구조**: 5단계 (조건 입력 → 충격 부하(SF) → 메이커 → 결과 → 비교·선정)
+- **메이커 DB**: Sumitomo Cyclo 6000(5종) / Fine Cyclo(6종), Nabtesco RV-E(7종) / RV-N(4종) (총 22개 모델)
+- **핵심 차이점**: 백래시 없음 → "위치 정밀도(히스테리시스 손실)" 표기, 순간 최대 토크 = 정격 × 5배
+- **설계 토크**: T_design = T_load × SF × 운전 패턴 보정계수 (역전 운전 시 SF × 1.2 추가)
+- **수명 등급**: 보장 수명 vs 요구 수명 비율로 ✅/⚠️/❌ 판정
+- **감속비 범위**: 입력값이 모델 ratioMin~ratioMax 내에 있는지 확인 후 필터링
+- **상태 객체 `S`**: `{ step, tLoad, nInput, ratio, lh, duty, sf, reverse, makers, results, picked }`
+- **데이터**: `CG_DATA` 객체 내 인라인
 
 ### planetary-gearbox.html — 유성 감속기 선정 계산기
 

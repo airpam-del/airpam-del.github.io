@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>사이클로이드 감속기 선정 계산기 — PartsOn Linear</title>
+<meta name="description" content="사이클로이드 감속기를 무료로 선정하세요. Sumitomo·Nabtesco 2사 동시 비교. 충격 내하중·위치 정밀도·수명 자동 계산.">
+<meta name="keywords" content="사이클로이드 감속기, 사이클로 감속기, Sumitomo, Nabtesco, RV감속기, 로봇 감속기, 충격 내하중">
+<meta property="og:title" content="사이클로이드 감속기 선정 계산기 — PartsOn Linear">
+<meta property="og:description" content="Sumitomo·Nabtesco 사이클로이드 감속기 동시 비교. 서비스 팩터·수명·충격 내하중 자동 계산.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/cycloidal-gearbox.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://partson.co.kr/cycloidal-gearbox.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val,.check-val{font-family:var(--mono)}
+
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 14px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+
+/* ── 헤더 ── */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 레이아웃 ── */
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* ── 위저드 진행 바 ── */
+.steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
+.step-line.done{background:var(--accent)}
+
+/* ── 가이드 배너 ── */
+.guide-banner{background:linear-gradient(135deg,#1A3A2A 0%,#2D6B4A 100%);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:opacity .15s}
+.guide-banner:hover{opacity:.92}
+.guide-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.guide-text{flex:1}
+.guide-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.guide-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.guide-arrow{font-size:18px;color:rgba(255,255,255,.5);flex-shrink:0;align-self:center}
+.guide-steps{display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.15)}
+.guide-steps.open{display:block}
+.guide-step-list{display:flex;flex-direction:column;gap:.5rem}
+.guide-step-item{display:flex;gap:.6rem;align-items:flex-start;font-size:12px;color:rgba(255,255,255,.85);line-height:1.5}
+.guide-step-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+
+/* ── 면책 배너 ── */
+.disclaimer-banner{display:flex;align-items:flex-start;gap:.6rem;background:#FFFBF0;border:1px solid #F0D080;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:12px;color:#7A5A00;line-height:1.6}
+.disclaimer-banner-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── 위저드 스텝 ── */
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 선택 카드 (2열) ── */
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.choice-grid-1{display:grid;grid-template-columns:1fr;gap:.75rem;margin-bottom:1.25rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;background:#fff;text-align:left}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:12px;color:var(--text2)}
+
+/* ── 입력 그룹 ── */
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+
+/* ── ? 툴팁 ── */
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.55;padding:.55rem .8rem;border-radius:8px;white-space:normal;width:220px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup{display:block}
+@media(max-width:480px){.tip-popup{left:0;transform:none}}
+
+/* ── 체크 아이템 (메이커) ── */
+.check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.check-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.check-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.check-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.check-item .ci-title{font-size:14px;font-weight:600;color:var(--text)}
+.check-item .ci-sub{font-size:12px;color:var(--text2)}
+
+/* ── 역전 운전 토글 ── */
+.reverse-toggle{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;margin-bottom:1.25rem}
+.reverse-toggle:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.reverse-toggle.sel{border-color:var(--accent);background:var(--accent-light)}
+.reverse-toggle input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;cursor:pointer}
+.reverse-toggle-text{font-size:14px;color:var(--text)}
+.reverse-toggle-sub{font-size:12px;color:var(--text2);margin-top:1px}
+
+/* ── 버튼 ── */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+
+/* ── 안내 박스 ── */
+.info-box{background:#F0F6FF;border:1px solid #BDD5F5;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1A3A5C;margin-bottom:1.25rem;line-height:1.6}
+.impact-box{background:#FDF3EB;border:1px solid #F0B060;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#6B3A00;margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 결과 카드 ── */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;transition:box-shadow .2s}
+.result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.result-card.ok-card{border-color:#6DBF8A}
+.result-card.warn-card{border-color:#F0B060}
+.result-card.bad-card{border-color:#D98080}
+.rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.15rem}
+.rc-series-tag{font-size:11px;background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 7px;font-weight:600;display:inline-block;margin-bottom:.3rem}
+.rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.rc-desc{font-size:12px;color:var(--text2);margin-bottom:.65rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem}
+.rc-badge.ok{background:var(--ok-bg);color:var(--ok)}
+.rc-badge.warn{background:var(--warn-bg);color:var(--warn)}
+.rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
+.rc-rows{display:flex;flex-direction:column;gap:.4rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2);flex-shrink:0}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text);text-align:right}
+.rc-row-val.good{color:var(--ok)}
+.rc-row-val.caution{color:#8B6A1A}
+.rc-row-val.bad{color:var(--bad)}
+.rc-divider{height:1px;background:var(--border-light);margin:.5rem 0}
+/* 충격 강조 박스 */
+.rc-impact{background:#FFF8F0;border:1px solid #F0C090;border-radius:8px;padding:.6rem .75rem;margin-top:.6rem}
+.rc-impact-label{font-size:11px;color:#8B5A00;margin-bottom:2px}
+.rc-impact-val{font-family:var(--mono);font-size:15px;font-weight:700;color:#8B3A00}
+
+/* ── 비교 테이블 ── */
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .75rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.cmp-table tr:hover td{background:#FAFAF8}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+
+/* ── 선택 버튼 ── */
+.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
+.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+
+/* ── 선정 요약 ── */
+#summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.sum-title{font-size:16px;font-weight:700;color:var(--ok);margin-bottom:.75rem}
+.sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid rgba(0,0,0,.06);padding:.2rem 0}
+.sum-row span:last-child{font-family:var(--mono);font-weight:600;color:var(--text)}
+.maker-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.maker-link{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;padding:.35rem .75rem;border-radius:6px;background:#fff;border:1px solid var(--border);color:var(--accent);text-decoration:none;transition:all .15s}
+.maker-link:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* ── 무결과 ── */
+.no-result{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
+.no-result-icon{font-size:40px;margin-bottom:.75rem}
+
+/* ── 인쇄 ── */
+.print-header{display:none}
+@media print{
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .step-wrap{display:block!important}
+  .step-wrap:not(.active){display:none!important}
+  .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
+}
+
+/* ── 반응형 ── */
+@media(max-width:600px){
+  .choice-grid{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:1fr}
+  .sum-rows{grid-template-columns:1fr}
+  .partson-nav a{padding:10px 10px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- 내비게이션 -->
+<nav class="partson-nav">
+  <span class="nav-brand">PartsOn</span>
+  <a href="index.html">홈</a>
+  <a href="lmguide.html">LM Guide</a>
+  <a href="ballscrew.html">볼스크류</a>
+  <a href="bearing.html">베어링</a>
+  <a href="servo_motor.html">서보모터</a>
+  <a href="screwjack.html">스크류잭</a>
+  <a href="planetary-gearbox.html">유성 감속기</a>
+  <a href="cycloidal-gearbox.html" class="active">사이클로이드</a>
+</nav>
+
+<!-- 헤더 -->
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔄</div>
+    <div>
+      <h1>사이클로이드 감속기 선정 계산기</h1>
+      <p>Sumitomo · Nabtesco 2사 동시 비교 — 충격 내하중 · 위치 정밀도 · 수명 자동 계산</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 인쇄 헤더 -->
+  <div class="print-header">
+    <span style="font-weight:700">PartsOn — 사이클로이드 감속기 선정 계산기</span>
+    <span id="print-date"></span>
+  </div>
+
+  <!-- 스텝 바 -->
+  <div class="steps-bar" id="steps-bar"></div>
+
+  <!-- 30초 가이드 배너 -->
+  <div class="guide-banner" id="guide-banner" onclick="toggleGuide()">
+    <div class="guide-icon">💡</div>
+    <div class="guide-text">
+      <div class="guide-title">선정이 처음이세요? — 30초 가이드</div>
+      <div class="guide-sub">사이클로이드 감속기는 충격에 강하고 위치 정밀도가 높습니다. 클릭해서 선정 방법을 확인하세요.</div>
+      <div class="guide-steps" id="guide-steps">
+        <div class="guide-step-list">
+          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">조건 입력</b> — 부하 토크(N·m)·회전수·감속비·요구 수명을 입력합니다. 입력 회전수는 1,800 rpm 이하를 권장합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">충격 부하 선택</b> — 운전 환경에 맞는 서비스 팩터(SF)를 선택하세요. 충격이 클수록 SF가 높아져 더 큰 감속기가 선정됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — Sumitomo(산업용 범용)와 Nabtesco(로봇·정밀 FA)를 선택합니다. 기본값은 2사 전체 비교입니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — ✅ 적합 모델이 자동 추천됩니다. 순간 최대 허용 토크(정격 × 5배)와 위치 정밀도를 확인하세요.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 테이블에서 두 메이커를 비교하고 <b style="color:#4ade80">선택</b> 버튼으로 선정 요약을 저장하세요.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="guide-arrow" id="guide-arrow">▾</div>
+  </div>
+
+  <!-- 면책 배너 -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-banner-icon">⚠️</div>
+    <div><b>면책 고지:</b> 이 계산기는 초기 선정 참고용입니다. 수명·토크 계산은 카탈로그 기반 추정값이며 실제 환경(온도·오염·충격 빈도)에 따라 크게 달라집니다. <b>최종 선정은 반드시 메이커 카탈로그 및 기술 담당자를 통해 확인하세요.</b></div>
+  </div>
+
+  <!-- ─────────────────────────────── -->
+  <!-- Step 1: 애플리케이션 조건 입력  -->
+  <!-- ─────────────────────────────── -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1</div>
+    <div class="question">애플리케이션 조건 입력</div>
+    <div class="question-desc">감속기에 요구되는 부하 토크와 운전 조건을 입력하세요.</div>
+
+    <div class="input-group">
+      <label>부하 토크 T_load
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 출력축에 걸리는 실제 운전 토크입니다.<br>서비스 팩터(SF)를 곱하기 전의 값을 입력하세요.<br>순간 충격은 Step 2에서 별도 입력합니다.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="t-load" min="1" step="1" placeholder="예: 200" value="">
+        <span class="input-unit">N·m</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>입력 회전수 n_input (모터 출력 축)
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 입력축(모터 출력축) 회전수입니다.<br>사이클로이드 감속기는 1,800 rpm 이하에서 최적 성능을 발휘합니다.<br>고속 서보모터 연결 시 전단에 감속 필요.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="n-input" min="1" step="100" placeholder="예: 1500" value="">
+        <span class="input-unit">rpm</span>
+      </div>
+      <div class="input-hint">⚡ 1,800 rpm 이하를 권장합니다. 초과 시 결과에 경고가 표시됩니다.</div>
+    </div>
+
+    <div class="input-group">
+      <label>감속비 i
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">사이클로이드 감속기는 1단으로 고감속비를 구현합니다.<br>예) 모터 1500 rpm → 출력 43 rpm = 감속비 35<br>원하는 값이 없으면 인접한 표준 감속비를 선택하세요.</div></span>
+      </label>
+      <div class="input-wrap">
+        <select id="ratio">
+          <option value="">-- 선택 --</option>
+          <option value="11">11</option>
+          <option value="17">17</option>
+          <option value="29">29</option>
+          <option value="35">35</option>
+          <option value="43">43</option>
+          <option value="53">53</option>
+          <option value="59">59</option>
+          <option value="71">71</option>
+          <option value="87">87</option>
+          <option value="119">119</option>
+          <option value="143">143</option>
+          <option value="175">175</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>요구 수명 L_h
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기가 보장해야 하는 최소 운전 시간입니다.<br>· 일반 산업기계: 10,000 h<br>· 로봇·정밀 FA: 20,000 h<br>· 24h 연속 가동(3교대): 20,000 h 이상 권장</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="lh" min="1000" step="1000" placeholder="예: 20000" value="">
+        <span class="input-unit">h</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>운전 패턴
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">IEC 60034 운전 주기 기준입니다.<br>· S1: 연속 운전 (토크 보정 없음)<br>· S3 60%: 전체 시간의 60% 가동<br>· S3 40%: 전체 시간의 40% 가동 (간헐 운전)</div></span>
+      </label>
+      <div class="choice-grid" id="duty-grid">
+        <div class="choice-card" data-duty="1.0" onclick="selDuty(this)">
+          <div class="choice-title">연속 운전 (S1)</div>
+          <div class="choice-sub">보정 계수 × 1.0</div>
+        </div>
+        <div class="choice-card" data-duty="0.9" onclick="selDuty(this)">
+          <div class="choice-title">간헐 운전 (S3, 60%)</div>
+          <div class="choice-sub">보정 계수 × 0.9</div>
+        </div>
+        <div class="choice-card" data-duty="0.75" onclick="selDuty(this)">
+          <div class="choice-title">간헐 운전 (S3, 40%)</div>
+          <div class="choice-sub">보정 계수 × 0.75</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-nav">
+      <span></span>
+      <button class="btn btn-primary" onclick="goStep(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── -->
+  <!-- Step 2: 충격 부하 및 운전 조건  -->
+  <!-- ─────────────────────────────── -->
+  <div class="step-wrap card" id="step-2">
+    <div class="section-label">Step 2</div>
+    <div class="question">충격 부하 및 운전 조건 선택</div>
+    <div class="question-desc">서비스 팩터(SF)를 설정합니다. 사이클로이드 감속기는 순간 최대 허용 토크가 정격 토크의 5배로, 충격 환경에서 탁월한 내구성을 발휘합니다.</div>
+
+    <div class="impact-box">
+      ⚡ <b>사이클로이드의 핵심 강점:</b> 순간 최대 허용 토크 = 정격 토크 × 5배<br>
+      충격·역전 부하가 많은 환경에서 유성 감속기 대비 현저히 긴 수명을 보장합니다.
+    </div>
+
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem">충격 부하 특성 (서비스 팩터 SF)
+      <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">설계 토크 = T_load × SF로 계산됩니다.<br>불확실하면 한 단계 높게 선택하는 것을 권장합니다.<br>역전 운전이 있으면 아래 옵션을 추가로 선택하세요.</div></span>
+    </div>
+
+    <div class="choice-grid-1" id="sf-grid">
+      <div class="choice-card" data-sf="1.0" onclick="selSf(this)">
+        <div class="choice-title">균일 부하 (SF = 1.0)</div>
+        <div class="choice-sub">컨베이어 · 믹서 — 충격 없는 정속 운전</div>
+      </div>
+      <div class="choice-card" data-sf="1.25" onclick="selSf(this)">
+        <div class="choice-title">경미한 충격 (SF = 1.25)</div>
+        <div class="choice-sub">포장기 · 인덱서 — 간헐 기동·정지 반복</div>
+      </div>
+      <div class="choice-card" data-sf="1.5" onclick="selSf(this)">
+        <div class="choice-title">중간 충격 (SF = 1.5)</div>
+        <div class="choice-sub">프레스 · 크레인 — 주기적 충격 부하</div>
+      </div>
+      <div class="choice-card" data-sf="2.0" onclick="selSf(this)">
+        <div class="choice-title">강한 충격 (SF = 2.0)</div>
+        <div class="choice-sub">해머밀 · 파쇄기 — 연속 고충격 부하</div>
+      </div>
+    </div>
+
+    <label class="reverse-toggle" id="reverse-toggle" onclick="toggleReverse(event)">
+      <input type="checkbox" id="reverse-chk" onclick="event.stopPropagation();toggleReverse(event)">
+      <div>
+        <div class="reverse-toggle-text">역전 운전 있음 <span style="font-family:var(--mono);font-size:12px;color:var(--text3)">(SF × 1.2 추가 적용)</span></div>
+        <div class="reverse-toggle-sub">정·역 반복, 브레이크 운전 포함 시 선택</div>
+      </div>
+    </label>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── -->
+  <!-- Step 3: 메이커 선택             -->
+  <!-- ─────────────────────────────── -->
+  <div class="step-wrap card" id="step-3">
+    <div class="section-label">Step 3</div>
+    <div class="question">비교할 메이커 선택</div>
+    <div class="question-desc">2개 모두 선택하면 나란히 비교됩니다.</div>
+
+    <div class="info-box">
+      🏭 <b>Sumitomo:</b> 중간 토크 산업용 자동화, Cyclo 6000(범용) / Fine Cyclo(정밀 서보용)<br>
+      🤖 <b>Nabtesco:</b> 고정밀 로봇·공작기계, RV-E(표준) / RV-N(컴팩트·고토크)
+    </div>
+
+    <div class="check-group">
+      <label class="check-item sel" id="mk-sumitomo">
+        <input type="checkbox" checked onchange="toggleMaker(this,'sumitomo')">
+        <div>
+          <div class="ci-title">Sumitomo (일본)</div>
+          <div class="ci-sub">Cyclo 6000 (산업용 범용) · Fine Cyclo (정밀 서보용)</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-nabtesco">
+        <input type="checkbox" checked onchange="toggleMaker(this,'nabtesco')">
+        <div>
+          <div class="ci-title">Nabtesco (일본)</div>
+          <div class="ci-sub">RV-E 시리즈 (표준) · RV-N 시리즈 (컴팩트·고토크)</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── -->
+  <!-- Step 4: 결과                    -->
+  <!-- ─────────────────────────────── -->
+  <div class="step-wrap card" id="step-4">
+    <div class="section-label">Step 4</div>
+    <div class="question">계산 결과</div>
+    <div class="question-desc" id="result-desc"></div>
+
+    <div id="result-grid" class="result-grid"></div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(3)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(5)">비교 테이블 →</button>
+    </div>
+  </div>
+
+  <!-- ─────────────────────────────── -->
+  <!-- Step 5: 상세 비교 & 선정        -->
+  <!-- ─────────────────────────────── -->
+  <div class="step-wrap card" id="step-5">
+    <div class="section-label">Step 5</div>
+    <div class="question">상세 비교 및 선정</div>
+
+    <div id="summary-box">
+      <div class="sum-title">✅ 선정 결과</div>
+      <div class="sum-rows" id="sum-rows"></div>
+    </div>
+
+    <div class="cmp-table-wrap">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>메이커</th>
+            <th>시리즈</th>
+            <th>모델</th>
+            <th>감속비</th>
+            <th>정격 토크 (N·m)</th>
+            <th>순간 최대 토크 (N·m)</th>
+            <th>위치 정밀도</th>
+            <th>효율 (%)</th>
+            <th>수명 등급</th>
+            <th>판정</th>
+            <th>선택</th>
+          </tr>
+        </thead>
+        <tbody id="cmp-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="maker-links">
+      <a href="https://us.sumitomodrive.com/en-us/product/cyclo-6000-speed-reducer" target="_blank" rel="noopener" class="maker-link">🔗 Sumitomo Cyclo 6000</a>
+      <a href="https://www.nabtesco.de/en/products/cycloidal-gears" target="_blank" rel="noopener" class="maker-link">🔗 Nabtesco RV Series</a>
+    </div>
+
+    <div style="font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6">
+      ⚠️ 면책 고지: 이 계산기는 초기 선정용입니다. 최종 선정은 메이커 카탈로그 및 기술 담당자를 통해 확인하세요. 수명 등급은 카탈로그 보장 수명 대비 요구 수명 비교 결과이며 실제 환경 조건에 따라 달라질 수 있습니다.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(4)">← 이전</button>
+      <button class="btn btn-ghost" onclick="doPrint()">📄 PDF 저장 (인쇄)</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ══════════════════════════════════════
+   제품 데이터
+══════════════════════════════════════ */
+const CG_DATA = {
+  sumitomo: {
+    name: 'Sumitomo',
+    series: [
+      /* Cyclo 6000 — 산업용 범용 */
+      { series:'Cyclo 6000', seriesTag:'산업용 범용', model:'6B', ratioMin:11, ratioMax:87,  torqueMin:58,   torqueMax:118,  maxRpm:1800, hysteresis:'< 3', eff:93, guaranteedLife:10000, peakMultiplier:5 },
+      { series:'Cyclo 6000', seriesTag:'산업용 범용', model:'6C', ratioMin:11, ratioMax:119, torqueMin:120,  torqueMax:280,  maxRpm:1800, hysteresis:'< 3', eff:93, guaranteedLife:10000, peakMultiplier:5 },
+      { series:'Cyclo 6000', seriesTag:'산업용 범용', model:'6D', ratioMin:11, ratioMax:119, torqueMin:290,  torqueMax:580,  maxRpm:1500, hysteresis:'< 3', eff:93, guaranteedLife:10000, peakMultiplier:5 },
+      { series:'Cyclo 6000', seriesTag:'산업용 범용', model:'6E', ratioMin:11, ratioMax:119, torqueMin:600,  torqueMax:1200, maxRpm:1200, hysteresis:'< 3', eff:92, guaranteedLife:10000, peakMultiplier:5 },
+      { series:'Cyclo 6000', seriesTag:'산업용 범용', model:'6F', ratioMin:11, ratioMax:119, torqueMin:1250, torqueMax:2500, maxRpm:1000, hysteresis:'< 3', eff:92, guaranteedLife:10000, peakMultiplier:5 },
+      /* Fine Cyclo — 정밀 서보용 */
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A1', ratioMin:29, ratioMax:179, torqueMin:12,  torqueMax:25,   maxRpm:6150, hysteresis:'< 1', eff:90, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A2', ratioMin:29, ratioMax:179, torqueMin:26,  torqueMax:55,   maxRpm:5000, hysteresis:'< 1', eff:90, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A3', ratioMin:29, ratioMax:179, torqueMin:60,  torqueMax:130,  maxRpm:4000, hysteresis:'< 1', eff:88, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A4', ratioMin:29, ratioMax:179, torqueMin:140, torqueMax:300,  maxRpm:3000, hysteresis:'< 1', eff:88, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A5', ratioMin:29, ratioMax:179, torqueMin:320, torqueMax:700,  maxRpm:2500, hysteresis:'< 1', eff:87, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'Fine Cyclo', seriesTag:'정밀 서보용', model:'FC-A6', ratioMin:29, ratioMax:179, torqueMin:750, torqueMax:1600, maxRpm:2000, hysteresis:'< 1', eff:87, guaranteedLife:20000, peakMultiplier:5 },
+    ]
+  },
+  nabtesco: {
+    name: 'Nabtesco',
+    series: [
+      /* RV-E 시리즈 — 표준 */
+      { series:'RV-E', seriesTag:'표준형', model:'RV-6E',   ratioMin:31, ratioMax:185, torqueMin:58,   torqueMax:58,   maxRpm:3000, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-20E',  ratioMin:31, ratioMax:185, torqueMin:196,  torqueMax:196,  maxRpm:3000, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-40E',  ratioMin:31, ratioMax:185, torqueMin:392,  torqueMax:392,  maxRpm:2500, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-80E',  ratioMin:31, ratioMax:185, torqueMin:784,  torqueMax:784,  maxRpm:2000, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-110E', ratioMin:31, ratioMax:185, torqueMin:1078, torqueMax:1078, maxRpm:2000, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-160E', ratioMin:31, ratioMax:185, torqueMin:1568, torqueMax:1568, maxRpm:1500, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-E', seriesTag:'표준형', model:'RV-320E', ratioMin:31, ratioMax:185, torqueMin:3136, torqueMax:3136, maxRpm:1500, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      /* RV-N 시리즈 — 컴팩트·고토크 */
+      { series:'RV-N', seriesTag:'컴팩트·고토크', model:'RV-245N', ratioMin:40, ratioMax:200, torqueMin:2450, torqueMax:2450, maxRpm:1500, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-N', seriesTag:'컴팩트·고토크', model:'RV-320N', ratioMin:40, ratioMax:200, torqueMin:3136, torqueMax:3136, maxRpm:1500, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-N', seriesTag:'컴팩트·고토크', model:'RV-500N', ratioMin:40, ratioMax:200, torqueMin:4900, torqueMax:4900, maxRpm:1200, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+      { series:'RV-N', seriesTag:'컴팩트·고토크', model:'RV-800N', ratioMin:40, ratioMax:200, torqueMin:7840, torqueMax:7840, maxRpm:1000, hysteresis:'< 1', eff:85, guaranteedLife:20000, peakMultiplier:5 },
+    ]
+  }
+};
+
+/* ══════════════════════════════════════
+   상태
+══════════════════════════════════════ */
+let S = {
+  step: 1,
+  tLoad: null,
+  nInput: null,
+  ratio: null,
+  lh: null,
+  duty: null,   // 운전 패턴 보정 계수
+  sf: null,     // 서비스 팩터
+  reverse: false,
+  makers: { sumitomo: true, nabtesco: true },
+  results: [],
+  picked: null,
+};
+
+/* ══════════════════════════════════════
+   스텝 바 (servo_motor 동일 패턴)
+══════════════════════════════════════ */
+const STEP_LABELS = ['조건 입력','충격 부하','메이커','결과','비교·선정'];
+const TOTAL_STEPS = 5;
+
+function renderStepsBar(cur) {
+  const bar = document.getElementById('steps-bar');
+  let html = '';
+  STEP_LABELS.forEach((lbl, i) => {
+    const n = i + 1;
+    const isDone = n < cur;
+    const isActive = n === cur;
+    const cls = isDone ? 'done' : isActive ? 'active' : '';
+    const lnCls = isDone ? 'done' : '';
+    const cursor = isDone ? 'cursor:pointer' : '';
+    const onclick = isDone ? `onclick="goStep(${n})"` : '';
+    const lblColor = isActive ? `color:var(--accent);font-weight:700` : `color:var(--text3)`;
+    html += `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div class="step-circle ${cls}" ${onclick} style="${cursor}">${n < cur ? '✓' : n}</div>
+      <div style="font-size:11px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:60px;${lblColor};${cursor}" ${onclick}>${lbl}</div>
+    </div>
+    ${n < TOTAL_STEPS ? `<div class="step-line ${lnCls}"></div>` : ''}`;
+  });
+  bar.innerHTML = html;
+}
+
+/* ══════════════════════════════════════
+   스텝 이동
+══════════════════════════════════════ */
+function goStep(n) {
+  if (n === 2 && !validateStep1()) return;
+  if (n === 3 && !validateStep2()) return;
+  S.step = n;
+  document.querySelectorAll('.step-wrap').forEach((el, i) => {
+    el.classList.toggle('active', i + 1 === n);
+  });
+  renderStepsBar(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function validateStep1() {
+  const tl = parseFloat(document.getElementById('t-load').value);
+  const ni = parseFloat(document.getElementById('n-input').value);
+  const r  = parseFloat(document.getElementById('ratio').value);
+  const lh = parseFloat(document.getElementById('lh').value);
+  if (!tl || tl <= 0) { alert('부하 토크를 입력하세요.'); return false; }
+  if (!ni || ni <= 0) { alert('입력 회전수를 입력하세요.'); return false; }
+  if (!r)             { alert('감속비를 선택하세요.'); return false; }
+  if (!lh || lh <= 0) { alert('요구 수명을 입력하세요.'); return false; }
+  if (!S.duty)        { alert('운전 패턴을 선택하세요.'); return false; }
+  S.tLoad  = tl;
+  S.nInput = ni;
+  S.ratio  = r;
+  S.lh     = lh;
+  return true;
+}
+
+function validateStep2() {
+  if (!S.sf) { alert('충격 부하 특성(서비스 팩터)을 선택하세요.'); return false; }
+  return true;
+}
+
+/* ══════════════════════════════════════
+   선택 핸들러
+══════════════════════════════════════ */
+function selDuty(el) {
+  document.querySelectorAll('#duty-grid .choice-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.duty = parseFloat(el.dataset.duty);
+}
+
+function selSf(el) {
+  document.querySelectorAll('#sf-grid .choice-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  S.sf = parseFloat(el.dataset.sf);
+}
+
+function toggleReverse(e) {
+  if (e.target.type === 'checkbox') {
+    S.reverse = e.target.checked;
+  } else {
+    const chk = document.getElementById('reverse-chk');
+    chk.checked = !chk.checked;
+    S.reverse = chk.checked;
+  }
+  document.getElementById('reverse-toggle').classList.toggle('sel', S.reverse);
+}
+
+function toggleMaker(cb, key) {
+  S.makers[key] = cb.checked;
+  const label = document.getElementById('mk-' + key);
+  if (label) label.classList.toggle('sel', cb.checked);
+}
+
+/* ══════════════════════════════════════
+   가이드 토글
+══════════════════════════════════════ */
+function toggleGuide() {
+  const steps = document.getElementById('guide-steps');
+  const arrow = document.getElementById('guide-arrow');
+  const isOpen = steps.classList.toggle('open');
+  arrow.textContent = isOpen ? '▴' : '▾';
+}
+
+/* ══════════════════════════════════════
+   계산 실행
+══════════════════════════════════════ */
+function runCalc() {
+  const activeMakers = Object.keys(S.makers).filter(k => S.makers[k]);
+  if (activeMakers.length === 0) { alert('메이커를 하나 이상 선택하세요.'); return; }
+
+  let sfFinal = S.sf;
+  if (S.reverse) sfFinal *= 1.2;
+
+  const tDesign = S.tLoad * sfFinal * S.duty;  // 운전 패턴 보정은 역방향(duty < 1이면 여유 증가)
+  // 실제로는 duty가 클수록 더 혹독한 조건 → duty를 load factor로 사용
+  // S3 40%는 실효 토크가 낮으므로 tDesign을 duty 보정으로 낮춤
+  const tDesignEff = S.tLoad * sfFinal;   // 설계 토크 (SF 적용)
+  const tDesignDuty = tDesignEff * S.duty; // 운전 패턴 보정 (S3에서 낮아짐)
+
+  S.results = [];
+
+  for (const makerKey of activeMakers) {
+    const maker = CG_DATA[makerKey];
+    for (const s of maker.series) {
+      // 감속비 범위 확인
+      if (S.ratio < s.ratioMin || S.ratio > s.ratioMax) continue;
+      // 정격 토크 충족 여부 (운전 패턴 보정 적용 설계 토크 기준)
+      if (s.torqueMax < tDesignDuty) continue;
+      // 입력 rpm 확인
+      const rpmOk = S.nInput <= s.maxRpm;
+      const rpmWarn = S.nInput > 1800;
+
+      // 수명 등급 판정
+      let lifeGrade;
+      if (s.guaranteedLife >= S.lh * 1.2)      lifeGrade = 'ok';
+      else if (s.guaranteedLife >= S.lh * 0.8)  lifeGrade = 'warn';
+      else                                       lifeGrade = 'bad';
+
+      // 순간 최대 토크
+      const peakTorque = s.torqueMax * s.peakMultiplier;
+
+      // 종합 판정
+      let overall;
+      if (!rpmOk || lifeGrade === 'bad')          overall = 'bad';
+      else if (lifeGrade === 'warn' || rpmWarn)   overall = 'warn';
+      else                                         overall = 'ok';
+
+      S.results.push({
+        makerKey, makerName: maker.name,
+        series: s.series, seriesTag: s.seriesTag,
+        model: s.model,
+        ratio: S.ratio,
+        ratedTorque: s.torqueMax,
+        tDesignEff, tDesignDuty,
+        peakTorque,
+        hysteresis: s.hysteresis,
+        guaranteedLife: s.guaranteedLife,
+        lifeGrade,
+        rpmOk, rpmWarn,
+        eff: s.eff,
+        overall,
+      });
+    }
+  }
+
+  // 정렬: ok → warn → bad, 정격 토크 오름차순
+  const order = { ok: 0, warn: 1, bad: 2 };
+  S.results.sort((a, b) => order[a.overall] - order[b.overall] || a.ratedTorque - b.ratedTorque);
+
+  renderResults(tDesignEff, tDesignDuty, sfFinal);
+  buildCompareTable();
+  goStep(4);
+}
+
+/* ══════════════════════════════════════
+   결과 카드 렌더
+══════════════════════════════════════ */
+function renderResults(tDesignEff, tDesignDuty, sfFinal) {
+  const desc = document.getElementById('result-desc');
+  const sfDisp = S.reverse ? `${S.sf} × 1.2(역전) = ${sfFinal.toFixed(2)}` : `${S.sf}`;
+  desc.innerHTML = `설계 토크 <b>${tDesignEff.toFixed(1)} N·m</b> (= ${S.tLoad} × SF ${sfDisp})
+    · 운전 패턴 보정 후 <b>${tDesignDuty.toFixed(1)} N·m</b> · 감속비 ${S.ratio} · 요구 수명 ${S.lh.toLocaleString()} h`;
+
+  const grid = document.getElementById('result-grid');
+  if (S.results.length === 0) {
+    grid.innerHTML = `<div class="no-result" style="grid-column:1/-1">
+      <div class="no-result-icon">🔍</div>
+      <div>조건에 맞는 모델이 없습니다.<br>감속비 범위를 확인하거나 서비스 팩터를 낮춰보세요.</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = S.results.map((r) => {
+    const cardClass  = r.overall + '-card';
+    const badgeClass = r.overall;
+    const badgeText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토 필요' : '❌ 부적합';
+    const lifeClass  = r.lifeGrade === 'ok' ? 'good' : r.lifeGrade === 'warn' ? 'caution' : 'bad';
+    const lifeIcon   = r.lifeGrade === 'ok' ? '✅' : r.lifeGrade === 'warn' ? '⚠️' : '❌';
+    const rpmClass   = r.rpmOk ? (r.rpmWarn ? 'caution' : 'good') : 'bad';
+    const rpmText    = r.rpmOk ? (r.rpmWarn ? `⚠️ ${S.nInput} rpm (1800 초과)` : `✅ ${S.nInput} rpm`) : `❌ ${S.nInput} rpm 초과`;
+    const useRate    = ((r.tDesignDuty / r.ratedTorque) * 100).toFixed(0);
+
+    return `<div class="result-card ${cardClass}">
+      <div class="rc-maker">${r.makerName}</div>
+      <div class="rc-series-tag">${r.series} · ${r.seriesTag}</div>
+      <div class="rc-model">${r.model}</div>
+      <div class="rc-desc">감속비 ${r.ratio} · 효율 ${r.eff}%</div>
+      <div class="rc-badge ${badgeClass}">${badgeText}</div>
+      <div class="rc-rows">
+        <div class="rc-row"><span class="rc-row-label">정격 출력 토크</span><span class="rc-row-val">${r.ratedTorque.toLocaleString()} N·m</span></div>
+        <div class="rc-row"><span class="rc-row-label">설계 토크 사용률</span><span class="rc-row-val">${useRate}%</span></div>
+        <div class="rc-divider"></div>
+        <div class="rc-row"><span class="rc-row-label">위치 정밀도</span><span class="rc-row-val good">${r.hysteresis} arcmin</span></div>
+        <div class="rc-row"><span class="rc-row-label">보장 수명</span><span class="rc-row-val ${lifeClass}">${lifeIcon} ${r.guaranteedLife.toLocaleString()} h</span></div>
+        <div class="rc-row"><span class="rc-row-label">입력 rpm 적합</span><span class="rc-row-val ${rpmClass}">${rpmText}</span></div>
+      </div>
+      <div class="rc-impact">
+        <div class="rc-impact-label">⚡ 순간 최대 허용 토크 (정격 × 5배)</div>
+        <div class="rc-impact-val">${r.peakTorque.toLocaleString()} N·m</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   비교 테이블
+══════════════════════════════════════ */
+function buildCompareTable() {
+  const tbody = document.getElementById('cmp-tbody');
+  if (S.results.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text3);padding:1.5rem">결과 없음</td></tr>';
+    return;
+  }
+  tbody.innerHTML = S.results.map((r, i) => {
+    const tagClass = r.overall === 'ok' ? 'tag-ok' : r.overall === 'warn' ? 'tag-warn' : 'tag-bad';
+    const tagText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토' : '❌ 부적합';
+    const lifeCls  = r.lifeGrade === 'ok' ? 'tag-ok' : r.lifeGrade === 'warn' ? 'tag-warn' : 'tag-bad';
+    const lifeText = r.lifeGrade === 'ok' ? `✅ ${r.guaranteedLife.toLocaleString()} h` : r.lifeGrade === 'warn' ? `⚠️ ${r.guaranteedLife.toLocaleString()} h` : `❌ ${r.guaranteedLife.toLocaleString()} h`;
+    return `<tr>
+      <td>${r.makerName}</td>
+      <td><span style="font-size:11px;background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 6px;font-weight:600">${r.series}</span></td>
+      <td class="mono">${r.model}</td>
+      <td class="mono">${r.ratio}</td>
+      <td class="mono">${r.ratedTorque.toLocaleString()}</td>
+      <td class="mono" style="color:#8B3A00;font-weight:700">${r.peakTorque.toLocaleString()}</td>
+      <td class="mono" style="color:var(--ok)">${r.hysteresis} arcmin</td>
+      <td class="mono">${r.eff}</td>
+      <td><span class="${lifeCls}">${lifeText}</span></td>
+      <td><span class="${tagClass}">${tagText}</span></td>
+      <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})">선택</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function pickModel(idx) {
+  S.picked = S.results[idx];
+  document.querySelectorAll('.select-btn').forEach((b, i) => b.classList.toggle('picked', i === idx));
+
+  const r = S.picked;
+  const box = document.getElementById('summary-box');
+  box.style.display = 'block';
+  const rows = [
+    ['메이커',          r.makerName],
+    ['시리즈',          `${r.series} (${r.seriesTag})`],
+    ['모델',            r.model],
+    ['감속비',          r.ratio],
+    ['정격 출력 토크',  r.ratedTorque.toLocaleString() + ' N·m'],
+    ['순간 최대 토크',  r.peakTorque.toLocaleString() + ' N·m'],
+    ['설계 토크',       r.tDesignEff.toFixed(1) + ' N·m'],
+    ['위치 정밀도',     r.hysteresis + ' arcmin'],
+    ['보장 수명',       r.guaranteedLife.toLocaleString() + ' h'],
+    ['효율',            r.eff + ' %'],
+  ];
+  document.getElementById('sum-rows').innerHTML = rows.map(([k, v]) =>
+    `<div class="sum-row"><span>${k}</span><span>${v}</span></div>`
+  ).join('');
+
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/* ══════════════════════════════════════
+   인쇄
+══════════════════════════════════════ */
+function doPrint() {
+  document.getElementById('print-date').textContent = '계산일: ' + new Date().toLocaleDateString('ko-KR');
+  window.print();
+}
+
+/* ══════════════════════════════════════
+   초기화
+══════════════════════════════════════ */
+renderStepsBar(1);
+</script>
+</body>
+</html>
