@@ -172,15 +172,26 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .rc-impact-val{font-family:var(--mono);font-size:15px;font-weight:700;color:#8B3A00}
 
 /* ── 비교 테이블 ── */
-.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
-.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
-.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .75rem;text-align:left;font-weight:500;white-space:nowrap}
-.cmp-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.cmp-table-wrap{margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+.cmp-table th{background:var(--accent);color:#fff;padding:.45rem .5rem;text-align:left;font-weight:500;white-space:nowrap;font-size:11px}
+.cmp-table td{padding:.45rem .5rem;border-bottom:1px solid var(--border-light);vertical-align:middle;word-break:break-word}
 .cmp-table tr:hover td{background:#FAFAF8}
-.cmp-table td.mono{font-family:var(--mono)}
-.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
-.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
-.cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table td.mono{font-family:var(--mono);font-size:12px}
+/* 컬럼 너비 고정 */
+.cmp-table .col-maker{width:20%}
+.cmp-table .col-model{width:13%}
+.cmp-table .col-ratio{width:7%}
+.cmp-table .col-torque{width:11%}
+.cmp-table .col-peak{width:13%}
+.cmp-table .col-prec{width:10%}
+.cmp-table .col-eff{width:7%}
+.cmp-table .col-verdict{width:12%}
+.cmp-table .col-sel{width:7%}
+.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
+.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
+.cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
+.series-chip{font-size:10px;background:var(--accent-light);color:var(--accent);border-radius:3px;padding:1px 5px;font-weight:600;display:inline-block;margin-top:2px}
 
 /* ── 선택 버튼 ── */
 .select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
@@ -483,18 +494,21 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 
     <div class="cmp-table-wrap">
       <table class="cmp-table">
+        <colgroup>
+          <col class="col-maker"><col class="col-model"><col class="col-ratio">
+          <col class="col-torque"><col class="col-peak"><col class="col-prec">
+          <col class="col-eff"><col class="col-verdict"><col class="col-sel">
+        </colgroup>
         <thead>
           <tr>
-            <th>메이커</th>
-            <th>시리즈</th>
+            <th>메이커 / 시리즈</th>
             <th>모델</th>
             <th>감속비</th>
             <th>정격 토크 (N·m)</th>
-            <th>순간 최대 토크 (N·m)</th>
+            <th>⚡ 순간 최대 (N·m)</th>
             <th>위치 정밀도</th>
-            <th>효율 (%)</th>
-            <th>수명 등급</th>
-            <th>판정</th>
+            <th>효율%</th>
+            <th>수명 / 판정</th>
             <th>선택</th>
           </tr>
         </thead>
@@ -818,18 +832,16 @@ function buildCompareTable() {
     const tagClass = r.overall === 'ok' ? 'tag-ok' : r.overall === 'warn' ? 'tag-warn' : 'tag-bad';
     const tagText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토' : '❌ 부적합';
     const lifeCls  = r.lifeGrade === 'ok' ? 'tag-ok' : r.lifeGrade === 'warn' ? 'tag-warn' : 'tag-bad';
-    const lifeText = r.lifeGrade === 'ok' ? `✅ ${r.guaranteedLife.toLocaleString()} h` : r.lifeGrade === 'warn' ? `⚠️ ${r.guaranteedLife.toLocaleString()} h` : `❌ ${r.guaranteedLife.toLocaleString()} h`;
+    const lifeText = r.lifeGrade === 'ok' ? `✅ ${r.guaranteedLife.toLocaleString()}h` : r.lifeGrade === 'warn' ? `⚠️ ${r.guaranteedLife.toLocaleString()}h` : `❌ ${r.guaranteedLife.toLocaleString()}h`;
     return `<tr>
-      <td>${r.makerName}</td>
-      <td><span style="font-size:11px;background:var(--accent-light);color:var(--accent);border-radius:4px;padding:1px 6px;font-weight:600">${r.series}</span></td>
+      <td>${r.makerName}<br><span class="series-chip">${r.series}</span></td>
       <td class="mono">${r.model}</td>
-      <td class="mono">${r.ratio}</td>
+      <td class="mono" style="text-align:center">${r.ratio}</td>
       <td class="mono">${r.ratedTorque.toLocaleString()}</td>
       <td class="mono" style="color:#8B3A00;font-weight:700">${r.peakTorque.toLocaleString()}</td>
-      <td class="mono" style="color:var(--ok)">${r.hysteresis} arcmin</td>
-      <td class="mono">${r.eff}</td>
-      <td><span class="${lifeCls}">${lifeText}</span></td>
-      <td><span class="${tagClass}">${tagText}</span></td>
+      <td class="mono" style="color:var(--ok);text-align:center">${r.hysteresis}<br>arcmin</td>
+      <td class="mono" style="text-align:center">${r.eff}</td>
+      <td><span class="${lifeCls}">${lifeText}</span><br><span class="${tagClass}">${tagText}</span></td>
       <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})">선택</button></td>
     </tr>`;
   }).join('');
