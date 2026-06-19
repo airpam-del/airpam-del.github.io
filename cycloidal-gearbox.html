@@ -178,16 +178,21 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table td{padding:.45rem .5rem;border-bottom:1px solid var(--border-light);vertical-align:middle;word-break:break-word}
 .cmp-table tr:hover td{background:#FAFAF8}
 .cmp-table td.mono{font-family:var(--mono);font-size:12px}
-/* 컬럼 너비 고정 */
-.cmp-table .col-maker{width:20%}
-.cmp-table .col-model{width:13%}
-.cmp-table .col-ratio{width:7%}
+/* 컬럼 너비 고정 — 합계 100% */
+.cmp-table .col-maker{width:16%}
+.cmp-table .col-model{width:12%}
+.cmp-table .col-ratio{width:6%}
 .cmp-table .col-torque{width:11%}
-.cmp-table .col-peak{width:13%}
-.cmp-table .col-prec{width:10%}
-.cmp-table .col-eff{width:7%}
-.cmp-table .col-verdict{width:12%}
+.cmp-table .col-peak{width:12%}
+.cmp-table .col-prec{width:12%}
+.cmp-table .col-eff{width:6%}
+.cmp-table .col-verdict{width:18%}
 .cmp-table .col-sel{width:7%}
+/* 셀 줄바꿈 방지 */
+.cmp-table td{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 수명/판정 셀만 줄바꿈 허용 */
+.cmp-table .td-verdict{white-space:normal;line-height:1.6}
+.cmp-table .td-verdict .tag-ok,.cmp-table .td-verdict .tag-warn,.cmp-table .td-verdict .tag-bad{display:block;width:fit-content;margin-bottom:2px}
 .cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
 .cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
 .cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
@@ -839,9 +844,9 @@ function buildCompareTable() {
       <td class="mono" style="text-align:center">${r.ratio}</td>
       <td class="mono">${r.ratedTorque.toLocaleString()}</td>
       <td class="mono" style="color:#8B3A00;font-weight:700">${r.peakTorque.toLocaleString()}</td>
-      <td class="mono" style="color:var(--ok);text-align:center">${r.hysteresis}<br>arcmin</td>
+      <td class="mono" style="color:var(--ok)">${r.hysteresis} arcmin</td>
       <td class="mono" style="text-align:center">${r.eff}</td>
-      <td><span class="${lifeCls}">${lifeText}</span><br><span class="${tagClass}">${tagText}</span></td>
+      <td class="td-verdict"><span class="${lifeCls}">${lifeText}</span><span class="${tagClass}">${tagText}</span></td>
       <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})">선택</button></td>
     </tr>`;
   }).join('');
