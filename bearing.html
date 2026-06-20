@@ -34,7 +34,15 @@
   --steel:#94A3B8;
   --steel-dark:#64748B;
   --ball:#1A3A2A;
+  --electric-primary:#1A3A2A;--electric-primary-hover:#2D6B4A;--electric-bg-tint:#E8F0EC;--electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+  --pneumatic-primary:#1A3A5C;--pneumatic-primary-hover:#2D5A8B;--pneumatic-bg-tint:#E8EEF5;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+  --brand-base:#0F2818;
 }
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
+.category-pneumatic .cat-badge{background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
 .input-wrap input{font-family:var(--mono)}
 .check-val{font-family:var(--mono)}
@@ -287,11 +295,11 @@ table.ctbl tr.rec-row.bad td{background:#FEF2F2}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
 </head>
-<body>
+<body class="category-electric">
 
 <nav class="partson-nav">
   <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
-  <div class="pnav-drop">
+  <div class="pnav-drop electric-drop">
     <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
     <div class="pnav-menu">
       <a href="lmguide.html">LM Guide</a>
@@ -304,7 +312,7 @@ table.ctbl tr.rec-row.bad td{background:#FEF2F2}
       <a href="harmonic-drive.html">하모닉 드라이브</a>
     </div>
   </div>
-  <div class="pnav-drop">
+  <div class="pnav-drop pneumatic-drop">
     <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
     <div class="pnav-menu"><span class="pnav-soon">공압 계산기 준비 중</span></div>
   </div>
@@ -318,7 +326,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="hdr">
     <div class="hdr-icon">⚙️</div>
     <div>
-      <h1>베어링 선정 계산기</h1>
+      <h1>베어링 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
       <p>PartsOn Linear · NSK · SKF · FAG · INA 카탈로그 평균 · ISO 281</p>
     </div>
   </div>

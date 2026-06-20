@@ -24,7 +24,15 @@
     --success: #1A5C2A; --success-bg: #EBF5EE;
     --load-color: #E05C2A;
     --font: 'IBM Plex Sans KR', sans-serif; --mono: 'IBM Plex Mono', monospace;
+    --electric-primary:#1A3A2A;--electric-primary-hover:#2D6B4A;--electric-bg-tint:#E8F0EC;--electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+    --pneumatic-primary:#1A3A5C;--pneumatic-primary-hover:#2D5A8B;--pneumatic-bg-tint:#E8EEF5;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+    --brand-base:#0F2818;
   }
+  .cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+  .category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
+  .category-pneumatic .cat-badge{background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+  .electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+  .pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
   body { font-family: var(--font); background: var(--bg); color: var(--text-primary); min-height: 100vh; }
   header { background: var(--accent); color: #fff; padding: 2.5rem 2rem 2rem; position: relative; overflow: hidden; }
   header::after { content: 'LM'; position: absolute; right: -10px; top: -20px; font-family: var(--mono); font-size: 140px; font-weight: 500; color: rgba(255,255,255,0.05); line-height: 1; pointer-events: none; }
@@ -240,11 +248,11 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
 </head>
-<body>
+<body class="category-electric">
 <!-- 내비게이션 -->
 <nav class="partson-nav">
   <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
-  <div class="pnav-drop">
+  <div class="pnav-drop electric-drop">
     <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
     <div class="pnav-menu">
       <a href="lmguide.html" class="active">LM Guide</a>
@@ -257,7 +265,7 @@
       <a href="harmonic-drive.html">하모닉 드라이브</a>
     </div>
   </div>
-  <div class="pnav-drop">
+  <div class="pnav-drop pneumatic-drop">
     <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
     <div class="pnav-menu"><span class="pnav-soon">공압 계산기 준비 중</span></div>
   </div>
@@ -286,7 +294,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <div class="header-logo-ver">BETA v0.9</div>
       </div>
     </div>
-    <h1>LM Guide 수명 계산기</h1>
+    <h1>LM Guide 수명 계산기<span class="cat-badge">⚡ 전동</span></h1>
     <p>Bosch Rexroth · THK · HIWIN · TBI · PMI 5개사 평균 C₁₀₀ 기준 · ISO 14728-1 · 100,000 m</p>
   </div>
 </header>

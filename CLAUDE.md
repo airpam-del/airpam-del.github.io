@@ -49,6 +49,15 @@ PartsOn 배포/
   - 공압 부품: 준비 중 (향후 공압 계산기는 이 드롭다운에 추가)
   - 드롭다운 CSS: `.pnav-drop`, `.pnav-toggle`, `.pnav-menu`, `.pnav-soon` (각 계산기 파일 인라인)
   - 드롭다운 JS: `pnavToggle()` 함수 + `document.addEventListener('click',...)` (nav 직후 `<script>` 블록)
+  - 전동 드롭다운: `class="pnav-drop electric-drop"` / 공압: `class="pnav-drop pneumatic-drop"`
+  - index.html nav는 `.nav-dropdown electric-nav` / `.nav-dropdown pneumatic-nav`
+- **카테고리 컬러 시스템 (2026-06-21)**:
+  - CSS 변수: `--electric-primary`, `--electric-icon(#00C853)`, `--electric-badge-bg`, `--pneumatic-primary(#1A3A5C)`, `--pneumatic-icon(#0088CC)`, `--pneumatic-badge-bg` (각 파일 `:root`에 인라인)
+  - 전동 계산기 8개: `<body class="category-electric">` 적용 완료
+  - 공압 계산기(미래): `<body class="category-pneumatic">` 사용 — 공압 실린더 계산기 추가 시 적용
+  - 계산기 페이지 헤더 배지: `<span class="cat-badge">⚡ 전동</span>` (h1 인라인)
+  - 공압 배지: `<span class="cat-badge">💨 공압</span>` (공압 계산기 추가 시 사용)
+  - 판정 신호색(✅⚠️❌)은 `--ok/--warn/--bad` 변수 사용 — 카테고리 색과 절대 혼용 금지
 - **접근성**: `prefers-reduced-motion` 지원
 
 ### 데이터 저장 (localStorage)

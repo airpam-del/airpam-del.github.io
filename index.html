@@ -33,6 +33,9 @@
       --font-mono: 'IBM Plex Mono', monospace;
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
       --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+      --electric-primary:#1A3A2A;--electric-primary-hover:#2D6B4A;--electric-bg-tint:#E8F0EC;--electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+      --pneumatic-primary:#1A3A5C;--pneumatic-primary-hover:#2D5A8B;--pneumatic-bg-tint:#E8EEF5;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+      --brand-base:#0F2818;
     }
 
     body {
@@ -196,6 +199,9 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
+    .hero-cta { border: 1.5px solid rgba(0,200,83,.15); border-radius: 14px; padding: 14px 16px; }
+    .electric-nav .nav-dropdown-toggle:hover,.electric-nav .nav-dropdown-toggle.open{color:var(--electric-icon) !important}
+    .pneumatic-nav .nav-dropdown-toggle:hover,.pneumatic-nav .nav-dropdown-toggle.open{color:var(--pneumatic-icon) !important}
 
     /* ── 히어로 ── */
     .hero {
@@ -1151,7 +1157,7 @@
       <img src="logo-white.png" alt="PartsOn" class="nav-logo">
     </a>
     <div class="nav-links">
-      <div class="nav-dropdown">
+      <div class="nav-dropdown electric-nav">
         <button class="nav-dropdown-toggle" onclick="navToggle(this)">전동 부품 ▾</button>
         <div class="nav-dropdown-menu">
           <a href="lmguide.html">LM Guide</a>
@@ -1164,7 +1170,7 @@
           <a href="harmonic-drive.html">하모닉 드라이브</a>
         </div>
       </div>
-      <div class="nav-dropdown">
+      <div class="nav-dropdown pneumatic-nav">
         <button class="nav-dropdown-toggle" onclick="navToggle(this)">공압 부품 ▾</button>
         <div class="nav-dropdown-menu">
           <span class="nav-soon">공압 계산기 준비 중</span>
@@ -1198,6 +1204,11 @@
       <a href="planetary-gearbox.html" class="btn-ghost">유성 감속기 선정하기</a>
       <a href="cycloidal-gearbox.html" class="btn-ghost">사이클로이드 선정하기</a>
       <a href="harmonic-drive.html" class="btn-ghost">하모닉 드라이브 선정하기</a>
+    </div>
+    <!-- 공압 부품 계산기 버튼 그룹 — 실린더 계산기 완성 후 display:flex로 변경 -->
+    <div class="hero-cta" style="display:none;border-color:rgba(0,136,204,.15);margin-top:12px">
+      <div class="hero-cta-label" style="color:rgba(0,136,204,.6)">💨 공압 부품 계산기</div>
+      <!-- 공압 계산기 링크 추가 예정 -->
     </div>
   </div>
 </div>
