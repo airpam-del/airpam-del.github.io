@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PartsOn — 자동화 부품 선정 플랫폼</title>
-  <meta name="description" content="LM Guide, 볼스크류, 베어링을 엔지니어링 데이터 기반으로 빠르게 선정하고 공급사와 연결하는 자동화 부품 플랫폼">
+  <meta name="description" content="LM Guide, 볼스크류, 베어링, 서보모터, 감속기 등 8종 자동화 부품을 ISO 표준 기반으로 빠르게 선정하는 엔지니어링 계산기 플랫폼">
   <meta property="og:title" content="PartsOn — 자동화 부품 선정 플랫폼">
   <meta property="og:description" content="LM Guide, 볼스크류, 베어링, 서보모터를 데이터 기반으로 빠르게 선정하세요">
   <meta property="og:image" content="https://partson.co.kr/og-image.png">
@@ -118,6 +118,83 @@
 
     .nav-link:hover::after {
       width: 60%;
+    }
+
+    /* ── 네비게이션 드롭다운 ── */
+    .nav-dropdown { position: relative; }
+
+    .nav-dropdown-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      font-family: var(--font-display);
+      color: rgba(255, 255, 255, 0.65);
+      padding: 8px 14px;
+      border-radius: 8px;
+      transition: all 0.2s var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      line-height: 1;
+    }
+
+    .nav-dropdown-toggle:hover,
+    .nav-dropdown-toggle.open {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .nav-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: #0F2818;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      min-width: 192px;
+      padding: 6px 0;
+      z-index: 300;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .nav-dropdown-menu.open {
+      display: block;
+    }
+
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-family: var(--font-display);
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: all 0.12s;
+      white-space: nowrap;
+    }
+
+    .nav-dropdown-menu a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nav-soon {
+      display: block;
+      padding: 10px 18px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.3);
+      font-style: italic;
+    }
+
+    .hero-cta-label {
+      width: 100%;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: rgba(255, 255, 255, 0.4);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
     }
 
     /* ── 히어로 ── */
@@ -1074,14 +1151,25 @@
       <img src="logo-white.png" alt="PartsOn" class="nav-logo">
     </a>
     <div class="nav-links">
-      <a href="lmguide.html" class="nav-link">LM Guide</a>
-      <a href="ballscrew.html" class="nav-link">볼스크류 선정</a>
-      <a href="bearing.html" class="nav-link">베어링 선정</a>
-      <a href="servo_motor.html" class="nav-link">서보모터 선정</a>
-      <a href="screwjack.html" class="nav-link">스크류잭 선정</a>
-      <a href="planetary-gearbox.html" class="nav-link">유성 감속기</a>
-      <a href="cycloidal-gearbox.html" class="nav-link">사이클로이드</a>
-      <a href="harmonic-drive.html" class="nav-link">하모닉 드라이브</a>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-toggle" onclick="navToggle(this)">전동 부품 ▾</button>
+        <div class="nav-dropdown-menu">
+          <a href="lmguide.html">LM Guide</a>
+          <a href="ballscrew.html">볼스크류 선정</a>
+          <a href="bearing.html">베어링 선정</a>
+          <a href="servo_motor.html">서보모터 선정</a>
+          <a href="screwjack.html">스크류잭 선정</a>
+          <a href="planetary-gearbox.html">유성 감속기</a>
+          <a href="cycloidal-gearbox.html">사이클로이드</a>
+          <a href="harmonic-drive.html">하모닉 드라이브</a>
+        </div>
+      </div>
+      <div class="nav-dropdown">
+        <button class="nav-dropdown-toggle" onclick="navToggle(this)">공압 부품 ▾</button>
+        <div class="nav-dropdown-menu">
+          <span class="nav-soon">공압 계산기 준비 중</span>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
@@ -1098,9 +1186,10 @@
       <span class="dim">정확한 부품.</span>
     </h1>
     <p class="hero-subtitle">
-      데이터 기반 계산으로 정밀 부품을 빠르게 선정하고,<br>최적의 공급사와 즉시 연결됩니다.
+      데이터 기반 계산으로 정밀 부품을 빠르게 선정하세요.<br>ISO 표준 기반의 정확한 계산으로 카탈로그 검토 시간을 줄여드립니다.
     </p>
     <div class="hero-cta">
+      <div class="hero-cta-label">⚡ 전동 부품 계산기</div>
       <a href="lmguide.html" class="btn-primary">LM Guide 선정 시작 →</a>
       <a href="ballscrew.html" class="btn-ghost">볼스크류 선정하기</a>
       <a href="bearing.html" class="btn-ghost">베어링 선정하기</a>
@@ -1117,7 +1206,7 @@
 <div class="stats-bar">
   <div class="stats-inner">
     <div class="stat-item">
-      <span class="stat-value">5종</span>
+      <span class="stat-value">8종</span>
       <span class="stat-label">선정 계산기</span>
     </div>
     <div class="stat-item">
@@ -1455,7 +1544,7 @@
   <div class="section-inner">
     <div class="cta-inner">
       <h2 class="cta-title">지금 바로 시작하세요</h2>
-      <p class="cta-desc">5가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
+      <p class="cta-desc">8가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
       <div class="cta-buttons">
         <a href="lmguide.html" class="btn-primary">LM Guide 선정</a>
         <a href="ballscrew.html" class="btn-ghost">볼스크류 선정</a>
@@ -1491,5 +1580,18 @@
   </div>
 </footer>
 
+<script>
+function navToggle(btn){
+  var menu=btn.nextElementSibling;
+  var isOpen=!menu.classList.contains('open');
+  document.querySelectorAll('.nav-dropdown-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});
+  if(isOpen){menu.classList.add('open');btn.classList.add('open')}
+}
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.nav-dropdown')){
+    document.querySelectorAll('.nav-dropdown-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});
+  }
+});
+</script>
 </body>
 </html>

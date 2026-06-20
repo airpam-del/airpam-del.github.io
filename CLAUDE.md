@@ -44,6 +44,11 @@ PartsOn 배포/
 - **반응형**: 데스크톱 → 태블릿(1024px 2열) → 모바일(768px 1열) → 소형(480px)
 - **이징**: `--ease-out: cubic-bezier(0.23, 1, 0.32, 1)`, `--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)`
 - 상단 내비게이션: `.partson-nav` 클래스 (전 파일 동일)
+- **네비게이션 그룹화 (2026-06-19)**: "전동 부품 ▾" / "공압 부품 ▾" 2개 드롭다운으로 구조화
+  - 전동 부품: LM Guide, 볼스크류, 베어링, 서보모터, 스크류잭, 유성 감속기, 사이클로이드, 하모닉 드라이브
+  - 공압 부품: 준비 중 (향후 공압 계산기는 이 드롭다운에 추가)
+  - 드롭다운 CSS: `.pnav-drop`, `.pnav-toggle`, `.pnav-menu`, `.pnav-soon` (각 계산기 파일 인라인)
+  - 드롭다운 JS: `pnavToggle()` 함수 + `document.addEventListener('click',...)` (nav 직후 `<script>` 블록)
 - **접근성**: `prefers-reduced-motion` 지원
 
 ### 데이터 저장 (localStorage)

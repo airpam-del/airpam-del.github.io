@@ -24,6 +24,15 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .partson-nav a{color:rgba(255,255,255,.6);text-decoration:none;white-space:nowrap;padding:2px 0;transition:all .2s var(--ease-out);position:relative}
 .partson-nav a:hover{color:#fff;transform:translateY(-1px)}
 .partson-nav a.active{color:#fff;border-bottom:2px solid var(--accent-bright)}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#4ade80;font-weight:600}
+.pnav-soon{display:block;padding:9px 16px;font-size:12px;color:rgba(255,255,255,0.3);font-style:italic}
 .partson-nav .nav-brand{color:rgba(255,255,255,.7);font-weight:600;transition:color .2s var(--ease-out)}
 .partson-nav .nav-brand:hover{color:#fff}
 .nav-brand{font-family:var(--font-display);font-size:14px}
@@ -289,14 +298,28 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:2rem;font-fam
 
 <nav class="partson-nav">
   <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,.7);font-weight:600">PartsOn</a>
-  <a href="lmguide.html">LM Guide</a>
-  <a href="ballscrew.html">볼스크류 선정</a>
-  <a href="bearing.html">베어링 선정</a>
-  <a href="servo_motor.html">서보모터 선정</a>
-  <a href="screwjack.html" class="active">스크류잭 선정</a>
-  <a href="planetary-gearbox.html">유성 감속기</a>
-  <a href="cycloidal-gearbox.html">사이클로이드</a>
+  <div class="pnav-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
+    <div class="pnav-menu">
+      <a href="lmguide.html">LM Guide</a>
+      <a href="ballscrew.html">볼스크류 선정</a>
+      <a href="bearing.html">베어링 선정</a>
+      <a href="servo_motor.html">서보모터 선정</a>
+      <a href="screwjack.html" class="active">스크류잭 선정</a>
+      <a href="planetary-gearbox.html">유성 감속기</a>
+      <a href="cycloidal-gearbox.html">사이클로이드</a>
+      <a href="harmonic-drive.html">하모닉 드라이브</a>
+    </div>
+  </div>
+  <div class="pnav-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
+    <div class="pnav-menu"><span class="pnav-soon">공압 계산기 준비 중</span></div>
+  </div>
 </nav>
+<script>
+function pnavToggle(btn){var menu=btn.nextElementSibling;var isOpen=!menu.classList.contains('open');document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});if(isOpen){menu.classList.add('open');btn.classList.add('open')}}
+document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')){document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')})}});
+</script>
 
 <header>
   <div class="hdr">
