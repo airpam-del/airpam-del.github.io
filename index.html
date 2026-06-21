@@ -208,17 +208,22 @@
     }
     .hero-chip-row {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
-      flex-wrap: wrap;
     }
     .chip-cat {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: rgba(255,255,255,.4);
-      letter-spacing: .5px;
+      font-size: 14px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      color: rgba(255,255,255,.5);
       flex-shrink: 0;
-      min-width: 52px;
+      width: 68px;
+      padding-top: 13px;
+    }
+    .chip-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .chip {
       display: inline-flex;
@@ -1248,18 +1253,22 @@
     <div class="hero-chips">
       <div class="hero-chip-row">
         <span class="chip-cat">⚡ 전동</span>
-        <a href="lmguide.html" class="chip">LM Guide 선정하기</a>
-        <a href="ballscrew.html" class="chip">볼스크류 선정하기</a>
-        <a href="bearing.html" class="chip">베어링 선정하기</a>
-        <a href="servo_motor.html" class="chip">서보모터 선정하기</a>
-        <a href="screwjack.html" class="chip">스크류잭 선정하기</a>
-        <a href="planetary-gearbox.html" class="chip">유성 감속기 선정하기</a>
-        <a href="cycloidal-gearbox.html" class="chip">사이클로이드 선정하기</a>
-        <a href="harmonic-drive.html" class="chip">하모닉 드라이브 선정하기</a>
+        <div class="chip-buttons">
+          <a href="lmguide.html" class="chip">LM Guide 선정하기</a>
+          <a href="ballscrew.html" class="chip">볼스크류 선정하기</a>
+          <a href="bearing.html" class="chip">베어링 선정하기</a>
+          <a href="servo_motor.html" class="chip">서보모터 선정하기</a>
+          <a href="screwjack.html" class="chip">스크류잭 선정하기</a>
+          <a href="planetary-gearbox.html" class="chip">유성 감속기 선정하기</a>
+          <a href="cycloidal-gearbox.html" class="chip">사이클로이드 선정하기</a>
+          <a href="harmonic-drive.html" class="chip">하모닉 드라이브 선정하기</a>
+        </div>
       </div>
       <div class="hero-chip-row">
         <span class="chip-cat">💨 공압</span>
-        <a href="pneumatic-cylinder.html" class="chip chip-pneu">실린더 선정하기</a>
+        <div class="chip-buttons">
+          <a href="pneumatic-cylinder.html" class="chip chip-pneu">실린더 선정하기</a>
+        </div>
       </div>
     </div>
   </div>
