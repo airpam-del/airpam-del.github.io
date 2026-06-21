@@ -199,27 +199,65 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
-    /* hero CTA 박스 */
-    .hero-cta {
+    /* hero CTA 칩 영역 */
+    .hero-chips {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.14);
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-bottom: 14px;
+      flex-direction: column;
+      gap: 10px;
       animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
-      max-width: 580px;
     }
-    .hero-cta-label {
-      width: 100%;
+    .hero-chip-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip-cat {
       font-size: 11px;
       font-family: var(--font-mono);
-      color: rgba(255,255,255,.55);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+      color: rgba(255,255,255,.4);
+      letter-spacing: .5px;
+      flex-shrink: 0;
+      min-width: 52px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: var(--font-display);
+      font-weight: 500;
+      text-decoration: none;
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.12);
+      transition: all 0.18s var(--ease-out);
+      white-space: nowrap;
+    }
+    .chip:hover {
+      background: rgba(255,255,255,.15);
+      color: #fff;
+      border-color: rgba(255,255,255,.25);
+      transform: translateY(-1px);
+    }
+    .chip-elec {
+      background: rgba(0,200,83,.1);
+      color: rgba(180,255,210,.9);
+      border-color: rgba(0,200,83,.22);
+    }
+    .chip-elec:hover {
+      background: rgba(0,200,83,.18);
+      color: #90EEB4;
+    }
+    .chip-pneu {
+      background: rgba(56,189,248,.1);
+      color: rgba(160,220,255,.9);
+      border-color: rgba(56,189,248,.22);
+    }
+    .chip-pneu:hover {
+      background: rgba(56,189,248,.18);
+      color: #BAE6FD;
     }
     .electric-nav .nav-dropdown-toggle:hover,.electric-nav .nav-dropdown-toggle.open{color:var(--electric-icon) !important}
     .pneumatic-nav .nav-dropdown-toggle:hover,.pneumatic-nav .nav-dropdown-toggle.open{color:var(--pneumatic-icon) !important}
@@ -1215,20 +1253,22 @@
     <p class="hero-subtitle">
       데이터 기반 계산으로 정밀 부품을 빠르게 선정하세요.<br>ISO 표준 기반의 정확한 계산으로 카탈로그 검토 시간을 줄여드립니다.
     </p>
-    <div class="hero-cta">
-      <div class="hero-cta-label">⚡ 전동 부품 계산기</div>
-      <a href="lmguide.html" class="btn-primary">LM Guide 선정 시작 →</a>
-      <a href="ballscrew.html" class="btn-ghost">볼스크류 선정하기</a>
-      <a href="bearing.html" class="btn-ghost">베어링 선정하기</a>
-      <a href="servo_motor.html" class="btn-ghost">서보모터 선정하기</a>
-      <a href="screwjack.html" class="btn-ghost">스크류잭 선정하기</a>
-      <a href="planetary-gearbox.html" class="btn-ghost">유성 감속기 선정하기</a>
-      <a href="cycloidal-gearbox.html" class="btn-ghost">사이클로이드 선정하기</a>
-      <a href="harmonic-drive.html" class="btn-ghost">하모닉 드라이브 선정하기</a>
-    </div>
-    <div class="hero-cta" style="border-color:rgba(56,189,248,.2);margin-top:0">
-      <div class="hero-cta-label" style="color:rgba(56,189,248,.7)">💨 공압 부품 계산기</div>
-      <a href="pneumatic-cylinder.html" class="btn-primary" style="background:#1A3A5C;color:#fff;border-color:#1A3A5C">실린더 선정 시작 →</a>
+    <div class="hero-chips">
+      <div class="hero-chip-row">
+        <span class="chip-cat">⚡ 전동</span>
+        <a href="lmguide.html" class="chip chip-elec">LM Guide 선정하기</a>
+        <a href="ballscrew.html" class="chip chip-elec">볼스크류 선정하기</a>
+        <a href="bearing.html" class="chip chip-elec">베어링 선정하기</a>
+        <a href="servo_motor.html" class="chip chip-elec">서보모터 선정하기</a>
+        <a href="screwjack.html" class="chip chip-elec">스크류잭 선정하기</a>
+        <a href="planetary-gearbox.html" class="chip chip-elec">유성 감속기 선정하기</a>
+        <a href="cycloidal-gearbox.html" class="chip chip-elec">사이클로이드 선정하기</a>
+        <a href="harmonic-drive.html" class="chip chip-elec">하모닉 드라이브 선정하기</a>
+      </div>
+      <div class="hero-chip-row">
+        <span class="chip-cat">💨 공압</span>
+        <a href="pneumatic-cylinder.html" class="chip chip-pneu">실린더 선정하기</a>
+      </div>
     </div>
   </div>
 </div>
