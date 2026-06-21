@@ -25,6 +25,7 @@ PartsOn 배포/
 ├── servo_motor.html    — 서보모터 선정 계산기 (5단계 위저드, 2026-05-29 신규)
 ├── planetary-gearbox.html — 유성 감속기 선정 계산기 (5단계 위저드, 2026-06-18 신규)
 ├── cycloidal-gearbox.html — 사이클로이드 감속기 선정 계산기 (5단계 위저드, 2026-06-19 신규)
+├── pneumatic-cylinder.html — 공압 실린더 선정 계산기 (5단계 위저드, 2026-06-21 신규, category-pneumatic)
 ├── admin.html          — 공급사 관리 페이지 (비밀번호 보호)
 ├── logo.png            — 원본 로고 (흰 배경 PNG)
 ├── logo-white.png      — 가공 로고 (흰색 실루엣, 투명 배경 — 네비바 사용)
@@ -46,7 +47,7 @@ PartsOn 배포/
 - 상단 내비게이션: `.partson-nav` 클래스 (전 파일 동일)
 - **네비게이션 그룹화 (2026-06-19)**: "전동 부품 ▾" / "공압 부품 ▾" 2개 드롭다운으로 구조화
   - 전동 부품: LM Guide, 볼스크류, 베어링, 서보모터, 스크류잭, 유성 감속기, 사이클로이드, 하모닉 드라이브
-  - 공압 부품: 준비 중 (향후 공압 계산기는 이 드롭다운에 추가)
+  - 공압 부품: 실린더 선정 (향후 공압 계산기 추가 시 이 드롭다운에 링크 추가)
   - 드롭다운 CSS: `.pnav-drop`, `.pnav-toggle`, `.pnav-menu`, `.pnav-soon` (각 계산기 파일 인라인)
   - 드롭다운 JS: `pnavToggle()` 함수 + `document.addEventListener('click',...)` (nav 직후 `<script>` 블록)
   - 전동 드롭다운: `class="pnav-drop electric-drop"` / 공압: `class="pnav-drop pneumatic-drop"`
