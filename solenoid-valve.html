@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>솔레노이드 밸브 선정 계산기 — PartsOn</title>
+<meta name="description" content="솔레노이드 밸브를 무료로 선정하세요. SMC, Festo, CKD 3사 동시 비교. 유량(Cv값) 기반 자동 계산. 3포트·5포트, 편솔·양솔 지원.">
+<meta name="keywords" content="솔레노이드 밸브 선정, 전자밸브 계산기, SMC, Festo, CKD, 유량 계산, 3포트 5포트">
+<meta property="og:title" content="솔레노이드 밸브 선정 계산기 — PartsOn">
+<meta property="og:description" content="SMC·Festo·CKD 3사 솔레노이드 밸브 동시 비교. 유량 자동 계산.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/solenoid-valve.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://partson.co.kr/solenoid-valve.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A5C;
+  --accent-light:#E8EEF5;
+  --accent-mid:#2D5A8B;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --electric-primary:#1A3A2A;--electric-primary-hover:#2D6B4A;--electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+  --pneumatic-primary:#1A3A5C;--pneumatic-primary-hover:#2D5A8B;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+  --brand-base:#0F2818;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-pneumatic .cat-badge{background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val,.check-val{font-family:var(--mono)}
+
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+.pnav-soon{display:block;padding:9px 16px;font-size:12px;color:rgba(255,255,255,0.3);font-style:italic}
+
+/* ── 헤더 ── */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 레이아웃 ── */
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* ── 위저드 진행 바 ── */
+.steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}
+.step-item.active .step-label{color:var(--accent);font-weight:700}
+.step-item.done .step-label{color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
+.step-line.done{background:var(--accent)}
+
+/* ── 가이드 배너 ── */
+.guide-banner{background:linear-gradient(135deg,#1A3A5C 0%,#2D5A8B 100%);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:opacity .15s}
+.guide-banner:hover{opacity:.92}
+.guide-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.guide-text{flex:1}
+.guide-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.guide-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.guide-arrow{font-size:18px;color:rgba(255,255,255,.5);flex-shrink:0;align-self:center}
+.guide-steps{display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.15)}
+.guide-steps.open{display:block}
+.guide-step-list{display:flex;flex-direction:column;gap:.5rem}
+.guide-step-item{display:flex;gap:.6rem;align-items:flex-start;font-size:12px;color:rgba(255,255,255,.85);line-height:1.5}
+.guide-step-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+
+/* ── 면책 배너 ── */
+.disclaimer-banner{display:flex;align-items:flex-start;gap:.6rem;background:#FFFBF0;border:1px solid #F0D080;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:12px;color:#7A5A00;line-height:1.6}
+.disclaimer-banner-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── 위저드 스텝 ── */
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 선택 카드 ── */
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.25rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:1rem;cursor:pointer;transition:all .2s;background:#fff;text-align:left}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:12px;color:var(--text2)}
+
+/* ── 입력 그룹 ── */
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+
+/* ── ? 툴팁 ── */
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;position:relative;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:260px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup,.tip-btn:focus + .tip-popup{display:block}
+.tip-popup b{color:#38BDF8}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:230px}}
+
+/* ── 유량 미리보기 ── */
+.q-preview{background:var(--accent-light);border:1px solid #BFDBFE;border-radius:8px;padding:.65rem 1rem;margin-top:.6rem;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:600;display:none}
+.q-preview.show{display:flex;align-items:center;gap:.5rem}
+.q-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px}
+
+/* ── 체크박스 ── */
+.check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.check-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.check-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.check-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.check-item .ci-title{font-size:14px;font-weight:600;color:var(--text)}
+.check-item .ci-sub{font-size:12px;color:var(--text2)}
+
+/* ── 라디오 그룹 ── */
+.radio-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.radio-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.radio-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.radio-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.radio-item input[type=radio]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.radio-item .ri-title{font-size:14px;font-weight:600;color:var(--text)}
+.radio-item .ri-sub{font-size:12px;color:var(--text2)}
+
+/* ── 버튼 ── */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+
+/* ── 안내 박스 ── */
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1E3A5F;margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 결과 카드 ── */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;position:relative;overflow:hidden;transition:box-shadow .2s}
+.result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.result-card.ok-card{border-color:#6DBF8A}
+.result-card.warn-card{border-color:#F0B060}
+.result-card.bad-card{border-color:#D98080}
+.rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem}
+.rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.rc-series{font-size:12px;color:var(--text2);margin-bottom:.75rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem}
+.rc-badge.ok{background:var(--ok-bg);color:var(--ok)}
+.rc-badge.warn{background:var(--warn-bg);color:var(--warn)}
+.rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
+.rc-rows{display:flex;flex-direction:column;gap:.4rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2)}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rc-row-val.good{color:var(--ok)}
+.rc-row-val.caution{color:#8B6A1A}
+.rc-row-val.bad{color:var(--bad)}
+.rc-divider{height:1px;background:var(--border-light);margin:.5rem 0}
+.rc-highlight{background:var(--accent-light);border-radius:6px;padding:.35rem .6rem;margin:.4rem 0}
+.rc-highlight .rc-row-label{color:var(--accent);font-weight:600}
+.rc-highlight .rc-row-val{color:var(--accent);font-size:15px}
+
+/* ── 비교 테이블 ── */
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .75rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.cmp-table tr:hover td{background:#F0F6FF}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+
+/* ── 선택 버튼 ── */
+.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
+.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+
+/* ── 선정 요약 ── */
+#summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.sum-title{font-size:16px;font-weight:700;color:var(--ok);margin-bottom:.75rem}
+.sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid rgba(0,0,0,.06);padding:.2rem 0}
+.sum-row span:last-child{font-family:var(--mono);font-weight:600;color:var(--text)}
+.maker-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.maker-link{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;padding:.35rem .75rem;border-radius:6px;background:#fff;border:1px solid var(--border);color:var(--accent);text-decoration:none;transition:all .15s}
+.maker-link:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* ── 무결과 ── */
+.no-result{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
+.no-result-icon{font-size:40px;margin-bottom:.75rem}
+
+/* ── 면책 고지 ── */
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+
+/* ── 인쇄 ── */
+.print-header{display:none}
+@media print{
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .step-wrap{display:block!important}
+  .step-wrap:not(.active){display:none!important}
+  .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
+}
+
+/* ── 반응형 ── */
+@media(max-width:600px){
+  .choice-grid{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:1fr}
+  .sum-rows{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body class="category-pneumatic">
+
+<!-- 내비게이션 -->
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <div class="pnav-drop electric-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
+    <div class="pnav-menu">
+      <a href="lmguide.html">LM Guide</a>
+      <a href="ballscrew.html">볼스크류 선정</a>
+      <a href="bearing.html">베어링 선정</a>
+      <a href="servo_motor.html">서보모터 선정</a>
+      <a href="screwjack.html">스크류잭 선정</a>
+      <a href="planetary-gearbox.html">유성 감속기</a>
+      <a href="cycloidal-gearbox.html">사이클로이드</a>
+      <a href="harmonic-drive.html">하모닉 드라이브</a>
+    </div>
+  </div>
+  <div class="pnav-drop pneumatic-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
+    <div class="pnav-menu">
+      <a href="pneumatic-cylinder.html">실린더 선정</a>
+      <a href="solenoid-valve.html" class="active">솔레노이드 밸브 선정</a>
+    </div>
+  </div>
+</nav>
+<script>
+function pnavToggle(btn){var menu=btn.nextElementSibling;var isOpen=!menu.classList.contains('open');document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});if(isOpen){menu.classList.add('open');btn.classList.add('open')}}
+document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')){document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')})}});
+</script>
+
+<!-- 헤더 -->
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔌</div>
+    <div>
+      <h1>솔레노이드 밸브 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>SMC · Festo · CKD 3사 동시 비교 — 유량(Q) 기반 자동 계산 · 3포트/5포트, 편솔/양솔 지원</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 인쇄 헤더 -->
+  <div class="print-header">
+    <span style="font-weight:700">PartsOn — 솔레노이드 밸브 선정 계산기</span>
+    <span id="print-date"></span>
+  </div>
+
+  <!-- 스텝 바 -->
+  <div class="steps-bar" id="steps-bar"></div>
+
+  <!-- 30초 가이드 배너 -->
+  <div class="guide-banner" id="guide-banner" onclick="toggleGuide()">
+    <div class="guide-icon">💡</div>
+    <div class="guide-text">
+      <div class="guide-title">선정이 처음이세요? — 30초 가이드</div>
+      <div class="guide-sub">5단계로 최적 솔레노이드 밸브를 찾는 방법을 안내합니다. 클릭해서 펼쳐보세요.</div>
+      <div class="guide-steps" id="guide-steps">
+        <div class="guide-step-list">
+          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">제어 조건 입력</b> — 실린더 보어, 목표 속도, 실린더 타입(단동/복동)을 입력합니다. 필요 유량이 자동 계산됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">밸브 사양 선택</b> — 포트 수(3/5포트), 작동 방식(편솔/양솔), 전원 사양을 선택합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — SMC·Festo·CKD 중 비교할 메이커를 체크합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — ✅ 정격 유량이 필요 유량 × 1.2 이상인 모델이 추천됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 테이블에서 3사 모델을 비교하고 선택 버튼을 눌러 선정 요약을 확인합니다.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="guide-arrow" id="guide-arrow">▾</div>
+  </div>
+
+  <!-- 면책 배너 -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-banner-icon">⚠️</div>
+    <div><b>면책 고지:</b> 이 계산기는 초기 선정 참고용입니다. 실제 유량은 배관 손실·압력·온도에 따라 달라질 수 있습니다. <b>최종 선정은 반드시 메이커 카탈로그 및 기술 담당자를 통해 확인하세요.</b></div>
+  </div>
+
+  <!-- Step 1: 제어 조건 입력 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1</div>
+    <div class="question">제어 대상 및 속도 조건 입력</div>
+    <div class="question-desc">제어할 실린더 사양과 원하는 작동 속도를 입력하면 필요 유량을 자동 계산합니다.</div>
+
+    <div class="input-group">
+      <label>실린더 보어 사이즈
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">제어하려는 실린더의 피스톤 직경(보어)입니다.<br><b>보어가 클수록 더 많은 유량이 필요</b>하므로 밸브 사이즈도 커집니다.</div></span>
+      </label>
+      <div class="input-wrap">
+        <select id="bore" onchange="calcQ()">
+          <option value="20">Ø20 mm — 단면적 314 mm²</option>
+          <option value="25">Ø25 mm — 단면적 491 mm²</option>
+          <option value="32" selected>Ø32 mm — 단면적 804 mm²</option>
+          <option value="40">Ø40 mm — 단면적 1,257 mm²</option>
+          <option value="50">Ø50 mm — 단면적 1,963 mm²</option>
+          <option value="63">Ø63 mm — 단면적 3,117 mm²</option>
+          <option value="80">Ø80 mm — 단면적 5,027 mm²</option>
+          <option value="100">Ø100 mm — 단면적 7,854 mm²</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>목표 작동 속도
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">피스톤이 이동해야 할 속도입니다.<br><b>일반 픽앤플레이스</b>: 150~250 mm/s<br><b>고속 작동</b>: 300~500 mm/s<br><b>저속 정밀 제어</b>: 50~100 mm/s</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="speed" min="10" step="10" value="200" oninput="calcQ()">
+        <span class="input-unit">mm/s</span>
+      </div>
+      <div class="input-hint">일반 자동화 설비 기준 100~300 mm/s가 표준입니다.</div>
+    </div>
+
+    <div class="input-group">
+      <label>실린더 타입
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>단동</b>: 공압으로 전진, 스프링으로 복귀 → 3포트 밸브 사용<br><b>복동</b>: 전진·후진 모두 공압 → 5포트 밸브 사용<br>선택에 따라 Step 2 포트 수 기본값이 자동 변경됩니다.</div></span>
+      </label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="ct-single" onclick="selCylType('single')">
+          <div class="choice-title">🔴 단동 (Single Acting)</div>
+          <div class="choice-sub">스프링 복귀. 3포트 밸브 사용.</div>
+        </div>
+        <div class="choice-card" id="ct-double" onclick="selCylType('double')">
+          <div class="choice-title">🔵 복동 (Double Acting)</div>
+          <div class="choice-sub">양방향 공압. 5포트 밸브 사용.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 유량 미리보기 -->
+    <div class="q-preview show" id="q-preview">
+      <span class="q-preview-label">필요 유량:</span>
+      <span id="q-val">— L/min</span>
+    </div>
+
+    <div class="btn-nav">
+      <div></div>
+      <button class="btn btn-primary" onclick="goStep2()">다음: 밸브 사양 선택 →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 밸브 사양 선택 -->
+  <div class="step-wrap card" id="step-2">
+    <div class="section-label">Step 2</div>
+    <div class="question">밸브 사양 선택</div>
+    <div class="question-desc">포트 수, 작동 방식, 전원 사양을 설정합니다.</div>
+
+    <div class="input-group">
+      <label>포트 수
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>3포트</b>: 단동 실린더 제어. 공급·배기 1개 포트.<br><b>5포트</b>: 복동 실린더 제어. 양방향 포트 2개 + 공급 + 배기 2개.</div></span>
+      </label>
+      <div class="radio-group" id="port-group">
+        <label class="radio-item" id="port-3" onclick="selPort('3')">
+          <input type="radio" name="port" value="3" onchange="selPort('3')">
+          <div>
+            <div class="ri-title">3포트 밸브</div>
+            <div class="ri-sub">단동 실린더 제어용. 단방향 공압 제어.</div>
+          </div>
+        </label>
+        <label class="radio-item" id="port-5" onclick="selPort('5')">
+          <input type="radio" name="port" value="5" onchange="selPort('5')">
+          <div>
+            <div class="ri-title">5포트 밸브</div>
+            <div class="ri-sub">복동 실린더 제어용. 양방향 공압 제어.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>작동 방식
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>편솔(Single Solenoid)</b>: 한쪽만 전자 작동, 반대는 스프링 복귀.<br>전원 차단 시 스프링 위치로 복귀.<br><b>양솔(Double Solenoid)</b>: 양방향 모두 전자 작동.<br>전원 차단 시 마지막 위치 유지.</div></span>
+      </label>
+      <div class="radio-group" id="act-group">
+        <label class="radio-item sel" id="act-single" onclick="selActuator('single')">
+          <input type="radio" name="actuator" value="single" checked onchange="selActuator('single')">
+          <div>
+            <div class="ri-title">편솔 (Single Solenoid)</div>
+            <div class="ri-sub">한쪽 전자 작동 + 스프링 복귀. 전원 차단 시 안전 위치로 복귀.</div>
+          </div>
+        </label>
+        <label class="radio-item" id="act-double" onclick="selActuator('double')">
+          <input type="radio" name="actuator" value="double" onchange="selActuator('double')">
+          <div>
+            <div class="ri-title">양솔 (Double Solenoid)</div>
+            <div class="ri-sub">양방향 전자 작동. 전원 차단 시 마지막 위치 유지.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>전원 사양
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>DC24V</b>: PLC 제어 표준. 국내 자동화 설비 대부분 사용.<br><b>AC220V</b>: 직접 전원 연결. PLC 없는 단순 회로에 사용.</div></span>
+      </label>
+      <div class="input-wrap">
+        <select id="voltage">
+          <option value="DC24V" selected>DC24V — PLC 제어 표준 (권장)</option>
+          <option value="AC220V">AC220V — 직접 전원 연결</option>
+          <option value="AC110V">AC110V</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="info-box">
+      💡 <b>전원 차단 시 실린더가 마지막 위치를 유지해야 하는 안전 요구사항이 있다면 양솔을 선택하세요.</b> 편솔은 전원 차단 시 스프링 위치로 자동 복귀합니다.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep3()">다음: 메이커 선택 →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 메이커 선택 -->
+  <div class="step-wrap card" id="step-3">
+    <div class="section-label">Step 3</div>
+    <div class="question">비교할 메이커 선택</div>
+    <div class="question-desc">3사 중 원하는 메이커를 선택하면 동시 비교합니다.</div>
+
+    <div class="check-group" id="maker-group">
+      <label class="check-item sel" id="mk-smc">
+        <input type="checkbox" value="smc" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇯🇵 SMC — SY / SYJ 시리즈</div>
+          <div class="ci-sub">국내 유통망 최대. 부품 수급 용이. 5포트(SY)/3포트(SYJ) 전 라인업.</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-festo">
+        <input type="checkbox" value="festo" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇩🇪 Festo — VUVG / CPE 시리즈</div>
+          <div class="ci-sub">정밀 제어·고내구성. VUVG(5포트)/CPE(3·5포트 범용).</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-ckd">
+        <input type="checkbox" value="ckd" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇯🇵 CKD — 4F / 3F 시리즈</div>
+          <div class="ci-sub">가격 경쟁력. ISO 표준 호환. 5포트(4F)/3포트(3F).</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="info-box">
+      💡 SMC는 국내 부품 수급이 가장 원활합니다. Festo는 정밀 제어·고내구성 강점. CKD는 가격 경쟁력과 표준 호환성이 우수합니다.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 결과 -->
+  <div class="step-wrap" id="step-4">
+    <div class="card">
+      <div class="section-label">Step 4</div>
+      <div class="question">계산 결과</div>
+      <div id="result-summary-bar" style="margin-bottom:1rem"></div>
+    </div>
+    <div class="result-grid" id="result-grid"></div>
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(3)">← 메이커 재선택</button>
+      <button class="btn btn-primary" onclick="goStep(5)">상세 비교 →</button>
+    </div>
+  </div>
+
+  <!-- Step 5: 비교 및 선정 -->
+  <div class="step-wrap card" id="step-5">
+    <div class="section-label">Step 5</div>
+    <div class="question">상세 비교 및 선정</div>
+    <div class="question-desc">조건을 충족하는 모델을 비교하고 선택하세요.</div>
+
+    <div id="summary-box">
+      <div class="sum-title">✅ 선정 완료</div>
+      <div class="sum-rows" id="sum-rows"></div>
+      <div class="maker-links" id="maker-links"></div>
+    </div>
+
+    <div class="cmp-table-wrap">
+      <table class="cmp-table" id="cmp-table">
+        <thead><tr id="cmp-head"></tr></thead>
+        <tbody id="cmp-body"></tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer">
+      이 계산기는 초기 선정 참고용입니다. 최종 선정은 메이커 카탈로그를 확인하세요.<br>
+      유량 계산: Q [L/min] = (보어 단면적[mm²] × 목표 속도[mm/s] × 60) ÷ 1,000,000. 여유율 1.2 이상 권장.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(4)">← 결과로 돌아가기</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ──────────────────────────────────────────────
+   보어 테이블 (실린더 계산기와 동일)
+──────────────────────────────────────────────── */
+const BORE_TABLE = {
+  20:314, 25:491, 32:804, 40:1257, 50:1963, 63:3117, 80:5027, 100:7854
+};
+
+/* ──────────────────────────────────────────────
+   밸브 제품 데이터
+──────────────────────────────────────────────── */
+const VALVE_DATA = [
+  // SMC SY 시리즈 (5포트)
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY3000',
+   qRated:70,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.smcworld.com', note:'컴팩트 표준형'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY5000',
+   qRated:170, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.smcworld.com', note:'중형 표준'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY7000',
+   qRated:400, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.smcworld.com', note:'대형 고유량'},
+  // SMC SYJ 시리즈 (3포트)
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ3000',
+   qRated:50,  ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
+   url:'https://www.smcworld.com', note:'소형 3포트'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ5000',
+   qRated:130, ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
+   url:'https://www.smcworld.com', note:'중형 3포트'},
+  // Festo VUVG 시리즈 (5포트)
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L10',
+   qRated:80,  ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
+   url:'https://www.festo.com', note:'소형 컴팩트'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L14',
+   qRated:200, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
+   url:'https://www.festo.com', note:'표준형'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L18',
+   qRated:450, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
+   url:'https://www.festo.com', note:'대형 고유량'},
+  // Festo CPE 시리즈 (3포트/5포트 범용)
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE10',
+   qRated:90,  ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'],
+   url:'https://www.festo.com', note:'3·5포트 범용'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE14',
+   qRated:220, ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'],
+   url:'https://www.festo.com', note:'3·5포트 범용'},
+  // CKD 4F 시리즈 (5포트)
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F2',
+   qRated:75,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.ckd.co.jp', note:'소형 표준형'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F3',
+   qRated:180, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.ckd.co.jp', note:'중형 표준형'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F4',
+   qRated:420, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
+   url:'https://www.ckd.co.jp', note:'대형 고유량'},
+  // CKD 3F 시리즈 (3포트)
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3F 시리즈', model:'3F2',
+   qRated:55,  ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
+   url:'https://www.ckd.co.jp', note:'소형 3포트'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3F 시리즈', model:'3F3',
+   qRated:140, ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
+   url:'https://www.ckd.co.jp', note:'중형 3포트'},
+];
+
+/* ──────────────────────────────────────────────
+   상태
+──────────────────────────────────────────────── */
+const S = {
+  step: 1,
+  bore: 32,
+  speed: 200,
+  cylType: 'single',  // single | double
+  qRequired: 0,
+  ports: '3',         // '3' | '5'
+  actuator: 'single', // single | double
+  voltage: 'DC24V',
+  makers: {smc:true, festo:true, ckd:true},
+  results: [],
+  picked: null,
+};
+
+/* ──────────────────────────────────────────────
+   유량 계산
+──────────────────────────────────────────────── */
+function calcQ() {
+  const bore = parseInt(document.getElementById('bore').value) || 32;
+  const speed = parseFloat(document.getElementById('speed').value) || 0;
+  S.bore = bore;
+  S.speed = speed;
+  const area = BORE_TABLE[bore] || 804;
+  // Q [L/min] = A[mm²] × v[mm/s] × 60 / 1,000,000
+  const q = (area * speed * 60) / 1000000;
+  S.qRequired = q;
+  const el = document.getElementById('q-val');
+  const preview = document.getElementById('q-preview');
+  if (speed > 0) {
+    el.textContent = q.toFixed(1) + ' L/min';
+    preview.classList.add('show');
+  } else {
+    preview.classList.remove('show');
+  }
+}
+
+/* ──────────────────────────────────────────────
+   선택 핸들러
+──────────────────────────────────────────────── */
+function selCylType(t) {
+  S.cylType = t;
+  ['single','double'].forEach(function(v) {
+    document.getElementById('ct-'+v).classList.toggle('sel', v === t);
+  });
+  // 포트 기본값 자동 추천
+  S.ports = t === 'single' ? '3' : '5';
+  // Step 2 라디오 반영 (이미 렌더된 경우)
+  applyPortUI(S.ports);
+}
+
+function applyPortUI(p) {
+  ['3','5'].forEach(function(v) {
+    const el = document.getElementById('port-'+v);
+    if (el) {
+      el.classList.toggle('sel', v === p);
+      const radio = el.querySelector('input[type=radio]');
+      if (radio) radio.checked = (v === p);
+    }
+  });
+}
+
+function selPort(p) {
+  S.ports = p;
+  applyPortUI(p);
+}
+
+function selActuator(a) {
+  S.actuator = a;
+  ['single','double'].forEach(function(v) {
+    document.getElementById('act-'+v).classList.toggle('sel', v === a);
+    const radio = document.getElementById('act-'+v).querySelector('input[type=radio]');
+    if (radio) radio.checked = (v === a);
+  });
+}
+
+function toggleMaker(cb) {
+  S.makers[cb.value] = cb.checked;
+  cb.closest('.check-item').classList.toggle('sel', cb.checked);
+}
+
+/* ──────────────────────────────────────────────
+   스텝 바
+──────────────────────────────────────────────── */
+const STEP_LABELS = ['제어 조건','밸브 사양','메이커','결과','비교·선정'];
+
+function renderStepsBar(cur) {
+  const bar = document.getElementById('steps-bar');
+  let h = '';
+  for (let i = 1; i <= 5; i++) {
+    const state = i < cur ? 'done' : i === cur ? 'active' : '';
+    const click = i < cur ? 'onclick="goStep('+i+')"' : '';
+    h += '<div class="step-item '+state+'">'
+      + '<div class="step-circle '+state+'" '+click+'>'+(i < cur ? '✓' : i)+'</div>'
+      + '<span class="step-label">'+STEP_LABELS[i-1]+'</span>'
+      + '</div>';
+    if (i < 5) h += '<div class="step-line '+(i < cur ? 'done' : '')+'"></div>';
+  }
+  bar.innerHTML = h;
+}
+
+function goStep(n) {
+  document.querySelector('.step-wrap.active').classList.remove('active');
+  document.getElementById('step-'+n).classList.add('active');
+  S.step = n;
+  renderStepsBar(n);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ──────────────────────────────────────────────
+   가이드 배너
+──────────────────────────────────────────────── */
+function toggleGuide() {
+  const steps = document.getElementById('guide-steps');
+  const arrow = document.getElementById('guide-arrow');
+  steps.classList.toggle('open');
+  arrow.textContent = steps.classList.contains('open') ? '▴' : '▾';
+}
+
+/* ──────────────────────────────────────────────
+   Step 이동 + 유효성 검사
+──────────────────────────────────────────────── */
+function goStep2() {
+  calcQ();
+  if (S.speed <= 0) { alert('목표 작동 속도를 입력하세요.'); return; }
+  // 실린더 타입에 따라 포트 기본값 설정
+  S.ports = S.cylType === 'single' ? '3' : '5';
+  goStep(2);
+  // Step 2 UI 반영 (DOM이 표시된 후)
+  setTimeout(function() { applyPortUI(S.ports); }, 0);
+}
+
+function goStep3() {
+  S.voltage = document.getElementById('voltage').value;
+  goStep(3);
+}
+
+/* ──────────────────────────────────────────────
+   계산 실행
+──────────────────────────────────────────────── */
+function runCalc() {
+  const activeMakers = Object.keys(S.makers).filter(function(k) { return S.makers[k]; });
+  if (activeMakers.length === 0) { alert('메이커를 1개 이상 선택하세요.'); return; }
+
+  const portNum = parseInt(S.ports); // 3 or 5
+
+  S.results = VALVE_DATA.filter(function(v) {
+    // 메이커 필터
+    if (!S.makers[v.maker]) return false;
+    // 포트 수 필터 (both는 3·5 모두 허용)
+    if (v.ports !== 'both' && v.ports !== portNum) return false;
+    // 작동 방식 필터
+    if (!v.actuators.includes(S.actuator)) return false;
+    // 전원 필터 (AC230V는 AC220V 선택 시도 포함)
+    const voltMatch = v.voltages.some(function(vv) {
+      if (S.voltage === 'AC220V') return vv === 'AC220V' || vv === 'AC230V';
+      return vv === S.voltage;
+    });
+    if (!voltMatch) return false;
+    return true;
+  }).map(function(v) {
+    const margin = v.qRated / S.qRequired;
+    let status;
+    if (margin >= 1.2) status = 'ok';
+    else if (margin >= 1.0) status = 'warn';
+    else status = 'bad';
+    return Object.assign({}, v, {margin: margin, status: status});
+  }).sort(function(a, b) {
+    const ord = {ok:0, warn:1, bad:2};
+    if (ord[a.status] !== ord[b.status]) return ord[a.status] - ord[b.status];
+    return a.qRated - b.qRated;
+  });
+
+  renderResults();
+  goStep(4);
+}
+
+/* ──────────────────────────────────────────────
+   결과 렌더
+──────────────────────────────────────────────── */
+function renderResults() {
+  const grid = document.getElementById('result-grid');
+  const bar  = document.getElementById('result-summary-bar');
+
+  if (S.results.length === 0) {
+    grid.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div><div>조건에 맞는 밸브 모델이 없습니다.<br>포트 수 또는 작동 방식을 변경해 보세요.</div></div>';
+    bar.innerHTML = '';
+    return;
+  }
+
+  const okCnt   = S.results.filter(function(r) { return r.status==='ok'; }).length;
+  const warnCnt = S.results.filter(function(r) { return r.status==='warn'; }).length;
+  const portLabel = S.ports === '3' ? '3포트' : '5포트';
+  const actLabel  = S.actuator === 'single' ? '편솔' : '양솔';
+
+  bar.innerHTML = '<div style="font-size:13px;color:var(--text2);line-height:1.8">'
+    + '필요 유량 <b style="color:var(--accent);font-family:var(--mono)">' + S.qRequired.toFixed(1) + ' L/min</b>'
+    + ' · ' + portLabel + ' · ' + actLabel + ' · ' + S.voltage
+    + '<br>✅ 적합 <b>' + okCnt + '개</b>'
+    + (warnCnt > 0 ? ' &nbsp;⚠️ 검토 필요 <b>' + warnCnt + '개</b>' : '')
+    + '</div>';
+
+  grid.innerHTML = S.results.map(function(r) {
+    const badgeClass = {ok:'ok', warn:'warn', bad:'bad'}[r.status];
+    const badgeText  = {ok:'✅ 적합', warn:'⚠️ 검토 필요', bad:'❌ 부적합'}[r.status];
+    const marginPct  = (r.margin * 100).toFixed(0);
+    const marginClass = r.status === 'ok' ? 'good' : r.status === 'warn' ? 'caution' : 'bad';
+    const portsDisp  = r.ports === 'both' ? '3·5포트 범용' : r.ports + '포트';
+    const actDisp    = r.actuators.includes('double') ? '편솔/양솔' : '편솔';
+    return '<div class="result-card ' + badgeClass + '-card">'
+      + '<div class="rc-maker">' + r.country + ' ' + r.name + '</div>'
+      + '<div class="rc-model">' + r.model + '</div>'
+      + '<div class="rc-series">' + r.series + ' — ' + r.note + '</div>'
+      + '<span class="rc-badge ' + badgeClass + '">' + badgeText + '</span>'
+      + '<div class="rc-rows">'
+      + '<div class="rc-row rc-highlight"><span class="rc-row-label">정격 유량</span><span class="rc-row-val">' + r.qRated + ' L/min</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">필요 유량</span><span class="rc-row-val">' + S.qRequired.toFixed(1) + ' L/min</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">여유율</span><span class="rc-row-val ' + marginClass + '">' + marginPct + '%</span></div>'
+      + '<div class="rc-divider"></div>'
+      + '<div class="rc-row"><span class="rc-row-label">포트 수</span><span class="rc-row-val">' + portsDisp + '</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">작동 방식</span><span class="rc-row-val">' + actDisp + '</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">전원 사양</span><span class="rc-row-val">' + r.voltages.join(', ') + '</span></div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+
+  renderCompareTable();
+}
+
+/* ──────────────────────────────────────────────
+   비교 테이블
+──────────────────────────────────────────────── */
+function renderCompareTable() {
+  const head = document.getElementById('cmp-head');
+  const body = document.getElementById('cmp-body');
+
+  head.innerHTML = '<th>메이커</th><th>모델</th><th>시리즈</th>'
+    + '<th>포트 수</th><th>작동 방식</th><th>정격 유량</th><th>여유율</th><th>전원</th><th>판정</th><th>선택</th>';
+
+  body.innerHTML = S.results.map(function(r, idx) {
+    const tagClass = {ok:'tag-ok', warn:'tag-warn', bad:'tag-bad'}[r.status];
+    const tagText  = {ok:'✅ 적합', warn:'⚠️ 검토', bad:'❌ 부적합'}[r.status];
+    const portsDisp = r.ports === 'both' ? '3·5포트' : r.ports + '포트';
+    const picked = S.picked === idx ? ' picked' : '';
+    return '<tr>'
+      + '<td>' + r.country + ' ' + r.name + '</td>'
+      + '<td class="mono">' + r.model + '</td>'
+      + '<td>' + r.series + '</td>'
+      + '<td>' + portsDisp + '</td>'
+      + '<td>' + (r.actuators.includes('double') ? '편솔/양솔' : '편솔') + '</td>'
+      + '<td class="mono">' + r.qRated + ' L/min</td>'
+      + '<td class="mono">' + (r.margin * 100).toFixed(0) + '%</td>'
+      + '<td>' + r.voltages.join(', ') + '</td>'
+      + '<td><span class="' + tagClass + '">' + tagText + '</span></td>'
+      + '<td><button class="select-btn' + picked + '" onclick="pickModel(' + idx + ')">선택</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function pickModel(idx) {
+  S.picked = idx;
+  const r = S.results[idx];
+
+  // 요약 박스
+  const sumBox   = document.getElementById('summary-box');
+  const sumRows  = document.getElementById('sum-rows');
+  const links    = document.getElementById('maker-links');
+  const portsDisp = r.ports === 'both' ? '3·5포트 범용' : r.ports + '포트';
+
+  sumRows.innerHTML = [
+    ['메이커',     r.country + ' ' + r.name],
+    ['모델',       r.model],
+    ['시리즈',     r.series],
+    ['정격 유량',  r.qRated + ' L/min'],
+    ['필요 유량',  S.qRequired.toFixed(1) + ' L/min'],
+    ['여유율',     (r.margin * 100).toFixed(0) + '%'],
+    ['포트 수',    portsDisp],
+    ['작동 방식',  r.actuators.includes('double') ? '편솔/양솔' : '편솔'],
+    ['전원 사양',  r.voltages.join(', ')],
+    ['보어 사이즈', 'Ø' + S.bore + ' mm'],
+    ['목표 속도',  S.speed + ' mm/s'],
+  ].map(function(pair) {
+    return '<div class="sum-row"><span>' + pair[0] + '</span><span>' + pair[1] + '</span></div>';
+  }).join('');
+
+  links.innerHTML = '<a class="maker-link" href="' + r.url + '" target="_blank">🔗 ' + r.name + ' 공식 사이트</a>';
+
+  sumBox.style.display = 'block';
+
+  // 테이블 하이라이트
+  renderCompareTable();
+}
+
+/* ──────────────────────────────────────────────
+   초기화
+──────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('print-date').textContent = new Date().toLocaleDateString('ko-KR');
+  renderStepsBar(1);
+  calcQ();
+  // Step 2 포트 기본값 (단동 → 3포트)
+  applyPortUI('3');
+});
+</script>
+</body>
+</html>
