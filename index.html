@@ -199,17 +199,17 @@
       text-transform: uppercase;
       margin-bottom: 2px;
     }
-    /* hero CTA 칩 영역 */
+    /* hero CTA 버튼 영역 */
     .hero-chips {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
       animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
     }
     .hero-chip-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
     }
     .chip-cat {
@@ -223,40 +223,32 @@
     .chip {
       display: inline-flex;
       align-items: center;
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
       font-family: var(--font-display);
       font-weight: 500;
       text-decoration: none;
-      background: rgba(255,255,255,.08);
-      color: rgba(255,255,255,.75);
-      border: 1px solid rgba(255,255,255,.12);
-      transition: all 0.18s var(--ease-out);
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.85);
+      border: 2px solid rgba(255,255,255,.2);
+      transition: all 0.2s var(--ease-out);
       white-space: nowrap;
+      backdrop-filter: blur(10px);
     }
     .chip:hover {
-      background: rgba(255,255,255,.15);
+      background: rgba(255,255,255,.16);
       color: #fff;
-      border-color: rgba(255,255,255,.25);
-      transform: translateY(-1px);
-    }
-    .chip-elec {
-      background: rgba(0,200,83,.1);
-      color: rgba(180,255,210,.9);
-      border-color: rgba(0,200,83,.22);
-    }
-    .chip-elec:hover {
-      background: rgba(0,200,83,.18);
-      color: #90EEB4;
+      border-color: rgba(255,255,255,.4);
+      transform: translateY(-2px);
     }
     .chip-pneu {
-      background: rgba(56,189,248,.1);
-      color: rgba(160,220,255,.9);
-      border-color: rgba(56,189,248,.22);
+      border-color: rgba(56,189,248,.35);
+      color: rgba(186,230,253,.9);
     }
     .chip-pneu:hover {
-      background: rgba(56,189,248,.18);
+      background: rgba(56,189,248,.15);
+      border-color: rgba(56,189,248,.55);
       color: #BAE6FD;
     }
     .electric-nav .nav-dropdown-toggle:hover,.electric-nav .nav-dropdown-toggle.open{color:var(--electric-icon) !important}
@@ -1256,14 +1248,14 @@
     <div class="hero-chips">
       <div class="hero-chip-row">
         <span class="chip-cat">⚡ 전동</span>
-        <a href="lmguide.html" class="chip chip-elec">LM Guide 선정하기</a>
-        <a href="ballscrew.html" class="chip chip-elec">볼스크류 선정하기</a>
-        <a href="bearing.html" class="chip chip-elec">베어링 선정하기</a>
-        <a href="servo_motor.html" class="chip chip-elec">서보모터 선정하기</a>
-        <a href="screwjack.html" class="chip chip-elec">스크류잭 선정하기</a>
-        <a href="planetary-gearbox.html" class="chip chip-elec">유성 감속기 선정하기</a>
-        <a href="cycloidal-gearbox.html" class="chip chip-elec">사이클로이드 선정하기</a>
-        <a href="harmonic-drive.html" class="chip chip-elec">하모닉 드라이브 선정하기</a>
+        <a href="lmguide.html" class="chip">LM Guide 선정하기</a>
+        <a href="ballscrew.html" class="chip">볼스크류 선정하기</a>
+        <a href="bearing.html" class="chip">베어링 선정하기</a>
+        <a href="servo_motor.html" class="chip">서보모터 선정하기</a>
+        <a href="screwjack.html" class="chip">스크류잭 선정하기</a>
+        <a href="planetary-gearbox.html" class="chip">유성 감속기 선정하기</a>
+        <a href="cycloidal-gearbox.html" class="chip">사이클로이드 선정하기</a>
+        <a href="harmonic-drive.html" class="chip">하모닉 드라이브 선정하기</a>
       </div>
       <div class="hero-chip-row">
         <span class="chip-cat">💨 공압</span>
