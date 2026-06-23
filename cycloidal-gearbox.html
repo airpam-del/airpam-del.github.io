@@ -258,9 +258,11 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700;white-space:nowrap}
 .series-chip{font-size:10px;background:var(--accent-light);color:var(--accent);border-radius:3px;padding:1px 5px;font-weight:600;display:inline-block;margin-top:2px}
 
-/* ── 선택 버튼 ── */
-.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
-.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+/* ── 비교 행 클릭 선택 ── */
+.comparison-row{cursor:pointer}
+.comparison-row:hover td{background:var(--accent-light)!important}
+.row-selected td{background:var(--accent-light)!important}
+.row-selected td:first-child{border-left:4px solid var(--accent)!important;padding-left:.5rem}
 
 /* ── 선정 요약 ── */
 #summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
@@ -279,7 +281,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 /* ── 인쇄 ── */
 .print-header{display:none}
 @media print{
-  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,button{display:none!important}
   .step-wrap{display:block!important}
   .step-wrap:not(.active){display:none!important}
   .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
@@ -665,7 +667,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <colgroup>
           <col class="col-maker"><col class="col-model"><col class="col-ratio">
           <col class="col-torque"><col class="col-peak"><col class="col-prec">
-          <col class="col-eff"><col class="col-verdict"><col class="col-sel">
+          <col class="col-eff"><col class="col-verdict">
         </colgroup>
         <thead>
           <tr>
@@ -677,11 +679,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
             <th>위치 정밀도</th>
             <th>효율%</th>
             <th>수명 / 판정</th>
-            <th>선택</th>
           </tr>
         </thead>
         <tbody id="cmp-tbody"></tbody>
       </table>
+      <div id="cmp-selected-label" style="display:none;font-size:12px;color:var(--accent);padding:.5rem .75rem;font-weight:600;border-left:3px solid var(--accent);background:var(--accent-light);border-radius:0 6px 6px 0;margin-top:.5rem">선택됨: <span id="cmp-selected-name"></span></div>
     </div>
 
     <div class="maker-links">
@@ -1001,7 +1003,7 @@ function buildCompareTable() {
     const tagText  = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토' : '❌ 부적합';
     const lifeCls  = r.lifeGrade === 'ok' ? 'tag-ok' : r.lifeGrade === 'warn' ? 'tag-warn' : 'tag-bad';
     const lifeText = r.lifeGrade === 'ok' ? `✅ ${r.guaranteedLife.toLocaleString()}h` : r.lifeGrade === 'warn' ? `⚠️ ${r.guaranteedLife.toLocaleString()}h` : `❌ ${r.guaranteedLife.toLocaleString()}h`;
-    return `<tr>
+    return `<tr class="comparison-row" role="button" tabindex="0" onclick="pickModel(${i})" onkeydown="if(event.key==='Enter'||event.key===' ')pickModel(${i})">
       <td>${r.makerName}<br><span class="series-chip">${r.series}</span></td>
       <td class="mono">${r.model}</td>
       <td class="mono" style="text-align:center">${r.ratio}</td>
@@ -1010,14 +1012,14 @@ function buildCompareTable() {
       <td class="mono" style="color:var(--ok)">${r.hysteresis} arcmin</td>
       <td class="mono" style="text-align:center">${r.eff}</td>
       <td class="td-verdict"><span class="${lifeCls}">${lifeText}</span><span class="${tagClass}">${tagText}</span></td>
-      <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})">선택</button></td>
     </tr>`;
   }).join('');
 }
 
 function pickModel(idx) {
   S.picked = S.results[idx];
-  document.querySelectorAll('.select-btn').forEach((b, i) => b.classList.toggle('picked', i === idx));
+  document.querySelectorAll('.comparison-row').forEach((row,i)=>{row.classList.toggle('row-selected',i===idx);row.setAttribute('aria-selected',String(i===idx))});
+  const _lbl=document.getElementById('cmp-selected-label');if(_lbl){_lbl.style.display='block';document.getElementById('cmp-selected-name').textContent=S.picked.makerName+' '+S.picked.model}
 
   const r = S.picked;
   const box = document.getElementById('summary-box');
@@ -1144,5 +1146,7 @@ function thApply(tabIdx) {
 </script>
 </body>
 </html>
+
+
 
 

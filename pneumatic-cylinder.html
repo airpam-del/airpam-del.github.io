@@ -222,9 +222,11 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 .cmp-table .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 
-/* ── 선택 버튼 ── */
-.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
-.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+/* ── 비교 행 클릭 선택 ── */
+.comparison-row{cursor:pointer}
+.comparison-row:hover td{background:var(--accent-light)!important}
+.row-selected td{background:var(--accent-light)!important}
+.row-selected td:first-child{border-left:4px solid var(--accent)!important;padding-left:.5rem}
 
 /* ── 선정 요약 ── */
 #summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
@@ -246,7 +248,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 /* ── 인쇄 ── */
 .print-header{display:none}
 @media print{
-  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,button{display:none!important}
   .step-wrap{display:block!important}
   .step-wrap:not(.active){display:none!important}
   .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
@@ -594,6 +596,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <thead><tr id="cmp-head"></tr></thead>
         <tbody id="cmp-body"></tbody>
       </table>
+      <div id="cmp-selected-label" style="display:none;font-size:12px;color:var(--accent);padding:.5rem .75rem;font-weight:600;border-left:3px solid var(--accent);background:var(--accent-light);border-radius:0 6px 6px 0;margin-top:.5rem">선택됨: <span id="cmp-selected-name"></span></div>
     </div>
 
     <div class="disclaimer">
@@ -934,7 +937,7 @@ function renderCompareTable() {
   const needPull = S.results.some(r => r.needPull);
   let heads = ['메이커','시리즈','보어','로드','이론 전진 추력','권장 전진 추력'];
   if (needPull) heads.push('이론 후진 추력','권장 후진 추력');
-  heads.push('작동압 범위','판정','선택');
+  heads.push('작동압 범위','판정');
 
   document.getElementById('cmp-head').innerHTML = heads.map(h=>`<th>${h}</th>`).join('');
 
@@ -947,7 +950,7 @@ function renderCompareTable() {
     const pullCells = needPull
       ? `<td class="mono">${r.F_pull_theo !== null ? fmt(r.F_pull_theo)+' N' : '—'}</td><td class="mono">${r.F_pull_rec !== null ? fmt(r.F_pull_rec)+' N' : '—'}</td>`
       : '';
-    rows += `<tr>
+    rows += `<tr class="comparison-row" role="button" tabindex="0" onclick="pickModel(${i})" onkeydown="if(event.key==='Enter'||event.key===' ')pickModel(${i})">
       <td>${r.maker.country} ${r.maker.name}</td>
       <td>${r.series.name}</td>
       <td class="mono">Ø${r.D} mm</td>
@@ -957,7 +960,6 @@ function renderCompareTable() {
       ${pullCells}
       <td class="mono">${r.series.pMin}~${r.series.pMax} MPa</td>
       <td>${tag}</td>
-      <td><button class="select-btn" onclick="pickModel(${i})" id="pick-${i}">선택</button></td>
     </tr>`;
   }
   document.getElementById('cmp-body').innerHTML = rows;
@@ -968,8 +970,9 @@ function renderCompareTable() {
 ──────────────────────────────────────────────── */
 function pickModel(idx) {
   S.picked = idx;
-  document.querySelectorAll('.select-btn').forEach((b,i) => b.classList.toggle('picked', i === idx));
+  document.querySelectorAll('.comparison-row').forEach((row,i)=>{row.classList.toggle('row-selected',i===idx);row.setAttribute('aria-selected',String(i===idx))});
   const r = S.results[idx];
+  const _lbl=document.getElementById('cmp-selected-label');if(_lbl){_lbl.style.display='block';document.getElementById('cmp-selected-name').textContent=r.maker.name+' '+r.series.name+' Ø'+r.D+'mm'}
   const needPull = r.needPull;
   let rows = `
     <div class="sum-row"><span>메이커</span><span>${r.maker.country} ${r.maker.name}</span></div>
@@ -1009,5 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
 
 

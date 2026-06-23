@@ -198,8 +198,11 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700}
 .tag-bad{display:inline-block;background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 5px;font-size:11px;font-weight:700}
 .series-chip{font-size:10px;background:var(--accent-light);color:var(--accent);border-radius:3px;padding:1px 5px;font-weight:600;display:inline-block;margin-top:2px}
-.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
-.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+/* ── 비교 행 클릭 선택 ── */
+.comparison-row{cursor:pointer}
+.comparison-row:hover td{background:var(--accent-light)!important}
+.row-selected td{background:var(--accent-light)!important}
+.row-selected td:first-child{border-left:4px solid var(--accent)!important;padding-left:.5rem}
 /* 선정 요약 */
 #summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
 .sum-title{font-size:16px;font-weight:700;color:var(--ok);margin-bottom:.75rem}
@@ -536,15 +539,16 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <colgroup>
           <col class="col-mk"><col class="col-mdl"><col class="col-rat">
           <col class="col-tr"><col class="col-pk"><col class="col-prec">
-          <col class="col-eff"><col class="col-life"><col class="col-sel">
+          <col class="col-eff"><col class="col-life">
         </colgroup>
         <thead><tr>
           <th>메이커 / 시리즈</th><th>모델</th><th>감속비</th>
           <th>정격 토크 (N·m)</th><th>⚡ 피크 허용 (N·m)</th>
-          <th>정밀도</th><th>효율%</th><th>수명 / 판정</th><th>선택</th>
+          <th>정밀도</th><th>효율%</th><th>수명 / 판정</th>
         </tr></thead>
         <tbody id="cmp-tbody"></tbody>
       </table>
+      <div id="cmp-selected-label" style="display:none;font-size:12px;color:var(--accent);padding:.5rem .75rem;font-weight:600;border-left:3px solid var(--accent);background:var(--accent-light);border-radius:0 6px 6px 0;margin-top:.5rem">선택됨: <span id="cmp-selected-name"></span></div>
     </div>
     <div class="btn-nav">
       <button class="btn btn-ghost" onclick="goStep(4)">← 이전</button>
@@ -823,7 +827,7 @@ function renderStep5() {
     const tagText = r.overall === 'ok' ? '✅ 적합' : r.overall === 'warn' ? '⚠️ 검토' : '❌ 부적합';
     const lifeCls = r.lifeGrade === 'ok' ? 'tag-ok' : r.lifeGrade === 'warn' ? 'tag-warn' : 'tag-bad';
     const ratchetTd = r.ratchetRisk ? `<br><span style="color:#D42020;font-size:10px;font-weight:700">⚠️ 래칫팅</span>` : '';
-    return `<tr>
+    return `<tr class="comparison-row" role="button" tabindex="0" onclick="pickModel(${i})" onkeydown="if(event.key==='Enter'||event.key===' ')pickModel(${i})">
       <td>${m.mn}<br><span class="series-chip">${m.sr}</span></td>
       <td class="mono">${m.sr}-${m.sz}</td>
       <td class="mono" style="text-align:center">${S.ratio}</td>
@@ -832,16 +836,16 @@ function renderStep5() {
       <td class="mono" style="color:var(--ok)">≤${m.prec}<br>arcmin</td>
       <td class="mono" style="text-align:center">${m.eff}${m.eff<80?'<br><span style="color:#8B6A00;font-size:10px">주의</span>':''}</td>
       <td class="td-life"><span class="${lifeCls}">${r.lifeH.toLocaleString()}h</span><br><span class="${tagCls}">${tagText}</span>${ratchetTd}</td>
-      <td><button class="select-btn" id="selbtn-${i}" onclick="pickModel(${i})" type="button">선택</button></td>
     </tr>`;
   }).join('');
 }
 
 function pickModel(i) {
   S.picked = i;
-  document.querySelectorAll('.select-btn').forEach((b,j) => b.classList.toggle('picked', j===i));
+  document.querySelectorAll('.comparison-row').forEach((row,j)=>{row.classList.toggle('row-selected',j===i);row.setAttribute('aria-selected',String(j===i))});
   const r = S.results[i];
   const m = r.m;
+  const _lbl=document.getElementById('cmp-selected-label');if(_lbl){_lbl.style.display='block';document.getElementById('cmp-selected-name').textContent=m.mn+' '+m.sr+'-'+m.sz}
   const box = document.getElementById('summary-box');
   box.style.display = 'block';
   document.getElementById('sum-rows').innerHTML = `
@@ -912,5 +916,7 @@ renderStepsBar(1);
 </script>
 </body>
 </html>
+
+
 
 

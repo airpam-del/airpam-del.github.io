@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -195,9 +195,11 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 .cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 
-/* ── 선택 버튼 ── */
-.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
-.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+/* ── 비교 행 클릭 선택 ── */
+.comparison-row{cursor:pointer}
+.comparison-row:hover td{background:var(--accent-light)!important}
+.row-selected td{background:var(--accent-light)!important}
+.row-selected td:first-child{border-left:4px solid var(--accent)!important;padding-left:.5rem}
 
 /* ── 선정 요약 ── */
 #summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
@@ -219,7 +221,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 /* ── 인쇄 ── */
 .print-header{display:none}
 @media print{
-  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,button{display:none!important}
   .step-wrap{display:block!important}
   .step-wrap:not(.active){display:none!important}
   .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
@@ -507,6 +509,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <thead><tr id="cmp-head"></tr></thead>
         <tbody id="cmp-body"></tbody>
       </table>
+      <div id="cmp-selected-label" style="display:none;font-size:12px;color:var(--accent);padding:.5rem .75rem;font-weight:600;border-left:3px solid var(--accent);background:var(--accent-light);border-radius:0 6px 6px 0;margin-top:.5rem">선택됨: <span id="cmp-selected-name"></span></div>
     </div>
 
     <div class="disclaimer">
@@ -773,16 +776,16 @@ function renderCompareTable() {
   var head = document.getElementById('cmp-head');
   var body = document.getElementById('cmp-body');
 
-  head.innerHTML = '<th>메이커</th><th>시리즈</th><th>모델</th><th>포트</th><th>정격유량</th><th>압력범위</th><th>필터</th><th>드레인</th><th>판정</th><th>선택</th>';
+  head.innerHTML = '<th>메이커</th><th>시리즈</th><th>모델</th><th>포트</th><th>정격유량</th><th>압력범위</th><th>필터</th><th>드레인</th><th>판정</th>';
 
   if (S.results.length === 0) {
-    body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:1.5rem">조건에 맞는 모델이 없습니다.</td></tr>';
+    body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text3);padding:1.5rem">조건에 맞는 모델이 없습니다.</td></tr>';
     return;
   }
 
   body.innerHTML = S.results.map(function(r, idx) {
-    var picked = S.picked === idx ? ' picked' : '';
-    return '<tr>'
+    var rowSel = S.picked === idx ? ' row-selected' : '';
+    return '<tr class="comparison-row' + rowSel + '" role="button" tabindex="0" onclick="pickModel('+idx+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')pickModel('+idx+')">'
       + '<td>'+r.country+' '+r.name+'</td>'
       + '<td>'+r.series+'</td>'
       + '<td class="mono">'+r.model+'</td>'
@@ -792,7 +795,6 @@ function renderCompareTable() {
       + '<td>'+(r.filter==='5um'?'5μm':'0.3μm')+'</td>'
       + '<td>'+(S.drain==='manual'?'수동':'오토')+'</td>'
       + '<td><span class="tag-ok">✅ 적합</span></td>'
-      + '<td><button class="select-btn'+picked+'" onclick="pickModel('+idx+')">선택</button></td>'
       + '</tr>';
   }).join('');
 }
@@ -819,6 +821,7 @@ function pickModel(idx) {
 
   links.innerHTML = '<a class="maker-link" href="'+r.url+'" target="_blank">🔗 '+r.name+' 공식 사이트</a>';
   sumBox.style.display = 'block';
+  var _lbl=document.getElementById('cmp-selected-label');if(_lbl){_lbl.style.display='block';document.getElementById('cmp-selected-name').textContent=r.name+' '+r.model}
   renderCompareTable();
 }
 
@@ -833,3 +836,5 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
