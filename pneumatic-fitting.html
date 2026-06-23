@@ -202,6 +202,26 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table td.mono{font-family:var(--mono)}
 .cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 
+/* ── 유량 계산 도우미 ── */
+.flow-helper-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin-top:.4rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;width:100%}
+.flow-helper-toggle:hover{color:var(--accent-mid)}
+.flow-helper-toggle .fh-arrow{transition:transform .2s;display:inline-block;font-style:normal}
+.flow-helper-toggle.open .fh-arrow{transform:rotate(180deg)}
+.flow-helper-body{display:none;margin-top:.6rem;border:1.5px solid var(--accent-light);border-radius:10px;overflow:hidden;background:#fff}
+.flow-helper-body.open{display:block}
+.fh-inner{padding:1rem}
+.fh-row{display:flex;gap:.6rem;margin-bottom:.75rem;flex-wrap:wrap}
+.fh-field{flex:1;min-width:110px}
+.fh-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
+.fh-field input,.fh-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);color:var(--text);background:#fff;outline:none;transition:border-color .15s}
+.fh-field input:focus,.fh-field select:focus{border-color:var(--accent)}
+.fh-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin-bottom:.75rem;min-height:36px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.4rem}
+.fh-preview .fh-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px;margin-right:.25rem}
+.fh-apply-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:all .15s;font-family:var(--font)}
+.fh-apply-btn:hover{background:var(--accent-mid)}
+.fh-apply-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
+.fh-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+
 /* ── 비교 행 클릭 선택 ── */
 .comparison-row{cursor:pointer}
 .comparison-row:hover td{background:var(--accent-light)!important}
@@ -336,6 +356,48 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <span class="input-unit">L/min</span>
       </div>
       <div class="input-hint">솔레노이드 밸브 계산기 결과를 그대로 입력하세요.</div>
+      <button class="flow-helper-toggle" type="button" onclick="toggleFlowHelper(this)">
+        <span class="fh-arrow">▼</span> 실린더 스펙으로 유량 직접 계산하기
+      </button>
+      <div class="flow-helper-body" id="flow-helper-body">
+        <div class="fh-inner">
+          <div class="fh-row">
+            <div class="fh-field">
+              <label>보어 지름 D</label>
+              <input type="number" id="fh-bore" min="1" step="1" placeholder="예: 32" oninput="calcFlowHelper()">
+              <div class="fh-hint">mm</div>
+            </div>
+            <div class="fh-field">
+              <label>스트로크 S</label>
+              <input type="number" id="fh-stroke" min="1" step="5" placeholder="예: 150" oninput="calcFlowHelper()">
+              <div class="fh-hint">mm</div>
+            </div>
+            <div class="fh-field">
+              <label>작동 횟수</label>
+              <input type="number" id="fh-cycles" min="1" step="1" placeholder="예: 30" oninput="calcFlowHelper()">
+              <div class="fh-hint">회/min (왕복 1회)</div>
+            </div>
+            <div class="fh-field">
+              <label>사용 압력</label>
+              <select id="fh-pressure" onchange="calcFlowHelper()">
+                <option value="0.3">0.3 MPa</option>
+                <option value="0.4">0.4 MPa</option>
+                <option value="0.5" selected>0.5 MPa</option>
+                <option value="0.6">0.6 MPa</option>
+                <option value="0.7">0.7 MPa</option>
+              </select>
+            </div>
+          </div>
+          <div class="fh-preview" id="fh-preview">
+            <span class="fh-preview-label">계산 결과</span>
+            <span id="fh-result">— L/min</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+            <button class="fh-apply-btn" id="fh-apply-btn" onclick="applyFlowHelper()" disabled>↑ 이 값 적용</button>
+            <span class="fh-hint">Q = (π/4)×D²×S×n×(P/0.1013+1)×60×10⁻⁶</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="input-group">
@@ -608,6 +670,48 @@ const S = {
   results: [],
   picked: null,
 };
+
+/* ──────────────────────────────────────────────
+   유량 계산 도우미
+──────────────────────────────────────────────── */
+function toggleFlowHelper(btn) {
+  btn.classList.toggle('open');
+  document.getElementById('flow-helper-body').classList.toggle('open');
+}
+
+function calcFlowHelper() {
+  const D = parseFloat(document.getElementById('fh-bore').value);
+  const S = parseFloat(document.getElementById('fh-stroke').value);
+  const n = parseFloat(document.getElementById('fh-cycles').value);
+  const P = parseFloat(document.getElementById('fh-pressure').value);
+  const btn = document.getElementById('fh-apply-btn');
+  const res = document.getElementById('fh-result');
+
+  if (!D || !S || !n || !P) {
+    res.textContent = '— L/min';
+    btn.disabled = true;
+    return;
+  }
+
+  // Q [L/min] = (π/4) × D² × S × n × (P/0.1013 + 1) × 60 × 10⁻⁶
+  const Q = (Math.PI / 4) * D * D * S * n * (P / 0.1013 + 1) * 60 * 1e-6;
+  res.textContent = Q.toFixed(1) + ' L/min';
+  btn.disabled = false;
+  btn._q = Q;
+}
+
+function applyFlowHelper() {
+  const btn = document.getElementById('fh-apply-btn');
+  if (!btn._q) return;
+  const Q = Math.round(btn._q * 10) / 10;
+  document.getElementById('flow').value = Q;
+  calcTube();
+  // 입력 하이라이트
+  const inp = document.getElementById('flow');
+  inp.classList.remove('input-highlight');
+  void inp.offsetWidth;
+  inp.classList.add('input-highlight');
+}
 
 /* ──────────────────────────────────────────────
    튜브 계산
