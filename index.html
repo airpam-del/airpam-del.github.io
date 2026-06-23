@@ -996,6 +996,66 @@
       animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
     }
 
+    .cta-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .65rem;
+    }
+
+    .cta-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.35);
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .cta-group-label::before,
+    .cta-group-label::after {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: rgba(255,255,255,.2);
+    }
+
+    .cta-group-btns {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-ghost-blue {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+      border: 1.5px solid rgba(56,189,248,.4);
+      color: rgba(56,189,248,.85);
+      background: rgba(56,189,248,.07);
+    }
+
+    .btn-ghost-blue:hover {
+      border-color: rgba(56,189,248,.8);
+      background: rgba(56,189,248,.15);
+      color: #fff;
+    }
+
     /* ── 푸터 ── */
     footer {
       background: #0A0F0B;
@@ -1724,16 +1784,30 @@
   <div class="section-inner">
     <div class="cta-inner">
       <h2 class="cta-title">지금 바로 시작하세요</h2>
-      <p class="cta-desc">8가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
-      <div class="cta-buttons">
-        <a href="lmguide.html" class="btn-primary">LM Guide 선정</a>
-        <a href="ballscrew.html" class="btn-ghost">볼스크류 선정</a>
-        <a href="bearing.html" class="btn-ghost">베어링 선정</a>
-        <a href="servo_motor.html" class="btn-ghost">서보모터 선정</a>
-        <a href="screwjack.html" class="btn-ghost">스크류잭 선정</a>
-        <a href="planetary-gearbox.html" class="btn-ghost">유성 감속기 선정</a>
-        <a href="cycloidal-gearbox.html" class="btn-ghost">사이클로이드 선정</a>
-        <a href="harmonic-drive.html" class="btn-ghost">하모닉 드라이브 선정</a>
+      <p class="cta-desc">12가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
+      <div class="cta-groups">
+        <div class="cta-group">
+          <div class="cta-group-label">⚡ 전동 부품</div>
+          <div class="cta-group-btns">
+            <a href="lmguide.html" class="btn-primary">LM Guide 선정</a>
+            <a href="ballscrew.html" class="btn-ghost">볼스크류 선정</a>
+            <a href="bearing.html" class="btn-ghost">베어링 선정</a>
+            <a href="servo_motor.html" class="btn-ghost">서보모터 선정</a>
+            <a href="screwjack.html" class="btn-ghost">스크류잭 선정</a>
+            <a href="planetary-gearbox.html" class="btn-ghost">유성 감속기 선정</a>
+            <a href="cycloidal-gearbox.html" class="btn-ghost">사이클로이드 선정</a>
+            <a href="harmonic-drive.html" class="btn-ghost">하모닉 드라이브 선정</a>
+          </div>
+        </div>
+        <div class="cta-group">
+          <div class="cta-group-label">💨 공압 부품</div>
+          <div class="cta-group-btns">
+            <a href="pneumatic-cylinder.html" class="btn-ghost-blue">실린더 선정</a>
+            <a href="solenoid-valve.html" class="btn-ghost-blue">솔레노이드 밸브 선정</a>
+            <a href="pneumatic-fitting.html" class="btn-ghost-blue">피팅/튜빙 선정</a>
+            <a href="pneumatic-fr-unit.html" class="btn-ghost-blue">필터/레귤레이터 선정</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
