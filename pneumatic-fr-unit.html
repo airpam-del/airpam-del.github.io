@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FR 유닛(필터+레귤레이터) 선정 계산기 — PartsOn</title>
-<meta name="description" content="공압 FR 유닛(필터+레귤레이터)을 무료로 선정하세요. SMC AW, Festo LFR, CKD C3000/W3000 3사 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
-<meta name="keywords" content="FR 유닛 선정, 필터 레귤레이터, SMC AW, Festo LFR, CKD W3000, 공압 선정 계산기">
-<meta property="og:title" content="FR 유닛(필터+레귤레이터) 선정 계산기 — PartsOn">
-<meta property="og:description" content="SMC·Festo·CKD 3사 FR 유닛 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
+<title>공기압 조절 유닛(필터+레귤레이터) 선정 계산기 — PartsOn</title>
+<meta name="description" content="공기압 조절 유닛(필터+레귤레이터)을 무료로 선정하세요. SMC AW, Festo LFR, CKD C3000/W3000 3사 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
+<meta name="keywords" content="공기압 조절 유닛 선정, 필터 레귤레이터, SMC AW, Festo LFR, CKD W3000, 공압 선정 계산기">
+<meta property="og:title" content="공기압 조절 유닛(필터+레귤레이터) 선정 계산기 — PartsOn">
+<meta property="og:description" content="SMC·Festo·CKD 3사 공기압 조절 유닛 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
 <meta property="og:image" content="https://partson.co.kr/og-image.png">
 <meta property="og:url" content="https://partson.co.kr/pneumatic-fr-unit.html">
 <meta property="og:type" content="website">
@@ -254,7 +254,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
       <a href="pneumatic-cylinder.html">실린더 선정</a>
       <a href="solenoid-valve.html">솔레노이드 밸브 선정</a>
       <a href="pneumatic-fitting.html">피팅/튜빙 선정</a>
-      <a href="pneumatic-fr-unit.html" class="active">필터/레귤레이터 선정</a>
+      <a href="pneumatic-fr-unit.html" class="active">공기압 조절 유닛 선정</a>
     </div>
   </div>
 </nav>
@@ -268,7 +268,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="hdr">
     <div class="hdr-icon">🌬️</div>
     <div>
-      <h1>FR 유닛(필터+레귤레이터) 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <h1>공기압 조절 유닛(필터+레귤레이터) 선정 계산기<span class="cat-badge">💨 공압</span></h1>
       <p>SMC AW · Festo LFR · CKD C3000/W3000 3사 동시 비교 — 포트 사이즈·유량·압력 조건 기반 자동 선정</p>
     </div>
   </div>
@@ -276,7 +276,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
 <main>
   <div class="print-header">
-    <span style="font-weight:700">PartsOn — FR 유닛(필터+레귤레이터) 선정 계산기</span>
+    <span style="font-weight:700">PartsOn — 공기압 조절 유닛(필터+레귤레이터) 선정 계산기</span>
     <span id="print-date"></span>
   </div>
 
@@ -287,14 +287,14 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="guide-banner" onclick="toggleGuide()">
     <div class="guide-icon">💡</div>
     <div class="guide-text">
-      <div class="guide-title">FR 유닛이란? — 30초 가이드</div>
+      <div class="guide-title">공기압 조절 유닛이란? — 30초 가이드</div>
       <div class="guide-sub">필터+레귤레이터 복합 유닛. 컴프레서에서 나온 공기를 정화(필터)하고 압력을 설정(레귤레이터)합니다. 클릭해서 펼쳐보세요.</div>
       <div class="guide-steps" id="guide-steps">
         <div class="guide-step-list">
           <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">배관 조건 입력</b> — 포트 사이즈(배관 나사 규격), 최대 사용 유량, 공급 압력과 설정 압력을 입력합니다.</div></div>
           <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">필터 등급·드레인 방식 선택</b> — 일반 자동화(5μm) 또는 정밀 환경(0.3μm), 수동/오토 드레인을 선택합니다.</div></div>
           <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — SMC·Festo·CKD 중 비교할 메이커를 선택합니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 조건을 만족하는 FR 유닛 모델이 정격 유량·압력 범위와 함께 표시됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 조건을 만족하는 공기압 조절 유닛 모델이 정격 유량·압력 범위와 함께 표시됩니다.</div></div>
           <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교·선정</b> — 3사 모델을 나란히 비교하고 선택 버튼으로 선정 요약을 확인합니다.</div></div>
         </div>
       </div>
@@ -305,7 +305,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <!-- 면책 배너 -->
   <div class="disclaimer-banner">
     <div class="disclaimer-banner-icon">⚠️</div>
-    <div><b>면책 고지:</b> 이 계산기는 FR 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b> 루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.</div>
+    <div><b>면책 고지:</b> 이 계산기는 공기압 조절 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b> 루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.</div>
   </div>
 
   <!-- Step 1: 배관 및 유량 조건 -->
@@ -322,7 +322,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <div class="input-group">
       <label>배관 포트 사이즈
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">FR 유닛을 연결할 배관의 나사 규격입니다.<br><b>Rc(PT) 나사 기준:</b><br>1/8" = 소형 라인<br>1/4" = 표준 자동화 라인<br>3/8", 1/2" = 대유량 라인</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">공기압 조절 유닛을 연결할 배관의 나사 규격입니다.<br><b>Rc(PT) 나사 기준:</b><br>1/8" = 소형 라인<br>1/4" = 표준 자동화 라인<br>3/8", 1/2" = 대유량 라인</div></span>
       </label>
       <div class="input-wrap">
         <select id="port-size">
@@ -336,7 +336,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <div class="input-group">
       <label>시스템 최대 사용 유량 Q
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">이 FR 유닛을 통과하는 <b>최대 유량</b>을 입력하세요.<br>솔레노이드 밸브 계산기에서 확인한 필요 유량을 그대로 입력하면 됩니다.<br><br>여러 회로를 묶는 경우 합산 유량을 입력하세요.</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">이 유닛을 통과하는 <b>최대 유량</b>을 입력하세요.<br>솔레노이드 밸브 계산기에서 확인한 필요 유량을 그대로 입력하면 됩니다.<br><br>여러 회로를 묶는 경우 합산 유량을 입력하세요.</div></span>
       </label>
       <div class="input-wrap">
         <input type="number" id="flow" min="1" step="10" placeholder="예: 95" oninput="checkPressure()">
@@ -513,7 +513,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="disclaimer">
-      이 계산기는 FR 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다.<br>
+      이 계산기는 공기압 조절 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다.<br>
       루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.<br>
       <b>최종 선정은 반드시 메이커 카탈로그를 확인하세요.</b>
     </div>
@@ -836,5 +836,17 @@ window.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
