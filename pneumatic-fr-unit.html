@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FR 유닛(필터+레귤레이터) 선정 계산기 — PartsOn</title>
+<meta name="description" content="공압 FR 유닛(필터+레귤레이터)을 무료로 선정하세요. SMC AW, Festo LFR, CKD C3000/W3000 3사 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
+<meta name="keywords" content="FR 유닛 선정, 필터 레귤레이터, SMC AW, Festo LFR, CKD W3000, 공압 선정 계산기">
+<meta property="og:title" content="FR 유닛(필터+레귤레이터) 선정 계산기 — PartsOn">
+<meta property="og:description" content="SMC·Festo·CKD 3사 FR 유닛 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/pneumatic-fr-unit.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://partson.co.kr/pneumatic-fr-unit.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;
+  --card:#FFFFFF;
+  --border:#D8D4CC;
+  --border-light:#E8E5DF;
+  --accent:#1A3A5C;
+  --accent-light:#E8EEF5;
+  --accent-mid:#2D5A8B;
+  --text:#1A1814;
+  --text2:#6B6760;
+  --text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;
+  --warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;
+  --font:'IBM Plex Sans KR',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-pneumatic .cat-badge{background:rgba(0,136,204,.10);color:#0088CC}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select{font-family:var(--mono)}
+
+/* ── 내비게이션 ── */
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:#0088CC!important}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:195px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+
+/* ── 헤더 ── */
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+
+/* ── 레이아웃 ── */
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── 카드 ── */
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+
+/* ── 위저드 진행 바 ── */
+.steps-bar{display:flex;align-items:flex-start;gap:0;margin-bottom:1.5rem}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}
+.step-item.active .step-label{color:var(--accent);font-weight:700}
+.step-item.done .step-label{color:var(--accent)}
+.step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
+.step-line.done{background:var(--accent)}
+
+/* ── 가이드 배너 ── */
+.guide-banner{background:linear-gradient(135deg,#1A3A5C 0%,#2D5A8B 100%);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:opacity .15s}
+.guide-banner:hover{opacity:.92}
+.guide-icon{font-size:22px;flex-shrink:0;margin-top:1px}
+.guide-text{flex:1}
+.guide-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.guide-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.guide-arrow{font-size:18px;color:rgba(255,255,255,.5);flex-shrink:0;align-self:center}
+.guide-steps{display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.15)}
+.guide-steps.open{display:block}
+.guide-step-list{display:flex;flex-direction:column;gap:.5rem}
+.guide-step-item{display:flex;gap:.6rem;align-items:flex-start;font-size:12px;color:rgba(255,255,255,.85);line-height:1.5}
+.guide-step-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;margin-top:1px}
+
+/* ── 면책 배너 ── */
+.disclaimer-banner{display:flex;align-items:flex-start;gap:.6rem;background:#FFFBF0;border:1px solid #F0D080;border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;font-size:12px;color:#7A5A00;line-height:1.6}
+.disclaimer-banner-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+
+/* ── 위저드 스텝 ── */
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 입력 그룹 ── */
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+
+/* ── ? 툴팁 ── */
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;position:relative;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:260px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup,.tip-btn:focus+.tip-popup{display:block}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:230px}}
+
+/* ── 경고 메시지 ── */
+.warn-msg{display:none;align-items:center;gap:.5rem;background:var(--warn-bg);border:1px solid #F0B080;border-radius:8px;padding:.65rem 1rem;font-size:13px;color:var(--warn);margin-top:.5rem}
+.warn-msg.show{display:flex}
+
+/* ── 포트 매핑 안내 ── */
+.port-guide{background:var(--accent-light);border:1px solid #BFDBFE;border-radius:8px;padding:.65rem 1rem;font-size:12px;color:var(--accent);margin-bottom:1rem;line-height:1.7}
+.port-guide-title{font-weight:700;margin-bottom:.25rem}
+
+/* ── 라디오 ── */
+.radio-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.radio-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.radio-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.radio-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.radio-item input[type=radio]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.radio-item .ri-title{font-size:14px;font-weight:600;color:var(--text)}
+.radio-item .ri-sub{font-size:12px;color:var(--text2)}
+
+/* ── 체크박스 ── */
+.check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
+.check-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
+.check-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.check-item.sel{border-color:var(--accent);background:var(--accent-light)}
+.check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
+.check-item .ci-title{font-size:14px;font-weight:600;color:var(--text)}
+.check-item .ci-sub{font-size:12px;color:var(--text2)}
+
+/* ── 안내 박스 ── */
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1E3A5F;margin-bottom:1.25rem;line-height:1.6}
+
+/* ── 버튼 ── */
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+
+/* ── 결과 카드 ── */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:1.5rem}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;transition:box-shadow .2s}
+.result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.result-card.ok-card{border-color:#6DBF8A}
+.rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem}
+.rc-model{font-size:20px;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.rc-series{font-size:12px;color:var(--text2);margin-bottom:.75rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem}
+.rc-badge.ok{background:var(--ok-bg);color:var(--ok)}
+.rc-badge.warn{background:var(--warn-bg);color:var(--warn)}
+.rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
+.rc-rows{display:flex;flex-direction:column;gap:.4rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2)}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rc-divider{height:1px;background:var(--border-light);margin:.5rem 0}
+.rc-highlight{background:var(--accent-light);border-radius:6px;padding:.35rem .6rem;margin:.4rem 0}
+.rc-highlight .rc-row-label{color:var(--accent);font-weight:600}
+.rc-highlight .rc-row-val{color:var(--accent);font-size:15px}
+
+/* ── 압력 바 ── */
+.pressure-bar-wrap{margin:.5rem 0}
+.pressure-bar-label{font-size:11px;color:var(--text3);margin-bottom:.25rem;display:flex;justify-content:space-between}
+.pressure-bar-track{height:8px;background:var(--border-light);border-radius:4px;position:relative;overflow:visible}
+.pressure-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#1A3A5C,#0088CC);transition:width .3s}
+.pressure-bar-marker{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#E85A00;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:2}
+.pressure-bar-marker-label{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:#E85A00;white-space:nowrap;font-family:var(--mono)}
+
+/* ── 비교 테이블 ── */
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .75rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.6rem .75rem;border-bottom:1px solid var(--border-light);vertical-align:middle}
+.cmp-table tr:hover td{background:#F0F6FF}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-warn{display:inline-block;background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+
+/* ── 선택 버튼 ── */
+.select-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .9rem;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--accent);background:#fff;color:var(--accent);transition:all .15s}
+.select-btn:hover,.select-btn.picked{background:var(--accent);color:#fff}
+
+/* ── 선정 요약 ── */
+#summary-box{display:none;background:var(--ok-bg);border:1.5px solid #6DBF8A;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.sum-title{font-size:16px;font-weight:700;color:var(--ok);margin-bottom:.75rem}
+.sum-rows{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem}
+.sum-row{display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid rgba(0,0,0,.06);padding:.2rem 0}
+.sum-row span:last-child{font-family:var(--mono);font-weight:600;color:var(--text)}
+.maker-links{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+.maker-link{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;padding:.35rem .75rem;border-radius:6px;background:#fff;border:1px solid var(--border);color:var(--accent);text-decoration:none;transition:all .15s}
+.maker-link:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* ── 면책 ── */
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+
+/* ── 무결과 ── */
+.no-result{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
+.no-result-icon{font-size:40px;margin-bottom:.75rem}
+
+/* ── 인쇄 ── */
+.print-header{display:none}
+@media print{
+  .partson-nav,.steps-bar,.btn-nav,.maker-links,.select-btn,button{display:none!important}
+  .step-wrap{display:block!important}
+  .step-wrap:not(.active){display:none!important}
+  .print-header{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}
+}
+
+@media(max-width:600px){.result-grid{grid-template-columns:1fr}.sum-rows{grid-template-columns:1fr}}
+</style>
+</head>
+<body class="category-pneumatic">
+
+<!-- 내비게이션 -->
+<nav class="partson-nav">
+  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
+  <div class="pnav-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
+    <div class="pnav-menu">
+      <a href="lmguide.html">LM Guide</a>
+      <a href="ballscrew.html">볼스크류 선정</a>
+      <a href="bearing.html">베어링 선정</a>
+      <a href="servo_motor.html">서보모터 선정</a>
+      <a href="screwjack.html">스크류잭 선정</a>
+      <a href="planetary-gearbox.html">유성 감속기</a>
+      <a href="cycloidal-gearbox.html">사이클로이드</a>
+      <a href="harmonic-drive.html">하모닉 드라이브</a>
+    </div>
+  </div>
+  <div class="pnav-drop pneumatic-drop">
+    <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
+    <div class="pnav-menu">
+      <a href="pneumatic-cylinder.html">실린더 선정</a>
+      <a href="solenoid-valve.html">솔레노이드 밸브 선정</a>
+      <a href="pneumatic-fitting.html">피팅/튜빙 선정</a>
+      <a href="pneumatic-fr-unit.html" class="active">필터/레귤레이터 선정</a>
+    </div>
+  </div>
+</nav>
+<script>
+function pnavToggle(btn){var menu=btn.nextElementSibling;var isOpen=!menu.classList.contains('open');document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});if(isOpen){menu.classList.add('open');btn.classList.add('open')}}
+document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')){document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')})}});
+</script>
+
+<!-- 헤더 -->
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🌬️</div>
+    <div>
+      <h1>FR 유닛(필터+레귤레이터) 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>SMC AW · Festo LFR · CKD C3000/W3000 3사 동시 비교 — 포트 사이즈·유량·압력 조건 기반 자동 선정</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="print-header">
+    <span style="font-weight:700">PartsOn — FR 유닛(필터+레귤레이터) 선정 계산기</span>
+    <span id="print-date"></span>
+  </div>
+
+  <!-- 스텝 바 -->
+  <div class="steps-bar" id="steps-bar"></div>
+
+  <!-- 가이드 배너 -->
+  <div class="guide-banner" onclick="toggleGuide()">
+    <div class="guide-icon">💡</div>
+    <div class="guide-text">
+      <div class="guide-title">FR 유닛이란? — 30초 가이드</div>
+      <div class="guide-sub">필터+레귤레이터 복합 유닛. 컴프레서에서 나온 공기를 정화(필터)하고 압력을 설정(레귤레이터)합니다. 클릭해서 펼쳐보세요.</div>
+      <div class="guide-steps" id="guide-steps">
+        <div class="guide-step-list">
+          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">배관 조건 입력</b> — 포트 사이즈(배관 나사 규격), 최대 사용 유량, 공급 압력과 설정 압력을 입력합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">필터 등급·드레인 방식 선택</b> — 일반 자동화(5μm) 또는 정밀 환경(0.3μm), 수동/오토 드레인을 선택합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — SMC·Festo·CKD 중 비교할 메이커를 선택합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 조건을 만족하는 FR 유닛 모델이 정격 유량·압력 범위와 함께 표시됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교·선정</b> — 3사 모델을 나란히 비교하고 선택 버튼으로 선정 요약을 확인합니다.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="guide-arrow" id="guide-arrow">▾</div>
+  </div>
+
+  <!-- 면책 배너 -->
+  <div class="disclaimer-banner">
+    <div class="disclaimer-banner-icon">⚠️</div>
+    <div><b>면책 고지:</b> 이 계산기는 FR 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b> 루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.</div>
+  </div>
+
+  <!-- Step 1: 배관 및 유량 조건 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1</div>
+    <div class="question">배관 및 유량 조건 입력</div>
+    <div class="question-desc">배관 포트 사이즈, 최대 사용 유량, 공급 압력과 설정 압력을 입력하세요.</div>
+
+    <div class="port-guide">
+      <div class="port-guide-title">📌 튜브 OD → 포트 사이즈 참고 매핑</div>
+      OD4~6 → 1/8" &nbsp;|&nbsp; OD6~10 → 1/4" &nbsp;|&nbsp; OD10~12 → 3/8" &nbsp;|&nbsp; OD12~16 → 1/2"<br>
+      <span style="color:var(--text3);font-size:11px">※ 대략적 참고용입니다. 피팅/튜빙 계산기 결과를 함께 확인하세요.</span>
+    </div>
+
+    <div class="input-group">
+      <label>배관 포트 사이즈
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">FR 유닛을 연결할 배관의 나사 규격입니다.<br><b>Rc(PT) 나사 기준:</b><br>1/8" = 소형 라인<br>1/4" = 표준 자동화 라인<br>3/8", 1/2" = 대유량 라인</div></span>
+      </label>
+      <div class="input-wrap">
+        <select id="port-size">
+          <option value="1/8">1/8"  — 소형 라인 (OD4~6 매칭)</option>
+          <option value="1/4" selected>1/4"  — 표준 라인 (OD6~10 매칭)</option>
+          <option value="3/8">3/8"  — 중형 라인 (OD10~12 매칭)</option>
+          <option value="1/2">1/2"  — 대유량 라인 (OD12~16 매칭)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>시스템 최대 사용 유량 Q
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">이 FR 유닛을 통과하는 <b>최대 유량</b>을 입력하세요.<br>솔레노이드 밸브 계산기에서 확인한 필요 유량을 그대로 입력하면 됩니다.<br><br>여러 회로를 묶는 경우 합산 유량을 입력하세요.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="flow" min="1" step="10" placeholder="예: 95" oninput="checkPressure()">
+        <span class="input-unit">L/min</span>
+      </div>
+      <div class="input-hint">솔레노이드 밸브 계산기 결과를 그대로 입력하세요.</div>
+    </div>
+
+    <div class="input-group">
+      <label>공급 압력 (컴프레서 1차 출력)
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">컴프레서 또는 메인 공기 라인의 <b>공급 압력</b>입니다.<br>일반적으로 0.6~0.9 MPa 범위입니다.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="supply-pressure" min="0.1" max="1.5" step="0.05" value="0.7" oninput="checkPressure()">
+        <span class="input-unit">MPa</span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>사용(설정) 압력 (실린더/밸브 공급압)
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">레귤레이터로 조정하여 <b>실제 회로에 공급할 압력</b>입니다.<br>레귤레이터는 압력을 낮추는 장치이므로, 반드시 공급 압력보다 낮아야 합니다.<br><br>일반적으로 0.4~0.6 MPa.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="set-pressure" min="0.05" max="0.85" step="0.05" value="0.5" oninput="checkPressure()">
+        <span class="input-unit">MPa</span>
+      </div>
+      <div class="warn-msg" id="pressure-warn">
+        ⚠️ 사용 압력은 공급 압력보다 낮아야 합니다. 레귤레이터는 압력을 낮추는 장치입니다.
+      </div>
+    </div>
+
+    <div class="info-box">
+      💡 공급 압력과 사용 압력의 차이가 클수록 레귤레이터가 더 많은 일을 합니다. 일반적으로 설정압 + 0.1~0.2 MPa 여유를 두어 공급하면 안정적입니다.
+    </div>
+
+    <div class="btn-nav">
+      <div></div>
+      <button class="btn btn-primary" onclick="goStep2()">다음: 필터 등급 선택 →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 필터 등급 및 드레인 방식 -->
+  <div class="step-wrap card" id="step-2">
+    <div class="section-label">Step 2</div>
+    <div class="question">필터 등급 및 드레인 방식 선택</div>
+    <div class="question-desc">공기 정화 수준과 응축수 배출 방식을 선택하세요.</div>
+
+    <div class="input-group">
+      <label>필터 여과 등급
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>5μm (표준)</b>: 일반 FA 자동화 환경. 먼지·이물질 제거. 가장 일반적.<br><br><b>0.3μm (정밀)</b>: 반도체·전자부품 조립, 정밀 측정 장비, 도장 라인 등 고청정도 요구 환경.</div></span>
+      </label>
+      <div class="radio-group">
+        <label class="radio-item sel" id="filter-std" onclick="selFilter('5um')">
+          <input type="radio" name="filter" value="5um" checked onchange="selFilter('5um')">
+          <div>
+            <div class="ri-title">표준 (5μm) — 권장</div>
+            <div class="ri-sub">일반 자동화·FA 환경. 먼지·금속 분진·수분 제거. 대부분의 공압 라인에 적합.</div>
+          </div>
+        </label>
+        <label class="radio-item" id="filter-prec" onclick="selFilter('0.3um')">
+          <input type="radio" name="filter" value="0.3um" onchange="selFilter('0.3um')">
+          <div>
+            <div class="ri-title">정밀 (0.3μm 이하) — 청정 환경</div>
+            <div class="ri-sub">반도체·전자부품·정밀 측정·도장 라인. 오일 미스트까지 제거 필요 시.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>드레인 방식
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>수동 드레인</b>: 작업자가 정기적으로 콕 밸브를 열어 응축수 배출. 저렴하나 주기적 관리 필요.<br><br><b>오토 드레인</b>: 일정 수위가 되면 자동 배출. 무인 라인·24시간 운전 설비에 필수.</div></span>
+      </label>
+      <div class="radio-group">
+        <label class="radio-item sel" id="drain-manual" onclick="selDrain('manual')">
+          <input type="radio" name="drain" value="manual" checked onchange="selDrain('manual')">
+          <div>
+            <div class="ri-title">수동 드레인 — 기본</div>
+            <div class="ri-sub">작업자가 정기적으로 배수. 비용 낮음. 유인 운전·정기 점검 가능한 환경.</div>
+          </div>
+        </label>
+        <label class="radio-item" id="drain-auto" onclick="selDrain('auto')">
+          <input type="radio" name="drain" value="auto" onchange="selDrain('auto')">
+          <div>
+            <div class="ri-title">오토 드레인 — 무인 라인 권장</div>
+            <div class="ri-sub">자동 배수. 무인 운전·24시간 가동 라인. 응축수 과다 환경에 필수.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="info-box">
+      ⚠️ 응축수(물)가 공압 회로에 유입되면 실린더·밸브 고장의 주요 원인이 됩니다. 무인 운전 환경이라면 오토 드레인을 강력히 권장합니다.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(3)">다음: 메이커 선택 →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 메이커 선택 -->
+  <div class="step-wrap card" id="step-3">
+    <div class="section-label">Step 3</div>
+    <div class="question">비교할 메이커 선택</div>
+    <div class="question-desc">3사 중 원하는 메이커를 선택하면 동시 비교합니다.</div>
+
+    <div class="check-group">
+      <label class="check-item sel" id="mk-smc">
+        <input type="checkbox" value="smc" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇯🇵 SMC — AW 시리즈 (FR 컴비네이션)</div>
+          <div class="ci-sub">국내 유통망 최대. AW 시리즈 표준. 정밀 필터 AME 시리즈 포함.</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-festo">
+        <input type="checkbox" value="festo" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇩🇪 Festo — LFR 시리즈</div>
+          <div class="ci-sub">정밀도·내구성 강점. LFR 컴비네이션 시리즈.</div>
+        </div>
+      </label>
+      <label class="check-item sel" id="mk-ckd">
+        <input type="checkbox" value="ckd" checked onchange="toggleMaker(this)">
+        <div>
+          <div class="ci-title">🇯🇵 CKD — C3000/W3000 시리즈</div>
+          <div class="ci-sub">가격 경쟁력·ISO 호환. C3000(소형)·W3000(중대형) 시리즈.</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="info-box">
+      💡 SMC AW 시리즈는 국내 수급이 가장 원활합니다. 정밀 여과(0.3μm)가 필요한 경우 SMC AME 시리즈를 확인하세요.
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 결과 -->
+  <div class="step-wrap" id="step-4">
+    <div class="card">
+      <div class="section-label">Step 4</div>
+      <div class="question">계산 결과</div>
+      <div id="result-summary-bar" style="margin-bottom:1rem"></div>
+    </div>
+    <div class="result-grid" id="result-grid"></div>
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(3)">← 메이커 재선택</button>
+      <button class="btn btn-primary" onclick="goStep(5)">상세 비교 →</button>
+    </div>
+  </div>
+
+  <!-- Step 5: 비교 및 선정 -->
+  <div class="step-wrap card" id="step-5">
+    <div class="section-label">Step 5</div>
+    <div class="question">상세 비교 및 선정</div>
+    <div class="question-desc">메이커별 모델을 비교하고 선택하세요.</div>
+
+    <div id="summary-box">
+      <div class="sum-title">✅ 선정 완료</div>
+      <div class="sum-rows" id="sum-rows"></div>
+      <div class="maker-links" id="maker-links"></div>
+    </div>
+
+    <div class="cmp-table-wrap">
+      <table class="cmp-table" id="cmp-table">
+        <thead><tr id="cmp-head"></tr></thead>
+        <tbody id="cmp-body"></tbody>
+      </table>
+    </div>
+
+    <div class="disclaimer">
+      이 계산기는 FR 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다.<br>
+      루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.<br>
+      <b>최종 선정은 반드시 메이커 카탈로그를 확인하세요.</b>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(4)">← 결과로 돌아가기</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ────────────────────────────────────────────
+   제품 데이터
+──────────────────────────────────────────── */
+var FR_DATA = [
+  // SMC AW — 표준 5μm
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AW 시리즈', model:'AW20',
+   port:'1/8', qRated:600,  pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AW 시리즈', model:'AW30',
+   port:'1/4', qRated:1500, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AW 시리즈', model:'AW40',
+   port:'3/8', qRated:2800, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AW 시리즈', model:'AW60',
+   port:'1/2', qRated:4500, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
+  // SMC AME — 정밀 0.3μm
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AME 시리즈 (정밀)', model:'AME150',
+   port:'1/4', qRated:1300, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AME 시리즈 (정밀)', model:'AME250',
+   port:'3/8', qRated:2400, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
+
+  // Festo LFR — 표준 5μm
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-1/8',
+   port:'1/8', qRated:700,  pMin:0.05, pMax:0.8,  filter:'5um', url:'https://www.festo.com'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-1/4',
+   port:'1/4', qRated:1600, pMin:0.05, pMax:0.8,  filter:'5um', url:'https://www.festo.com'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-3/8',
+   port:'3/8', qRated:3000, pMin:0.05, pMax:0.8,  filter:'5um', url:'https://www.festo.com'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-1/2',
+   port:'1/2', qRated:4800, pMin:0.05, pMax:0.8,  filter:'5um', url:'https://www.festo.com'},
+
+  // CKD C3000/W3000 — 표준 5μm
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'C3000 시리즈', model:'C3000-8',
+   port:'1/8', qRated:650,  pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'C3000 시리즈', model:'C3000-10',
+   port:'1/4', qRated:1550, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W3000 시리즈', model:'W3000-10',
+   port:'3/8', qRated:2900, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W3000 시리즈', model:'W3000-15',
+   port:'1/2', qRated:4600, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
+];
+
+/* ────────────────────────────────────────────
+   상태
+──────────────────────────────────────────── */
+var S = {
+  step: 1,
+  port: '1/4',
+  flow: 0,
+  supplyP: 0.7,
+  setP: 0.5,
+  filter: '5um',
+  drain: 'manual',
+  makers: {smc:true, festo:true, ckd:true},
+  results: [],
+  picked: null,
+};
+
+/* ────────────────────────────────────────────
+   스텝 바
+──────────────────────────────────────────── */
+var STEP_LABELS = ['배관·유량','필터·드레인','메이커','결과','비교·선정'];
+
+function renderStepsBar(cur) {
+  var bar = document.getElementById('steps-bar');
+  var h = '';
+  for (var i = 1; i <= 5; i++) {
+    var state = i < cur ? 'done' : i === cur ? 'active' : '';
+    var click = i < cur ? 'onclick="goStep('+i+')"' : '';
+    h += '<div class="step-item '+state+'">'
+      + '<div class="step-circle '+state+'" '+click+'>'+(i < cur ? '✓' : i)+'</div>'
+      + '<span class="step-label">'+STEP_LABELS[i-1]+'</span>'
+      + '</div>';
+    if (i < 5) h += '<div class="step-line '+(i<cur?'done':'')+'"></div>';
+  }
+  bar.innerHTML = h;
+}
+
+/* ────────────────────────────────────────────
+   가이드
+──────────────────────────────────────────── */
+function toggleGuide() {
+  var steps = document.getElementById('guide-steps');
+  var arrow  = document.getElementById('guide-arrow');
+  steps.classList.toggle('open');
+  arrow.textContent = steps.classList.contains('open') ? '▴' : '▾';
+}
+
+/* ────────────────────────────────────────────
+   압력 경고
+──────────────────────────────────────────── */
+function checkPressure() {
+  var sp = parseFloat(document.getElementById('supply-pressure').value) || 0;
+  var pp = parseFloat(document.getElementById('set-pressure').value) || 0;
+  var warn = document.getElementById('pressure-warn');
+  if (pp >= sp && pp > 0 && sp > 0) {
+    warn.classList.add('show');
+  } else {
+    warn.classList.remove('show');
+  }
+}
+
+/* ────────────────────────────────────────────
+   선택 핸들러
+──────────────────────────────────────────── */
+function selFilter(v) {
+  S.filter = v;
+  ['std','prec'].forEach(function(k) {
+    var id = k === 'std' ? 'filter-std' : 'filter-prec';
+    var val = k === 'std' ? '5um' : '0.3um';
+    document.getElementById(id).classList.toggle('sel', val === v);
+    document.getElementById(id).querySelector('input').checked = (val === v);
+  });
+}
+
+function selDrain(v) {
+  S.drain = v;
+  ['manual','auto'].forEach(function(k) {
+    var id = 'drain-'+k;
+    document.getElementById(id).classList.toggle('sel', k === v);
+    document.getElementById(id).querySelector('input').checked = (k === v);
+  });
+}
+
+function toggleMaker(cb) {
+  S.makers[cb.value] = cb.checked;
+  cb.closest('.check-item').classList.toggle('sel', cb.checked);
+}
+
+/* ────────────────────────────────────────────
+   스텝 이동
+──────────────────────────────────────────── */
+function goStep(n) {
+  document.querySelector('.step-wrap.active').classList.remove('active');
+  document.getElementById('step-'+n).classList.add('active');
+  S.step = n;
+  renderStepsBar(n);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goStep2() {
+  var sp  = parseFloat(document.getElementById('supply-pressure').value) || 0;
+  var pp  = parseFloat(document.getElementById('set-pressure').value)    || 0;
+  var q   = parseFloat(document.getElementById('flow').value)            || 0;
+  if (q <= 0) { alert('시스템 최대 사용 유량을 입력하세요.'); return; }
+  if (sp <= 0) { alert('공급 압력을 입력하세요.'); return; }
+  if (pp <= 0) { alert('사용(설정) 압력을 입력하세요.'); return; }
+  if (pp >= sp) { alert('사용 압력은 공급 압력보다 낮아야 합니다.\n레귤레이터는 압력을 낮추는 장치입니다.'); return; }
+  S.port    = document.getElementById('port-size').value;
+  S.flow    = q;
+  S.supplyP = sp;
+  S.setP    = pp;
+  goStep(2);
+}
+
+/* ────────────────────────────────────────────
+   계산 실행
+──────────────────────────────────────────── */
+function runCalc() {
+  var activeMakers = Object.keys(S.makers).filter(function(k) { return S.makers[k]; });
+  if (activeMakers.length === 0) { alert('메이커를 1개 이상 선택하세요.'); return; }
+
+  S.results = FR_DATA.filter(function(m) {
+    // 메이커 필터
+    if (!S.makers[m.maker]) return false;
+    // 포트 사이즈 일치
+    if (m.port !== S.port) return false;
+    // 필터 등급
+    if (m.filter !== S.filter) return false;
+    // 유량 조건
+    if (S.flow > m.qRated) return false;
+    // 압력 조정 범위 내에 설정압 있는지
+    if (S.setP < m.pMin || S.setP > m.pMax) return false;
+    return true;
+  });
+
+  // 유량 여유 계산
+  S.results = S.results.map(function(m) {
+    return Object.assign({}, m, { margin: m.qRated / S.flow });
+  });
+
+  renderResults();
+  goStep(4);
+}
+
+/* ────────────────────────────────────────────
+   결과 렌더
+──────────────────────────────────────────── */
+function renderResults() {
+  var grid = document.getElementById('result-grid');
+  var bar  = document.getElementById('result-summary-bar');
+
+  bar.innerHTML = '<div style="font-size:13px;color:var(--text2);line-height:1.8">'
+    + '포트 사이즈: <b style="color:var(--accent);font-family:var(--mono)">'+S.port+'"</b>'
+    + ' · 최대 유량: <b style="color:var(--accent);font-family:var(--mono)">'+S.flow+' L/min</b>'
+    + ' · 설정압: <b style="color:var(--accent);font-family:var(--mono)">'+S.setP+' MPa</b>'
+    + ' · 필터: <b>'+( S.filter==='5um' ? '표준 5μm' : '정밀 0.3μm')+'</b>'
+    + ' · 드레인: <b>'+(S.drain==='manual' ? '수동' : '오토')+'</b>'
+    + '</div>';
+
+  if (S.results.length === 0) {
+    grid.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div>'
+      + '<div>조건에 맞는 모델이 없습니다.<br>'
+      + (S.filter==='0.3um' ? 'SMC AME 시리즈는 1/4", 3/8" 포트만 지원합니다.<br>' : '')
+      + '포트 사이즈 또는 필터 등급을 변경해 보세요.</div></div>';
+    renderCompareTable();
+    return;
+  }
+
+  grid.innerHTML = S.results.map(function(r, idx) {
+    var badgeClass = r.margin >= 2 ? 'ok' : r.margin >= 1.2 ? 'ok' : 'ok';
+    var badgeText  = '✅ 적합 (여유 '+(r.margin).toFixed(1)+'배)';
+
+    // 압력 바 계산
+    var range = r.pMax - r.pMin;
+    var fillPct  = 100;
+    var markerPct = Math.min(100, Math.max(0, ((S.setP - r.pMin) / range) * 100));
+
+    return '<div class="result-card ok-card">'
+      + '<div class="rc-maker">'+r.country+' '+r.name+'</div>'
+      + '<div class="rc-model">'+r.model+'</div>'
+      + '<div class="rc-series">'+r.series+'</div>'
+      + '<span class="rc-badge '+badgeClass+'">'+badgeText+'</span>'
+      + '<div class="rc-rows">'
+      + '<div class="rc-row rc-highlight"><span class="rc-row-label">정격 유량</span><span class="rc-row-val">'+r.qRated.toLocaleString()+' L/min</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">필요 유량</span><span class="rc-row-val">'+S.flow+' L/min</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">포트 사이즈</span><span class="rc-row-val">'+r.port+'"</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">필터 등급</span><span class="rc-row-val">'+(r.filter==='5um'?'5μm':'0.3μm')+'</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">드레인</span><span class="rc-row-val">'+(S.drain==='manual'?'수동':'오토')+'</span></div>'
+      + '<div class="rc-divider"></div>'
+      + '<div class="pressure-bar-wrap">'
+      + '<div class="pressure-bar-label"><span>압력 조정 범위</span><span style="font-family:var(--mono)">'+r.pMin+'~'+r.pMax+' MPa</span></div>'
+      + '<div class="pressure-bar-track">'
+      + '<div class="pressure-bar-fill" style="width:'+fillPct+'%"></div>'
+      + '<div class="pressure-bar-marker" style="left:'+markerPct+'%">'
+      + '<div class="pressure-bar-marker-label">'+S.setP+'MPa</div>'
+      + '</div></div>'
+      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:2px"><span>'+r.pMin+'</span><span>'+r.pMax+'</span></div>'
+      + '</div>'
+      + '</div></div>';
+  }).join('');
+
+  renderCompareTable();
+}
+
+/* ────────────────────────────────────────────
+   비교 테이블
+──────────────────────────────────────────── */
+function renderCompareTable() {
+  var head = document.getElementById('cmp-head');
+  var body = document.getElementById('cmp-body');
+
+  head.innerHTML = '<th>메이커</th><th>시리즈</th><th>모델</th><th>포트</th><th>정격유량</th><th>압력범위</th><th>필터</th><th>드레인</th><th>판정</th><th>선택</th>';
+
+  if (S.results.length === 0) {
+    body.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--text3);padding:1.5rem">조건에 맞는 모델이 없습니다.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = S.results.map(function(r, idx) {
+    var picked = S.picked === idx ? ' picked' : '';
+    return '<tr>'
+      + '<td>'+r.country+' '+r.name+'</td>'
+      + '<td>'+r.series+'</td>'
+      + '<td class="mono">'+r.model+'</td>'
+      + '<td class="mono">'+r.port+'"</td>'
+      + '<td class="mono">'+r.qRated.toLocaleString()+' L/min</td>'
+      + '<td class="mono">'+r.pMin+'~'+r.pMax+'</td>'
+      + '<td>'+(r.filter==='5um'?'5μm':'0.3μm')+'</td>'
+      + '<td>'+(S.drain==='manual'?'수동':'오토')+'</td>'
+      + '<td><span class="tag-ok">✅ 적합</span></td>'
+      + '<td><button class="select-btn'+picked+'" onclick="pickModel('+idx+')">선택</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function pickModel(idx) {
+  S.picked = idx;
+  var r = S.results[idx];
+  var sumBox  = document.getElementById('summary-box');
+  var sumRows = document.getElementById('sum-rows');
+  var links   = document.getElementById('maker-links');
+
+  sumRows.innerHTML = ''
+    + '<div class="sum-row"><span>메이커</span><span>'+r.country+' '+r.name+'</span></div>'
+    + '<div class="sum-row"><span>시리즈</span><span>'+r.series+'</span></div>'
+    + '<div class="sum-row"><span>모델</span><span>'+r.model+'</span></div>'
+    + '<div class="sum-row"><span>포트 사이즈</span><span>'+r.port+'"</span></div>'
+    + '<div class="sum-row"><span>정격 유량</span><span>'+r.qRated.toLocaleString()+' L/min</span></div>'
+    + '<div class="sum-row"><span>최대 사용 유량</span><span>'+S.flow+' L/min</span></div>'
+    + '<div class="sum-row"><span>압력 조정 범위</span><span>'+r.pMin+'~'+r.pMax+' MPa</span></div>'
+    + '<div class="sum-row"><span>사용(설정) 압력</span><span>'+S.setP+' MPa</span></div>'
+    + '<div class="sum-row"><span>공급 압력</span><span>'+S.supplyP+' MPa</span></div>'
+    + '<div class="sum-row"><span>필터 등급</span><span>'+(r.filter==='5um'?'5μm':'0.3μm')+'</span></div>'
+    + '<div class="sum-row"><span>드레인 방식</span><span>'+(S.drain==='manual'?'수동 드레인':'오토 드레인')+'</span></div>';
+
+  links.innerHTML = '<a class="maker-link" href="'+r.url+'" target="_blank">🔗 '+r.name+' 공식 사이트</a>';
+  sumBox.style.display = 'block';
+  renderCompareTable();
+}
+
+/* ────────────────────────────────────────────
+   초기화
+──────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('print-date').textContent = new Date().toLocaleDateString('ko-KR');
+  renderStepsBar(1);
+  checkPressure();
+});
+</script>
+</body>
+</html>
