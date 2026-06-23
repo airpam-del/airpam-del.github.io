@@ -933,7 +933,7 @@ function renderCompareTable() {
   body.innerHTML = S.results.map(function(r, idx) {
     var shapeCells = activeShapes.map(function(s) { return '<td class="mono">' + r.fittings[s] + '</td>'; }).join('');
     var rowSel = S.picked === idx ? ' row-selected' : '';
-    return '<tr class="comparison-row' + rowSel + '" role="button" tabindex="0" onclick="pickModel(' + idx + ')" onkeydown="if(event.key===\\'Enter\\'||event.key===\\' \\')pickModel(' + idx + ')">'
+    return '<tr class="comparison-row' + rowSel + '" role="button" tabindex="0" onclick="pickModel(' + idx + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')pickModel(' + idx + ')">'
       + '<td>' + r.country + ' ' + r.name + '</td>'
       + '<td class="mono">OD' + r.od + '</td>'
       + '<td class="mono">' + r.tubing + '</td>'
