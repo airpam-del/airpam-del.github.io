@@ -1039,21 +1039,26 @@
     .btn-ghost-blue {
       display: inline-flex;
       align-items: center;
-      padding: 10px 20px;
-      border-radius: 8px;
+      gap: 8px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: var(--font-display);
       font-size: 14px;
       font-weight: 500;
       text-decoration: none;
-      transition: all .2s;
-      border: 1.5px solid rgba(56,189,248,.4);
-      color: rgba(56,189,248,.85);
-      background: rgba(56,189,248,.07);
+      transition: all 0.3s var(--ease-out);
+      border: 2px solid rgba(56,189,248,.35);
+      color: rgba(56,189,248,.9);
+      background: rgba(56,189,248,.08);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
     }
 
     .btn-ghost-blue:hover {
-      border-color: rgba(56,189,248,.8);
-      background: rgba(56,189,248,.15);
+      border-color: rgba(56,189,248,.75);
+      background: rgba(56,189,248,.18);
       color: #fff;
+      transform: translateY(-3px);
     }
 
     /* ── 푸터 ── */
