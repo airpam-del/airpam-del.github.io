@@ -203,24 +203,32 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
 
 /* ── 유량 계산 도우미 ── */
-.flow-helper-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin-top:.4rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;width:100%}
-.flow-helper-toggle:hover{color:var(--accent-mid)}
-.flow-helper-toggle .fh-arrow{transition:transform .2s;display:inline-block;font-style:normal}
-.flow-helper-toggle.open .fh-arrow{transform:rotate(180deg)}
-.flow-helper-body{display:none;margin-top:.6rem;border:1.5px solid var(--accent-light);border-radius:10px;overflow:hidden;background:#fff}
-.flow-helper-body.open{display:block}
-.fh-inner{padding:1rem}
-.fh-row{display:flex;gap:.6rem;margin-bottom:.75rem;flex-wrap:wrap}
-.fh-field{flex:1;min-width:110px}
-.fh-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
-.fh-field input,.fh-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);color:var(--text);background:#fff;outline:none;transition:border-color .15s}
-.fh-field input:focus,.fh-field select:focus{border-color:var(--accent)}
-.fh-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin-bottom:.75rem;min-height:36px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.4rem}
-.fh-preview .fh-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px;margin-right:.25rem}
-.fh-apply-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:all .15s;font-family:var(--font)}
-.fh-apply-btn:hover{background:var(--accent-mid)}
-.fh-apply-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
-.fh-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.thrust-helper-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin-top:.4rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;text-decoration:none;width:100%}
+.thrust-helper-toggle:hover{color:var(--accent-mid)}
+.thrust-helper-toggle .th-arrow{transition:transform .2s;display:inline-block;font-style:normal}
+.thrust-helper-toggle.open .th-arrow{transform:rotate(180deg)}
+.thrust-helper-body{display:none;margin-top:.6rem;border:1.5px solid var(--accent-light);border-radius:10px;overflow:hidden;background:#fff}
+.thrust-helper-body.open{display:block}
+.th-tabs{display:flex;border-bottom:1px solid var(--border-light);background:#F8F7F5}
+.th-tab{flex:1;padding:.55rem .5rem;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font)}
+.th-tab:hover{color:var(--accent)}
+.th-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff}
+.th-panels{padding:1rem}
+.th-panel{display:none}
+.th-panel.active{display:block}
+.th-input-row{display:flex;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+.th-input-row .th-field{flex:1;min-width:120px}
+.th-input-row .th-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
+.th-input-row .th-field input,.th-input-row .th-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);color:var(--text);background:#fff;outline:none;transition:border-color .15s}
+.th-input-row .th-field input:focus,.th-input-row .th-field select:focus{border-color:var(--accent)}
+.th-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin-bottom:.75rem;min-height:36px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.4rem}
+.th-preview .th-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px;margin-right:.25rem}
+.th-apply-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:all .15s;font-family:var(--font)}
+.th-apply-btn:hover{background:var(--accent-mid)}
+.th-apply-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
+.th-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+@keyframes highlightPulse{0%{background:#DBEAFE}50%{background:#BFDBFE}100%{background:#fff}}
+.input-highlight{animation:highlightPulse .7s ease-out}
 
 /* ── 비교 행 클릭 선택 ── */
 .comparison-row{cursor:pointer}
@@ -356,45 +364,55 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <span class="input-unit">L/min</span>
       </div>
       <div class="input-hint">솔레노이드 밸브 계산기 결과를 그대로 입력하세요.</div>
-      <button class="flow-helper-toggle" type="button" onclick="toggleFlowHelper(this)">
-        <span class="fh-arrow">▼</span> 실린더 스펙으로 유량 직접 계산하기
+      <button class="thrust-helper-toggle" id="th-toggle" onclick="thToggle()" type="button">
+        <span>💡 필요 유량을 모르신다면? 계산 도우미 열기</span>
+        <span class="th-arrow">▾</span>
       </button>
-      <div class="flow-helper-body" id="flow-helper-body">
-        <div class="fh-inner">
-          <div class="fh-row">
-            <div class="fh-field">
-              <label>보어 지름 D</label>
-              <input type="number" id="fh-bore" min="1" step="1" placeholder="예: 32" oninput="calcFlowHelper()">
-              <div class="fh-hint">mm</div>
+      <div class="thrust-helper-body" id="th-body">
+        <div class="th-tabs">
+          <button class="th-tab active" onclick="thTab(0)" type="button">실린더 스펙으로 계산</button>
+          <button class="th-tab" onclick="thTab(1)" type="button">직접 입력</button>
+        </div>
+        <div class="th-panels">
+          <!-- 탭 A: 실린더 스펙 -->
+          <div class="th-panel active" id="th-panel-0">
+            <div class="th-input-row">
+              <div class="th-field">
+                <label>보어 지름 D (mm)</label>
+                <input type="number" id="fh-bore" min="1" step="1" placeholder="예: 32" oninput="calcFlowHelper()">
+              </div>
+              <div class="th-field">
+                <label>스트로크 S (mm)</label>
+                <input type="number" id="fh-stroke" min="1" step="5" placeholder="예: 150" oninput="calcFlowHelper()">
+              </div>
             </div>
-            <div class="fh-field">
-              <label>스트로크 S</label>
-              <input type="number" id="fh-stroke" min="1" step="5" placeholder="예: 150" oninput="calcFlowHelper()">
-              <div class="fh-hint">mm</div>
+            <div class="th-input-row">
+              <div class="th-field">
+                <label>작동 횟수 (회/min)</label>
+                <input type="number" id="fh-cycles" min="1" step="1" placeholder="예: 30" oninput="calcFlowHelper()">
+              </div>
+              <div class="th-field">
+                <label>사용 압력</label>
+                <select id="fh-pressure" onchange="calcFlowHelper()">
+                  <option value="0.3">0.3 MPa</option>
+                  <option value="0.4">0.4 MPa</option>
+                  <option value="0.5" selected>0.5 MPa</option>
+                  <option value="0.6">0.6 MPa</option>
+                  <option value="0.7">0.7 MPa</option>
+                </select>
+              </div>
             </div>
-            <div class="fh-field">
-              <label>작동 횟수</label>
-              <input type="number" id="fh-cycles" min="1" step="1" placeholder="예: 30" oninput="calcFlowHelper()">
-              <div class="fh-hint">회/min (왕복 1회)</div>
-            </div>
-            <div class="fh-field">
-              <label>사용 압력</label>
-              <select id="fh-pressure" onchange="calcFlowHelper()">
-                <option value="0.3">0.3 MPa</option>
-                <option value="0.4">0.4 MPa</option>
-                <option value="0.5" selected>0.5 MPa</option>
-                <option value="0.6">0.6 MPa</option>
-                <option value="0.7">0.7 MPa</option>
-              </select>
-            </div>
+            <div class="th-preview"><span class="th-preview-label">계산된 필요 유량:</span><span id="fh-result">— L/min</span></div>
+            <button class="th-apply-btn" id="fh-apply-btn" onclick="applyFlowHelper()" disabled type="button">✓ 이 값을 Q에 적용</button>
+            <div class="th-hint" style="margin-top:.5rem">Q = (π/4)×D²×S×n×(P/0.1013+1)×60×10⁻⁶ &nbsp;|&nbsp; 왕복 1회 기준</div>
           </div>
-          <div class="fh-preview" id="fh-preview">
-            <span class="fh-preview-label">계산 결과</span>
-            <span id="fh-result">— L/min</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-            <button class="fh-apply-btn" id="fh-apply-btn" onclick="applyFlowHelper()" disabled>↑ 이 값 적용</button>
-            <span class="fh-hint">Q = (π/4)×D²×S×n×(P/0.1013+1)×60×10⁻⁶</span>
+          <!-- 탭 B: 직접 입력 -->
+          <div class="th-panel" id="th-panel-1">
+            <div style="padding:.5rem 0;color:var(--text2);font-size:13px;line-height:1.7">
+              필요 유량 값을 이미 알고 계시다면<br>
+              위 "필요 유량 Q" 입력창에 직접 값을 입력하세요.<br><br>
+              <span style="color:var(--text3);font-size:12px">단위: L/min<br>솔레노이드 밸브 계산기 결과를 그대로 사용할 수 있습니다.</span>
+            </div>
           </div>
         </div>
       </div>
@@ -674,40 +692,41 @@ const S = {
 /* ──────────────────────────────────────────────
    유량 계산 도우미
 ──────────────────────────────────────────────── */
-function toggleFlowHelper(btn) {
-  btn.classList.toggle('open');
-  document.getElementById('flow-helper-body').classList.toggle('open');
+function thToggle() {
+  var tog = document.getElementById('th-toggle');
+  var body = document.getElementById('th-body');
+  tog.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function thTab(idx) {
+  document.querySelectorAll('.th-tab').forEach(function(t,i){ t.classList.toggle('active', i===idx); });
+  document.querySelectorAll('.th-panel').forEach(function(p,i){ p.classList.toggle('active', i===idx); });
 }
 
 function calcFlowHelper() {
-  const D = parseFloat(document.getElementById('fh-bore').value);
-  const S = parseFloat(document.getElementById('fh-stroke').value);
-  const n = parseFloat(document.getElementById('fh-cycles').value);
-  const P = parseFloat(document.getElementById('fh-pressure').value);
-  const btn = document.getElementById('fh-apply-btn');
-  const res = document.getElementById('fh-result');
+  var D = parseFloat(document.getElementById('fh-bore').value);
+  var St = parseFloat(document.getElementById('fh-stroke').value);
+  var n = parseFloat(document.getElementById('fh-cycles').value);
+  var P = parseFloat(document.getElementById('fh-pressure').value);
+  var btn = document.getElementById('fh-apply-btn');
+  var res = document.getElementById('fh-result');
 
-  if (!D || !S || !n || !P) {
-    res.textContent = '— L/min';
-    btn.disabled = true;
-    return;
-  }
+  if (!D || !St || !n || !P) { res.textContent = '— L/min'; btn.disabled = true; return; }
 
-  // Q [L/min] = (π/4) × D² × S × n × (P/0.1013 + 1) × 60 × 10⁻⁶
-  const Q = (Math.PI / 4) * D * D * S * n * (P / 0.1013 + 1) * 60 * 1e-6;
+  var Q = (Math.PI / 4) * D * D * St * n * (P / 0.1013 + 1) * 60 * 1e-6;
   res.textContent = Q.toFixed(1) + ' L/min';
   btn.disabled = false;
   btn._q = Q;
 }
 
 function applyFlowHelper() {
-  const btn = document.getElementById('fh-apply-btn');
+  var btn = document.getElementById('fh-apply-btn');
   if (!btn._q) return;
-  const Q = Math.round(btn._q * 10) / 10;
-  document.getElementById('flow').value = Q;
+  var Q = Math.round(btn._q * 10) / 10;
+  var inp = document.getElementById('flow');
+  inp.value = Q;
   calcTube();
-  // 입력 하이라이트
-  const inp = document.getElementById('flow');
   inp.classList.remove('input-highlight');
   void inp.offsetWidth;
   inp.classList.add('input-highlight');
