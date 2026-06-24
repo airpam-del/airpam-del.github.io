@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://partson.co.kr/servo_motor.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -807,6 +808,7 @@ const S = {
   voltage: '단상 200V', // 입력 전원
 };
 
+const STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
 const STEP_LABELS = ['부하 형태','전달 방식','부하 조건','운전 조건','결과'];
 const TOTAL_STEPS = 5;
 
@@ -854,7 +856,7 @@ function renderStepsBar(cur) {
     const lblColor = n === cur ? 'color:var(--accent);font-weight:700' : clickable ? 'color:var(--accent);text-decoration:underline;text-underline-offset:2px' : 'color:var(--text3)';
     html += `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
       <div class="step-circle ${cls}" ${onclick} style="${cursor}">${n < cur ? '✓' : n}</div>
-      <div style="font-size:12px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:64px;${lblColor};${cursor}" ${onclick}>${STEP_LABELS[i]}</div>
+      <div style="font-size:12px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:64px;${lblColor};${cursor}" ${onclick}><i class="ti ${STEP_ICONS[i]}" aria-hidden="true" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>${STEP_LABELS[i]}</div>
     </div>
     ${n < TOTAL_STEPS ? `<div class="step-line ${lnCls}" style="margin-top:16px"></div>` : ''}`;
   }

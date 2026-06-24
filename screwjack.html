@@ -1,10 +1,11 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PartsOn — ZIMM ZE 스크류잭 선정 계산기</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -65,7 +66,7 @@ main{max-width:720px;margin:0 auto;padding:2rem 1.5rem 4rem}
 .step-line{position:absolute;top:16px;left:calc(50% + 16px);right:calc(-50% + 16px);height:2px;background:var(--border);transition:background .2s}
 .step-node:last-child .step-line{display:none}
 .step-line.done{background:var(--accent)}
-.step-label{font-size:10px;color:var(--text3);text-align:center;white-space:nowrap}
+.step-label{font-size:10px;color:var(--text3);text-align:center;white-space:nowrap}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
 .step-label.active{color:var(--accent);font-weight:600}
 
 /* MODE TOGGLE */
@@ -701,6 +702,7 @@ function setMode(m) {
 //  STEP NAVIGATION
 // ═══════════════════════════════════════════
 function renderStepsBar(cur) {
+  const STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
   const labels = ['운전 조건','타입 선택','모델 선택','토크 계산','결과 확인'];
   const bar = document.getElementById('steps-bar');
   bar.innerHTML = labels.map((l,i)=>{
@@ -715,7 +717,7 @@ function renderStepsBar(cur) {
       <div class="step-node">
         <div class="${circleClass}" ${onClick}>${isDone?'✓':n}</div>
         ${lineHTML}
-        <div class="${labelClass}">${l}</div>
+        <div class="${labelClass}"><i class="ti ${STEP_ICONS[i]}" aria-hidden="true" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>${l}</div>
       </div>`;
   }).join('');
 }

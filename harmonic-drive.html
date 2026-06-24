@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -9,6 +9,7 @@
 <meta property="og:image" content="https://partson.co.kr/og-image.png">
 <meta property="og:url" content="https://partson.co.kr/harmonic-drive.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -622,6 +623,7 @@ let S = {
 };
 
 /* ══ 스텝 바 ══ */
+const STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
 const STEP_LABELS = ['조건 입력','샤프트 타입','메이커','결과','비교·선정'];
 function renderStepsBar(cur) {
   const bar = document.getElementById('steps-bar');
@@ -636,7 +638,7 @@ function renderStepsBar(cur) {
     const lblColor = isActive ? `color:var(--accent);font-weight:700` : `color:var(--text3)`;
     html += `<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
       <div class="step-circle ${cls}" ${onclick} style="${cursor}">${isDone ? '✓' : n}</div>
-      <div style="font-size:11px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:60px;${lblColor};${cursor}" ${onclick}>${lbl}</div>
+      <div style="font-size:11px;margin-top:5px;text-align:center;line-height:1.3;word-break:keep-all;max-width:60px;${lblColor};${cursor}" ${onclick}><i class="ti ${STEP_ICONS[i]}" aria-hidden="true" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>${lbl}</div>
     </div>${n < 5 ? `<div class="step-line ${lnCls}"></div>` : ''}`;
   });
   bar.innerHTML = html;

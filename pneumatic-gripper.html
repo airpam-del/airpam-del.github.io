@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://partson.co.kr/pneumatic-gripper.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -79,9 +80,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
 .step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
 .step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
-.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}
-.step-item.active .step-label{color:var(--accent);font-weight:700}
-.step-item.done .step-label{color:var(--accent)}
+.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-item.active .step-label{color:var(--accent);font-weight:700}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-item.done .step-label{color:var(--accent)}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
 .step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
 .step-line.done{background:var(--accent)}
 
@@ -115,6 +116,10 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
 .choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
 .choice-card .choice-sub{font-size:12px;color:var(--text2)}
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
 
 /* ── 입력 그룹 ── */
 .input-group{margin-bottom:1.1rem}
@@ -320,7 +325,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">파지할 워크피스의 무게·크기와 공급 조건을 입력하세요.</div>
 
     <div class="input-group">
-      <label>워크피스 무게
+      <label><i class="ti ti-box" aria-hidden="true"></i>워크피스 무게
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">파지할 부품의 무게입니다.<br><br>권장 파지력 = 무게(g) ÷ 1000 × 9.81 × <b>15 (안전계수)</b><br>예: 200g → 약 29.4 N 이상<br><br>안전계수 15는 미끄러짐 방지·가속·진동을 고려한 업계 권장 중간값(10~20배)입니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -336,7 +341,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>워크피스 폭/두께
+      <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>워크피스 폭/두께
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼가 파지하는 방향의 치수입니다.<br>이 치수가 그리퍼 총 개폐 스트로크(편측 × 2) 이내여야 파지 가능합니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -346,7 +351,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>공급 공기압</label>
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>공급 공기압</label>
       <div class="input-wrap">
         <select id="inp-pressure">
           <option value="0.3">0.3 MPa</option>
@@ -358,15 +363,34 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>파지 방향
+      <label><i class="ti ti-arrows-split-2" aria-hidden="true"></i>파지 방향
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>외부 파지:</b> 조가 오므려지며 바깥쪽을 잡습니다. 일반적인 픽업에 사용.<br><br><b>내부 파지:</b> 조가 벌어지며 안쪽에서 잡습니다. 구멍·링 형태 부품에 사용.<br><br>일반적으로 외부 파지력 ≥ 내부 파지력입니다.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="dir-outer" onclick="selDir('outer')">
+        <div class="choice-card sel has-icon" id="dir-outer" onclick="selDir('outer')" aria-label="외부 파지 — 조가 오므려지며 바깥쪽 파지">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6,13 H12 V35 H6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M42,13 H36 V35 H42" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="19" y="20" width="10" height="8" rx="1.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+            <line x1="12" y1="24" x2="18" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="16,22 18.5,24 16,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="36" y1="24" x2="30" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="32,22 29.5,24 32,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div class="choice-title">외부 파지</div>
           <div class="choice-sub">조가 오므려지며 바깥쪽 파지 (일반)</div>
         </div>
-        <div class="choice-card" id="dir-inner" onclick="selDir('inner')">
+        <div class="choice-card has-icon" id="dir-inner" onclick="selDir('inner')" aria-label="내부 파지 — 조가 벌어지며 안쪽 파지">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="14" stroke-width="1.5" fill="currentColor" fill-opacity="0.04"/>
+            <circle cx="24" cy="24" r="7" stroke-width="1.2"/>
+            <rect x="10" y="20" width="7" height="8" rx="1" stroke-width="1.5"/>
+            <rect x="31" y="20" width="7" height="8" rx="1" stroke-width="1.5"/>
+            <line x1="10" y1="24" x2="5" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="7,22 4.5,24 7,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="38" y1="24" x2="43" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="41,22 43.5,24 41,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div class="choice-title">내부 파지</div>
           <div class="choice-sub">조가 벌어지며 안쪽 파지 (구멍·링)</div>
         </div>
@@ -386,15 +410,37 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">작동 방식과 파지 지점 거리를 선택하세요.</div>
 
     <div class="input-group">
-      <label>작동 방식
+      <label><i class="ti ti-settings-2" aria-hidden="true"></i>작동 방식
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>복동 (Double Acting):</b> 열기·닫기 모두 공압으로 작동. 빠르고 확실. 일반적으로 권장.<br><br><b>단동 (Single Acting):</b> 한 방향만 공압, 반대 방향은 스프링 복귀. 전원 차단 시 복귀 동작 보장.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="act-double" onclick="selAct('double')">
+        <div class="choice-card sel has-icon" id="act-double" onclick="selAct('double')" aria-label="복동 — 열기·닫기 모두 공압 작동">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="23" y1="18" x2="23" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="33" y1="12" x2="33" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <polyline points="31,16 33,18 35,16" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="33" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
           <div class="choice-title">복동 (Double Acting)</div>
           <div class="choice-sub">열기·닫기 모두 공압 작동 (권장)</div>
         </div>
-        <div class="choice-card" id="act-single" onclick="selAct('single')">
+        <div class="choice-card has-icon" id="act-single" onclick="selAct('single')" aria-label="단동 — 스프링 복귀">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="20" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="20,24 22,20 25,28 28,20 31,28 34,20 38,24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="14" y1="12" x2="14" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="14" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
           <div class="choice-title">단동 (Single Acting)</div>
           <div class="choice-sub">스프링 복귀 — 전원 차단 시 열림 또는 닫힘</div>
         </div>
@@ -402,7 +448,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>파지 지점 거리 L
+      <label><i class="ti ti-ruler" aria-hidden="true"></i>파지 지점 거리 L
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼 본체 기준면에서 실제 파지 지점까지의 거리입니다.<br><br>카탈로그 파지력은 보통 <b>L=20mm 기준</b>이므로 짧은 핑거를 사용한다면 기본값 그대로 사용 가능합니다.<br><br>파지 지점이 멀어지면(긴 손가락 사용 시) 실제 유효 파지력은 카탈로그 값보다 작아집니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -568,6 +614,7 @@ var S = {
 };
 
 /* ─── 스텝 바 ─── */
+var STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
 var STEP_LABELS = ['워크피스 조건','그리퍼 사양','메이커 선택','결과 확인','비교·선정'];
 function renderStepsBar(cur) {
   var bar = document.getElementById('steps-bar');

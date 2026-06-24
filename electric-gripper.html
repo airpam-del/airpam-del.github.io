@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://partson.co.kr/electric-gripper.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -79,9 +80,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s}
 .step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
 .step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
-.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}
-.step-item.active .step-label{color:var(--accent);font-weight:700}
-.step-item.done .step-label{color:var(--accent)}
+.step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-item.active .step-label{color:var(--accent);font-weight:700}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-item.done .step-label{color:var(--accent)}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
 .step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
 .step-line.done{background:var(--accent)}
 
@@ -115,6 +116,10 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
 .choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
 .choice-card .choice-sub{font-size:12px;color:var(--text2)}
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
 
 /* ── 입력 그룹 ── */
 .input-group{margin-bottom:1.1rem}
@@ -325,7 +330,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>워크피스 무게
+      <label><i class="ti ti-box" aria-hidden="true"></i>워크피스 무게
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">파지할 부품의 무게입니다.<br><br>권장 파지력 = 무게(g) ÷ 1000 × 9.81 × <b>2 (안전계수)</b><br>예: 800g → 약 15.7 N 이상<br><br>전동 그리퍼는 정밀 힘 제어가 가능해 공압 대비 낮은 안전계수(2)를 적용합니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -341,7 +346,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>워크피스 폭/두께
+      <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>워크피스 폭/두께
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼가 파지하는 방향의 치수입니다.<br>이 치수가 모델의 최대 스트로크 이내여야 합니다.<br><br>전동 그리퍼는 일반적으로 스트로크가 넓어 다양한 워크피스에 대응 가능합니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -351,13 +356,32 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>정밀 힘 제어 필요 여부</label>
+      <label><i class="ti ti-adjustments" aria-hidden="true"></i>정밀 힘 제어 필요 여부</label>
       <div class="choice-grid">
-        <div class="choice-card" id="force-ctrl-yes" onclick="selForceCtrl(true)">
+        <div class="choice-card has-icon" id="force-ctrl-yes" onclick="selForceCtrl(true)" aria-label="예 — 정밀 힘 제어 필요">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="26" r="13" stroke-width="1.5"/>
+            <line x1="24" y1="26" x2="24" y2="13" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="24" y1="26" x2="32" y2="19" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="24" cy="26" r="2" stroke-width="1.5" fill="currentColor" fill-opacity="0.15"/>
+            <path d="M14,26 a10,10 0 0,1 20,0" stroke-width="1" stroke-dasharray="2 2"/>
+            <line x1="15" y1="20" x2="17" y2="22" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="24" y1="13" x2="24" y2="16" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="33" y1="20" x2="31" y2="22" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
           <div class="choice-title">예 — 정밀 제어 필요</div>
           <div class="choice-sub">섬세한 부품, 힘 피드백, IO-Link 제어 환경</div>
         </div>
-        <div class="choice-card sel" id="force-ctrl-no" onclick="selForceCtrl(false)">
+        <div class="choice-card sel has-icon" id="force-ctrl-no" onclick="selForceCtrl(false)" aria-label="아니요 — 일반 파지">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="17" width="12" height="14" rx="2" stroke-width="1.5"/>
+            <rect x="30" y="17" width="12" height="14" rx="2" stroke-width="1.5"/>
+            <rect x="19" y="21" width="10" height="6" rx="1.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+            <line x1="18" y1="24" x2="14" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="30" y1="24" x2="34" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="16,22 13.5,24 16,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="32,22 34.5,24 32,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div class="choice-title">아니요 — 일반 파지</div>
           <div class="choice-sub">반복 픽앤플레이스, 디지털 I/O 제어</div>
         </div>
@@ -377,7 +401,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">사용 중인 협동로봇 브랜드와 통신 방식을 선택하세요.</div>
 
     <div class="input-group">
-      <label>사용 로봇 브랜드
+      <label><i class="ti ti-robot" aria-hidden="true"></i>사용 로봇 브랜드
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">협동로봇 브랜드에 따라 Quick Changer 어댑터 호환 여부가 다릅니다.<br><br><b>Universal Robots:</b> OnRobot RG 시리즈와 네이티브 호환 (Quick Changer 내장)<br><b>Doosan:</b> Schunk Co-act EGP-C 인증 호환<br><b>기타:</b> 범용 어댑터가 필요할 수 있습니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -393,15 +417,27 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>통신 방식
+      <label><i class="ti ti-plug" aria-hidden="true"></i>통신 방식
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>디지털 I/O:</b> 열기·닫기 단순 신호. 설치·연결이 간단.<br><br><b>IO-Link:</b> 파지력·속도를 정밀 제어. 위치·힘 피드백 가능. 정밀 제어 환경에 권장.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="comm-dio" onclick="selComm('dio')">
+        <div class="choice-card sel has-icon" id="comm-dio" onclick="selComm('dio')" aria-label="디지털 I/O — 단순 열기·닫기 신호">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4,32 L4,20 L14,20 L14,32 L24,32 L24,20 L34,20 L34,32 L44,32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="6" y="44" font-size="8" fill="currentColor" font-family="monospace" stroke="none">0</text>
+            <text x="16" y="44" font-size="8" fill="currentColor" font-family="monospace" stroke="none">1</text>
+            <text x="26" y="44" font-size="8" fill="currentColor" font-family="monospace" stroke="none">0</text>
+            <text x="36" y="44" font-size="8" fill="currentColor" font-family="monospace" stroke="none">1</text>
+          </svg>
           <div class="choice-title">디지털 I/O</div>
           <div class="choice-sub">단순 열기·닫기 신호 (설치 간단)</div>
         </div>
-        <div class="choice-card" id="comm-iolink" onclick="selComm('iolink')">
+        <div class="choice-card has-icon" id="comm-iolink" onclick="selComm('iolink')" aria-label="IO-Link — 파지력·속도 정밀 제어">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4,30 L4,22 L8,22 L8,30 L11,30 L11,22 L14,22 L14,30 L17,30 L17,22 L20,22 L20,30 L23,30 L23,22 L26,22 L26,30 L29,30 L29,22 L32,22 L32,30 L35,30 L35,22 L38,22 L38,30 L41,30 L41,22 L44,22 L44,30" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="13" y="35" width="22" height="8" rx="2" stroke-width="1.2" fill="currentColor" fill-opacity="0.06"/>
+            <text x="15" y="42" font-size="7" fill="currentColor" font-family="monospace" stroke="none">IO-Link</text>
+          </svg>
           <div class="choice-title">IO-Link</div>
           <div class="choice-sub">파지력·속도 정밀 제어 (힘 피드백)</div>
         </div>
@@ -593,6 +629,7 @@ var S = {
 };
 
 /* ─── 스텝 바 ─── */
+var STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
 var STEP_LABELS = ['워크피스 조건','사용 환경','메이커 선택','결과 확인','비교·선정'];
 function renderStepsBar(cur) {
   var bar = document.getElementById('steps-bar');

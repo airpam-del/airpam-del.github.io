@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -14,6 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://partson.co.kr/ballscrew.html">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -872,6 +873,7 @@ const BS_DATA={
 };
 const BS_DIAMS=[16,20,25,32,40,50,63];
 const DN_LIMIT=70000;
+const STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
 const STEP_LABELS=['방향','하중·스트로크','속도','수명','지지 방식'];
 
 function renderStepsBar(cur){
@@ -903,7 +905,7 @@ function renderStepsBar(cur){
     } else {
       lbl.style.cssText=baseStyle+';color:var(--text3)';
     }
-    lbl.textContent=STEP_LABELS[i-1];
+    lbl.innerHTML='<i class="ti "+STEP_ICONS[i-1]+'" aria-hidden="true" style="font-size:10px;vertical-align:-1px;margin-right:3px"></i>'+STEP_LABELS[i-1];
     col.appendChild(lbl);
     wrap.appendChild(col);
     // 원과 원 사이의 연결선 (마지막 스텝 제외)
