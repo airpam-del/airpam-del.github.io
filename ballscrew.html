@@ -1452,6 +1452,11 @@ function closePopup(e){if(!e||e.target===document.getElementById('popup-overlay'
 /* 초기화 */
 renderStepsBar(1);
 updateSpeedPreview();
+// 수평을 기본 선택
+(function(){
+  const btn = document.querySelector('#s1 .opt-btn');
+  if(btn){ BS.dir='horizontal'; btn.classList.add('sel'); }
+})();
 
 /* ── 공급사 연결 ── */
 const LM_KEY = 'partson_lm_suppliers';
