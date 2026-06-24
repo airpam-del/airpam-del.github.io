@@ -244,7 +244,13 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
   .result-grid{grid-template-columns:1fr}
   .sum-rows{grid-template-columns:1fr}
 }
-</style>
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s;fill:none}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+.ri-icon{width:32px;height:32px;flex-shrink:0;stroke:var(--text3);transition:stroke .2s;fill:none}
+.radio-item.sel .ri-icon,.radio-item:hover .ri-icon{stroke:var(--accent)}
+.check-item.sel .ri-icon,.check-item:hover .ri-icon{stroke:var(--accent)}</style>
 </head>
 <body class="category-pneumatic">
 
@@ -334,7 +340,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">제어할 실린더 사양과 원하는 작동 속도를 입력하면 필요 유량을 자동 계산합니다.</div>
 
     <div class="input-group">
-      <label>실린더 보어 사이즈
+      <label><i class="ti ti-circle-dot" aria-hidden="true"></i>실린더 보어 사이즈
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">제어하려는 실린더의 피스톤 직경(보어)입니다.<br><b>보어가 클수록 더 많은 유량이 필요</b>하므로 밸브 사이즈도 커집니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -352,7 +358,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>목표 작동 속도
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>목표 작동 속도
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">피스톤이 이동해야 할 속도입니다.<br><b>일반 픽앤플레이스</b>: 150~250 mm/s<br><b>고속 작동</b>: 300~500 mm/s<br><b>저속 정밀 제어</b>: 50~100 mm/s</div></span>
       </label>
       <div class="input-wrap">
@@ -367,12 +373,35 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>단동</b>: 공압으로 전진, 스프링으로 복귀 → 3포트 밸브 사용<br><b>복동</b>: 전진·후진 모두 공압 → 5포트 밸브 사용<br>선택에 따라 Step 2 포트 수 기본값이 자동 변경됩니다.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="ct-single" onclick="selCylType('single')">
-          <div class="choice-title">🔴 단동 (Single Acting)</div>
+        <div class="choice-card sel has-icon" id="ct-single" onclick="selCylType('single')" aria-label="단동 — 스프링 복귀, 3포트 밸브">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="20" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="20,24 22,20 25,28 28,20 31,28 34,20 38,24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="14" y1="12" x2="14" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="14" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
+          <div class="choice-title">단동 (Single Acting)</div>
           <div class="choice-sub">스프링 복귀. 3포트 밸브 사용.</div>
         </div>
-        <div class="choice-card" id="ct-double" onclick="selCylType('double')">
-          <div class="choice-title">🔵 복동 (Double Acting)</div>
+        <div class="choice-card has-icon" id="ct-double" onclick="selCylType('double')" aria-label="복동 — 양방향 공압, 5포트 밸브">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="23" y1="18" x2="23" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="15" y1="12" x2="15" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="15" cy="10" r="2" stroke-width="1.2"/>
+            <line x1="33" y1="12" x2="33" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="33" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
+          <div class="choice-title">복동 (Double Acting)</div>
           <div class="choice-sub">양방향 공압. 5포트 밸브 사용.</div>
         </div>
       </div>
@@ -397,19 +426,44 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">포트 수, 작동 방식, 전원 사양을 설정합니다.</div>
 
     <div class="input-group">
-      <label>포트 수
+      <label><i class="ti ti-topology-star-3" aria-hidden="true"></i>포트 수
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>3포트</b>: 단동 실린더 제어. 공급·배기 1개 포트.<br><b>5포트</b>: 복동 실린더 제어. 양방향 포트 2개 + 공급 + 배기 2개.</div></span>
       </label>
       <div class="radio-group" id="port-group">
-        <label class="radio-item" id="port-3" onclick="selPort('3')">
+        <label class="radio-item" id="port-3" onclick="selPort('3')" aria-label="3포트 밸브 — P·A·R 3개 포트, 단동 제어">
           <input type="radio" name="port" value="3" onchange="selPort('3')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="17" width="20" height="14" rx="2" stroke-width="1.5"/>
+            <line x1="4" y1="24" x2="14" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="12,22 14,24 12,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="24" y1="6" x2="24" y2="17" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="22,8 24,6 26,8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="34" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="41,22 44,24 41,26" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="4" cy="24" r="2" fill="currentColor" fill-opacity="0.3" stroke-width="0"/>
+            <circle cx="24" cy="5" r="2" fill="currentColor" fill-opacity="0.3" stroke-width="0"/>
+          </svg>
           <div>
             <div class="ri-title">3포트 밸브</div>
             <div class="ri-sub">단동 실린더 제어용. 단방향 공압 제어.</div>
           </div>
         </label>
-        <label class="radio-item" id="port-5" onclick="selPort('5')">
+        <label class="radio-item" id="port-5" onclick="selPort('5')" aria-label="5포트 밸브 — P·A·B·R1·R2 5개 포트, 복동 제어">
           <input type="radio" name="port" value="5" onchange="selPort('5')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="17" width="28" height="14" rx="2" stroke-width="1.5"/>
+            <line x1="24" y1="31" x2="24" y2="42" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="22,40 24,42 26,40" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="17" y1="6" x2="17" y2="17" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="15,8 17,6 19,8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="31" y1="6" x2="31" y2="17" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="29,8 31,6 33,8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="13" y1="31" x2="8" y2="42" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="35" y1="31" x2="40" y2="42" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="24" cy="43" r="2" fill="currentColor" fill-opacity="0.3" stroke-width="0"/>
+            <circle cx="17" cy="5" r="2" fill="currentColor" fill-opacity="0.3" stroke-width="0"/>
+            <circle cx="31" cy="5" r="2" fill="currentColor" fill-opacity="0.3" stroke-width="0"/>
+          </svg>
           <div>
             <div class="ri-title">5포트 밸브</div>
             <div class="ri-sub">복동 실린더 제어용. 양방향 공압 제어.</div>
@@ -419,19 +473,38 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>작동 방식
+      <label><i class="ti ti-bolt" aria-hidden="true"></i>작동 방식
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>편솔(Single Solenoid)</b>: 한쪽만 전자 작동, 반대는 스프링 복귀.<br>전원 차단 시 스프링 위치로 복귀.<br><b>양솔(Double Solenoid)</b>: 양방향 모두 전자 작동.<br>전원 차단 시 마지막 위치 유지.</div></span>
       </label>
       <div class="radio-group" id="act-group">
-        <label class="radio-item sel" id="act-single" onclick="selActuator('single')">
+        <label class="radio-item sel" id="act-single" onclick="selActuator('single')" aria-label="편솔 — 한쪽 전자 작동, 스프링 복귀">
           <input type="radio" name="actuator" value="single" checked onchange="selActuator('single')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="15" y="18" width="16" height="12" rx="1" stroke-width="1.5"/>
+            <rect x="4" y="19" width="11" height="10" rx="1" stroke-width="1.2"/>
+            <line x1="6" y1="22" x2="13" y2="22" stroke-width="1"/>
+            <line x1="6" y1="24" x2="13" y2="24" stroke-width="1"/>
+            <line x1="6" y1="27" x2="13" y2="27" stroke-width="1"/>
+            <polyline points="31,24 33,20 36,28 39,20 42,24 44,24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div>
             <div class="ri-title">편솔 (Single Solenoid)</div>
             <div class="ri-sub">한쪽 전자 작동 + 스프링 복귀. 전원 차단 시 안전 위치로 복귀.</div>
           </div>
         </label>
-        <label class="radio-item" id="act-double" onclick="selActuator('double')">
+        <label class="radio-item" id="act-double" onclick="selActuator('double')" aria-label="양솔 — 양방향 전자 작동, 위치 유지">
           <input type="radio" name="actuator" value="double" onchange="selActuator('double')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="13" y="18" width="22" height="12" rx="1" stroke-width="1.5"/>
+            <rect x="2" y="19" width="11" height="10" rx="1" stroke-width="1.2"/>
+            <line x1="4" y1="22" x2="11" y2="22" stroke-width="1"/>
+            <line x1="4" y1="24" x2="11" y2="24" stroke-width="1"/>
+            <line x1="4" y1="27" x2="11" y2="27" stroke-width="1"/>
+            <rect x="35" y="19" width="11" height="10" rx="1" stroke-width="1.2"/>
+            <line x1="37" y1="22" x2="44" y2="22" stroke-width="1"/>
+            <line x1="37" y1="24" x2="44" y2="24" stroke-width="1"/>
+            <line x1="37" y1="27" x2="44" y2="27" stroke-width="1"/>
+          </svg>
           <div>
             <div class="ri-title">양솔 (Double Solenoid)</div>
             <div class="ri-sub">양방향 전자 작동. 전원 차단 시 마지막 위치 유지.</div>
@@ -441,7 +514,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>전원 사양
+      <label><i class="ti ti-plug" aria-hidden="true"></i>전원 사양
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>DC24V</b>: PLC 제어 표준. 국내 자동화 설비 대부분 사용.<br><b>AC220V</b>: 직접 전원 연결. PLC 없는 단순 회로에 사용.</div></span>
       </label>
       <div class="input-wrap">

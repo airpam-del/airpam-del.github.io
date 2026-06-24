@@ -335,11 +335,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="card-title">입력 조건</div>
       <div class="input-grid">
         <div class="input-group">
-          <label>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
           <div class="input-row"><input type="number" id="s-load" value="50" min="1"><span class="unit-tag">kgf</span></div>
         </div>
         <div class="input-group">
-          <label>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
           <div class="input-row"><input type="number" id="s-stroke" value="500" min="1"><span class="unit-tag">mm</span></div>
         </div>
         <div class="input-group">
@@ -351,11 +351,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="input-row"><input type="number" id="s-sets" value="1" min="1" max="10"><span class="unit-tag">set</span></div>
         </div>
         <div class="input-group">
-          <label>이동 속도 <button class="help-btn" onclick="openPopup('speed')">?</button></label>
+          <label><i class="ti ti-gauge" aria-hidden="true"></i>이동 속도 <button class="help-btn" onclick="openPopup('speed')">?</button></label>
           <div class="input-row"><input type="number" id="s-speed" value="300" min="1"><span class="unit-tag">mm/s</span></div>
         </div>
         <div class="input-group">
-          <label>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
+          <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
           <div class="input-row"><input type="number" id="s-hours" value="8" min="1" max="24"><span class="unit-tag">시간/일</span></div>
         </div>
         <div class="input-group full">
@@ -485,11 +485,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="card-title">기본 조건</div>
       <div class="input-grid">
         <div class="input-group">
-          <label>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>하중 <button class="help-btn" onclick="openPopup('load')">?</button></label>
           <div class="input-row"><input type="number" id="a-load" value="50" min="1"><span class="unit-tag">kgf</span></div>
         </div>
         <div class="input-group">
-          <label>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>스트로크 (ST) <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
           <div class="input-row"><input type="number" id="a-stroke" value="500" min="1" oninput="updateSpeedPreview()"><span class="unit-tag">mm</span></div>
         </div>
         <div class="input-group">
@@ -501,7 +501,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="input-row"><input type="number" id="a-sets" value="1" min="1" max="10"><span class="unit-tag">set</span></div>
         </div>
         <div class="input-group">
-          <label>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
+          <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>일일 가동 시간 <button class="help-btn" onclick="openPopup('hours')">?</button></label>
           <div class="input-row"><input type="number" id="a-hours" value="8" min="1" max="24"><span class="unit-tag">시간/일</span></div>
         </div>
         <div class="input-group">

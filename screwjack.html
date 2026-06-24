@@ -395,7 +395,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
   <div class="input-grid">
     <div class="input-group">
-      <label>하중 F <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>하중 F (kg)</b><br>스크류잭 시스템이 들어올리거나 밀어야 하는 <b>전체 하중</b>입니다.<br>잭이 여러 개여도 시스템 총 하중을 입력하세요. 잭 1개당 하중은 자동 계산됩니다.</span></button></label>
+      <label><i class="ti ti-weight" aria-hidden="true"></i>하중 F <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>하중 F (kg)</b><br>스크류잭 시스템이 들어올리거나 밀어야 하는 <b>전체 하중</b>입니다.<br>잭이 여러 개여도 시스템 총 하중을 입력하세요. 잭 1개당 하중은 자동 계산됩니다.</span></button></label>
       <div class="input-row">
         <input type="number" id="inp-F" min="1" step="10" value="1000" placeholder="1000">
         <span class="unit-tag">kg</span>
@@ -412,14 +412,14 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       </div>
     </div>
     <div class="input-group">
-      <label>스트로크 L <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>스트로크 L (mm)</b><br>스템(축)이 움직이는 <b>최대 이동 거리</b>입니다.<br>좌굴 계산의 핵심 입력값으로, 압축 하중 시 스트로크가 길수록 좌굴 위험이 높아집니다.</span></button></label>
+      <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>스트로크 L <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>스트로크 L (mm)</b><br>스템(축)이 움직이는 <b>최대 이동 거리</b>입니다.<br>좌굴 계산의 핵심 입력값으로, 압축 하중 시 스트로크가 길수록 좌굴 위험이 높아집니다.</span></button></label>
       <div class="input-row">
         <input type="number" id="inp-L" min="1" step="1" value="300" placeholder="300">
         <span class="unit-tag">mm</span>
       </div>
     </div>
     <div class="input-group">
-      <label>이송 속도 v <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>이송 속도 v (mm/s)</b><br>스템이 이동하는 속도입니다.<br>필요 모터 회전수(RPM) 계산에 사용됩니다. 빠를수록 필요 RPM이 높아집니다.<br><b>일반 기준:</b> 5~30 mm/s</span></button></label>
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>이송 속도 v <button class="tip-btn" tabindex="-1">?<span class="tip-box"><b>이송 속도 v (mm/s)</b><br>스템이 이동하는 속도입니다.<br>필요 모터 회전수(RPM) 계산에 사용됩니다. 빠를수록 필요 RPM이 높아집니다.<br><b>일반 기준:</b> 5~30 mm/s</span></button></label>
       <div class="input-row">
         <input type="number" id="inp-v" min="0.1" step="0.5" value="10" placeholder="10">
         <span class="unit-tag">mm/s</span>

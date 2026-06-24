@@ -261,7 +261,13 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
   .result-grid{grid-template-columns:1fr}
   .sum-rows{grid-template-columns:1fr}
 }
-</style>
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s;fill:none}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+.ri-icon{width:32px;height:32px;flex-shrink:0;stroke:var(--text3);transition:stroke .2s;fill:none}
+.radio-item.sel .ri-icon,.radio-item:hover .ri-icon{stroke:var(--accent)}
+.check-item.sel .ri-icon,.check-item:hover .ri-icon{stroke:var(--accent)}</style>
 </head>
 <body class="category-pneumatic">
 
@@ -351,7 +357,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">실린더가 밀어야 할 최소 추력과 공급 공기압을 입력하세요.</div>
 
     <div class="input-group">
-      <label>필요 추력 F_required
+      <label><i class="ti ti-weight" aria-hidden="true"></i>필요 추력 F_required
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>필요 추력이란?</b><br>실린더 피스톤이 부하를 이기고 작동하기 위해 필요한 최소 힘입니다.<br><br>• 수평 이송: 부하 무게 × 마찰계수 × 안전계수<br>• 수직 리프트: 부하 무게 × 9.81 × 안전계수<br>• 모르신다면 아래 "계산 도우미"를 사용하세요</div></span>
       </label>
       <div class="input-wrap">
@@ -422,7 +428,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>공급 공기압 P
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>공급 공기압 P
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">공장 공압 라인의 공급 압력입니다.<br><b>0.5 MPa</b>가 국내 일반 공장 표준입니다.<br>압력이 높을수록 추력이 커집니다.<br>실린더 최대 허용 압력(보통 1.0 MPa) 이하로 설정하세요.</div></span>
       </label>
       <div class="input-wrap">
@@ -437,15 +443,30 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>작동 방향
+      <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>작동 방향
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">전진(밀기)만 필요한 경우 단동 실린더로도 충분합니다.<br>전진·후진 모두 정확한 힘이 필요하면 복동 실린더를 사용합니다.<br>복동 선택 시 후진 추력도 함께 계산됩니다.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="dir-push" onclick="selDir('push')">
+        <div class="choice-card has-icon sel" id="dir-push" onclick="selDir('push')" aria-label="전진만 필요">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="26" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="21" y1="18" x2="21" y2="30" stroke-width="1.8"/>
+            <polyline points="8,24 10,20 13,28 16,20 20,24" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="34" y1="24" x2="44" y2="24" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="41,21 44,24 41,27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div class="choice-title">→ 전진(밀기)만 필요</div>
           <div class="choice-sub">단동 실린더 적용 가능</div>
         </div>
-        <div class="choice-card" id="dir-both" onclick="selDir('both')">
+        <div class="choice-card has-icon" id="dir-both" onclick="selDir('both')" aria-label="전진+후진 모두 필요">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="32" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="24" y1="18" x2="24" y2="30" stroke-width="1.8"/>
+            <line x1="40" y1="24" x2="46" y2="24" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="43,21 46,24 43,27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="2" stroke-linecap="round"/>
+            <polyline points="5,21 2,24 5,27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div class="choice-title">↔ 전진 + 후진 모두 필요</div>
           <div class="choice-sub">복동 실린더 권장</div>
         </div>
@@ -453,7 +474,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>스트로크 길이
+      <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>스트로크 길이
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">피스톤의 이동 거리입니다.<br><b>추력 계산에는 영향을 주지 않습니다.</b><br>모델 사양 표시 및 카탈로그 주문 시 참고용으로만 사용됩니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -476,14 +497,36 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">작동 방식과 안전 여유를 설정합니다.</div>
 
     <div class="input-group">
-      <label>실린더 타입</label>
+      <label><i class="ti ti-settings-2" aria-hidden="true"></i>실린더 타입</label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="type-single" onclick="selType('single')">
-          <div class="choice-title">🔴 단동 (Single Acting)</div>
+        <div class="choice-card has-icon sel" id="type-single" onclick="selType('single')" aria-label="단동 실린더">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="20" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <polyline points="20,24 22,20 25,28 28,20 31,28 34,20 38,24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="14" y1="12" x2="14" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="14" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
+          <div class="choice-title">단동 (Single Acting)</div>
           <div class="choice-sub">공압으로 전진, 스프링으로 복귀. 에너지 효율 우수. 소형 실린더에 적합.</div>
         </div>
-        <div class="choice-card" id="type-double" onclick="selType('double')">
-          <div class="choice-title">🔵 복동 (Double Acting)</div>
+        <div class="choice-card has-icon" id="type-double" onclick="selType('double')" aria-label="복동 실린더">
+          <svg class="choice-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="18" width="30" height="12" rx="2" stroke-width="1.5"/>
+            <line x1="23" y1="18" x2="23" y2="30" stroke-width="1.8"/>
+            <line x1="38" y1="24" x2="44" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="42,22 44,24 42,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="2" y1="24" x2="8" y2="24" stroke-width="1.5" stroke-linecap="round"/>
+            <polyline points="6,22 8,24 6,26" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="33" y1="12" x2="33" y2="18" stroke-width="1.2" stroke-linecap="round"/>
+            <polyline points="31,16 33,18 35,16" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="33" cy="10" r="2" stroke-width="1.2"/>
+          </svg>
+          <div class="choice-title">복동 (Double Acting)</div>
           <div class="choice-sub">전진·후진 모두 공압 구동. 정밀 위치결정, 반복 작업에 적합.</div>
         </div>
       </div>

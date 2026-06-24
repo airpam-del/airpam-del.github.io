@@ -410,12 +410,12 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div id="loadInputArea" style="display:none;margin-bottom:1rem">
       <div class="grid2">
         <div class="field" id="fieldFr">
-          <label>반경 하중 Fr <button class="help-btn" onclick="openBrgHelp('fr')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>반경 하중 Fr <button class="help-btn" onclick="openBrgHelp('fr')">?</button></label>
           <div class="input-wrap"><input type="number" id="inFr" placeholder="0" min="0" step="1"><span class="unit">kgf</span></div>
           <span class="hint">축에 수직으로 작용하는 힘</span>
         </div>
         <div class="field" id="fieldFa">
-          <label>축방향 하중 Fa <button class="help-btn" onclick="openBrgHelp('fa')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>축방향 하중 Fa <button class="help-btn" onclick="openBrgHelp('fa')">?</button></label>
           <div class="input-wrap"><input type="number" id="inFa" placeholder="0" min="0" step="1"><span class="unit">kgf</span></div>
           <span class="hint">축 방향으로 미는 힘</span>
         </div>
@@ -443,7 +443,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question">운전 조건을 입력하세요</div>
     <div class="question-desc">운전 회전수와 운전 온도를 입력합니다.</div>
     <div class="field" style="margin-bottom:1rem">
-      <label>회전수 n <button class="help-btn" onclick="openBrgHelp('rpm')">?</button></label>
+      <label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>회전수 n <button class="help-btn" onclick="openBrgHelp('rpm')">?</button></label>
       <div class="input-wrap" style="max-width:200px"><input type="number" id="inRPM" placeholder="1000" min="1" step="100"><span class="unit">rpm</span></div>
     </div>
     <div class="question" style="font-size:14px;margin-bottom:.75rem">운전 온도 (온도계수 ft)</div>
@@ -469,7 +469,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <button class="opt-btn" id="lhCustomBtn" onclick="selLhCustom(this)"><div class="opt-title">직접 입력</div><div class="sub">목표 수명을 직접 지정</div></button>
     </div>
     <div id="lhCustomWrap" style="display:none;margin-top:12px">
-      <div class="field"><label>목표 수명 입력</label><div class="input-wrap" style="max-width:200px"><input type="number" id="inLhCustom" placeholder="10000" min="100" step="100"><span class="unit">h</span></div></div>
+      <div class="field"><label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>목표 수명 입력</label><div class="input-wrap" style="max-width:200px"><input type="number" id="inLhCustom" placeholder="10000" min="100" step="100"><span class="unit">h</span></div></div>
     </div>
     <div style="background:var(--bg);border-radius:10px;padding:14px 16px;margin-top:14px">
       <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px">일일 가동 시간 <span style="font-size:11px;font-weight:400;color:var(--text3)">(수명을 "년"으로 환산)</span> <button class="help-btn" onclick="openBrgHelp('hday')">?</button></div>

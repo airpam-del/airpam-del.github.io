@@ -341,7 +341,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <!-- 연속 부하 토크 -->
     <div class="input-group">
-      <label>연속 부하 토크 T_cont
+      <label><i class="ti ti-weight" aria-hidden="true"></i>연속 부하 토크 T_cont
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>연속 부하 토크란?</b><br>정상 운전 중 출력축에 걸리는 지속적인 토크입니다.<br><br><b>구하는 방법</b><br>• 모터 정격 토크 × 안전계수(1.2~1.5)<br>• 구동력(N) × 반경(m)<br>• 모르겠다면 아래 계산 도우미를 이용하세요</div></span>
       </label>
       <div class="input-wrap">
@@ -386,7 +386,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <!-- 피크 토크 -->
     <div class="input-group">
-      <label>가속/감속 피크 토크 T_peak
+      <label><i class="ti ti-weight" aria-hidden="true"></i>가속/감속 피크 토크 T_peak
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>피크 토크 T_peak란?</b><br>가속·감속 시 순간적으로 발생하는 최대 토크입니다.<br><br>이 값이 모델의 순간 최대 허용 토크를 초과하면 <b>래칫팅(Ratcheting) 위험</b>이 발생합니다.<br><br>일반적으로 T_cont × 2~3배로 설정합니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -398,7 +398,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <!-- 입력 rpm -->
     <div class="input-group">
-      <label>입력 회전수 n_input
+      <label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>입력 회전수 n_input
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>입력 회전수란?</b><br>감속기 입력축(모터 출력축) 회전수입니다.<br><br>하모닉 드라이브 수명 기준은 <b>2,000 rpm 연속 운전</b>입니다. 고속일수록 수명이 단축됩니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -409,7 +409,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <!-- 감속비 -->
     <div class="input-group">
-      <label>원하는 감속비 i
+      <label><i class="ti ti-arrows-diff" aria-hidden="true"></i>원하는 감속비 i
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>감속비란?</b><br>입력 rpm ÷ 출력 rpm 입니다.<br><br>하모닉 드라이브 표준 감속비: 30, 50, 80, 100, 120, 160<br><br>※ 감속비 30은 CSF 시리즈(솔리드)에만 지원됩니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -427,7 +427,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <!-- 요구 수명 -->
     <div class="input-group">
-      <label>요구 수명 L_h
+      <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>요구 수명 L_h
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>수명이란?</b><br>하모닉 드라이브의 수명 제한 요소는 <b>플렉스플라인(Flexspline) 피로</b>입니다.<br><br>기준 수명: 10,000 h (2,000 rpm 연속 운전 기준)<br><br>• 일반 FA: 10,000~15,000 h<br>• 로봇·정밀: 20,000 h 이상</div></span>
       </label>
       <div class="input-wrap">

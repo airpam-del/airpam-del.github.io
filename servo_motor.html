@@ -515,7 +515,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="hint">일반 볼스크류 0.90~0.95</div>
         </div>
         <div class="field">
-          <label>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
           <div class="input-wrap"><input type="number" id="bs-mass" value="50" min="0.1" step="1"><span class="unit">kg</span></div>
         </div>
         <div class="field">
@@ -554,7 +554,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="hint">모터 RPM = 이송속도×60÷(π×직경)</div>
         </div>
         <div class="field">
-          <label>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>이동 하중 (테이블+워크) <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
           <div class="input-wrap"><input type="number" id="rp-mass" value="100" min="0.1" step="1"><span class="unit">kg</span></div>
         </div>
         <div class="field">
@@ -593,7 +593,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="hint">모터 RPM = 이송속도×60÷(π×직경)</div>
         </div>
         <div class="field">
-          <label>이송물 질량 <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>이송물 질량 <button class="help-btn" onclick="openHelp('load_mass')">?</button></label>
           <div class="input-wrap"><input type="number" id="cv-mass" value="30" min="0.1" step="1"><span class="unit">kg</span></div>
         </div>
         <div class="field">
@@ -666,7 +666,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="input-wrap"><input type="number" id="rot-mass" value="10" min="0.1" step="0.5"><span class="unit">kg</span></div>
         </div>
         <div class="field">
-          <label>목표 회전수 <button class="help-btn" onclick="openHelp('speed_field')">?</button></label>
+          <label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>목표 회전수 <button class="help-btn" onclick="openHelp('speed_field')">?</button></label>
           <div class="input-wrap"><input type="number" id="rot-rpm" value="1000" min="1" step="10"><span class="unit">rpm</span></div>
         </div>
         <div class="field">
@@ -698,16 +698,16 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <div class="input-wrap"><input type="number" id="op-speed" value="500" min="1" step="10"><span class="unit" id="speed-unit">mm/s</span></div>
       </div>
       <div class="field">
-        <label>가속 시간 t<sub>acc</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
+        <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>가속 시간 t<sub>acc</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
         <div class="input-wrap"><input type="number" id="op-tacc" value="0.3" min="0.01" step="0.05"><span class="unit">s</span></div>
         <div class="hint">0 → 최대 속도까지의 시간</div>
       </div>
       <div class="field">
-        <label>감속 시간 t<sub>dec</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
+        <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>감속 시간 t<sub>dec</sub> <button class="help-btn" onclick="openHelp('tacc')">?</button></label>
         <div class="input-wrap"><input type="number" id="op-tdec" value="0.3" min="0.01" step="0.05"><span class="unit">s</span></div>
       </div>
       <div class="field">
-        <label>사이클 타임 <button class="help-btn" onclick="openHelp('tcycle')">?</button></label>
+        <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>사이클 타임 <button class="help-btn" onclick="openHelp('tcycle')">?</button></label>
         <div class="input-wrap"><input type="number" id="op-tcycle" value="3.0" min="0.1" step="0.1"><span class="unit">s</span></div>
         <div class="hint">1회 동작 전체 시간 (가속+등속+감속+대기)</div>
       </div>

@@ -229,7 +229,13 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 }
 
 @media(max-width:600px){.result-grid{grid-template-columns:1fr}.sum-rows{grid-template-columns:1fr}}
-</style>
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s;fill:none}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+.ri-icon{width:32px;height:32px;flex-shrink:0;stroke:var(--text3);transition:stroke .2s;fill:none}
+.radio-item.sel .ri-icon,.radio-item:hover .ri-icon{stroke:var(--accent)}
+.check-item.sel .ri-icon,.check-item:hover .ri-icon{stroke:var(--accent)}</style>
 </head>
 <body class="category-pneumatic">
 
@@ -324,7 +330,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>배관 포트 사이즈
+      <label><i class="ti ti-circle-dot" aria-hidden="true"></i>배관 포트 사이즈
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">공기압 조절 유닛을 연결할 배관의 나사 규격입니다.<br><b>Rc(PT) 나사 기준:</b><br>1/8" = 소형 라인<br>1/4" = 표준 자동화 라인<br>3/8", 1/2" = 대유량 라인</div></span>
       </label>
       <div class="input-wrap">
@@ -338,7 +344,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>시스템 최대 사용 유량 Q
+      <label><i class="ti ti-wind" aria-hidden="true"></i>시스템 최대 사용 유량 Q
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">이 유닛을 통과하는 <b>최대 유량</b>을 입력하세요.<br>솔레노이드 밸브 계산기에서 확인한 필요 유량을 그대로 입력하면 됩니다.<br><br>여러 회로를 묶는 경우 합산 유량을 입력하세요.</div></span>
       </label>
       <div class="input-wrap">
@@ -349,7 +355,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>공급 압력 (컴프레서 1차 출력)
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>공급 압력 (컴프레서 1차 출력)
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">컴프레서 또는 메인 공기 라인의 <b>공급 압력</b>입니다.<br>일반적으로 0.6~0.9 MPa 범위입니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -359,7 +365,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>사용(설정) 압력 (실린더/밸브 공급압)
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>사용(설정) 압력 (실린더/밸브 공급압)
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">레귤레이터로 조정하여 <b>실제 회로에 공급할 압력</b>입니다.<br>레귤레이터는 압력을 낮추는 장치이므로, 반드시 공급 압력보다 낮아야 합니다.<br><br>일반적으로 0.4~0.6 MPa.</div></span>
       </label>
       <div class="input-wrap">
@@ -388,19 +394,45 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="question-desc">공기 정화 수준과 응축수 배출 방식을 선택하세요.</div>
 
     <div class="input-group">
-      <label>필터 여과 등급
+      <label><i class="ti ti-filter" aria-hidden="true"></i>필터 여과 등급
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>5μm (표준)</b>: 일반 FA 자동화 환경. 먼지·이물질 제거. 가장 일반적.<br><br><b>0.3μm (정밀)</b>: 반도체·전자부품 조립, 정밀 측정 장비, 도장 라인 등 고청정도 요구 환경.</div></span>
       </label>
       <div class="radio-group">
-        <label class="radio-item sel" id="filter-std" onclick="selFilter('5um')">
+        <label class="radio-item sel" id="filter-std" onclick="selFilter('5um')" aria-label="표준 5μm 필터">
           <input type="radio" name="filter" value="5um" checked onchange="selFilter('5um')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="10" width="32" height="28" rx="3" stroke-width="1.5" fill="currentColor" fill-opacity="0.03"/>
+            <line x1="8" y1="19" x2="40" y2="19" stroke-width="1"/>
+            <line x1="8" y1="28" x2="40" y2="28" stroke-width="1"/>
+            <line x1="19" y1="10" x2="19" y2="38" stroke-width="1"/>
+            <line x1="29" y1="10" x2="29" y2="38" stroke-width="1"/>
+            <circle cx="13" cy="23" r="2.5" stroke-width="1.2" fill="currentColor" fill-opacity="0.18"/>
+            <circle cx="35" cy="14" r="2.5" stroke-width="1.2" fill="currentColor" fill-opacity="0.18"/>
+            <circle cx="24" cy="33" r="2.5" stroke-width="1.2" fill="currentColor" fill-opacity="0.18"/>
+          </svg>
           <div>
             <div class="ri-title">표준 (5μm) — 권장</div>
             <div class="ri-sub">일반 자동화·FA 환경. 먼지·금속 분진·수분 제거. 대부분의 공압 라인에 적합.</div>
           </div>
         </label>
-        <label class="radio-item" id="filter-prec" onclick="selFilter('0.3um')">
+        <label class="radio-item" id="filter-prec" onclick="selFilter('0.3um')" aria-label="정밀 0.3μm 필터">
           <input type="radio" name="filter" value="0.3um" onchange="selFilter('0.3um')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="8" y="10" width="32" height="28" rx="3" stroke-width="1.5" fill="currentColor" fill-opacity="0.03"/>
+            <line x1="8" y1="16" x2="40" y2="16" stroke-width=".8"/>
+            <line x1="8" y1="22" x2="40" y2="22" stroke-width=".8"/>
+            <line x1="8" y1="28" x2="40" y2="28" stroke-width=".8"/>
+            <line x1="8" y1="34" x2="40" y2="34" stroke-width=".8"/>
+            <line x1="16" y1="10" x2="16" y2="38" stroke-width=".8"/>
+            <line x1="24" y1="10" x2="24" y2="38" stroke-width=".8"/>
+            <line x1="32" y1="10" x2="32" y2="38" stroke-width=".8"/>
+            <line x1="12" y1="5" x2="15" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="15" y1="5" x2="12" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="22" y1="5" x2="25" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="25" y1="5" x2="22" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="32" y1="5" x2="35" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="35" y1="5" x2="32" y2="9" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
           <div>
             <div class="ri-title">정밀 (0.3μm 이하) — 청정 환경</div>
             <div class="ri-sub">반도체·전자부품·정밀 측정·도장 라인. 오일 미스트까지 제거 필요 시.</div>
@@ -414,15 +446,26 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>수동 드레인</b>: 작업자가 정기적으로 콕 밸브를 열어 응축수 배출. 저렴하나 주기적 관리 필요.<br><br><b>오토 드레인</b>: 일정 수위가 되면 자동 배출. 무인 라인·24시간 운전 설비에 필수.</div></span>
       </label>
       <div class="radio-group">
-        <label class="radio-item sel" id="drain-manual" onclick="selDrain('manual')">
+        <label class="radio-item sel" id="drain-manual" onclick="selDrain('manual')" aria-label="수동 드레인">
           <input type="radio" name="drain" value="manual" checked onchange="selDrain('manual')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24,8 C24,8 15,20 15,27 a9,9 0 0 0 18,0 C33,20 24,8 24,8 Z" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+            <line x1="24" y1="36" x2="24" y2="40" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="20" y="40" width="8" height="4" rx="1" stroke-width="1.3"/>
+            <line x1="17" y1="38" x2="31" y2="38" stroke-width="2" stroke-linecap="round"/>
+          </svg>
           <div>
             <div class="ri-title">수동 드레인 — 기본</div>
             <div class="ri-sub">작업자가 정기적으로 배수. 비용 낮음. 유인 운전·정기 점검 가능한 환경.</div>
           </div>
         </label>
-        <label class="radio-item" id="drain-auto" onclick="selDrain('auto')">
+        <label class="radio-item" id="drain-auto" onclick="selDrain('auto')" aria-label="오토 드레인">
           <input type="radio" name="drain" value="auto" onchange="selDrain('auto')">
+          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24,6 C24,6 16,17 16,23 a8,8 0 0 0 16,0 C32,17 24,6 24,6 Z" stroke-width="1.5" fill="currentColor" fill-opacity="0.08"/>
+            <path d="M14,38 a12,12 0 1 1 7,10" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+            <polyline points="21,46 21,50 18,47" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           <div>
             <div class="ri-title">오토 드레인 — 무인 라인 권장</div>
             <div class="ri-sub">자동 배수. 무인 운전·24시간 가동 라인. 응축수 과다 환경에 필수.</div>

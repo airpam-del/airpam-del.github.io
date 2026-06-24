@@ -459,11 +459,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="question-desc">볼스크류가 움직여야 하는 총 무게(테이블 + 워크)와 이동 거리입니다.</div>
       <div class="grid2">
         <div class="field">
-          <label>이동 하중 W <button class="help-btn" onclick="openPopup('load')">?</button></label>
+          <label><i class="ti ti-weight" aria-hidden="true"></i>이동 하중 W <button class="help-btn" onclick="openPopup('load')">?</button></label>
           <div class="input-wrap"><input type="number" id="bs-W" placeholder="예: 50" min="0.1" step="0.1"><span class="unit">kg</span></div>
         </div>
         <div class="field">
-          <label>스트로크 S <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
+          <label><i class="ti ti-arrows-horizontal" aria-hidden="true"></i>스트로크 S <button class="help-btn" onclick="openPopup('stroke')">?</button></label>
           <div class="input-wrap"><input type="number" id="bs-S" placeholder="예: 500" min="10" step="10"><span class="unit">mm</span></div>
         </div>
         <div class="field full">
@@ -486,11 +486,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="question-desc">최대 이동 속도와 가감속 시간입니다. 리드 선정에 직접 영향을 줍니다.</div>
       <div class="grid2">
         <div class="field">
-          <label>최대 속도 v_max <button class="help-btn" onclick="openPopup('vmax')">?</button></label>
+          <label><i class="ti ti-gauge" aria-hidden="true"></i>최대 속도 v_max <button class="help-btn" onclick="openPopup('vmax')">?</button></label>
           <div class="input-wrap"><input type="number" id="bs-vmax" placeholder="예: 500" min="1" step="10"><span class="unit">mm/s</span></div>
         </div>
         <div class="field">
-          <label>가감속 시간 t_acc <button class="help-btn" onclick="openPopup('tacc')">?</button></label>
+          <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>가감속 시간 t_acc <button class="help-btn" onclick="openPopup('tacc')">?</button></label>
           <div class="input-wrap"><input type="number" id="bs-tacc" placeholder="예: 0.2" min="0.01" step="0.01"><span class="unit">s</span></div>
         </div>
       </div>
@@ -522,7 +522,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       </div>
       <div id="life-custom" style="display:none;margin-bottom:12px">
         <div class="field" style="max-width:200px">
-          <label>요구 수명 (hr)</label>
+          <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>요구 수명 (hr)</label>
           <div class="input-wrap"><input type="number" id="bs-life-val" value="15000" min="1000" step="1000"><span class="unit">hr</span></div>
         </div>
       </div>

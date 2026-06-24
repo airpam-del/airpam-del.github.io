@@ -412,7 +412,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="app-preset-notice" id="app-preset-notice"></div>
 
     <div class="input-group">
-      <label>부하 토크 T_load
+      <label><i class="ti ti-weight" aria-hidden="true"></i>부하 토크 T_load
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>부하 토크 T_load란?</b><br>감속기 출력축에 걸리는 회전 저항 토크입니다.<br><br><b>구하는 방법</b><br>• 모터를 선정했다면 → 모터 정격 토크 × 안전계수(1.2~1.5)<br>• 컨베이어·롤러 → 구동력(N) × 반경(m)<br>• SF·순간 충격은 Step 2에서 별도 입력합니다<br>• 모르겠다면 → 아래 "계산 도우미"를 펼쳐보세요</div></span>
       </label>
       <div class="input-wrap">
@@ -482,7 +482,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>입력 회전수 n_input (모터 출력 축)
+      <label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>입력 회전수 n_input (모터 출력 축)
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 입력축(모터 출력축) 회전수입니다.<br>사이클로이드 감속기는 1,800 rpm 이하에서 최적 성능을 발휘합니다.<br>고속 서보모터 연결 시 전단에 감속 필요.</div></span>
       </label>
       <div class="input-wrap">
@@ -493,7 +493,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>감속비 i
+      <label><i class="ti ti-arrows-diff" aria-hidden="true"></i>감속비 i
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">사이클로이드 감속기는 1단으로 고감속비를 구현합니다.<br>예) 모터 1500 rpm → 출력 43 rpm = 감속비 35<br>원하는 값이 없으면 인접한 표준 감속비를 선택하세요.</div></span>
       </label>
       <div class="input-wrap">
@@ -516,7 +516,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>요구 수명 L_h
+      <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>요구 수명 L_h
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기가 보장해야 하는 최소 운전 시간입니다.<br>· 일반 산업기계: 10,000 h<br>· 로봇·정밀 FA: 20,000 h<br>· 24h 연속 가동(3교대): 20,000 h 이상 권장</div></span>
       </label>
       <div class="input-wrap">
@@ -526,7 +526,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>운전 패턴
+      <label><i class="ti ti-settings-2" aria-hidden="true"></i>운전 패턴
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">IEC 60034 운전 주기 기준입니다.<br>· S1: 연속 운전 (토크 보정 없음)<br>· S3 60%: 전체 시간의 60% 가동<br>· S3 40%: 전체 시간의 40% 가동 (간헐 운전)</div></span>
       </label>
       <div class="choice-grid" id="duty-grid">

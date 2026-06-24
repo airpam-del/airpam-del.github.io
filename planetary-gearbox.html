@@ -387,7 +387,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="app-preset-notice" id="app-preset-notice"></div>
 
     <div class="input-group">
-      <label>부하 토크 T_load
+      <label><i class="ti ti-weight" aria-hidden="true"></i>부하 토크 T_load
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>부하 토크 T_load란?</b><br>감속기 출력축에 걸리는 회전 저항 토크입니다.<br><br><b>구하는 방법</b><br>• 모터를 선정했다면 → 모터 정격 토크 × 안전계수(1.2~1.5)<br>• 컨베이어·롤러 → 구동력(N) × 반경(m)<br>• 모르겠다면 → 아래 "계산 도우미"를 펼쳐보세요</div></span>
       </label>
       <div class="input-wrap">
@@ -457,7 +457,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>입력 회전수 n_input
+      <label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>입력 회전수 n_input
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기 입력축(모터 출력축)의 회전수입니다.<br>서보모터 정격 회전수를 기준으로 입력하세요.<br>출력 회전수 = n_input ÷ 감속비</div></span>
       </label>
       <div class="input-wrap">
@@ -467,7 +467,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>감속비 i
+      <label><i class="ti ti-arrows-diff" aria-hidden="true"></i>감속비 i
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">입력 회전수 ÷ 출력 회전수입니다.<br>예) 모터 3000 rpm → 출력 300 rpm 이면 감속비 10.<br>원하는 값이 없으면 인접한 표준값을 선택하세요.</div></span>
       </label>
       <div class="input-wrap">
@@ -490,7 +490,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>요구 수명 L_h
+      <label><i class="ti ti-clock-hour-4" aria-hidden="true"></i>요구 수명 L_h
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">감속기가 보장해야 하는 최소 운전 시간입니다.<br>일반 산업기계: 10,000~20,000 h<br>24시간 연속 가동: 20,000 h 이상 권장.<br>계산기는 L10h(10% 파손 수명)를 기준으로 비교합니다.</div></span>
       </label>
       <div class="input-wrap">
@@ -500,7 +500,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="input-group">
-      <label>부하 관성 모멘트 J_load
+      <label><i class="ti ti-orbit" aria-hidden="true"></i>부하 관성 모멘트 J_load
         <span style="font-size:11px;color:var(--text3);font-weight:400">(선택)</span>
         <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">모터축으로 환산한 부하 관성입니다.<br>입력하면 관성비(JL/JM)를 추정해 드립니다.<br>불확실하면 비워두어도 선정에 지장 없습니다.<br>단위: kg·m²  (예: 0.003)</div></span>
       </label>
