@@ -675,14 +675,17 @@ function toggleMakerCard(key, card) {
   card.classList.toggle('sel', cb.checked);
 }
 
-/* ─── 판정 로직 ─── */
+/* ─── 판정 로직 ───
+   hard-fail: 파지력 부족(F_req > forceMax)만.
+   통신 방식 불일치·스트로크 부족·로봇 호환 미확인·최소 파지력 초과는 warn.
+   전동 그리퍼는 완제품(EoAT) 필터링 방식이므로 조건이 많아도 최대한 결과를 표시. ─── */
 function judgeModel(m) {
-  var forceOk = S.fRequired >= m.forceMin && S.fRequired <= m.forceMax;
+  if (S.fRequired > m.forceMax) return 'bad';
   var strokeOk = m.stroke >= S.width;
   var commOk = m.comm.indexOf(S.comm) !== -1;
-  if (!forceOk || !strokeOk || !commOk) return 'bad';
   var robotOk = m.robots.length === 0 || m.robots.indexOf(S.robot) !== -1;
-  if (!robotOk) return 'warn';
+  var forceInRange = S.fRequired >= m.forceMin;
+  if (!strokeOk || !commOk || !robotOk || !forceInRange) return 'warn';
   return 'ok';
 }
 

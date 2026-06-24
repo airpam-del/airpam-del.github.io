@@ -653,14 +653,16 @@ function toggleMakerCard(key, card) {
   card.classList.toggle('sel', cb.checked);
 }
 
-/* ─── 판정 로직 ─── */
+/* ─── 판정 로직 ───
+   스트로크(편측×2)는 조가 움직이는 거리이므로 워크피스 폭의 절대 상한이 아님.
+   파지력 부족·공급압 부족만 hard-fail, 스트로크 부족은 검토 필요(warn) 처리. ─── */
 function judgeModel(m) {
   var fRated = S.gripDir === 'outer' ? m.forceOuter : m.forceInner;
   var totalStroke = m.strokePerSide * 2;
   var pressureOk = S.pressure >= m.pMin;
-  var strokeOk = totalStroke >= S.width;
   var forceOk = fRated >= S.fRequired;
-  if (!pressureOk || !strokeOk || !forceOk) return 'bad';
+  if (!pressureOk || !forceOk) return 'bad';
+  if (totalStroke < S.width) return 'warn';
   if (fRated < S.fRequired * 1.3) return 'warn';
   return 'ok';
 }
