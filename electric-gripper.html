@@ -714,9 +714,9 @@ function renderResultCards() {
     var bestStatus = 'bad';
 
     mk.models.forEach(function(m) {
-      if (bestModel) return;
       var status = judgeModel(m);
-      if (status !== 'bad') { bestModel = m; bestStatus = status; }
+      if (status === 'ok' && bestStatus !== 'ok') { bestModel = m; bestStatus = 'ok'; }
+      else if (status === 'warn' && bestStatus === 'bad') { bestModel = m; bestStatus = 'warn'; }
     });
 
     if (!bestModel) {
