@@ -1,18 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공압 그리퍼(2조 평행형) 선정 계산기 — PartsOn</title>
-<meta name="description" content="공압 그리퍼(2조 평행형)를 무료로 선정하세요. SMC MHZ2, Festo HGPT, CKD HGW 3사 동시 비교. 파지력·스트로크 기반 자동 선정.">
-<meta name="keywords" content="공압 그리퍼 선정, 평행 그리퍼, SMC MHZ2, Festo HGPT, CKD HGW, 파지력 계산">
-<meta property="og:title" content="공압 그리퍼(2조 평행형) 선정 계산기 — PartsOn">
-<meta property="og:description" content="SMC·Festo·CKD 3사 공압 그리퍼 동시 비교. 파지력·스트로크 자동 계산.">
+<title>전동 그리퍼 선정 계산기 — PartsOn</title>
+<meta name="description" content="전동 그리퍼를 무료로 선정하세요. Schunk EGP·Co-act EGP-C, OnRobot RG 시리즈 동시 비교. 파지력·스트로크·협동로봇 호환성 기반 자동 선정.">
+<meta name="keywords" content="전동 그리퍼 선정, Schunk EGP, OnRobot RG, 협동로봇 그리퍼, 전동 그리퍼 계산기">
+<meta property="og:title" content="전동 그리퍼 선정 계산기 — PartsOn">
+<meta property="og:description" content="Schunk·OnRobot 전동 그리퍼 동시 비교. 파지력·스트로크·로봇 호환성 자동 필터링.">
 <meta property="og:image" content="https://partson.co.kr/og-image.png">
-<meta property="og:url" content="https://partson.co.kr/pneumatic-gripper.html">
+<meta property="og:url" content="https://partson.co.kr/electric-gripper.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://partson.co.kr/pneumatic-gripper.html">
+<link rel="canonical" href="https://partson.co.kr/electric-gripper.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -21,9 +21,9 @@
   --card:#FFFFFF;
   --border:#D8D4CC;
   --border-light:#E8E5DF;
-  --accent:#1A3A5C;
-  --accent-light:#E8EEF5;
-  --accent-mid:#2D5A8B;
+  --accent:#1A3A2A;
+  --accent-light:#E8F0EC;
+  --accent-mid:#2D6B4A;
   --text:#1A1814;
   --text2:#6B6760;
   --text3:#9E9B96;
@@ -38,18 +38,18 @@
   --brand-base:#0F2818;
 }
 .cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
-.category-pneumatic .cat-badge{background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
 .electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon)!important}
 .pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon)!important}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
-.input-wrap input,.input-wrap select,.r-val,.check-val{font-family:var(--mono)}
+.input-wrap input,.input-wrap select{font-family:var(--mono)}
 
 /* ── 내비게이션 ── */
 .partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
 .partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px;text-decoration:none}
 .partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
 .partson-nav a:hover{color:#fff}
-.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #00C853}
 .pnav-drop{position:relative}
 .pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
 .pnav-toggle:hover,.pnav-toggle.open{color:#fff}
@@ -57,7 +57,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pnav-menu.open{display:block}
 .pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
 .pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
-.pnav-menu a.active{color:#38BDF8;font-weight:600}
+.pnav-menu a.active{color:#00C853;font-weight:600}
 
 /* ── 헤더 ── */
 header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
@@ -86,7 +86,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .step-line.done{background:var(--accent)}
 
 /* ── 가이드 배너 ── */
-.guide-banner{background:linear-gradient(135deg,#1A3A5C 0%,#2D5A8B 100%);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:opacity .15s}
+.guide-banner{background:linear-gradient(135deg,#1A3A2A 0%,#2D6B4A 100%);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:flex-start;gap:.875rem;cursor:pointer;transition:opacity .15s}
 .guide-banner:hover{opacity:.92}
 .guide-icon{font-size:22px;flex-shrink:0;margin-top:1px}
 .guide-text{flex:1}
@@ -120,7 +120,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .input-group{margin-bottom:1.1rem}
 .input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
 .input-wrap{position:relative}
-.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s;font-family:var(--mono)}
 .input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
 .input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
 .input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
@@ -132,12 +132,16 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:260px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
 .tip-wrap:hover .tip-popup,.tip-btn:focus + .tip-popup{display:block}
-.tip-popup b{color:#38BDF8}
+.tip-popup b{color:#00C853}
 @media(max-width:480px){.tip-popup{left:0;transform:none;width:230px}}
 
 /* ── 파지력 미리보기 ── */
-.force-preview{background:var(--accent-light);border:1px solid #BFDBFE;border-radius:8px;padding:.65rem 1rem;margin-top:.6rem;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.5rem}
+.force-preview{background:var(--accent-light);border:1px solid #A7D9B8;border-radius:8px;padding:.65rem 1rem;margin-top:.6rem;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.5rem}
 .force-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px}
+
+/* ── 알림 박스 ── */
+.info-box{background:#F0FAF4;border:1px solid #A7D9B8;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1A5C2A;margin-bottom:1.25rem;line-height:1.6}
+.info-box b{color:#1A3A2A}
 
 /* ── 체크박스 (메이커) ── */
 .maker-check-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
@@ -154,12 +158,9 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 .btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
 
-/* ── 안내 박스 ── */
-.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1E3A5F;margin-bottom:1.25rem;line-height:1.6}
-
 /* ── 결과 카드 ── */
 .result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.5rem}
-.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;position:relative;overflow:hidden;transition:box-shadow .2s}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.25rem;background:#fff;position:relative;transition:box-shadow .2s}
 .result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
 .result-card.ok-card{border-color:#6DBF8A}
 .result-card.warn-card{border-color:#F0B060}
@@ -167,7 +168,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem}
 .rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem}
 .rc-series{font-size:12px;color:var(--text2);margin-bottom:.75rem}
-.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.5rem;margin-right:.3rem}
 .rc-badge.ok{background:var(--ok-bg);color:var(--ok)}
 .rc-badge.warn{background:var(--warn-bg);color:var(--warn)}
 .rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
@@ -232,7 +233,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 }
 </style>
 </head>
-<body class="category-pneumatic">
+<body class="category-electric">
 
 <!-- 내비게이션 -->
 <nav class="partson-nav">
@@ -248,7 +249,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
       <a href="planetary-gearbox.html">유성 감속기</a>
       <a href="cycloidal-gearbox.html">사이클로이드</a>
       <a href="harmonic-drive.html">하모닉 드라이브</a>
-      <a href="electric-gripper.html">전동 그리퍼 선정</a>
+      <a href="electric-gripper.html" class="active">전동 그리퍼 선정</a>
     </div>
   </div>
   <div class="pnav-drop pneumatic-drop">
@@ -258,7 +259,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
       <a href="solenoid-valve.html">솔레노이드 밸브 선정</a>
       <a href="pneumatic-fitting.html">피팅/튜빙 선정</a>
       <a href="pneumatic-fr-unit.html">공기압 조절 유닛 선정</a>
-      <a href="pneumatic-gripper.html" class="active">공압 그리퍼 선정</a>
+      <a href="pneumatic-gripper.html">공압 그리퍼 선정</a>
     </div>
   </div>
 </nav>
@@ -270,10 +271,10 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 <!-- 헤더 -->
 <header>
   <div class="hdr">
-    <div class="hdr-icon">🤏</div>
+    <div class="hdr-icon">🦾</div>
     <div>
-      <h1>공압 그리퍼(2조 평행형) 선정 계산기<span class="cat-badge">💨 공압</span></h1>
-      <p>SMC MHZ2 · Festo HGPT · CKD HGW 3사 동시 비교 — 파지력·스트로크 기반 자동 선정</p>
+      <h1>전동 그리퍼 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
+      <p>Schunk EGP·Co-act EGP-C · OnRobot RG — 파지력·스트로크·협동로봇 호환성 기반 자동 필터링</p>
     </div>
   </div>
 </header>
@@ -281,7 +282,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 <main>
   <!-- 인쇄 헤더 -->
   <div class="print-header">
-    <span style="font-weight:700">PartsOn — 공압 그리퍼(2조 평행형) 선정 계산기</span>
+    <span style="font-weight:700">PartsOn — 전동 그리퍼 선정 계산기</span>
     <span id="print-date"></span>
   </div>
 
@@ -292,15 +293,15 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="guide-banner" id="guide-banner" onclick="toggleGuide()">
     <div class="guide-icon">💡</div>
     <div class="guide-text">
-      <div class="guide-title">그리퍼 선정이 처음이세요? — 30초 가이드</div>
-      <div class="guide-sub">5단계로 최적 공압 그리퍼 모델을 찾는 방법을 안내합니다. 클릭해서 펼쳐보세요.</div>
+      <div class="guide-title">전동 그리퍼 선정이 처음이세요? — 30초 가이드</div>
+      <div class="guide-sub">전동 그리퍼는 완제품(End-of-Arm Tooling) 형태로, 사용 조건에 맞는 카탈로그 모델을 필터링하는 방식입니다. 클릭해서 펼쳐보세요.</div>
       <div class="guide-steps" id="guide-steps">
         <div class="guide-step-list">
-          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">워크피스 조건 입력</b> — 무게, 폭, 공급 압력, 파지 방향을 입력합니다. 권장 파지력이 자동 계산됩니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">그리퍼 사양 선택</b> — 작동 방식(복동/단동)과 파지 지점 거리를 선택합니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — SMC·Festo·CKD 중 비교할 메이커를 체크합니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 파지력·스트로크 조건을 충족하는 최소 보어 모델이 추천됩니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 3사 모델을 테이블로 비교하고 최적 모델을 선정하세요.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">워크피스 조건 입력</b> — 무게, 폭, 정밀 힘 제어 필요 여부를 입력합니다. 권장 파지력이 자동 계산됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">사용 환경 선택</b> — 협동로봇 브랜드와 통신 방식(I/O·IO-Link)을 선택합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — Schunk·OnRobot 중 비교할 메이커를 체크합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 파지력 범위·스트로크·로봇 호환성 조건을 충족하는 모델이 추천됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 테이블로 비교하고 행을 클릭해 최적 모델을 선정하세요.</div></div>
         </div>
       </div>
     </div>
@@ -310,21 +311,25 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <!-- 면책 배너 -->
   <div class="disclaimer-banner">
     <div class="disclaimer-banner-icon">⚠️</div>
-    <div><b>면책 고지:</b> 이 계산기는 공압 그리퍼 초기 선정 참고용입니다. 권장 파지력은 단순 들어올리는 힘이 아니라 미끄러짐 방지를 위한 여유값입니다. 정밀한 파지력 검토(긴 손가락, 무게중심 오프셋 등)는 메이커 기술 자료를 참고하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b></div>
+    <div><b>면책 고지:</b> 이 계산기는 전동 그리퍼 초기 선정 참고용입니다. 로봇 호환성은 모델·연도에 따라 달라질 수 있으니 최종 적용 전 메이커에 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b></div>
   </div>
 
   <!-- ── STEP 1 ── -->
   <div class="step-wrap card active" id="step-1">
     <div class="section-label">Step 1</div>
     <div class="question">워크피스 조건 입력</div>
-    <div class="question-desc">파지할 워크피스의 무게·크기와 공급 조건을 입력하세요.</div>
+    <div class="question-desc">파지할 워크피스의 무게와 크기를 입력하세요.</div>
+
+    <div class="info-box">
+      💡 <b>전동 그리퍼 vs 공압 그리퍼:</b> 정밀 힘 제어·협동로봇 연동이 필요하다면 전동 그리퍼가 적합합니다. 단순 반복 픽앤플레이스라면 <a href="pneumatic-gripper.html" style="color:var(--accent);font-weight:600">공압 그리퍼</a>가 더 경제적일 수 있습니다.
+    </div>
 
     <div class="input-group">
       <label>워크피스 무게
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">파지할 부품의 무게입니다.<br><br>권장 파지력 = 무게(g) ÷ 1000 × 9.81 × <b>15 (안전계수)</b><br>예: 200g → 약 29.4 N 이상<br><br>안전계수 15는 미끄러짐 방지·가속·진동을 고려한 업계 권장 중간값(10~20배)입니다.</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">파지할 부품의 무게입니다.<br><br>권장 파지력 = 무게(g) ÷ 1000 × 9.81 × <b>2 (안전계수)</b><br>예: 800g → 약 15.7 N 이상<br><br>전동 그리퍼는 정밀 힘 제어가 가능해 공압 대비 낮은 안전계수(2)를 적용합니다.</div></span>
       </label>
       <div class="input-wrap">
-        <input type="number" id="inp-weight" min="1" step="1" placeholder="예: 200" oninput="calcPreview()">
+        <input type="number" id="inp-weight" min="1" step="1" placeholder="예: 800" oninput="calcPreview()">
         <span class="input-unit">g</span>
       </div>
       <div id="force-preview" class="force-preview" style="display:none">
@@ -332,84 +337,75 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <span id="force-preview-val">— N</span>
         <span style="font-family:var(--font);font-size:11px;color:var(--text2);margin-left:.3rem">이상</span>
       </div>
-      <div class="input-hint">권장 파지력은 워크피스 무게의 10~20배 이상이 일반적입니다. 가속·진동이 큰 환경이라면 더 큰 여유를 두세요.</div>
+      <div class="input-hint">안전계수 2 적용 (전동 그리퍼 정밀 힘 제어 기준 — 공압 그리퍼의 15배와 다릅니다)</div>
     </div>
 
     <div class="input-group">
       <label>워크피스 폭/두께
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼가 파지하는 방향의 치수입니다.<br>이 치수가 그리퍼 총 개폐 스트로크(편측 × 2) 이내여야 파지 가능합니다.</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼가 파지하는 방향의 치수입니다.<br>이 치수가 모델의 최대 스트로크 이내여야 합니다.<br><br>전동 그리퍼는 일반적으로 스트로크가 넓어 다양한 워크피스에 대응 가능합니다.</div></span>
       </label>
       <div class="input-wrap">
-        <input type="number" id="inp-width" min="1" step="1" placeholder="예: 20">
+        <input type="number" id="inp-width" min="1" step="1" placeholder="예: 50">
         <span class="input-unit">mm</span>
       </div>
     </div>
 
     <div class="input-group">
-      <label>공급 공기압</label>
-      <div class="input-wrap">
-        <select id="inp-pressure">
-          <option value="0.3">0.3 MPa</option>
-          <option value="0.4">0.4 MPa</option>
-          <option value="0.5" selected>0.5 MPa — 표준 (권장)</option>
-          <option value="0.6">0.6 MPa</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <label>파지 방향
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>외부 파지:</b> 조가 오므려지며 바깥쪽을 잡습니다. 일반적인 픽업에 사용.<br><br><b>내부 파지:</b> 조가 벌어지며 안쪽에서 잡습니다. 구멍·링 형태 부품에 사용.<br><br>일반적으로 외부 파지력 ≥ 내부 파지력입니다.</div></span>
-      </label>
+      <label>정밀 힘 제어 필요 여부</label>
       <div class="choice-grid">
-        <div class="choice-card sel" id="dir-outer" onclick="selDir('outer')">
-          <div class="choice-title">외부 파지</div>
-          <div class="choice-sub">조가 오므려지며 바깥쪽 파지 (일반)</div>
+        <div class="choice-card" id="force-ctrl-yes" onclick="selForceCtrl(true)">
+          <div class="choice-title">예 — 정밀 제어 필요</div>
+          <div class="choice-sub">섬세한 부품, 힘 피드백, IO-Link 제어 환경</div>
         </div>
-        <div class="choice-card" id="dir-inner" onclick="selDir('inner')">
-          <div class="choice-title">내부 파지</div>
-          <div class="choice-sub">조가 벌어지며 안쪽 파지 (구멍·링)</div>
+        <div class="choice-card sel" id="force-ctrl-no" onclick="selForceCtrl(false)">
+          <div class="choice-title">아니요 — 일반 파지</div>
+          <div class="choice-sub">반복 픽앤플레이스, 디지털 I/O 제어</div>
         </div>
       </div>
     </div>
 
     <div class="btn-nav">
       <div></div>
-      <button class="btn btn-primary" onclick="goStep2()">다음: 그리퍼 사양 선택 →</button>
+      <button class="btn btn-primary" onclick="goStep2()">다음: 사용 환경 선택 →</button>
     </div>
   </div>
 
   <!-- ── STEP 2 ── -->
   <div class="step-wrap card" id="step-2">
     <div class="section-label">Step 2</div>
-    <div class="question">그리퍼 사양 선택</div>
-    <div class="question-desc">작동 방식과 파지 지점 거리를 선택하세요.</div>
+    <div class="question">사용 환경 선택</div>
+    <div class="question-desc">사용 중인 협동로봇 브랜드와 통신 방식을 선택하세요.</div>
 
     <div class="input-group">
-      <label>작동 방식
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>복동 (Double Acting):</b> 열기·닫기 모두 공압으로 작동. 빠르고 확실. 일반적으로 권장.<br><br><b>단동 (Single Acting):</b> 한 방향만 공압, 반대 방향은 스프링 복귀. 전원 차단 시 복귀 동작 보장.</div></span>
+      <label>사용 로봇 브랜드
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">협동로봇 브랜드에 따라 Quick Changer 어댑터 호환 여부가 다릅니다.<br><br><b>Universal Robots:</b> OnRobot RG 시리즈와 네이티브 호환 (Quick Changer 내장)<br><b>Doosan:</b> Schunk Co-act EGP-C 인증 호환<br><b>기타:</b> 범용 어댑터가 필요할 수 있습니다.</div></span>
       </label>
-      <div class="choice-grid">
-        <div class="choice-card sel" id="act-double" onclick="selAct('double')">
-          <div class="choice-title">복동 (Double Acting)</div>
-          <div class="choice-sub">열기·닫기 모두 공압 작동 (권장)</div>
-        </div>
-        <div class="choice-card" id="act-single" onclick="selAct('single')">
-          <div class="choice-title">단동 (Single Acting)</div>
-          <div class="choice-sub">스프링 복귀 — 전원 차단 시 열림 또는 닫힘</div>
-        </div>
+      <div class="input-wrap">
+        <select id="inp-robot">
+          <option value="ur">Universal Robots (UR)</option>
+          <option value="doosan">Doosan Robotics</option>
+          <option value="kuka">KUKA</option>
+          <option value="fanuc">FANUC</option>
+          <option value="other">기타 / 범용</option>
+        </select>
       </div>
+      <div class="input-hint">특정 브랜드 선택 시 호환 가능한 모델에 "✅ 호환 확인됨" 배지가 표시됩니다.</div>
     </div>
 
     <div class="input-group">
-      <label>파지 지점 거리 L
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">그리퍼 본체 기준면에서 실제 파지 지점까지의 거리입니다.<br><br>카탈로그 파지력은 보통 <b>L=20mm 기준</b>이므로 짧은 핑거를 사용한다면 기본값 그대로 사용 가능합니다.<br><br>파지 지점이 멀어지면(긴 손가락 사용 시) 실제 유효 파지력은 카탈로그 값보다 작아집니다.</div></span>
+      <label>통신 방식
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>디지털 I/O:</b> 열기·닫기 단순 신호. 설치·연결이 간단.<br><br><b>IO-Link:</b> 파지력·속도를 정밀 제어. 위치·힘 피드백 가능. 정밀 제어 환경에 권장.</div></span>
       </label>
-      <div class="input-wrap">
-        <input type="number" id="inp-gripL" min="5" step="5" value="20" placeholder="예: 20">
-        <span class="input-unit">mm</span>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="comm-dio" onclick="selComm('dio')">
+          <div class="choice-title">디지털 I/O</div>
+          <div class="choice-sub">단순 열기·닫기 신호 (설치 간단)</div>
+        </div>
+        <div class="choice-card" id="comm-iolink" onclick="selComm('iolink')">
+          <div class="choice-title">IO-Link</div>
+          <div class="choice-sub">파지력·속도 정밀 제어 (힘 피드백)</div>
+        </div>
       </div>
-      <div class="input-hint">카탈로그 파지력 기준: L=20mm. 다른 값 입력 시 결과 화면에서 안내됩니다.</div>
     </div>
 
     <div class="btn-nav">
@@ -422,28 +418,21 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="step-wrap card" id="step-3">
     <div class="section-label">Step 3</div>
     <div class="question">비교할 메이커 선택</div>
-    <div class="question-desc">3사 중 원하는 메이커를 선택하면 동시 비교합니다.</div>
+    <div class="question-desc">비교할 메이커를 선택하면 동시 비교합니다.</div>
 
     <div class="maker-check-list">
-      <label class="check-item sel" id="mk-smc" onclick="toggleMakerCard('smc',this)">
-        <input type="checkbox" id="cb-smc" checked onclick="event.stopPropagation();toggleMaker('smc',this)">
+      <label class="check-item sel" id="mk-schunk" onclick="toggleMakerCard('schunk',this)">
+        <input type="checkbox" id="cb-schunk" checked onclick="event.stopPropagation();toggleMaker('schunk',this)">
         <div>
-          <div class="check-title">🇯🇵 SMC</div>
-          <div class="check-sub">MHZ2 시리즈 — 2조 평행형, 세계 1위 공압 메이커</div>
+          <div class="check-title">🇩🇪 Schunk</div>
+          <div class="check-sub">EGP / Co-act EGP-C 시리즈 — 산업 표준급 전동 그리퍼, 다양한 보어 사이즈</div>
         </div>
       </label>
-      <label class="check-item sel" id="mk-festo" onclick="toggleMakerCard('festo',this)">
-        <input type="checkbox" id="cb-festo" checked onclick="event.stopPropagation();toggleMaker('festo',this)">
+      <label class="check-item sel" id="mk-onrobot" onclick="toggleMakerCard('onrobot',this)">
+        <input type="checkbox" id="cb-onrobot" checked onclick="event.stopPropagation();toggleMaker('onrobot',this)">
         <div>
-          <div class="check-title">🇩🇪 Festo</div>
-          <div class="check-sub">HGPT 시리즈 — 2조 평행형, 유럽 최대 공압 메이커</div>
-        </div>
-      </label>
-      <label class="check-item sel" id="mk-ckd" onclick="toggleMakerCard('ckd',this)">
-        <input type="checkbox" id="cb-ckd" checked onclick="event.stopPropagation();toggleMaker('ckd',this)">
-        <div>
-          <div class="check-title">🇯🇵 CKD</div>
-          <div class="check-sub">HGW 시리즈 — 2조 평행형, 일본 2위 공압 메이커</div>
+          <div class="check-title">🇩🇰 OnRobot</div>
+          <div class="check-sub">RG 시리즈 — Universal Robots 네이티브 호환, Quick Changer 내장</div>
         </div>
       </label>
     </div>
@@ -480,17 +469,15 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="cmp-table-wrap">
-      <table class="cmp-table" id="cmp-table">
+      <table class="cmp-table">
         <thead>
           <tr>
-            <th>메이커</th>
+            <th>메이커 / 시리즈</th>
             <th>모델</th>
-            <th>보어 [mm]</th>
-            <th>외부 파지력 [N]</th>
-            <th>내부 파지력 [N]</th>
-            <th>스트로크/편측 [mm]</th>
-            <th>작동 방식</th>
-            <th>작동압력 [MPa]</th>
+            <th>파지력 범위 [N]</th>
+            <th>스트로크 [mm]</th>
+            <th>통신 방식</th>
+            <th>로봇 호환</th>
             <th>판정</th>
           </tr>
         </thead>
@@ -502,8 +489,8 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div id="maker-links" class="maker-links"></div>
 
     <div class="disclaimer">
-      이 계산기는 공압 그리퍼 초기 선정 참고용입니다. 권장 파지력은 단순 들어올리는 힘이 아니라 미끄러짐 방지를 위한 여유값입니다. 정밀한 파지력 검토(긴 손가락, 무게중심 오프셋 등)는 메이커 기술 자료를 참고하세요.<br>
-      단동 모델의 파지력은 복동 대비 약 60~70% 수준이므로 메이커 카탈로그를 반드시 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b>
+      이 계산기는 전동 그리퍼 초기 선정 참고용입니다. 전동 그리퍼는 복잡한 수식 계산이 아닌 사용 조건에 맞는 완제품(EoAT) 카탈로그 필터링 방식으로 동작합니다.<br>
+      로봇 호환성은 모델·연도에 따라 달라질 수 있으니 최종 적용 전 메이커에 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b>
     </div>
 
     <div class="btn-nav">
@@ -514,40 +501,79 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 </main>
 
 <script>
-/* ─── 제품 데이터 (0.5MPa, L=20mm 기준) ─── */
+/* ─────────────────────────────────────────────────────────────────
+   제품 데이터 — 전동 그리퍼는 완제품(EoAT) 카탈로그 필터링 방식.
+   복잡한 수식 계산이 아니라 조건에 맞는 모델을 찾는 것이 핵심.
+   ───────────────────────────────────────────────────────────────── */
 var MAKERS = {
-  smc: {
-    name:'SMC', country:'🇯🇵', series:'MHZ2 시리즈',
-    url:'https://www.smcworld.com',
-    models:[
-      {bore:10, modelD:'MHZ2-10D', modelS:'MHZ2-10S', forceOuter:34,  forceInner:22,  strokePerSide:2, pMin:0.15, pMax:0.7},
-      {bore:16, modelD:'MHZ2-16D', modelS:'MHZ2-16S', forceOuter:64,  forceInner:50,  strokePerSide:3, pMin:0.15, pMax:0.7},
-      {bore:20, modelD:'MHZ2-20D', modelS:'MHZ2-20S', forceOuter:90,  forceInner:70,  strokePerSide:4, pMin:0.1,  pMax:0.7},
-      {bore:25, modelD:'MHZ2-25D', modelS:'MHZ2-25S', forceOuter:65,  forceInner:104, strokePerSide:7, pMin:0.1,  pMax:0.7},
-      {bore:32, modelD:'MHZ2-32D', modelS:'MHZ2-32S', forceOuter:165, forceInner:215, strokePerSide:8, pMin:0.1,  pMax:0.7},
-      {bore:40, modelD:'MHZ2-40D', modelS:'MHZ2-40S', forceOuter:255, forceInner:330, strokePerSide:8, pMin:0.1,  pMax:0.7}
+  schunk: {
+    name: 'Schunk', country: '🇩🇪',
+    url: 'https://schunk.com',
+    models: [
+      /* EGP 시리즈 (범용 산업용) */
+      {
+        model:'EGP 25', series:'EGP 시리즈',
+        forceMin:0,  forceMax:12,  stroke:6,
+        comm:['dio'],
+        robots:[], robotLabel:'범용 (어댑터 필요)',
+        note:'소형 워크피스 전용'
+      },
+      {
+        model:'EGP 40', series:'EGP 시리즈',
+        forceMin:0,  forceMax:30,  stroke:12,
+        comm:['dio','iolink'],
+        robots:[], robotLabel:'범용 (어댑터 필요)',
+        note:''
+      },
+      {
+        model:'EGP 50', series:'EGP 시리즈',
+        forceMin:54, forceMax:215, stroke:16,
+        comm:['dio','iolink'],
+        robots:[], robotLabel:'범용 (어댑터 필요)',
+        note:''
+      },
+      {
+        model:'EGP 64', series:'EGP 시리즈',
+        forceMin:75, forceMax:300, stroke:20,
+        comm:['dio','iolink'],
+        robots:[], robotLabel:'범용 (어댑터 필요)',
+        note:''
+      },
+      /* Co-act EGP-C 시리즈 (협동로봇 인증형) */
+      {
+        model:'Co-act EGP-C 40', series:'Co-act EGP-C 시리즈',
+        forceMin:35, forceMax:140, stroke:12,
+        comm:['dio'],
+        robots:['doosan','kuka'], robotLabel:'Doosan·Mitsubishi 인증',
+        note:'협동로봇 인증 취득'
+      },
+      {
+        model:'Co-act EGP-C (대형)', series:'Co-act EGP-C 시리즈',
+        forceMin:40, forceMax:230, stroke:20,
+        comm:['dio'],
+        robots:['doosan','kuka'], robotLabel:'Doosan·Mitsubishi 인증',
+        note:'협동로봇 인증 취득'
+      }
     ]
   },
-  festo: {
-    name:'Festo', country:'🇩🇪', series:'HGPT 시리즈',
-    url:'https://www.festo.com',
-    models:[
-      {bore:16, modelD:'HGPT-16', modelS:'HGPT-16-A', forceOuter:60,  forceInner:48,  strokePerSide:3, pMin:0.2,  pMax:0.8},
-      {bore:20, modelD:'HGPT-20', modelS:'HGPT-20-A', forceOuter:85,  forceInner:68,  strokePerSide:4, pMin:0.2,  pMax:0.8},
-      {bore:25, modelD:'HGPT-25', modelS:'HGPT-25-A', forceOuter:95,  forceInner:100, strokePerSide:6, pMin:0.15, pMax:0.8},
-      {bore:32, modelD:'HGPT-32', modelS:'HGPT-32-A', forceOuter:160, forceInner:200, strokePerSide:8, pMin:0.15, pMax:0.8},
-      {bore:40, modelD:'HGPT-40', modelS:'HGPT-40-A', forceOuter:250, forceInner:320, strokePerSide:8, pMin:0.15, pMax:0.8}
-    ]
-  },
-  ckd: {
-    name:'CKD', country:'🇯🇵', series:'HGW 시리즈',
-    url:'https://www.ckd.co.jp',
-    models:[
-      {bore:16, modelD:'HGW-16', modelS:'HGW-16-S', forceOuter:58,  forceInner:46,  strokePerSide:3, pMin:0.15, pMax:0.7},
-      {bore:20, modelD:'HGW-20', modelS:'HGW-20-S', forceOuter:82,  forceInner:65,  strokePerSide:4, pMin:0.1,  pMax:0.7},
-      {bore:25, modelD:'HGW-25', modelS:'HGW-25-S', forceOuter:92,  forceInner:98,  strokePerSide:6, pMin:0.1,  pMax:0.7},
-      {bore:32, modelD:'HGW-32', modelS:'HGW-32-S', forceOuter:155, forceInner:198, strokePerSide:8, pMin:0.1,  pMax:0.7},
-      {bore:40, modelD:'HGW-40', modelS:'HGW-40-S', forceOuter:245, forceInner:315, strokePerSide:8, pMin:0.1,  pMax:0.7}
+  onrobot: {
+    name: 'OnRobot', country: '🇩🇰',
+    url: 'https://onrobot.com',
+    models: [
+      {
+        model:'RG2', series:'RG 시리즈',
+        forceMin:3,  forceMax:40,  stroke:110,
+        comm:['iolink'],
+        robots:['ur'], robotLabel:'Universal Robots 네이티브 호환',
+        note:'Quick Changer 내장'
+      },
+      {
+        model:'RG6', series:'RG 시리즈',
+        forceMin:25, forceMax:120, stroke:160,
+        comm:['iolink'],
+        robots:['ur'], robotLabel:'Universal Robots 네이티브 호환',
+        note:'Quick Changer 내장'
+      }
     ]
   }
 };
@@ -557,18 +583,17 @@ var S = {
   step: 1,
   weight: 0,
   width: 0,
-  pressure: 0.5,
-  gripDir: 'outer',
-  actuator: 'double',
-  gripL: 20,
-  makers: {smc:true, festo:true, ckd:true},
+  forceCtrl: false,
+  robot: 'ur',
+  comm: 'dio',
+  makers: {schunk:true, onrobot:true},
   fRequired: 0,
   results: [],
   picked: null
 };
 
 /* ─── 스텝 바 ─── */
-var STEP_LABELS = ['워크피스 조건','그리퍼 사양','메이커 선택','결과 확인','비교·선정'];
+var STEP_LABELS = ['워크피스 조건','사용 환경','메이커 선택','결과 확인','비교·선정'];
 function renderStepsBar(cur) {
   var bar = document.getElementById('steps-bar');
   var html = '';
@@ -603,15 +628,15 @@ function calcPreview() {
   var w = parseFloat(document.getElementById('inp-weight').value);
   var prev = document.getElementById('force-preview');
   if (!w || w <= 0) { prev.style.display = 'none'; return; }
-  var f = (w / 1000) * 9.81 * 15;
+  var f = (w / 1000) * 9.81 * 2;
   document.getElementById('force-preview-val').textContent = f.toFixed(1) + ' N';
   prev.style.display = 'flex';
 }
 
-function selDir(dir) {
-  S.gripDir = dir;
-  document.getElementById('dir-outer').classList.toggle('sel', dir === 'outer');
-  document.getElementById('dir-inner').classList.toggle('sel', dir === 'inner');
+function selForceCtrl(val) {
+  S.forceCtrl = val;
+  document.getElementById('force-ctrl-yes').classList.toggle('sel', val === true);
+  document.getElementById('force-ctrl-no').classList.toggle('sel', val === false);
 }
 
 function goStep2() {
@@ -621,22 +646,19 @@ function goStep2() {
   if (!wd || wd <= 0) { alert('워크피스 폭/두께를 입력해 주세요.'); return; }
   S.weight = w;
   S.width = wd;
-  S.pressure = parseFloat(document.getElementById('inp-pressure').value);
-  S.fRequired = (w / 1000) * 9.81 * 15;
+  S.fRequired = (w / 1000) * 9.81 * 2;
   goStep(2);
 }
 
 /* ─── Step 2 ─── */
-function selAct(act) {
-  S.actuator = act;
-  document.getElementById('act-double').classList.toggle('sel', act === 'double');
-  document.getElementById('act-single').classList.toggle('sel', act === 'single');
+function selComm(val) {
+  S.comm = val;
+  document.getElementById('comm-dio').classList.toggle('sel', val === 'dio');
+  document.getElementById('comm-iolink').classList.toggle('sel', val === 'iolink');
 }
 
 function goStep3() {
-  var L = parseFloat(document.getElementById('inp-gripL').value);
-  if (!L || L <= 0) { alert('파지 지점 거리를 입력해 주세요.'); return; }
-  S.gripL = L;
+  S.robot = document.getElementById('inp-robot').value;
   goStep(3);
 }
 
@@ -655,30 +677,35 @@ function toggleMakerCard(key, card) {
 
 /* ─── 판정 로직 ─── */
 function judgeModel(m) {
-  var fRated = S.gripDir === 'outer' ? m.forceOuter : m.forceInner;
-  var totalStroke = m.strokePerSide * 2;
-  var pressureOk = S.pressure >= m.pMin;
-  var strokeOk = totalStroke >= S.width;
-  var forceOk = fRated >= S.fRequired;
-  if (!pressureOk || !strokeOk || !forceOk) return 'bad';
-  if (fRated < S.fRequired * 1.3) return 'warn';
+  var forceOk = S.fRequired >= m.forceMin && S.fRequired <= m.forceMax;
+  var strokeOk = m.stroke >= S.width;
+  var commOk = m.comm.indexOf(S.comm) !== -1;
+  if (!forceOk || !strokeOk || !commOk) return 'bad';
+  var robotOk = m.robots.length === 0 || m.robots.indexOf(S.robot) !== -1;
+  if (!robotOk) return 'warn';
   return 'ok';
 }
 
-/* ─── Step 4 결과 렌더 ─── */
+function robotCompatLabel(m) {
+  if (m.robots.length === 0) return '⚠️ 범용 어댑터 필요';
+  if (m.robots.indexOf(S.robot) !== -1) return '✅ 호환 확인됨';
+  return '⚠️ 호환 미확인';
+}
+
+/* ─── Step 4 결과 카드 렌더 ─── */
 function renderResultCards() {
   var desc = document.getElementById('result-desc');
   var grid = document.getElementById('result-grid');
   var fReqStr = S.fRequired.toFixed(1);
-  var dirLabel = S.gripDir === 'outer' ? '외부 파지' : '내부 파지';
-  desc.textContent = '필요 파지력 ' + fReqStr + ' N 이상 · 워크피스 폭 ' + S.width + ' mm · ' + dirLabel + ' · ' + S.pressure + ' MPa';
+  var robotLabels = {ur:'Universal Robots', doosan:'Doosan', kuka:'KUKA', fanuc:'FANUC', other:'기타'};
+  desc.textContent = '필요 파지력 ' + fReqStr + ' N · 워크피스 폭 ' + S.width + ' mm · ' + robotLabels[S.robot] + ' · ' + (S.comm === 'dio' ? '디지털 I/O' : 'IO-Link');
 
   var html = '';
-  var anyMakerSelected = false;
+  var anySelected = false;
 
   Object.keys(MAKERS).forEach(function(key) {
     if (!S.makers[key]) return;
-    anyMakerSelected = true;
+    anySelected = true;
     var mk = MAKERS[key];
     var bestModel = null;
     var bestStatus = 'bad';
@@ -686,45 +713,39 @@ function renderResultCards() {
     mk.models.forEach(function(m) {
       if (bestModel) return;
       var status = judgeModel(m);
-      if (status !== 'bad') {
-        bestModel = m;
-        bestStatus = status;
-      }
+      if (status !== 'bad') { bestModel = m; bestStatus = status; }
     });
 
     if (!bestModel) {
-      bestModel = mk.models[mk.models.length - 1];
+      bestModel = mk.models[0];
       bestStatus = 'bad';
     }
 
-    var modelName = S.actuator === 'double' ? bestModel.modelD : bestModel.modelS;
-    var fRated = S.gripDir === 'outer' ? bestModel.forceOuter : bestModel.forceInner;
-    var totalStroke = bestModel.strokePerSide * 2;
     var badgeMap = {ok:'✅ 적합', warn:'⚠️ 검토 필요', bad:'❌ 부적합'};
     var cardCls = bestStatus === 'ok' ? 'ok-card' : (bestStatus === 'warn' ? 'warn-card' : 'bad-card');
-    var fValCls = bestStatus !== 'bad' ? 'good' : 'bad';
-    var strokeCls = totalStroke >= S.width ? 'good' : 'bad';
-    var Lnote = S.gripL !== 20 ? '<div class="rc-row"><span class="rc-row-label">파지점 거리</span><span class="rc-row-val" style="color:var(--warn)">L='+S.gripL+'mm (카탈로그 기준 L=20mm)</span></div>' : '';
+    var forceInRange = S.fRequired >= bestModel.forceMin && S.fRequired <= bestModel.forceMax;
+    var strokeOk = bestModel.stroke >= S.width;
+    var commOk = bestModel.comm.indexOf(S.comm) !== -1;
+    var robotCompat = robotCompatLabel(bestModel);
+    var forceRange = bestModel.forceMin === 0 ? '0~'+bestModel.forceMax : bestModel.forceMin+'~'+bestModel.forceMax;
 
     html += '<div class="result-card '+cardCls+'">';
     html += '<div class="rc-maker">'+mk.country+' '+mk.name+'</div>';
-    html += '<div class="rc-model">'+modelName+'</div>';
-    html += '<div class="rc-series">'+mk.series+'</div>';
+    html += '<div class="rc-model">'+bestModel.model+'</div>';
+    html += '<div class="rc-series">'+bestModel.series+'</div>';
     html += '<div class="rc-badge '+bestStatus+'">'+badgeMap[bestStatus]+'</div>';
+    if (bestModel.note) html += '<div class="rc-badge" style="background:#F0F6FF;color:#1A3A5C">'+bestModel.note+'</div>';
     html += '<div class="rc-rows">';
-    html += '<div class="rc-highlight"><div class="rc-row"><span class="rc-row-label">'+dirLabel+' 파지력</span><span class="rc-row-val '+fValCls+'">'+fRated+' N</span></div></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">필요 파지력</span><span class="rc-row-val">≥ '+fReqStr+' N</span></div>';
+    html += '<div class="rc-highlight"><div class="rc-row"><span class="rc-row-label">파지력 범위</span><span class="rc-row-val '+(forceInRange?'good':'bad')+'">'+forceRange+' N</span></div></div>';
+    html += '<div class="rc-row"><span class="rc-row-label">필요 파지력</span><span class="rc-row-val">'+fReqStr+' N</span></div>';
     html += '<div class="rc-divider"></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">총 개폐 스트로크</span><span class="rc-row-val '+strokeCls+'">'+totalStroke+' mm (편측 '+bestModel.strokePerSide+' mm)</span></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">워크피스 폭</span><span class="rc-row-val">'+S.width+' mm</span></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">보어</span><span class="rc-row-val">'+bestModel.bore+' mm</span></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">작동방식</span><span class="rc-row-val">'+(S.actuator==='double'?'복동':'단동')+'</span></div>';
-    html += '<div class="rc-row"><span class="rc-row-label">작동압력</span><span class="rc-row-val">'+bestModel.pMin+'~'+bestModel.pMax+' MPa</span></div>';
-    if (Lnote) html += Lnote;
+    html += '<div class="rc-row"><span class="rc-row-label">최대 스트로크</span><span class="rc-row-val '+(strokeOk?'good':'bad')+'">'+bestModel.stroke+' mm</span></div>';
+    html += '<div class="rc-row"><span class="rc-row-label">통신 방식</span><span class="rc-row-val '+(commOk?'good':'bad')+'" style="font-family:var(--font)">'+bestModel.comm.map(function(c){return c==='dio'?'디지털 I/O':'IO-Link'}).join(' / ')+'</span></div>';
+    html += '<div class="rc-row"><span class="rc-row-label">로봇 호환</span><span style="font-size:12px;font-weight:600">'+robotCompat+'</span></div>';
     html += '</div></div>';
   });
 
-  if (!anyMakerSelected) {
+  if (!anySelected) {
     html = '<div class="no-result"><div class="no-result-icon">🔍</div><div>메이커를 1개 이상 선택해 주세요.</div></div>';
   }
 
@@ -735,8 +756,6 @@ function renderResultCards() {
 function renderCompareTable() {
   var tbody = document.getElementById('cmp-body');
   var rows = '';
-  var idx = 0;
-
   S.results = [];
 
   Object.keys(MAKERS).forEach(function(key) {
@@ -744,44 +763,38 @@ function renderCompareTable() {
     var mk = MAKERS[key];
     mk.models.forEach(function(m) {
       var status = judgeModel(m);
-      var modelName = S.actuator === 'double' ? m.modelD : m.modelS;
-      var totalStroke = m.strokePerSide * 2;
+      var forceRange = m.forceMin === 0 ? '0~'+m.forceMax : m.forceMin+'~'+m.forceMax;
+      var commStr = m.comm.map(function(c){return c==='dio'?'디지털 I/O':'IO-Link'}).join(' / ');
       var tagMap = {ok:'<span class="tag-ok">✅ 적합</span>', warn:'<span class="tag-warn">⚠️ 검토</span>', bad:'<span class="tag-bad">❌ 부적합</span>'};
-      var rowSel = (S.picked !== null && S.picked === S.results.length) ? ' row-selected' : '';
+      var rowIdx = S.results.length;
+      var rowSel = (S.picked !== null && S.picked === rowIdx) ? ' row-selected' : '';
 
       S.results.push({
-        makerName: mk.country + ' ' + mk.name,
-        series: mk.series,
-        model: modelName,
-        bore: m.bore,
-        forceOuter: m.forceOuter,
-        forceInner: m.forceInner,
-        strokePerSide: m.strokePerSide,
-        totalStroke: totalStroke,
-        actuator: S.actuator === 'double' ? '복동' : '단동',
-        pRange: m.pMin + '~' + m.pMax,
+        makerName: mk.country+' '+mk.name,
+        series: m.series,
+        model: m.model,
+        forceRange: forceRange,
+        stroke: m.stroke,
+        comm: commStr,
+        robotLabel: robotCompatLabel(m),
         status: status,
         url: mk.url
       });
 
-      var i = S.results.length - 1;
-      rows += '<tr class="comparison-row'+rowSel+'" role="button" tabindex="0" onclick="pickModel('+i+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')pickModel('+i+')" aria-selected="'+(S.picked===i)+'">';
-      rows += '<td>'+mk.country+' '+mk.name+'<br><span style="font-size:11px;color:var(--text3)">'+mk.series+'</span></td>';
-      rows += '<td class="mono">'+modelName+'</td>';
-      rows += '<td class="mono">'+m.bore+'</td>';
-      rows += '<td class="mono">'+(S.gripDir==='outer'?'<b>'+m.forceOuter+'</b>':m.forceOuter)+'</td>';
-      rows += '<td class="mono">'+(S.gripDir==='inner'?'<b>'+m.forceInner+'</b>':m.forceInner)+'</td>';
-      rows += '<td class="mono">'+m.strokePerSide+' (총 '+totalStroke+')</td>';
-      rows += '<td>'+(S.actuator==='double'?'복동':'단동')+'</td>';
-      rows += '<td class="mono">'+m.pMin+'~'+m.pMax+'</td>';
+      rows += '<tr class="comparison-row'+rowSel+'" role="button" tabindex="0" onclick="pickModel('+rowIdx+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')pickModel('+rowIdx+')" aria-selected="'+(S.picked===rowIdx)+'">';
+      rows += '<td>'+mk.country+' '+mk.name+'<br><span style="font-size:11px;color:var(--text3)">'+m.series+'</span></td>';
+      rows += '<td class="mono">'+m.model+'</td>';
+      rows += '<td class="mono">'+forceRange+'</td>';
+      rows += '<td class="mono">'+m.stroke+'</td>';
+      rows += '<td>'+commStr+'</td>';
+      rows += '<td style="font-size:12px">'+robotCompatLabel(m)+'</td>';
       rows += '<td>'+tagMap[status]+'</td>';
       rows += '</tr>';
-      idx++;
     });
   });
 
   if (!rows) {
-    rows = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:var(--text2)">선택된 메이커가 없습니다.</td></tr>';
+    rows = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text2)">선택된 메이커가 없습니다.</td></tr>';
   }
 
   tbody.innerHTML = rows;
@@ -811,19 +824,15 @@ function pickModel(idx) {
   }
 
   var box = document.getElementById('summary-box');
-  var sumRows = document.getElementById('sum-rows');
   box.style.display = 'block';
-  var dirLabel = S.gripDir === 'outer' ? '외부 파지력' : '내부 파지력';
-  var fVal = S.gripDir === 'outer' ? r.forceOuter : r.forceInner;
-  sumRows.innerHTML =
+  document.getElementById('sum-rows').innerHTML =
     '<div class="sum-row"><span>메이커</span><span>'+r.makerName+'</span></div>'+
     '<div class="sum-row"><span>시리즈</span><span>'+r.series+'</span></div>'+
     '<div class="sum-row"><span>모델</span><span>'+r.model+'</span></div>'+
-    '<div class="sum-row"><span>보어</span><span>'+r.bore+' mm</span></div>'+
-    '<div class="sum-row"><span>'+dirLabel+'</span><span>'+fVal+' N</span></div>'+
-    '<div class="sum-row"><span>스트로크(편측)</span><span>'+r.strokePerSide+' mm</span></div>'+
-    '<div class="sum-row"><span>작동 방식</span><span>'+r.actuator+'</span></div>'+
-    '<div class="sum-row"><span>작동압력</span><span>'+r.pRange+' MPa</span></div>';
+    '<div class="sum-row"><span>파지력 범위</span><span>'+r.forceRange+' N</span></div>'+
+    '<div class="sum-row"><span>최대 스트로크</span><span>'+r.stroke+' mm</span></div>'+
+    '<div class="sum-row"><span>통신 방식</span><span>'+r.comm+'</span></div>'+
+    '<div class="sum-row"><span>로봇 호환성</span><span>'+r.robotLabel+'</span></div>';
 }
 
 /* ─── 계산 실행 ─── */
