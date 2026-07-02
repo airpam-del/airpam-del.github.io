@@ -789,6 +789,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <li>본 계산기의 모터 DB 및 계산 결과는 참고 목적으로 제공됩니다.</li>
   <li>실제 선정 시 미쯔비시·파나소닉·LS산전 공식 선정 소프트웨어 및 카탈로그를 반드시 확인하십시오.</li>
   <li>모터 관성·토크 값은 제조사 시리즈 대표값이며, 세부 모델에 따라 다를 수 있습니다.</li>
+  <li>데이터 최종 검증: 2026.07 (일부 항목 검증 진행 중)</li>
 </div>
 <footer>© 2025 PartsOn · 서보모터 선정 계산기 Beta v1.0</footer>
 
@@ -910,6 +911,7 @@ function goBack(step) { goStep(step - 1); }
 /* ───────────────────────────────────────────
    모터 DB  (inertia: kg·cm²  torques: N·m)
 ─────────────────────────────────────────── */
+// TODO: J(관성) 값 카탈로그 대조 미완 — 관성비 판정 결과는 참고용
 const MOTORS = [
   // 미쯔비시 HG-KR (저관성 — J-series 후속, 국내 주력)
   { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:6000 },
@@ -918,24 +920,26 @@ const MOTORS = [
   { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.230, nr:3000, nmax:6000 },
   { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.610, nr:3000, nmax:6000 },
   // 미쯔비시 HG-SR (중관성 — J-series 후속, 국내 주력)
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:1.59,  Tmax:4.78,  J:1.04,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:3.18,  Tmax:9.55,  J:2.30,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR152', power:1500, Tr:4.78,  Tmax:14.3,  J:4.40,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR202', power:2000, Tr:6.37,  Tmax:19.1,  J:6.00,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR352', power:3500, Tr:11.1,  Tmax:33.4,  J:14.0,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR502', power:5000, Tr:15.9,  Tmax:47.7,  J:22.0,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR702', power:7000, Tr:22.3,  Tmax:66.8,  J:40.0,  nr:2000, nmax:3000 },
+  // 2026-07 검증: 정격토크를 2000rpm 정격 기준으로 수정 (Tr=9.55×P/2000, Tmax=Tr×300%, 미쓰비시 공식 사양 확인)
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:2.39,  Tmax:7.16,  J:1.04,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:4.77,  Tmax:14.3,  J:2.30,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR152', power:1500, Tr:7.16,  Tmax:21.5,  J:4.40,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR202', power:2000, Tr:9.55,  Tmax:28.6,  J:6.00,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR352', power:3500, Tr:16.7,  Tmax:50.1,  J:14.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR502', power:5000, Tr:23.9,  Tmax:71.6,  J:22.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR702', power:7000, Tr:33.4,  Tmax:100.2, J:40.0,  nr:2000, nmax:3000 },
   // 파나소닉 MSMF (중관성)
   { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MSMF', model:'MSMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MSMF', model:'MSMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF102L1',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:2000, nmax:3000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF152L1',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:2000, nmax:3000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF202L1',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:2000, nmax:3000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF302L1',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:2000, nmax:3000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF502L1',  power:5000, Tr:15.9,  Tmax:47.7,  J:25.0,  nr:2000, nmax:3000 },
+  // 2026-07 검증: 1kW 이상 5개 모델 nr 2000→3000 수정 (Tr은 3000rpm 기준으로 정확)
+  { maker:'파나소닉', series:'MSMF', model:'MSMF102L1',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF152L1',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF202L1',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF302L1',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF502L1',  power:5000, Tr:15.9,  Tmax:47.7,  J:25.0,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
   // 파나소닉 MQMF (초저관성)
   { maker:'파나소닉', series:'MQMF', model:'MQMF012L1',  power:100,  Tr:0.318, Tmax:1.59,  J:0.015, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MQMF', model:'MQMF022L1',  power:200,  Tr:0.637, Tmax:2.07,  J:0.036, nr:3000, nmax:5000 },
@@ -952,6 +956,7 @@ const MOTORS = [
   { maker:'LS산전',  series:'APM',  model:'APM-SC02A',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
   { maker:'LS산전',  series:'APM',  model:'APM-SC04A',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
   { maker:'LS산전',  series:'APM',  model:'APM-SC07A',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
+  // TODO: 아래 4개 모델 Tr–nr 물리 불일치 (Tr은 3000rpm 기준값, nr은 2000으로 기재 — MSMF와 동일 패턴 의심). 카탈로그 확인 필요, 임의 수정 보류 (2026-07 검증에서 발견)
   { maker:'LS산전',  series:'APM',  model:'APM-SC10A',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:2000, nmax:3000 },
   { maker:'LS산전',  series:'APM',  model:'APM-SC15A',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:2000, nmax:3000 },
   { maker:'LS산전',  series:'APM',  model:'APM-SC20A',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:2000, nmax:3000 },

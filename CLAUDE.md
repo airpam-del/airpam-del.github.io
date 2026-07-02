@@ -248,6 +248,39 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 - OG 이미지: `make-og-image.html`로 `og-image.png` (1200×630) 생성
 - `prefers-reduced-motion` 접근성 지원
 
+### 2026-07-02 — 데이터 검증 발견 오류 수정 (서보모터·실린더·LM가이드)
+
+**servo_motor.html — 모터 DB 수정**
+- 미쓰비시 HG-SR 7개 모델 Tr/Tmax 교체: 3000rpm 기준 토크가 잘못 들어가 있던 것을 2000rpm 정격 기준으로 수정 (Tr=9.55×P/2000, Tmax=Tr×300%, 미쓰비시 공식 사양 확인)
+- 파나소닉 MSMF 1kW 이상 5개 모델(102L1/152L1/202L1/302L1/502L1) nr: 2000 → 3000 (Tr은 3000rpm 기준으로 정확했음)
+- 물리 일관성 전수 검증: 39개 모델 중 35개 통과 (|Tr − 9.55×P/nr| 오차 5% 이내)
+- **검증 FAIL 4건 (임의 수정 보류, TODO 주석만 추가)**: LS산전 APM-SC10A/SC15A/SC20A/SC30A — Tr은 3000rpm 기준값인데 nr:2000으로 기재 (오차 33%, MSMF와 동일 패턴 의심)
+
+**pneumatic-cylinder.html — 시리즈 매핑 리팩토링**
+- `MAKERS.series`를 타입별 단일 객체 → **보어 범위별 배열** 구조로 변경: `single/double: [{name, minD, maxD, pMin, pMax}, ...]` — 보어 D에 맞는 항목의 시리즈명 표시
+- SMC 복동: CM2B(Ø20~40) / CA2(Ø50~100) 분리 — 존재하지 않는 "CM2B Ø63" 표기 제거
+- SMC 단동: CM2(단동)(Ø20~40) / "CA2 계열(단동 사양 확인 필요)"(Ø50~100)
+- Festo ESNU maxD: 100 → 63 (ESNU 라인업은 Ø63까지)
+- `runCalc()`에 `S.makerNotes` 추가: 보어 라인업 없음/압력범위 밖으로 제외된 메이커·보어를 결과 요약 아래 info-box로 안내 (예: "Festo: Ø80, Ø100는 단동 라인업 없음 — 결과에서 제외")
+- Step 3 메이커 카드 문구 갱신 (CM2/CA2 보어 분리, ESNU 20~63mm)
+
+**lmguide.html — 추정값 투명성**
+- TBI·PMI C₀ 추정값 각주 추가: Simple/Advanced 결과 카드 note + 메이커별 C₁₀₀ 참고표 하단 ("※ TBI·PMI의 정정격하중(C₀)은 추정값입니다...")
+
+**공통 — 데이터 기준 표기**
+- 세 계산기 하단 면책 고지에 "데이터 최종 검증: 2026.07 (일부 항목 검증 진행 중)" 추가
+
+**회귀 테스트**: 세 계산기 5단계 위저드 전체 흐름 통과 (실린더 단동/복동 시나리오, 서보 볼스크류+직결, LM Simple/Advanced), 콘솔 에러 없음
+
+**남은 TODO (카탈로그 확인 필요 — 임의 수정 금지)**
+- [ ] servo_motor: MSMF 1kW 이상 5개 모델 nmax (현재 3000, 실제 4500~5000 가능성) — 각 행 주석
+- [ ] servo_motor: LS산전 APM-SC10A/15A/20A/30A Tr–nr 불일치 (검증 FAIL 4건) — DB 내 주석
+- [ ] servo_motor: 전 모델 J(관성) 값 카탈로그 대조 미완 — DB 상단 주석
+- [ ] pneumatic-cylinder: SMC 대구경(Ø50~) 단동 표준 시리즈명 미확정
+- [ ] pneumatic-cylinder: ESNU 압력범위 0.5~0.8MPa 의심 (단동 최소압 통상 0.15~0.25MPa)
+- [ ] pneumatic-cylinder: CKD SSD/SCA2 보어 라인업 Ø20~100 전체 커버 여부
+- [ ] lmguide: TBI·PMI C₀ 추정값의 실측 카탈로그 값 확보
+
 ## 수정 시 주의사항
 
 - **공급사 섹션 HTML ID 규칙**: `{prefix}-supplier-section`, `{prefix}-supplier-list`  
