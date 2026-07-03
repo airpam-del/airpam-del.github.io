@@ -333,6 +333,18 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 
 **회귀 테스트**: 3개 계산기 위저드 전체 흐름 + 하모닉 tr≤rp≤mp 무결성 전수 통과, 콘솔 에러 없음
 
+### 2026-07-03 (3차) — 하모닉: Leadshine 제거, Leaderdrive·Laifual 공표 정격표로 보강
+
+- **Leadshine(하모닉 미제조) 전체 삭제** → **Leaderdrive**(중국 1위) LCS(솔리드)·LHS(중공) 14종 추가
+  — leaderdrive.com 공표 정격표 기준, HDS와 동일한 tr/rp/mp 감속비별 테이블 구조
+- **Laifual** 근사값 전면 교체 → FSS(솔리드, 구 LSS)·FHT(중공, 구 LHT) 15종 — laifualdrive.com
+  공표 정격표 기준. 구 표기 "CSF/SHF"는 Laifual 실제 시리즈명이 아니었음
+- 두 메이커 모두 HDS CSF 호환 사양 체계(공표값이 CSF 정격표와 일치) — 교차 검증 완료
+- 특이사항: Leaderdrive LCS/LHS-50 감속비 50 정격 122 N·m은 메이커 페이지 기재값 그대로
+  (HDS 동급 245 대비 낮음, 오기 의심되나 보수적이라 유지 — 카탈로그 PDF 재확인 TODO)
+- 호환 메이커 prec 1.5·eff·l10 7000은 보수 추정(TODO). S.makers 키 leadshine→leaderdrive,
+  메이커 카드/가이드/메타/링크(leaderdrive.com) 일괄 교체. 45개 모델 무결성(tr≤rp≤mp) 전수 통과
+
 **남은 TODO (카탈로그 확인 필요 — 임의 수정 금지)**
 - [ ] servo_motor: MSMF 1kW 이상 5개 모델 nmax (현재 3000, 실제 4500~5000 가능성) — 각 행 주석
 - [ ] servo_motor: LS산전 APM-SC10A/15A/20A/30A Tr–nr 불일치 (검증 FAIL 4건) — DB 내 주석
@@ -345,8 +357,8 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 - [ ] pneumatic-gripper: Festo HGPT 32/40 파지력(변형 G1/G2별 상이)·전 사이즈 strokePerSide·단동 표기 검증
 - [ ] pneumatic-fitting: CKD 튜빙 TAS/TAN 실존 미확인 — U-95/NU 계열 확인 후 교체
 - [ ] electric-gripper: Co-act EGP-C (대형) 파지력 40~230N·EGP 시리즈 IO-Link 지원 여부 검증
-- [ ] harmonic-drive: Leadshine → Leaderdrive 교체 여부 사용자 결정 필요, Laifual 수치 카탈로그 대조,
-      CSF-8/11 최대입력rpm 확인
+- [ ] harmonic-drive: Leaderdrive LCS/LHS-50-50 정격 122 N·m 재확인(메이커 페이지 기재값, 오기 의심),
+      호환 메이커(LD·LF) 정밀도·효율·수명 카탈로그 명시값 확보, CSF-8/11 최대입력rpm 확인
 - [ ] solenoid-valve: CKD "3F" 실존 미확인 — 실제 3포트 시리즈(3GA/3GB 등) 선정 후 재작성,
       4F2 C값·CPE 대표 품번 유량 확정
 - [ ] pneumatic-fr-unit: CKD W시리즈·SMC AW·Festo LFR·AFM40 정격유량 카탈로그 대조

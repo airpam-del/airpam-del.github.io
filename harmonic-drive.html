@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>하모닉 드라이브 선정 계산기 — PartsOn</title>
-<meta name="description" content="하모닉 드라이브(Harmonic Drive) 선정 계산기. HDS·Leadshine·Laifual 3사 비교. 래칫팅 경고·수명·효율 자동 계산.">
+<meta name="description" content="하모닉 드라이브(Harmonic Drive) 선정 계산기. HDS·Leaderdrive·Laifual 3사 비교. 래칫팅 경고·수명·효율 자동 계산.">
 <meta property="og:title" content="하모닉 드라이브 선정 계산기 — PartsOn">
 <meta property="og:image" content="https://partson.co.kr/og-image.png">
 <meta property="og:url" content="https://partson.co.kr/harmonic-drive.html">
@@ -264,7 +264,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="hdr-icon">⚙️</div>
     <div>
       <h1>하모닉 드라이브 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
-      <p>HDS · Leadshine · Laifual 3사 비교 — 래칫팅 경고 · 플렉스플라인 수명 · 효율 자동 계산</p>
+      <p>HDS · Leaderdrive · Laifual 3사 비교 — 래칫팅 경고 · 플렉스플라인 수명 · 효율 자동 계산</p>
     </div>
   </div>
 </header>
@@ -290,7 +290,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="guide-step-list">
         <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">조건 입력</b> — 연속 부하 토크·피크 토크·입력 rpm·감속비·요구 수명을 입력합니다.</div></div>
         <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">샤프트 타입</b> — 솔리드(CSF) 또는 중공(SHF) 타입을 선택합니다. 로봇 관절은 중공 필수.</div></div>
-        <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — HDS(오리지널) / Leadshine(호환) 비교할 메이커를 선택합니다.</div></div>
+        <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — HDS(오리지널) / Leaderdrive·Laifual(호환) 비교할 메이커를 선택합니다.</div></div>
         <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 적합 모델과 래칫팅 위험 경고를 확인합니다. 효율 80% 미만 시 주의 배지.</div></div>
         <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교·선정</b> — 테이블에서 모델을 비교하고 선택하면 선정 요약이 출력됩니다.</div></div>
       </div>
@@ -300,7 +300,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <!-- 면책 배너 -->
   <div class="disclaimer-banner">
     <div class="disclaimer-banner-icon">⚠️</div>
-    <div><b>면책 고지:</b> 이 계산기는 초기 선정 참고용입니다. 수명·효율은 카탈로그 기준 추정값이며 실제 운전 환경에 따라 달라질 수 있습니다. <b>최종 선정은 반드시 메이커 카탈로그 및 기술 담당자를 통해 확인하세요.</b><br>데이터 최종 검증: 2026.07 — HDS(CSF·SHF)는 공식 정격표 대조 완료, Leadshine·Laifual은 검증 진행 중(근사값)</div>
+    <div><b>면책 고지:</b> 이 계산기는 초기 선정 참고용입니다. 수명·효율은 카탈로그 기준 추정값이며 실제 운전 환경에 따라 달라질 수 있습니다. <b>최종 선정은 반드시 메이커 카탈로그 및 기술 담당자를 통해 확인하세요.</b><br>데이터 최종 검증: 2026.07 — HDS(CSF·SHF)·Leaderdrive(LCS·LHS)·Laifual(FSS·FHT) 3사 공식 정격표 대조 완료 (호환 메이커의 정밀도·효율·수명은 보수 추정)</div>
   </div>
 
   <!-- ══ Step 1 ══ -->
@@ -454,11 +454,11 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="choice-grid">
       <div class="choice-card" id="shaft-solid" onclick="selShaft('solid',this)">
         <div class="choice-title">솔리드 샤프트 (CSF 시리즈)</div>
-        <div class="choice-sub">컵형 · 컴팩트 설계 · 감속비 30 지원 · Leadshine HS 포함</div>
+        <div class="choice-sub">컵형 · 컴팩트 설계 · 감속비 30 지원 · HDS CSF / Leaderdrive LCS / Laifual FSS</div>
       </div>
       <div class="choice-card" id="shaft-hollow" onclick="selShaft('hollow',this)">
         <div class="choice-title">중공 샤프트 (SHF 시리즈)</div>
-        <div class="choice-sub">실크햇형 · 배선 내통 가능 · 로봇 관절 · HDS 전용</div>
+        <div class="choice-sub">실크햇형 · 배선 내통 가능 · 로봇 관절 · HDS SHF / Leaderdrive LHS / Laifual FHT</div>
       </div>
     </div>
 
@@ -466,7 +466,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="choice-grid">
       <div class="choice-card" id="prec-std" onclick="selPrecision(1.5,this)">
         <div class="choice-title">표준 정밀도 (≤1.5 arcmin)</div>
-        <div class="choice-sub">일반 위치결정 · FA 자동화 · HDS + Leadshine 모두 포함</div>
+        <div class="choice-sub">일반 위치결정 · FA 자동화 · HDS + Leaderdrive·Laifual 모두 포함</div>
       </div>
       <div class="choice-card" id="prec-high" onclick="selPrecision(1.0,this)">
         <div class="choice-title">HDS 정밀 (≤1 arcmin)</div>
@@ -484,7 +484,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="step-wrap card" id="step-3">
     <div class="section-label">Step 3</div>
     <div class="question">비교할 메이커 선택</div>
-    <div class="question-desc">HDS는 오리지널 브랜드, Leadshine는 가격 경쟁력 있는 호환 제품입니다.</div>
+    <div class="question-desc">HDS는 오리지널 브랜드, Leaderdrive·Laifual은 가격 경쟁력 있는 호환 제품입니다.</div>
 
     <div class="check-group">
       <label class="check-item sel" id="ci-hds" onclick="toggleMaker('hds',this)">
@@ -494,18 +494,18 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <div class="ci-sub">일본 오리지널 브랜드 · 최고 정밀도 ≤1 arcmin · CSF/SHF 시리즈 · 프리미엄 가격</div>
         </div>
       </label>
-      <label class="check-item sel" id="ci-leadshine" onclick="toggleMaker('leadshine',this)">
-        <input type="checkbox" id="chk-leadshine" checked onclick="event.stopPropagation();toggleMaker('leadshine',document.getElementById('ci-leadshine'))">
+      <label class="check-item sel" id="ci-leaderdrive" onclick="toggleMaker('leaderdrive',this)">
+        <input type="checkbox" id="chk-leaderdrive" checked onclick="event.stopPropagation();toggleMaker('leaderdrive',document.getElementById('ci-leaderdrive'))">
         <div>
-          <div class="ci-title">Leadshine <span style="font-size:10px;background:#FFF3E0;color:#8B4A00;border-radius:3px;padding:1px 5px;font-weight:600">호환</span></div>
-          <div class="ci-sub">중국 FA 자동화 특화 · 정밀도 ≤1.5 arcmin · HS 시리즈 · 솔리드 샤프트만 · 가격 경쟁력</div>
+          <div class="ci-title">Leaderdrive <span style="font-size:10px;background:#FFF3E0;color:#8B4A00;border-radius:3px;padding:1px 5px;font-weight:600">호환</span></div>
+          <div class="ci-sub">중국 1위 하모닉 메이커 · LCS(솔리드)/LHS(중공) · 공표 정격표 반영 · 가격 경쟁력</div>
         </div>
       </label>
       <label class="check-item sel" id="ci-laifual" onclick="toggleMaker('laifual',this)">
         <input type="checkbox" id="chk-laifual" checked onclick="event.stopPropagation();toggleMaker('laifual',document.getElementById('ci-laifual'))">
         <div>
           <div class="ci-title">Laifual Drive <span style="font-size:10px;background:#FFF3E0;color:#8B4A00;border-radius:3px;padding:1px 5px;font-weight:600">호환</span></div>
-          <div class="ci-sub">중국 정밀 감속기 · 정밀도 ≤1.0 arcmin · CSF/SHF 양쪽 지원 · HDS 대비 원가 경쟁력</div>
+          <div class="ci-sub">중국 2위 하모닉 메이커 · FSS(솔리드)/FHT(중공) · 공표 정격표 반영 · 원가 경쟁력</div>
         </div>
       </label>
     </div>
@@ -617,32 +617,105 @@ const HD_MODELS = [
   {mk:'HDS',mn:'Harmonic Drive Systems',sr:'SHF',sz:50,sh:'hollow',rr:[50,80,100,120,160],
    tr:{50:245,80:372,100:470,120:529,160:529}, rp:{50:715,80:941,100:980,120:1080,160:1180}, mp:{50:1430,80:1860,100:2060,120:2060,160:2450},
    mrpm:3500,prec:1.0,eff:85,l10:7000,brand:'original'},
-  /* TODO(중요): "Leadshine"은 하모닉 감속기 제조사가 아님 (2026-07 확인 — 모션컨트롤 메이커,
-     하모닉은 타사 조달). 실제 중국 메이커는 Leaderdrive(1위)·Laifual(2위) — 메이커 교체 여부 사용자 확인 필요.
-     아래 수치도 구 HDS 근사값 미러라 부풀려져 있을 가능성 높음. 임의 교체 보류. */
-  // Leadshine HS (솔리드 샤프트)
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:14,sh:'solid', rr:[50,80,100,120,160],trMin:16,  trMax:30,  mrpm:6500,prec:1.5,eff:78,brand:'compatible'},
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:17,sh:'solid', rr:[50,80,100,120,160],trMin:28,  trMax:50,  mrpm:5600,prec:1.5,eff:79,brand:'compatible'},
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:20,sh:'solid', rr:[50,80,100,120,160],trMin:42,  trMax:78,  mrpm:4800,prec:1.5,eff:80,brand:'compatible'},
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:25,sh:'solid', rr:[50,80,100,120,160],trMin:85,  trMax:155, mrpm:3500,prec:1.5,eff:81,brand:'compatible'},
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:32,sh:'solid', rr:[50,80,100,120,160],trMin:160, trMax:290, mrpm:2800,prec:1.5,eff:82,brand:'compatible'},
-  {mk:'LS', mn:'Leadshine',             sr:'HS', sz:40,sh:'solid', rr:[50,80,100,120,160],trMin:270, trMax:510, mrpm:2200,prec:1.5,eff:83,brand:'compatible'},
-  /* TODO: Laifual은 실존 메이커(중국 2위) 확인됨. 단 아래 수치는 구 HDS 근사값 미러 — 카탈로그 대조 필요 */
-  // Laifual CSF (솔리드 샤프트, 컵형)
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:14,sh:'solid', rr:[50,80,100,120,160],trMin:17,  trMax:30,  mrpm:6500,prec:1.0,eff:79,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:17,sh:'solid', rr:[30,50,80,100,120,160],trMin:28, trMax:52, mrpm:5600,prec:1.0,eff:80,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:20,sh:'solid', rr:[30,50,80,100,120,160],trMin:42, trMax:80, mrpm:4800,prec:1.0,eff:81,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:25,sh:'solid', rr:[30,50,80,100,120,160],trMin:88, trMax:158,mrpm:3500,prec:1.0,eff:82,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:32,sh:'solid', rr:[30,50,80,100,120,160],trMin:165,trMax:295,mrpm:2800,prec:1.0,eff:82,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:40,sh:'solid', rr:[30,50,80,100,120,160],trMin:280,trMax:520,mrpm:2200,prec:1.0,eff:83,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'CSF',sz:50,sh:'solid', rr:[50,80,100,120],       trMin:480,trMax:710,mrpm:1700,prec:1.0,eff:84,brand:'compatible'},
-  // Laifual SHF (중공 샤프트, 실크햇형)
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:14,sh:'hollow',rr:[50,80,100,120,160],trMin:17,  trMax:27,  mrpm:6500,prec:1.0,eff:79,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:17,sh:'hollow',rr:[50,80,100,120,160],trMin:29,  trMax:45,  mrpm:5600,prec:1.0,eff:80,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:20,sh:'hollow',rr:[50,80,100,120,160],trMin:48,  trMax:70,  mrpm:4800,prec:1.0,eff:81,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:25,sh:'hollow',rr:[50,80,100,120,160],trMin:100, trMax:140, mrpm:3500,prec:1.0,eff:82,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:32,sh:'hollow',rr:[50,80,100,120,160],trMin:195, trMax:275, mrpm:2800,prec:1.0,eff:83,brand:'compatible'},
-  {mk:'LF', mn:'Laifual Drive',         sr:'SHF',sz:40,sh:'hollow',rr:[50,80,100,120,160],trMin:330, trMax:485, mrpm:2200,prec:1.0,eff:84,brand:'compatible'},
+  /* Leaderdrive(綠的, 중국 1위) — 2026-07 leaderdrive.com 공표 정격표 기준 (Leadshine 대체).
+     LCS=표준 컵형(솔리드), LHS=표준 실크햇형(중공). HDS CSF 호환 사양 체계.
+     주의: LCS/LHS-50 감속비 50의 정격 122 N·m은 메이커 페이지 기재값 그대로 (HDS 동급 245 대비
+     낮음 — 오기 가능성 있으나 보수적 방향이라 기재값 유지, 카탈로그 PDF 재확인 TODO).
+     prec(히스테리시스)·eff·수명은 카탈로그 명시값 미확인 — 보수 추정(TODO) */
+  // Leaderdrive LCS (솔리드 샤프트, 컵형)
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:14,sh:'solid', rr:[30,50,80,100],
+   tr:{30:4,50:5.4,80:7.8,100:7.8}, rp:{30:9,50:18,80:23,100:28}, mp:{30:17,50:35,80:47,100:54},
+   mrpm:8500,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:17,sh:'solid', rr:[30,50,80,100,120],
+   tr:{30:8.8,50:16,80:22,100:24,120:24}, rp:{30:16,50:34,80:43,100:54,120:54}, mp:{30:30,50:70,80:87,100:108,120:86},
+   mrpm:7300,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:20,sh:'solid', rr:[30,50,80,100,120,160],
+   tr:{30:15,50:25,80:34,100:40,120:40,160:40}, rp:{30:26,50:56,80:74,100:82,120:87,160:92}, mp:{30:50,50:98,80:127,100:147,120:147,160:147},
+   mrpm:6500,prec:1.5,eff:81,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:25,sh:'solid', rr:[30,50,80,100,120,160],
+   tr:{30:27,50:39,80:63,100:67,120:67,160:67}, rp:{30:50,50:98,80:137,100:157,120:167,160:176}, mp:{30:95,50:186,80:255,100:284,120:304,160:314},
+   mrpm:5600,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:32,sh:'solid', rr:[30,50,80,100,120,160],
+   tr:{30:54,50:76,80:118,100:137,120:137,160:137}, rp:{30:100,50:216,80:304,100:333,120:353,160:372}, mp:{30:200,50:382,80:568,100:647,120:686,160:686},
+   mrpm:4800,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:40,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:137,80:206,100:265,120:294,160:294}, rp:{50:402,80:519,100:568,120:617,160:647}, mp:{50:686,80:980,100:1080,120:1180,160:1180},
+   mrpm:4000,prec:1.5,eff:83,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LCS',sz:50,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:122,80:372,100:470,120:529,160:529}, rp:{50:715,80:941,100:980,120:1080,160:1180}, mp:{50:1430,80:1860,100:2060,120:2060,160:2450},
+   mrpm:3500,prec:1.5,eff:83,l10:7000,brand:'compatible'},
+  // Leaderdrive LHS (중공 샤프트, 실크햇형) — 일부 셀은 LCS(컵형)와 교차 검증해 보수값 채택
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:14,sh:'hollow',rr:[30,50,80,100],
+   tr:{30:4,50:5.4,80:7.8,100:7.8}, rp:{30:9,50:18,80:23,100:28}, mp:{30:17,50:35,80:47,100:54},
+   mrpm:8500,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:17,sh:'hollow',rr:[30,50,80,100,120],
+   tr:{30:8.8,50:16,80:22,100:24,120:24}, rp:{30:16,50:34,80:43,100:54,120:54}, mp:{30:30,50:70,80:87,100:108,120:86},
+   mrpm:7300,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:20,sh:'hollow',rr:[30,50,80,100,120,160],
+   tr:{30:15,50:25,80:34,100:40,120:40,160:40}, rp:{30:27,50:56,80:74,100:82,120:87,160:92}, mp:{30:50,50:98,80:127,100:147,120:147,160:147},
+   mrpm:6500,prec:1.5,eff:81,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:25,sh:'hollow',rr:[30,50,80,100,120,160],
+   tr:{30:27,50:39,80:63,100:67,120:67,160:67}, rp:{30:50,50:98,80:137,100:157,120:167,160:176}, mp:{30:95,50:186,80:255,100:284,120:304,160:314},
+   mrpm:5600,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:32,sh:'hollow',rr:[30,50,80,100,120,160],
+   tr:{30:54,50:76,80:118,100:137,120:137,160:137}, rp:{30:100,50:216,80:304,100:333,120:353,160:372}, mp:{30:200,50:382,80:568,100:647,120:686,160:686},
+   mrpm:4800,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:40,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:137,80:206,100:265,120:294,160:294}, rp:{50:402,80:519,100:568,120:617,160:647}, mp:{50:686,80:980,100:1080,120:1180,160:1180},
+   mrpm:4000,prec:1.5,eff:83,l10:7000,brand:'compatible'},
+  {mk:'LD', mn:'Leaderdrive',           sr:'LHS',sz:50,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:122,80:372,100:470,120:529,160:529}, rp:{50:715,80:941,100:980,120:1080,160:1180}, mp:{50:1430,80:1860,100:2060,120:2060,160:2450},
+   mrpm:3500,prec:1.5,eff:83,l10:7000,brand:'compatible'},
+  /* Laifual(来福, 중국 2위) — 2026-07 laifualdrive.com 공표 정격표 기준 (구 근사값 전면 교체).
+     FSS=표준 컵형 솔리드(구 LSS), FHT=중공 실크햇형(구 LHT). HDS CSF 호환 사양 체계.
+     prec·eff·수명은 카탈로그 명시값 미확인 — 보수 추정(TODO) */
+  // Laifual FSS (솔리드 샤프트, 컵형)
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:8, sh:'solid', rr:[50,100],
+   tr:{50:1.8,100:2.4}, rp:{50:3.3,100:4.8}, mp:{50:6.6,100:9},
+   mrpm:8500,prec:1.5,eff:78,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:11,sh:'solid', rr:[50,100],
+   tr:{50:3.5,100:5}, rp:{50:8.3,100:11}, mp:{50:17,100:25},
+   mrpm:8500,prec:1.5,eff:79,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:14,sh:'solid', rr:[50,80,100],
+   tr:{50:5.4,80:7.8,100:7.8}, rp:{50:18,80:23,100:28}, mp:{50:35,80:47,100:54},
+   mrpm:8500,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:17,sh:'solid', rr:[50,80,100,120],
+   tr:{50:16,80:22,100:24,120:24}, rp:{50:34,80:43,100:54,120:54}, mp:{50:70,80:87,100:108,120:86},
+   mrpm:7300,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:20,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:25,80:34,100:40,120:40,160:40}, rp:{50:56,80:74,100:82,120:87,160:92}, mp:{50:98,80:127,100:147,120:147,160:147},
+   mrpm:6500,prec:1.5,eff:81,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:25,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:39,80:63,100:67,120:67,160:67}, rp:{50:98,80:137,100:157,120:167,160:176}, mp:{50:186,80:255,100:284,120:304,160:314},
+   mrpm:5600,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:32,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:76,80:118,100:137,120:137,160:137}, rp:{50:216,80:304,100:333,120:353,160:372}, mp:{50:382,80:568,100:647,120:686,160:686},
+   mrpm:4800,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FSS',sz:40,sh:'solid', rr:[50,80,100,120,160],
+   tr:{50:137,80:206,100:265,120:294,160:294}, rp:{50:402,80:519,100:568,120:617,160:647}, mp:{50:686,80:980,100:1080,120:1180,160:1180},
+   mrpm:4000,prec:1.5,eff:83,l10:7000,brand:'compatible'},
+  // Laifual FHT (중공 샤프트, 실크햇형)
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:11,sh:'hollow',rr:[50],
+   tr:{50:3.5}, rp:{50:8.3}, mp:{50:17},
+   mrpm:8500,prec:1.5,eff:79,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:14,sh:'hollow',rr:[50,80,100],
+   tr:{50:5.4,80:7.8,100:7.8}, rp:{50:18,80:23,100:28}, mp:{50:35,80:47,100:54},
+   mrpm:8500,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:17,sh:'hollow',rr:[50,80,100,120],
+   tr:{50:16,80:22,100:24,120:24}, rp:{50:34,80:43,100:54,120:54}, mp:{50:70,80:87,100:108,120:86},
+   mrpm:7300,prec:1.5,eff:80,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:20,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:25,80:34,100:40,120:40,160:40}, rp:{50:56,80:74,100:82,120:87,160:92}, mp:{50:98,80:127,100:147,120:147,160:147},
+   mrpm:6500,prec:1.5,eff:81,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:25,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:39,80:63,100:67,120:67,160:67}, rp:{50:98,80:137,100:157,120:167,160:176}, mp:{50:186,80:255,100:284,120:304,160:314},
+   mrpm:5600,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:32,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:76,80:118,100:137,120:137,160:137}, rp:{50:216,80:304,100:333,120:353,160:372}, mp:{50:382,80:568,100:647,120:686,160:686},
+   mrpm:4800,prec:1.5,eff:82,l10:7000,brand:'compatible'},
+  {mk:'LF', mn:'Laifual Drive',         sr:'FHT',sz:40,sh:'hollow',rr:[50,80,100,120,160],
+   tr:{50:137,80:206,100:265,120:294,160:294}, rp:{50:402,80:519,100:568,120:617,160:647}, mp:{50:686,80:980,100:1080,120:1180,160:1180},
+   mrpm:4000,prec:1.5,eff:83,l10:7000,brand:'compatible'},
 ];
 
 /* 감속비 기준 정격 토크 — HDS는 카탈로그 실측 테이블(tr), 그 외는 레거시 선형 보간(근사) */
@@ -659,7 +732,7 @@ function getRatedTorque(m, ratio) {
 let S = {
   step:1, tCont:null, tPeak:null, nInput:null, ratio:null, lh:null,
   shaft:null, precision:null,
-  makers:{hds:true, leadshine:true, laifual:true},
+  makers:{hds:true, leaderdrive:true, laifual:true},
   results:[], picked:null
 };
 
@@ -776,11 +849,11 @@ function toggleMaker(key, el) {
 
 /* ══ 계산 ══ */
 function runCalcAndGo() {
-  if (!S.makers.hds && !S.makers.leadshine) { alert('최소 한 개 메이커를 선택하세요.'); return; }
+  if (!S.makers.hds && !S.makers.leaderdrive && !S.makers.laifual) { alert('최소 한 개 메이커를 선택하세요.'); return; }
   S.results = [];
   HD_MODELS.forEach(m => {
     if (m.mk === 'HDS' && !S.makers.hds) return;
-    if (m.mk === 'LS'  && !S.makers.leadshine) return;
+    if (m.mk === 'LD'  && !S.makers.leaderdrive) return;
     if (m.mk === 'LF'  && !S.makers.laifual) return;
     if (S.shaft === 'solid'  && m.sh !== 'solid')  return;
     if (S.shaft === 'hollow' && m.sh !== 'hollow') return;
@@ -905,7 +978,7 @@ function pickModel(i) {
   document.getElementById('sum-rows').innerHTML = `
     <div class="sum-row"><span>메이커</span><span>${m.mn}</span></div>
     <div class="sum-row"><span>시리즈 / 모델</span><span>${m.sr}-${m.sz}</span></div>
-    <div class="sum-row"><span>샤프트 타입</span><span>${m.sh === 'hollow' ? '중공(SHF)' : '솔리드(CSF)'}</span></div>
+    <div class="sum-row"><span>샤프트 타입</span><span>${m.sh === 'hollow' ? '중공' : '솔리드'} (${m.sr})</span></div>
     <div class="sum-row"><span>감속비</span><span>${S.ratio}</span></div>
     <div class="sum-row"><span>정격 연속 토크</span><span>${r.ratedTorque} N·m</span></div>
     <div class="sum-row"><span>순간 최대 허용 토크</span><span>${r.peakTorque} N·m</span></div>
@@ -915,7 +988,7 @@ function pickModel(i) {
     <div class="sum-row"><span>브랜드</span><span>${m.brand === 'original' ? 'HDS 오리지널' : m.mn + ' 호환'}</span></div>`;
   document.getElementById('maker-links').innerHTML = `
     <a class="maker-link" href="https://www.harmonicdrive.net" target="_blank">🔗 HDS 공식 사이트</a>
-    <a class="maker-link" href="https://www.leadshine.com" target="_blank">🔗 Leadshine 공식 사이트</a>
+    <a class="maker-link" href="https://www.leaderdrive.com" target="_blank">🔗 Leaderdrive 공식 사이트</a>
     <a class="maker-link" href="https://www.laifualdrive.com" target="_blank">🔗 Laifual 공식 사이트</a>`;
   box.scrollIntoView({behavior:'smooth'});
 }
