@@ -549,7 +549,8 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <div class="disclaimer">
       이 계산기는 공압 그리퍼 초기 선정 참고용입니다. 권장 파지력은 단순 들어올리는 힘이 아니라 미끄러짐 방지를 위한 여유값입니다. 정밀한 파지력 검토(긴 손가락, 무게중심 오프셋 등)는 메이커 기술 자료를 참고하세요.<br>
-      단동 모델의 파지력은 복동 대비 약 60~70% 수준이므로 메이커 카탈로그를 반드시 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b>
+      단동 모델의 파지력은 복동 대비 약 60~70% 수준이므로 메이커 카탈로그를 반드시 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b><br>
+      데이터 최종 검증: 2026.07 — SMC MHZ2는 카탈로그 대조 완료, Festo·CKD는 일부 항목 검증 진행 중
     </div>
 
     <div class="btn-nav">
@@ -566,26 +567,34 @@ var MAKERS = {
     name:'SMC', country:'🇯🇵', series:'MHZ2 시리즈',
     url:'https://www.smcworld.com',
     models:[
-      {bore:10, modelD:'MHZ2-10D', modelS:'MHZ2-10S', forceOuter:34,  forceInner:22,  strokePerSide:2, pMin:0.15, pMax:0.7},
-      {bore:16, modelD:'MHZ2-16D', modelS:'MHZ2-16S', forceOuter:64,  forceInner:50,  strokePerSide:3, pMin:0.15, pMax:0.7},
-      {bore:20, modelD:'MHZ2-20D', modelS:'MHZ2-20S', forceOuter:90,  forceInner:70,  strokePerSide:4, pMin:0.1,  pMax:0.7},
-      {bore:25, modelD:'MHZ2-25D', modelS:'MHZ2-25S', forceOuter:65,  forceInner:104, strokePerSide:7, pMin:0.1,  pMax:0.7},
-      {bore:32, modelD:'MHZ2-32D', modelS:'MHZ2-32S', forceOuter:165, forceInner:215, strokePerSide:8, pMin:0.1,  pMax:0.7},
-      {bore:40, modelD:'MHZ2-40D', modelS:'MHZ2-40S', forceOuter:255, forceInner:330, strokePerSide:8, pMin:0.1,  pMax:0.7}
+      /* SMC 카탈로그 유효 파지력(0.5MPa, 파지점 L=20mm, 손가락당) — 2026-07 카탈로그 검증 완료.
+         MHZ2는 전 보어에서 외부(닫힘) < 내부(열림) 파지력이 정상 (피스톤 수압 면적 차이) */
+      {bore:10, modelD:'MHZ2-10D', modelS:'MHZ2-10S', forceOuter:11,  forceInner:17,  strokePerSide:2,  pMin:0.15, pMax:0.7},
+      {bore:16, modelD:'MHZ2-16D', modelS:'MHZ2-16S', forceOuter:34,  forceInner:45,  strokePerSide:3,  pMin:0.15, pMax:0.7},
+      {bore:20, modelD:'MHZ2-20D', modelS:'MHZ2-20S', forceOuter:42,  forceInner:66,  strokePerSide:5,  pMin:0.1,  pMax:0.7},
+      {bore:25, modelD:'MHZ2-25D', modelS:'MHZ2-25S', forceOuter:65,  forceInner:104, strokePerSide:7,  pMin:0.1,  pMax:0.7},
+      {bore:32, modelD:'MHZ2-32D', modelS:'MHZ2-32S', forceOuter:158, forceInner:193, strokePerSide:11, pMin:0.1,  pMax:0.7},
+      {bore:40, modelD:'MHZ2-40D', modelS:'MHZ2-40S', forceOuter:254, forceInner:318, strokePerSide:15, pMin:0.1,  pMax:0.7}
     ]
   },
   festo: {
     name:'Festo', country:'🇩🇪', series:'HGPT 시리즈',
     url:'https://www.festo.com',
     models:[
-      {bore:16, modelD:'HGPT-16', modelS:'HGPT-16-A', forceOuter:60,  forceInner:48,  strokePerSide:3, pMin:0.2,  pMax:0.8},
-      {bore:20, modelD:'HGPT-20', modelS:'HGPT-20-A', forceOuter:85,  forceInner:68,  strokePerSide:4, pMin:0.2,  pMax:0.8},
-      {bore:25, modelD:'HGPT-25', modelS:'HGPT-25-A', forceOuter:95,  forceInner:100, strokePerSide:6, pMin:0.15, pMax:0.8},
+      /* Festo HGPT-A 카탈로그 파지력(6bar, 조당) — 16/20/25는 2026-07 데이터시트 검증.
+         외부(닫힘) < 내부(열림)이 정상. TODO: 32/40은 변형(G1/G2)별 값 상이 — 카탈로그 확인 필요.
+         TODO: strokePerSide·단동(modelS) 표기 미검증 */
+      {bore:16, modelD:'HGPT-16', modelS:'HGPT-16-A', forceOuter:53,  forceInner:60,  strokePerSide:3, pMin:0.2,  pMax:0.8},
+      {bore:20, modelD:'HGPT-20', modelS:'HGPT-20-A', forceOuter:77,  forceInner:82,  strokePerSide:4, pMin:0.2,  pMax:0.8},
+      {bore:25, modelD:'HGPT-25', modelS:'HGPT-25-A', forceOuter:124, forceInner:133, strokePerSide:6, pMin:0.15, pMax:0.8},
       {bore:32, modelD:'HGPT-32', modelS:'HGPT-32-A', forceOuter:160, forceInner:200, strokePerSide:8, pMin:0.15, pMax:0.8},
       {bore:40, modelD:'HGPT-40', modelS:'HGPT-40-A', forceOuter:250, forceInner:320, strokePerSide:8, pMin:0.15, pMax:0.8}
     ]
   },
   ckd: {
+    /* TODO(중요): CKD "HGW" 평행 그리퍼 시리즈는 실존 확인 실패 (2026-07 검색 — CKD 실제
+       평행핸드는 HMF·LHA·HAP·BHA 계열). 아래 데이터 전체가 SMC 미러 근사값이므로
+       실제 시리즈 선정 후 카탈로그 기준으로 재작성 필요. 사용자 확인 전 임의 교체 보류. */
     name:'CKD', country:'🇯🇵', series:'HGW 시리즈',
     url:'https://www.ckd.co.jp',
     models:[

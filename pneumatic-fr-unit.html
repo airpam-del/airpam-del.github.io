@@ -642,7 +642,7 @@ function renderStepsBar(cur) {
     var click = i < cur ? 'onclick="goStep('+i+')"' : '';
     h += '<div class="step-item '+state+'">'
       + '<div class="step-circle '+state+'" '+click+'>'+(i < cur ? '✓' : i)+'</div>'
-      + '<span class="step-label"><i class="ti "+STEP_ICONS[i-1]+'" aria-hidden="true"></i>'+STEP_LABELS[i-1]+'</span>'
+      + '<span class="step-label"><i class="ti '+STEP_ICONS[i-1]+'" aria-hidden="true"></i>'+STEP_LABELS[i-1]+'</span>'
       + '</div>';
     if (i < 5) h += '<div class="step-line '+(i<cur?'done':'')+'"></div>';
   }

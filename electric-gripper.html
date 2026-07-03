@@ -402,7 +402,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <div class="input-group">
       <label><i class="ti ti-robot" aria-hidden="true"></i>사용 로봇 브랜드
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">협동로봇 브랜드에 따라 Quick Changer 어댑터 호환 여부가 다릅니다.<br><br><b>Universal Robots:</b> OnRobot RG 시리즈와 네이티브 호환 (Quick Changer 내장)<br><b>Doosan:</b> Schunk Co-act EGP-C 인증 호환<br><b>기타:</b> 범용 어댑터가 필요할 수 있습니다.</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">협동로봇 브랜드에 따라 Quick Changer 어댑터 호환 여부가 다릅니다.<br><br><b>Universal Robots:</b> OnRobot RG 시리즈 네이티브 호환 (Quick Changer 내장), Schunk Co-act EGP-C UR 변형 제공<br><b>Doosan·FANUC CR·Mitsubishi ASSISTA:</b> Schunk Co-act EGP-C 전용 변형 제공<br><b>기타:</b> 범용 어댑터가 필요할 수 있습니다.</div></span>
       </label>
       <div class="input-wrap">
         <select id="inp-robot">
@@ -526,7 +526,8 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
     <div class="disclaimer">
       이 계산기는 전동 그리퍼 초기 선정 참고용입니다. 전동 그리퍼는 복잡한 수식 계산이 아닌 사용 조건에 맞는 완제품(EoAT) 카탈로그 필터링 방식으로 동작합니다.<br>
-      로봇 호환성은 모델·연도에 따라 달라질 수 있으니 최종 적용 전 메이커에 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b>
+      로봇 호환성은 모델·연도에 따라 달라질 수 있으니 최종 적용 전 메이커에 확인하세요. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b><br>
+      데이터 최종 검증: 2026.07 (일부 항목 검증 진행 중)
     </div>
 
     <div class="btn-nav">
@@ -548,15 +549,17 @@ var MAKERS = {
     models: [
       /* EGP 시리즈 (범용 산업용) */
       {
+        /* EGP 25-N-N-B 기준: 20~40N (Schunk 공식, 2026-07 검증). 12N은 스피드 버전(N-S-B) 값 */
         model:'EGP 25', series:'EGP 시리즈',
-        forceMin:0,  forceMax:12,  stroke:6,
+        forceMin:20, forceMax:40,  stroke:6,
         comm:['dio'],
         robots:[], robotLabel:'범용 (어댑터 필요)',
         note:'소형 워크피스 전용'
       },
       {
+        /* EGP 40-N-N-B 기준: 35~140N (Schunk 공식, 2026-07 검증). 30N은 스피드 버전(N-S-B) 값 */
         model:'EGP 40', series:'EGP 시리즈',
-        forceMin:0,  forceMax:30,  stroke:12,
+        forceMin:35, forceMax:140, stroke:12,
         comm:['dio','iolink'],
         robots:[], robotLabel:'범용 (어댑터 필요)',
         note:''
@@ -577,17 +580,19 @@ var MAKERS = {
       },
       /* Co-act EGP-C 시리즈 (협동로봇 인증형) */
       {
+        /* 공식 변형 확인(2026-07): UR·Doosan·FANUC CR-7(FCR7)·Mitsubishi ASSISTA. KUKA 변형 근거 없음 */
         model:'Co-act EGP-C 40', series:'Co-act EGP-C 시리즈',
         forceMin:35, forceMax:140, stroke:12,
         comm:['dio'],
-        robots:['doosan','kuka'], robotLabel:'Doosan·Mitsubishi 인증',
+        robots:['ur','doosan','fanuc'], robotLabel:'UR·Doosan·FANUC CR·Mitsubishi 인증',
         note:'협동로봇 인증 취득'
       },
       {
+        /* TODO: 대형(EGP-C 64 추정) 파지력 40~230N 카탈로그 미검증 — 확인 필요 */
         model:'Co-act EGP-C (대형)', series:'Co-act EGP-C 시리즈',
         forceMin:40, forceMax:230, stroke:20,
         comm:['dio'],
-        robots:['doosan','kuka'], robotLabel:'Doosan·Mitsubishi 인증',
+        robots:['ur','doosan','fanuc'], robotLabel:'UR·Doosan·FANUC CR·Mitsubishi 인증',
         note:'협동로봇 인증 취득'
       }
     ]

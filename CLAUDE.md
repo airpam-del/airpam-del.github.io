@@ -272,6 +272,39 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 
 **회귀 테스트**: 세 계산기 5단계 위저드 전체 흐름 통과 (실린더 단동/복동 시나리오, 서보 볼스크류+직결, LM Simple/Advanced), 콘솔 에러 없음
 
+### 2026-07-03 — 2차 데이터 검증 확정 오류 수정 (그리퍼 2종·피팅) + 치명적 JS 버그 수정
+
+**🔥 치명적 버그 — 스텝바 아이콘 따옴표 오류로 계산기 3종 전체 스크립트 실행 불능**
+- `pneumatic-fitting.html`, `solenoid-valve.html`, `pneumatic-fr-unit.html`의 스텝바 렌더 코드
+  `<i class="ti "+STEP_ICONS[i-1]+'"` — 따옴표 불일치 SyntaxError로 **메인 스크립트 블록 전체 미실행**
+  (계산기가 아예 동작하지 않는 상태로 배포돼 있었음). 아이콘 시스템 커밋(1635c46 계열)에서 유입.
+- 3개 파일 모두 `class="ti '+STEP_ICONS[i-1]+'"`로 수정, 전 HTML 인라인 스크립트 node 구문검사 통과 확인
+
+**pneumatic-gripper.html — SMC MHZ2 파지력 전면 교체 (물리 모순 해소)**
+- SMC 카탈로그 유효 파지력(0.5MPa, L=20mm, 손가락당)으로 검증 교체:
+  Ø10=11/17, Ø16=34/45, Ø20=42/66, Ø25=65/104(기존값 정확), Ø32=158/193, Ø40=254/318 (외부/내부 N)
+- 기존 데이터는 Ø10~20이 2~3배 부풀려져 Ø20(90N)>Ø25(65N) 역전 — 과소 보어 추천 위험이었음
+- 스트로크/편측 수정: Ø20 4→5, Ø32 8→11, Ø40 8→15 mm
+- Festo HGPT 16/20/25 데이터시트 값으로 교체(53/60, 77/82, 124/133 — 6bar 조당), 32/40은 변형별 상이로 TODO
+- **CKD "HGW" 시리즈 실존 확인 실패** (실제 CKD 평행핸드는 HMF·LHA·HAP·BHA 계열) — 데이터 전체가
+  SMC 미러 근사값. TODO 주석만 추가, 사용자 확인 후 시리즈 교체 필요
+
+**electric-gripper.html — Schunk EGP 파지력 수정**
+- EGP 40: 0~30 → 35~140N, EGP 25: 0~12 → 20~40N (Schunk 공식 제품페이지 검증 — 기존값은 스피드 버전 N-S-B 값)
+- Co-act EGP-C robots: ['doosan','kuka'] → ['ur','doosan','fanuc'], 라벨 'UR·Doosan·FANUC CR·Mitsubishi 인증'
+  (공식 변형 UR·Doosan·FCR7·ASSISTA 확인, KUKA 근거 없음), Step2 로봇 툴팁도 갱신
+
+**pneumatic-fitting.html — 표-공식 모순 해소 + 비실존 품번 교체**
+- OD_TABLE 내경을 SMC TU 실측으로 수정(OD8: 5.8→5.0, OD10: 7.5→6.5, OD12: 9.0→8.0, OD16: 12→10),
+  qMax를 calcTube()와 동일 공식(유속 8m/s)으로 재계산(2.3/6.0/9.4/15.9/24.1/37.6) — 2.5배 모순 해소
+- SMC 튜빙 품번: TU1075/TU1209/TU1613(비실존) → TU1065/TU1208/TU1610, 16mm 나일론 TS1612
+- CKD GW 피팅 형상 매핑 수정: GWS=스트레이트/GWL=엘보/GWT=티 (기존은 GWL을 스트레이트, 비실존 GWE를 엘보로 오기)
+- CKD 튜빙 TAS/TAN 실존 미확인 — TODO 주석 (실제는 U-95/NU 계열 추정)
+
+**회귀 테스트**: 그리퍼 2종·피팅 위저드 전체 흐름 + 물리 일관성(보어↑=파지력↑, 외부<내부) 자동 점검 통과,
+솔밸브·FR유닛 스크립트 실행 복구 확인, 17개 HTML 인라인 스크립트 구문검사 전수 통과, 콘솔 에러 없음
+- `.claude/launch.json`: python 미설치 환경이라 `npx http-server`로 변경
+
 **남은 TODO (카탈로그 확인 필요 — 임의 수정 금지)**
 - [ ] servo_motor: MSMF 1kW 이상 5개 모델 nmax (현재 3000, 실제 4500~5000 가능성) — 각 행 주석
 - [ ] servo_motor: LS산전 APM-SC10A/15A/20A/30A Tr–nr 불일치 (검증 FAIL 4건) — DB 내 주석
@@ -280,6 +313,12 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 - [ ] pneumatic-cylinder: ESNU 압력범위 0.5~0.8MPa 의심 (단동 최소압 통상 0.15~0.25MPa)
 - [ ] pneumatic-cylinder: CKD SSD/SCA2 보어 라인업 Ø20~100 전체 커버 여부
 - [ ] lmguide: TBI·PMI C₀ 추정값의 실측 카탈로그 값 확보
+- [ ] pneumatic-gripper: CKD "HGW" 시리즈 실존 미확인 — 실제 시리즈(HMF/LHA 등) 선정 후 재작성
+- [ ] pneumatic-gripper: Festo HGPT 32/40 파지력(변형 G1/G2별 상이)·전 사이즈 strokePerSide·단동 표기 검증
+- [ ] pneumatic-fitting: CKD 튜빙 TAS/TAN 실존 미확인 — U-95/NU 계열 확인 후 교체
+- [ ] electric-gripper: Co-act EGP-C (대형) 파지력 40~230N·EGP 시리즈 IO-Link 지원 여부 검증
+- [ ] 2차 보고서 🟡 항목: 솔레노이드 밸브 qRated·SYJ 3포트 모델명, 유성감속기 PLE 단수·백래시,
+      Sumitomo 사이클로 토크, 하모닉 순간최대토크 필드 부재, FR유닛 qRated·CKD C3000 분류
 
 ## 수정 시 주의사항
 

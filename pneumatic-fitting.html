@@ -623,7 +623,8 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="disclaimer">
       이 계산기는 튜브 사이즈 초기 선정 참고용입니다. 최종 선정은 메이커 카탈로그를 확인하세요.<br>
       계산식: d_required [mm] = √(4Q / π×8×60,000) × 1000 (권장 유속 8 m/s 적용)<br>
-      <b>정밀 압력 손실 계산이 필요한 장거리·복잡 배관은 별도 검토가 필요합니다.</b>
+      <b>정밀 압력 손실 계산이 필요한 장거리·복잡 배관은 별도 검토가 필요합니다.</b><br>
+      데이터 최종 검증: 2026.07 — SMC 튜빙 품번·내경 카탈로그 대조 완료, CKD 튜빙 시리즈는 검증 진행 중
     </div>
 
     <div class="btn-nav">
@@ -638,13 +639,17 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 /* ──────────────────────────────────────────────
    튜브 OD 사이즈 테이블 (3사 공통 규격)
 ──────────────────────────────────────────────── */
+/* 내경(id)은 3사 중 최소인 SMC TU 튜빙 실측 기준 (TU0425/0604/0805/1065/1208/1610) —
+   추천이 어느 메이커를 선택해도 보수적이 되도록 최소 내경 사용. 2026-07 카탈로그 검증.
+   qMax는 calcTube()와 동일 기준(유속 8 m/s): qMax = π/4 × id² × 8 × 60000 [L/min] —
+   기존 값이 공식 대비 2.5배 커서 표-공식 모순이었던 것을 재계산으로 일치시킴 */
 const OD_TABLE = [
-  {od:4,  id:2.5, qMax:6},
-  {od:6,  id:4.0, qMax:15},
-  {od:8,  id:5.8, qMax:32},
-  {od:10, id:7.5, qMax:53},
-  {od:12, id:9.0, qMax:76},
-  {od:16, id:12.0,qMax:136},
+  {od:4,  id:2.5, qMax:2.3},
+  {od:6,  id:4.0, qMax:6.0},
+  {od:8,  id:5.0, qMax:9.4},
+  {od:10, id:6.5, qMax:15.9},
+  {od:12, id:8.0, qMax:24.1},
+  {od:16, id:10.0,qMax:37.6},
 ];
 
 /* ──────────────────────────────────────────────
@@ -660,9 +665,11 @@ const FITTING_DATA = {
       4:  {straight:'KQ2H04', elbow:'KQ2L04', tee:'KQ2T04', tubing:{pu:'TU0425', pa:'TS0425'}, pMax:1.0},
       6:  {straight:'KQ2H06', elbow:'KQ2L06', tee:'KQ2T06', tubing:{pu:'TU0604', pa:'TS0604'}, pMax:1.0},
       8:  {straight:'KQ2H08', elbow:'KQ2L08', tee:'KQ2T08', tubing:{pu:'TU0805', pa:'TS0805'}, pMax:1.0},
-      10: {straight:'KQ2H10', elbow:'KQ2L10', tee:'KQ2T10', tubing:{pu:'TU1075', pa:'TS1075'}, pMax:1.0},
-      12: {straight:'KQ2H12', elbow:'KQ2L12', tee:'KQ2T12', tubing:{pu:'TU1209', pa:'TS1209'}, pMax:1.0},
-      16: {straight:'KQ2H16', elbow:'KQ2L16', tee:'KQ2T16', tubing:{pu:'TU1613', pa:'TS1613'}, pMax:1.0},
+      /* SMC 튜빙 품번 2026-07 검증: TU1065(10×6.5)·TU1208(12×8)·TU1610(16×10)이 실제 라인업.
+         구 표기 TU1075/TU1209/TU1613은 비실존 품번이었음. 16mm 소프트나일론은 TS1612(16×12) */
+      10: {straight:'KQ2H10', elbow:'KQ2L10', tee:'KQ2T10', tubing:{pu:'TU1065', pa:'TS1065'}, pMax:1.0},
+      12: {straight:'KQ2H12', elbow:'KQ2L12', tee:'KQ2T12', tubing:{pu:'TU1208', pa:'TS1208'}, pMax:1.0},
+      16: {straight:'KQ2H16', elbow:'KQ2L16', tee:'KQ2T16', tubing:{pu:'TU1610', pa:'TS1612'}, pMax:1.0},
     }
   },
   festo: {
@@ -684,13 +691,18 @@ const FITTING_DATA = {
     fittingSeries:'GW 시리즈',
     tubingSeries:{pu:'TAS 튜빙', pa:'TAN 튜빙'},
     url:'https://www.ckd.co.jp',
+    /* CKD GW 시리즈 형상 코드 2026-07 검증: GWS=스트레이트, GWL=엘보, GWT=티.
+       (구 표기는 GWL을 스트레이트, 비실존 GWE를 엘보로 잘못 매핑했었음)
+       실제 품번은 나사경 포함 2단 표기(예: GWS8-6) — 아래는 튜브경 기준 축약 표기.
+       TODO: CKD 튜빙 "TAS/TAN" 시리즈는 실존 미확인 (실제 CKD 우레탄 튜브는 U-95/NU 계열,
+       나일론은 F-15 계열 추정) — 카탈로그 확인 후 교체 필요. 사용자 확인 전 임의 교체 보류. */
     models:{
-      4:  {straight:'GWL04', elbow:'GWE04', tee:'GWT04', tubing:{pu:'TAS0425', pa:'TAN0425'}, pMax:1.0},
-      6:  {straight:'GWL06', elbow:'GWE06', tee:'GWT06', tubing:{pu:'TAS0604', pa:'TAN0604'}, pMax:1.0},
-      8:  {straight:'GWL08', elbow:'GWE08', tee:'GWT08', tubing:{pu:'TAS0805', pa:'TAN0805'}, pMax:1.0},
-      10: {straight:'GWL10', elbow:'GWE10', tee:'GWT10', tubing:{pu:'TAS1075', pa:'TAN1075'}, pMax:1.0},
-      12: {straight:'GWL12', elbow:'GWE12', tee:'GWT12', tubing:{pu:'TAS1209', pa:'TAN1209'}, pMax:1.0},
-      16: {straight:'GWL16', elbow:'GWE16', tee:'GWT16', tubing:{pu:'TAS1613', pa:'TAN1613'}, pMax:1.0},
+      4:  {straight:'GWS-04', elbow:'GWL-04', tee:'GWT-04', tubing:{pu:'TAS0425', pa:'TAN0425'}, pMax:1.0},
+      6:  {straight:'GWS-06', elbow:'GWL-06', tee:'GWT-06', tubing:{pu:'TAS0604', pa:'TAN0604'}, pMax:1.0},
+      8:  {straight:'GWS-08', elbow:'GWL-08', tee:'GWT-08', tubing:{pu:'TAS0805', pa:'TAN0805'}, pMax:1.0},
+      10: {straight:'GWS-10', elbow:'GWL-10', tee:'GWT-10', tubing:{pu:'TAS1075', pa:'TAN1075'}, pMax:1.0},
+      12: {straight:'GWS-12', elbow:'GWL-12', tee:'GWT-12', tubing:{pu:'TAS1209', pa:'TAN1209'}, pMax:1.0},
+      16: {straight:'GWS-16', elbow:'GWL-16', tee:'GWT-16', tubing:{pu:'TAS1613', pa:'TAN1613'}, pMax:1.0},
     }
   }
 };
@@ -822,7 +834,7 @@ function renderStepsBar(cur) {
     const click = i < cur ? 'onclick="goStep('+i+')"' : '';
     h += '<div class="step-item '+state+'">'
       + '<div class="step-circle '+state+'" '+click+'>'+(i < cur ? '✓' : i)+'</div>'
-      + '<span class="step-label"><i class="ti "+STEP_ICONS[i-1]+'" aria-hidden="true"></i>'+STEP_LABELS[i-1]+'</span>'
+      + '<span class="step-label"><i class="ti '+STEP_ICONS[i-1]+'" aria-hidden="true"></i>'+STEP_LABELS[i-1]+'</span>'
       + '</div>';
     if (i < 5) h += '<div class="step-line '+(i < cur ? 'done' : '')+'"></div>';
   }
