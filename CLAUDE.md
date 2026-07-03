@@ -305,6 +305,34 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 솔밸브·FR유닛 스크립트 실행 복구 확인, 17개 HTML 인라인 스크립트 구문검사 전수 통과, 콘솔 에러 없음
 - `.claude/launch.json`: python 미설치 환경이라 `npx http-server`로 변경
 
+### 2026-07-03 (2차) — 하모닉·솔밸브·FR유닛 데이터 검증 수정
+
+**harmonic-drive.html — HDS 데이터 전면 교체 + 래칫팅 판정 구조 개선**
+- HDS CSF/SHF 정격이 실제의 1.6~4배로 부풀려져 있던 것을 공식 정격표(harmonicdrive.net
+  CSF-2UH/SHF-2UH/CSF-2XH, 2개 소스 교차 검증)로 전면 교체 — 용량 부족 감속기를 적합 추천하던
+  위험 방향 오류. 감속비 라인업도 실제로 수정(CSF-8/11: 30/50/100만, CSF-40+: 30 없음 등)
+- 데이터 구조 변경: trMin/trMax 선형보간 → 감속비별 실측 테이블 tr(정격)/rp(반복피크)/mp(순간최대)
+- 판정 로직: 래칫팅 = tPeak > mp(실측), 신규 가감속 초과 경고 = tPeak > rp → warn
+- l10: HDS CSF/SHF 정격수명 7,000h 반영(기존 10,000h 일괄). mrpm 그리스 기준 실측값으로 수정
+- **"Leadshine"은 하모닉 감속기 제조사 아님** (실제 중국 메이커는 Leaderdrive·Laifual) — TODO,
+  미검증 모델(LS/LF)에 "근사 데이터" 배지 표시. Laifual 링크 laifualdrive.com으로 수정
+
+**solenoid-valve.html — SYJ 모델명 정정 + 유량 기준 통일(ANR)**
+- SYJ3000/5000(실제는 5포트 시리즈) → SYJ300/500/700(진짜 3포트)으로 정정, C값 기반 유량
+  92/329/724 L/min 반영
+- calcQ()에 ANR 환산(0.5MPa 가정, ×5.94) 추가 — 기존엔 비환산 배출유량이라 카탈로그
+  유량·피팅 계산기 입력(ANR)과 기준이 어긋났음. qRated 전량 카탈로그 기준 교체:
+  SY=294/687/1178(C=1.0/2.4/4.1), VUVG=220/560/870, CPE=350/810, CKD 4F3/4F4=C값 기반
+- **CKD "3F" 3포트 시리즈 실존 확인 실패** (실제는 3GA/3GB·3QR·3KA 계열) — TODO, 근사 환산만 적용
+
+**pneumatic-fr-unit.html — 시리즈 분류 정정**
+- CKD C3000(F+R+L 콤보라 부적합) → W시리즈(W1000-6/W3000-8/W3000-10/W4000-15, 필터+레귤레이터
+  일체형)로 교체. 포트 코드 6=1/8, 8=1/4, 10=3/8, 15=1/2. qRated는 근사 유지(TODO)
+- SMC AME(실제는 0.01μm 슈퍼 미스트 세퍼레이터) → AFM 시리즈(진짜 0.3μm, AFM20=200/AFM30=450
+  카탈로그 확인, AFM40=1100 TODO)로 교체 + "레귤레이터 별도 조합" 안내 추가
+
+**회귀 테스트**: 3개 계산기 위저드 전체 흐름 + 하모닉 tr≤rp≤mp 무결성 전수 통과, 콘솔 에러 없음
+
 **남은 TODO (카탈로그 확인 필요 — 임의 수정 금지)**
 - [ ] servo_motor: MSMF 1kW 이상 5개 모델 nmax (현재 3000, 실제 4500~5000 가능성) — 각 행 주석
 - [ ] servo_motor: LS산전 APM-SC10A/15A/20A/30A Tr–nr 불일치 (검증 FAIL 4건) — DB 내 주석
@@ -317,8 +345,13 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 - [ ] pneumatic-gripper: Festo HGPT 32/40 파지력(변형 G1/G2별 상이)·전 사이즈 strokePerSide·단동 표기 검증
 - [ ] pneumatic-fitting: CKD 튜빙 TAS/TAN 실존 미확인 — U-95/NU 계열 확인 후 교체
 - [ ] electric-gripper: Co-act EGP-C (대형) 파지력 40~230N·EGP 시리즈 IO-Link 지원 여부 검증
-- [ ] 2차 보고서 🟡 항목: 솔레노이드 밸브 qRated·SYJ 3포트 모델명, 유성감속기 PLE 단수·백래시,
-      Sumitomo 사이클로 토크, 하모닉 순간최대토크 필드 부재, FR유닛 qRated·CKD C3000 분류
+- [ ] harmonic-drive: Leadshine → Leaderdrive 교체 여부 사용자 결정 필요, Laifual 수치 카탈로그 대조,
+      CSF-8/11 최대입력rpm 확인
+- [ ] solenoid-valve: CKD "3F" 실존 미확인 — 실제 3포트 시리즈(3GA/3GB 등) 선정 후 재작성,
+      4F2 C값·CPE 대표 품번 유량 확정
+- [ ] pneumatic-fr-unit: CKD W시리즈·SMC AW·Festo LFR·AFM40 정격유량 카탈로그 대조
+- [ ] 2차 보고서 🟡 잔여: 유성감속기 PLE 단수·백래시, Sumitomo 사이클로 토크, RV peakMultiplier
+      조건, 스크류잭 ZE-200 N/L 비율
 
 ## 수정 시 주의사항
 

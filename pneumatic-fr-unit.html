@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>공기압 조절 유닛(필터+레귤레이터) 선정 계산기 — PartsOn</title>
-<meta name="description" content="공기압 조절 유닛(필터+레귤레이터)을 무료로 선정하세요. SMC AW, Festo LFR, CKD C3000/W3000 3사 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
+<meta name="description" content="공기압 조절 유닛(필터+레귤레이터)을 무료로 선정하세요. SMC AW, Festo LFR, CKD W시리즈 3사 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
 <meta name="keywords" content="공기압 조절 유닛 선정, 필터 레귤레이터, SMC AW, Festo LFR, CKD W3000, 공압 선정 계산기">
 <meta property="og:title" content="공기압 조절 유닛(필터+레귤레이터) 선정 계산기 — PartsOn">
 <meta property="og:description" content="SMC·Festo·CKD 3사 공기압 조절 유닛 동시 비교. 포트 사이즈·유량·압력 조건 기반 자동 선정.">
@@ -278,7 +278,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="hdr-icon">🌬️</div>
     <div>
       <h1>공기압 조절 유닛(필터+레귤레이터) 선정 계산기<span class="cat-badge">💨 공압</span></h1>
-      <p>SMC AW · Festo LFR · CKD C3000/W3000 3사 동시 비교 — 포트 사이즈·유량·압력 조건 기반 자동 선정</p>
+      <p>SMC AW · Festo LFR · CKD W시리즈 3사 동시 비교 — 포트 사이즈·유량·압력 조건 기반 자동 선정</p>
     </div>
   </div>
 </header>
@@ -314,7 +314,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <!-- 면책 배너 -->
   <div class="disclaimer-banner">
     <div class="disclaimer-banner-icon">⚠️</div>
-    <div><b>면책 고지:</b> 이 계산기는 공기압 조절 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b> 루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.</div>
+    <div><b>면책 고지:</b> 이 계산기는 공기압 조절 유닛 초기 선정 참고용입니다. 정밀 압력 손실·응축수 발생량 계산은 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b> 루브리케이터(윤활기)는 무급유 실린더 표준화 트렌드를 반영해 제외합니다.<br>데이터 최종 검증: 2026.07 — 시리즈 분류(CKD W·SMC AFM) 정정 완료, 정격 유량 일부는 검증 진행 중(근사값)</div>
   </div>
 
   <!-- Step 1: 배관 및 유량 조건 -->
@@ -495,7 +495,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
         <input type="checkbox" value="smc" checked onchange="toggleMaker(this)">
         <div>
           <div class="ci-title">🇯🇵 SMC — AW 시리즈 (FR 컴비네이션)</div>
-          <div class="ci-sub">국내 유통망 최대. AW 시리즈 표준. 정밀 필터 AME 시리즈 포함.</div>
+          <div class="ci-sub">국내 유통망 최대. AW 시리즈 표준. 정밀 미스트 세퍼레이터 AFM 시리즈(0.3μm) 포함.</div>
         </div>
       </label>
       <label class="check-item sel" id="mk-festo">
@@ -508,14 +508,14 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <label class="check-item sel" id="mk-ckd">
         <input type="checkbox" value="ckd" checked onchange="toggleMaker(this)">
         <div>
-          <div class="ci-title">🇯🇵 CKD — C3000/W3000 시리즈</div>
-          <div class="ci-sub">가격 경쟁력·ISO 호환. C3000(소형)·W3000(중대형) 시리즈.</div>
+          <div class="ci-title">🇯🇵 CKD — W 시리즈</div>
+          <div class="ci-sub">가격 경쟁력·ISO 호환. W1000(소형)~W4000(대형) 필터+레귤레이터 일체형.</div>
         </div>
       </label>
     </div>
 
     <div class="info-box">
-      💡 SMC AW 시리즈는 국내 수급이 가장 원활합니다. 정밀 여과(0.3μm)가 필요한 경우 SMC AME 시리즈를 확인하세요.
+      💡 SMC AW 시리즈는 국내 수급이 가장 원활합니다. 정밀 여과(0.3μm)가 필요한 경우 SMC AFM 시리즈(미스트 세퍼레이터 — 레귤레이터 별도 조합)를 확인하세요.
     </div>
 
     <div class="btn-nav">
@@ -585,11 +585,15 @@ var FR_DATA = [
    port:'3/8', qRated:2800, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
   {maker:'smc', name:'SMC', country:'🇯🇵', series:'AW 시리즈', model:'AW60',
    port:'1/2', qRated:4500, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.smcworld.com'},
-  // SMC AME — 정밀 0.3μm
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AME 시리즈 (정밀)', model:'AME150',
-   port:'1/4', qRated:1300, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AME 시리즈 (정밀)', model:'AME250',
-   port:'3/8', qRated:2400, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
+  /* SMC 정밀 0.3μm — 2026-07 정정: AME는 0.01μm급 슈퍼 미스트 세퍼레이터로 용도가 다름.
+     0.3μm 정밀 여과는 AFM 시리즈(모듈러 미스트 세퍼레이터)가 해당. AFM은 필터 단독이므로
+     레귤레이터(AW/AR)와 조합 필요. 정격유량: AFM20=200, AFM30=450 (카탈로그 ANR 확인) */
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AFM 시리즈 (정밀·레귤레이터 별도)', model:'AFM20',
+   port:'1/4', qRated:200, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AFM 시리즈 (정밀·레귤레이터 별도)', model:'AFM30',
+   port:'3/8', qRated:450, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'AFM 시리즈 (정밀·레귤레이터 별도)', model:'AFM40',
+   port:'1/2', qRated:1100, pMin:0.05, pMax:0.85, filter:'0.3um', url:'https://www.smcworld.com'}, // TODO: AFM40 정격유량 카탈로그 확인
 
   // Festo LFR — 표준 5μm
   {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-1/8',
@@ -601,14 +605,16 @@ var FR_DATA = [
   {maker:'festo', name:'Festo', country:'🇩🇪', series:'LFR 시리즈', model:'LFR-1/2',
    port:'1/2', qRated:4800, pMin:0.05, pMax:0.8,  filter:'5um', url:'https://www.festo.com'},
 
-  // CKD C3000/W3000 — 표준 5μm
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'C3000 시리즈', model:'C3000-8',
+  /* CKD — 2026-07 정정: C시리즈는 F+R+L 3점 콤보(루브리케이터 포함)라 FR 전용 계산기에 부적합.
+     필터+레귤레이터 일체형은 W시리즈(W1000~W8000)가 정답. 포트 코드: 6=1/8, 8=1/4, 10=3/8, 15=1/2.
+     TODO: qRated는 구 근사값 유지 — CKD W시리즈 카탈로그 정격유량 대조 필요 */
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W1000 시리즈', model:'W1000-6',
    port:'1/8', qRated:650,  pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'C3000 시리즈', model:'C3000-10',
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W3000 시리즈', model:'W3000-8',
    port:'1/4', qRated:1550, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
   {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W3000 시리즈', model:'W3000-10',
    port:'3/8', qRated:2900, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W3000 시리즈', model:'W3000-15',
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'W4000 시리즈', model:'W4000-15',
    port:'1/2', qRated:4600, pMin:0.05, pMax:0.85, filter:'5um', url:'https://www.ckd.co.jp'},
 ];
 
@@ -774,7 +780,7 @@ function renderResults() {
   if (S.results.length === 0) {
     grid.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div>'
       + '<div>조건에 맞는 모델이 없습니다.<br>'
-      + (S.filter==='0.3um' ? 'SMC AME 시리즈는 1/4", 3/8" 포트만 지원합니다.<br>' : '')
+      + (S.filter==='0.3um' ? 'SMC AFM 시리즈(0.3μm)는 1/4"~1/2" 포트만 지원하며, 필터 단독형이라 레귤레이터(AW/AR) 조합이 필요합니다.<br>' : '')
       + '포트 사이즈 또는 필터 등급을 변경해 보세요.</div></div>';
     renderCompareTable();
     return;
