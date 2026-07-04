@@ -305,33 +305,7 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:2rem;font-fam
 </head>
 <body class="category-electric">
 
-<nav class="partson-nav">
-  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,.7);font-weight:600">PartsOn</a>
-  <div class="pnav-drop electric-drop">
-    <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
-    <div class="pnav-menu">
-      <a href="lmguide.html">LM Guide</a>
-      <a href="ballscrew.html">볼스크류 선정</a>
-      <a href="bearing.html">베어링 선정</a>
-      <a href="servo_motor.html">서보모터 선정</a>
-      <a href="screwjack.html" class="active">스크류잭 선정</a>
-      <a href="planetary-gearbox.html">유성 감속기</a>
-      <a href="cycloidal-gearbox.html">사이클로이드</a>
-      <a href="harmonic-drive.html">하모닉 드라이브</a>
-      <a href="electric-gripper.html">전동 그리퍼 선정</a>
-    </div>
-  </div>
-  <div class="pnav-drop pneumatic-drop">
-    <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>
-    <div class="pnav-menu"><a href="pneumatic-cylinder.html">실린더 선정</a><a href="solenoid-valve.html">솔레노이드 밸브 선정</a><a href="pneumatic-fitting.html">피팅/튜빙 선정</a><a href="pneumatic-fr-unit.html">공기압 조절 유닛 선정</a>
-          <a href="pneumatic-gripper.html">공압 그리퍼 선정</a>
-          <a href="speed-controller.html">스피드 컨트롤러 선정</a></div>
-  </div>
-</nav>
-<script>
-function pnavToggle(btn){var menu=btn.nextElementSibling;var isOpen=!menu.classList.contains('open');document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});if(isOpen){menu.classList.add('open');btn.classList.add('open')}}
-document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')){document.querySelectorAll('.pnav-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')})}});
-</script>
+<div id="site-nav"></div>
 
 <header>
   <div class="hdr">
@@ -1335,94 +1309,8 @@ function resetCalc() {
 renderStepsBar(1);
 renderLayoutOpts();
 </script>
-<!-- ══ PartsOn 모바일 내비게이션 (공통 스니펫 — 전 페이지 동일, 수정 시 전 페이지 일괄 교체) ══ -->
-<style id="pmnav-style">
-.pmnav-toggle{display:none}
-.pmnav-panel{display:none}
-@media(max-width:768px){
-  /* 데스크톱 드롭다운 숨김 (계산기 페이지 .pnav-drop / index .nav-links) */
-  .partson-nav .pnav-drop{display:none!important}
-  .nav-links{display:none!important}
-  .partson-nav{position:relative}
-  .pmnav-toggle{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:auto;background:none;border:none;color:rgba(255,255,255,.85);font-size:24px;line-height:1;cursor:pointer;padding:0;flex-shrink:0}
-  .pmnav-panel{position:absolute;top:100%;left:0;right:0;background:#0a1d12;border-bottom:1px solid rgba(255,255,255,.12);box-shadow:0 12px 24px rgba(0,0,0,.45);z-index:500;max-height:calc(100vh - 56px);overflow-y:auto}
-  .pmnav-panel.open{display:block}
-  .pmnav-sec{padding:8px 0 6px}
-  .pmnav-sec+.pmnav-sec{border-top:1px solid rgba(255,255,255,.08)}
-  .pmnav-sec-title{display:flex;align-items:center;min-height:36px;padding:0 20px;font-size:12px;font-weight:700;letter-spacing:.5px;color:rgba(255,255,255,.45)}
-  .pmnav-panel a{display:flex;align-items:center;min-height:44px;padding:0 20px 0 30px;font-size:15px;color:rgba(255,255,255,.75);text-decoration:none;border-bottom:0}
-  .pmnav-panel a:hover,.pmnav-panel a:active{color:#fff;background:rgba(255,255,255,.07)}
-  .pmnav-panel a.pmnav-active{color:#38BDF8;font-weight:600}
-  .pmnav-panel a.pmnav-home{padding-left:20px}
-}
-</style>
-<script>
-(function(){
-  if (document.getElementById('pmnav-panel')) return;
-  var ELECTRIC = [
-    ['lmguide.html','LM Guide 선정'],
-    ['ballscrew.html','볼스크류 선정'],
-    ['bearing.html','베어링 선정'],
-    ['servo_motor.html','서보모터 선정'],
-    ['screwjack.html','스크류잭 선정'],
-    ['planetary-gearbox.html','유성 감속기 선정'],
-    ['cycloidal-gearbox.html','사이클로이드 선정'],
-    ['harmonic-drive.html','하모닉 드라이브 선정'],
-    ['electric-gripper.html','전동 그리퍼 선정']
-  ];
-  var PNEUMATIC = [
-    ['pneumatic-cylinder.html','실린더 선정'],
-    ['solenoid-valve.html','솔레노이드 밸브 선정'],
-    ['pneumatic-fitting.html','피팅/튜빙 선정'],
-    ['pneumatic-fr-unit.html','공기압 조절 유닛 선정'],
-    ['pneumatic-gripper.html','공압 그리퍼 선정'],
-    ['speed-controller.html','스피드 컨트롤러 선정']
-  ];
-  /* 버튼을 넣을 컨테이너: 계산기 페이지 .partson-nav / index .nav-inner */
-  var host = document.querySelector('.partson-nav') || document.querySelector('nav .nav-inner') || document.querySelector('nav');
-  if (!host) return;
-  /* 패널 기준 요소: 전체 폭 패널이 되도록 nav 자체에 부착 */
-  var anchor = document.querySelector('.partson-nav') || document.querySelector('nav');
-  if (getComputedStyle(anchor).position === 'static') anchor.style.position = 'relative';
 
-  var cur = location.pathname.split('/').pop() || 'index.html';
-  function sec(title, items) {
-    var h = '<div class="pmnav-sec"><div class="pmnav-sec-title">' + title + '</div>';
-    items.forEach(function(it) {
-      h += '<a href="' + it[0] + '"' + (cur === it[0] ? ' class="pmnav-active"' : '') + '>' + it[1] + '</a>';
-    });
-    return h + '</div>';
-  }
-
-  var btn = document.createElement('button');
-  btn.className = 'pmnav-toggle';
-  btn.setAttribute('aria-label', '전체 메뉴');
-  btn.setAttribute('aria-expanded', 'false');
-  btn.innerHTML = '☰';
-
-  var panel = document.createElement('div');
-  panel.className = 'pmnav-panel';
-  panel.id = 'pmnav-panel';
-  panel.innerHTML = sec('⚡ 전동 부품', ELECTRIC)
-    + sec('💨 공압 부품', PNEUMATIC)
-    + '<div class="pmnav-sec"><a href="index.html" class="pmnav-home' + (cur === 'index.html' ? ' pmnav-active' : '') + '">🏠 PartsOn 홈</a></div>';
-
-  host.appendChild(btn);
-  anchor.appendChild(panel);
-
-  function close() { panel.classList.remove('open'); btn.innerHTML = '☰'; btn.setAttribute('aria-expanded', 'false'); }
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    var open = panel.classList.toggle('open');
-    btn.innerHTML = open ? '✕' : '☰';
-    btn.setAttribute('aria-expanded', String(open));
-  });
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#pmnav-panel') && !e.target.closest('.pmnav-toggle')) close();
-  });
-})();
-</script>
-
+<script src="js/common.js"></script>
 </body>
 </html>
 
