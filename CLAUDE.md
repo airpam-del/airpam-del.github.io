@@ -27,6 +27,7 @@ PartsOn 배포/
 ├── cycloidal-gearbox.html — 사이클로이드 감속기 선정 계산기 (5단계 위저드, 2026-06-19 신규)
 ├── pneumatic-cylinder.html — 공압 실린더 선정 계산기 (5단계 위저드, 2026-06-21 신규, category-pneumatic)
 ├── solenoid-valve.html    — 솔레노이드 밸브 선정 계산기 (5단계 위저드, 2026-06-21 신규, category-pneumatic)
+├── speed-controller.html  — 스피드 컨트롤러 선정 계산기 (5단계 위저드, 2026-07-04 신규, 나사×OD 치수 매칭)
 ├── admin.html          — 공급사 관리 페이지 (비밀번호 보호)
 ├── logo.png            — 원본 로고 (흰 배경 PNG)
 ├── logo-white.png      — 가공 로고 (흰색 실루엣, 투명 배경 — 네비바 사용)
@@ -333,6 +334,38 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 
 **회귀 테스트**: 3개 계산기 위저드 전체 흐름 + 하모닉 tr≤rp≤mp 무결성 전수 통과, 콘솔 에러 없음
 
+### 2026-07-04 — 스피드 컨트롤러 계산기 신규 + index 버튼 통일 + 모바일 네비 전면 수정
+
+**speed-controller.html 신규 (공압 카테고리 — 계산기 15종째)**
+- 5단계 위저드: 실린더 연결 조건(보어·속도·튜브OD·포트나사) → 제어·취부(SVG 카드) → 메이커 → 결과 → 비교·선정
+- 선정 로직: **나사×튜브OD 치수 매칭** 중심 (엘보형: 나사+OD 일치 / 인라인형: OD만).
+  유량값은 검증 전이라 미포함 — Step1에 참고 필요유량(ANR·0.5MPa, 솔밸브와 동일 공식)만 표시
+- 미터아웃(권장)/미터인, 엘보형(일반적)/인라인형 SVG 일러스트 카드. 미터인 선택 시
+  "주문 시 사양 코드 확인" 안내만 표시 (접미사 임의 생성 금지 원칙 준수)
+- 데이터: SMC AS(엘보 5종+인라인 2종)/Festo GRLA·GRO/CKD SC3W·SC1 — [추정] 항목 전부
+  `// TODO: 카탈로그 확인 필요` 주석(6개), 하단 "데이터 최종 검증: 미완" 표기
+- 링크 추가: index(네비 드롭다운·히어로 칩·하단 CTA), 전 계산기 페이지(14개) 공압 드롭다운, sitemap.xml
+- index CTA 문구 "12가지" → "15가지"
+
+**index.html — 공압 버튼 크기 통일 (진단 결과)**
+- 데스크톱 CSS는 .btn-ghost와 .btn-ghost-blue가 동일(패딩 14×32/폰트 14px)했으나,
+  **모바일 미디어쿼리의 `width:100%` 규칙에 .btn-ghost-blue가 누락**돼 모바일에서만 크기 불일치
+- 리팩토링: 마크업을 `class="btn-ghost btn-ghost-blue"`로 base 클래스 공유,
+  .btn-ghost-blue는 색상(보더·텍스트·배경) 오버라이드만 잔존 → 모바일 풀폭 규칙 자동 상속
+
+**모바일 네비게이션 — 전 페이지 햄버거 메뉴 (진단 결과)**
+- 원인: index는 768px 이하에서 `.nav-links{display:none}` 처리 후 대체 메뉴 없음(링크 접근 불가),
+  계산기 페이지는 데스크톱 드롭다운 구조 그대로라 모바일 UX 부재
+- 수정: **자기완결형 공통 스니펫**(`pmnav-style` + IIFE 스크립트)을 16개 페이지(15 계산기+index)
+  `</body>` 앞에 동일 주입 — JS가 햄버거(44×44)와 패널(⚡전동 9개/💨공압 6개/홈, 링크 44px,
+  현재 페이지 하이라이트)을 동적 생성하므로 페이지별 nav 구조 차이와 무관하게 일관 동작
+- 스니펫 수정 시: `pmnav-style`~`</script>` 블록을 전 페이지에서 일괄 교체할 것 (원본:
+  스니펫이 각 파일에 동일 복사돼 있음)
+- 회귀 확인: 데스크톱 드롭다운(pnavToggle/navToggle) 정상, 햄버거는 데스크톱에서 숨김
+
+**검증**: 전 18개 HTML 인라인 스크립트 구문 통과, 위저드 3개 시나리오(매칭/조합없음/인라인) 통과,
+index 데스크톱 버튼 동일(54px)·모바일 풀폭 동일(327px), 모바일 네비 4개 페이지 표본 확인, 콘솔 에러 없음
+
 ### 2026-07-03 (3차) — 하모닉: Leadshine 제거, Leaderdrive·Laifual 공표 정격표로 보강
 
 - **Leadshine(하모닉 미제조) 전체 삭제** → **Leaderdrive**(중국 1위) LCS(솔리드)·LHS(중공) 14종 추가
@@ -362,6 +395,8 @@ let _calcP, _allResults, _passingList, _curIdx, _makerFilter;
 - [ ] solenoid-valve: CKD "3F" 실존 미확인 — 실제 3포트 시리즈(3GA/3GB 등) 선정 후 재작성,
       4F2 C값·CPE 대표 품번 유량 확정
 - [ ] pneumatic-fr-unit: CKD W시리즈·SMC AW·Festo LFR·AFM40 정격유량 카탈로그 대조
+- [ ] speed-controller: [추정] 6건 카탈로그 대조 — AS2211F/AS2052F 조합, GRLA OD 조합·인라인
+      시리즈명(GRO/GRE), SC3W 나사-호칭 매핑·인라인(SC1), 각사 미터인/미터아웃 접미사 체계
 - [ ] 2차 보고서 🟡 잔여: 유성감속기 PLE 단수·백래시, Sumitomo 사이클로 토크, RV peakMultiplier
       조건, 스크류잭 ZE-200 N/L 비율
 

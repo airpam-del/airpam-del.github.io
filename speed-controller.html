@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공압 피팅/튜빙 선정 계산기 — PartsOn</title>
-<meta name="description" content="공압 피팅과 튜빙을 무료로 선정하세요. SMC, Festo, CKD 3사 동시 비교. 유량 기반 튜브 OD 자동 계산. 원터치 피팅 추천.">
-<meta name="keywords" content="공압 피팅 선정, 튜빙 계산기, SMC KQ2, Festo QS, CKD GW, 원터치 피팅, 튜브 사이즈">
-<meta property="og:title" content="공압 피팅/튜빙 선정 계산기 — PartsOn">
-<meta property="og:description" content="SMC·Festo·CKD 3사 공압 피팅/튜빙 동시 비교. 유량 기반 튜브 OD 자동 계산.">
+<title>스피드 컨트롤러 선정 계산기 — PartsOn</title>
+<meta name="description" content="공압 스피드 컨트롤러를 무료로 선정하세요. SMC AS, Festo GRLA, CKD SC3W 3사 동시 비교. 미터아웃/미터인, 나사×튜브OD 치수 매칭 자동 필터.">
+<meta name="keywords" content="스피드 컨트롤러 선정, 속도 제어 밸브, SMC AS, Festo GRLA, CKD SC3W, 미터아웃, 미터인">
+<meta property="og:title" content="스피드 컨트롤러 선정 계산기 — PartsOn">
+<meta property="og:description" content="SMC·Festo·CKD 3사 스피드 컨트롤러 동시 비교. 미터아웃/미터인 · 나사×튜브OD 치수 매칭.">
 <meta property="og:image" content="https://partson.co.kr/og-image.png">
-<meta property="og:url" content="https://partson.co.kr/pneumatic-fitting.html">
+<meta property="og:url" content="https://partson.co.kr/speed-controller.html">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="canonical" href="https://partson.co.kr/pneumatic-fitting.html">
+<link rel="canonical" href="https://partson.co.kr/speed-controller.html">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
 <style>
@@ -81,8 +81,8 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
 .step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
 .step-label{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.2px;white-space:nowrap;transition:color .2s}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
-.step-item.active .step-label{color:var(--accent);font-weight:700}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
-.step-item.done .step-label{color:var(--accent)}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-item.active .step-label{color:var(--accent);font-weight:700}
+.step-item.done .step-label{color:var(--accent)}
 .step-line{flex:1;height:2px;background:var(--border);transition:background .2s;margin-top:16px}
 .step-line.done{background:var(--accent)}
 
@@ -116,6 +116,10 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
 .choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
 .choice-card .choice-sub{font-size:12px;color:var(--text2)}
+.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
+.choice-icon{width:64px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s;fill:none}
+.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
+.choice-badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;background:var(--accent);color:#fff;margin-left:5px;vertical-align:1px}
 
 /* ── 입력 그룹 ── */
 .input-group{margin-bottom:1.1rem}
@@ -125,6 +129,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
 .input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
 .input-hint{font-size:11px;color:var(--text3);margin-top:.3rem}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
 
 /* ── ? 툴팁 ── */
 .tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;position:relative;font-family:var(--font)}
@@ -140,8 +145,6 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .calc-preview{background:var(--accent-light);border:1px solid #BFDBFE;border-radius:8px;padding:.65rem 1rem;margin-top:.6rem;font-size:13px;color:var(--accent);font-family:var(--mono);font-weight:600;display:none}
 .calc-preview.show{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .calc-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px}
-.calc-preview-arrow{color:var(--accent-mid);font-weight:400}
-.calc-preview-recommend{background:var(--accent);color:#fff;border-radius:4px;padding:1px 8px;font-size:12px;font-family:var(--font);font-weight:700}
 
 /* ── 체크박스 ── */
 .check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
@@ -151,15 +154,6 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .check-item input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
 .check-item .ci-title{font-size:14px;font-weight:600;color:var(--text)}
 .check-item .ci-sub{font-size:12px;color:var(--text2)}
-
-/* ── 라디오 ── */
-.radio-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
-.radio-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
-.radio-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
-.radio-item.sel{border-color:var(--accent);background:var(--accent-light)}
-.radio-item input[type=radio]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
-.radio-item .ri-title{font-size:14px;font-weight:600;color:var(--text)}
-.radio-item .ri-sub{font-size:12px;color:var(--text2)}
 
 /* ── 버튼 ── */
 .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
@@ -176,7 +170,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .result-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
 .result-card.ok-card{border-color:#6DBF8A}
 .rc-maker{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:.25rem}
-.rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem}
+.rc-model{font-size:18px;font-weight:700;color:var(--text);margin-bottom:.15rem;font-family:var(--mono)}
 .rc-series{font-size:12px;color:var(--text2);margin-bottom:.75rem}
 .rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.75rem;background:var(--ok-bg);color:var(--ok)}
 .rc-rows{display:flex;flex-direction:column;gap:.4rem}
@@ -187,12 +181,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .rc-highlight{background:var(--accent-light);border-radius:6px;padding:.35rem .6rem;margin:.4rem 0}
 .rc-highlight .rc-row-label{color:var(--accent);font-weight:600}
 .rc-highlight .rc-row-val{color:var(--accent);font-size:15px}
-
-/* ── 피팅 타입 그룹 ── */
-.fitting-group{margin:.5rem 0}
-.fitting-group-title{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:.3rem}
-.fitting-tag-row{display:flex;flex-wrap:wrap;gap:.4rem}
-.fitting-tag{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;font-family:var(--mono);font-weight:600;padding:.3rem .7rem;border-radius:6px;background:var(--accent-light);color:var(--accent);border:1px solid #BFDBFE}
+.rc-note{font-size:11px;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:.4rem .6rem;margin-top:.5rem;line-height:1.5}
 
 /* ── 비교 테이블 ── */
 .cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
@@ -202,34 +191,6 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .cmp-table tr:hover td{background:#F0F6FF}
 .cmp-table td.mono{font-family:var(--mono)}
 .cmp-table .tag-ok{display:inline-block;background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
-
-/* ── 유량 계산 도우미 ── */
-.thrust-helper-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin-top:.4rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;text-decoration:none;width:100%}
-.thrust-helper-toggle:hover{color:var(--accent-mid)}
-.thrust-helper-toggle .th-arrow{transition:transform .2s;display:inline-block;font-style:normal}
-.thrust-helper-toggle.open .th-arrow{transform:rotate(180deg)}
-.thrust-helper-body{display:none;margin-top:.6rem;border:1.5px solid var(--accent-light);border-radius:10px;overflow:hidden;background:#fff}
-.thrust-helper-body.open{display:block}
-.th-tabs{display:flex;border-bottom:1px solid var(--border-light);background:#F8F7F5}
-.th-tab{flex:1;padding:.55rem .5rem;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font)}
-.th-tab:hover{color:var(--accent)}
-.th-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff}
-.th-panels{padding:1rem}
-.th-panel{display:none}
-.th-panel.active{display:block}
-.th-input-row{display:flex;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
-.th-input-row .th-field{flex:1;min-width:120px}
-.th-input-row .th-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
-.th-input-row .th-field input,.th-input-row .th-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);color:var(--text);background:#fff;outline:none;transition:border-color .15s}
-.th-input-row .th-field input:focus,.th-input-row .th-field select:focus{border-color:var(--accent)}
-.th-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin-bottom:.75rem;min-height:36px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.4rem}
-.th-preview .th-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px;margin-right:.25rem}
-.th-apply-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:all .15s;font-family:var(--font)}
-.th-apply-btn:hover{background:var(--accent-mid)}
-.th-apply-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
-.th-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
-@keyframes highlightPulse{0%{background:#DBEAFE}50%{background:#BFDBFE}100%{background:#fff}}
-.input-highlight{animation:highlightPulse .7s ease-out}
 
 /* ── 비교 행 클릭 선택 ── */
 .comparison-row{cursor:pointer}
@@ -268,14 +229,7 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
   .choice-grid{grid-template-columns:1fr}
   .result-grid{grid-template-columns:1fr}
   .sum-rows{grid-template-columns:1fr}
-}
-.choice-card.has-icon{text-align:center;padding:.875rem .75rem}
-.choice-icon{width:48px;height:48px;display:block;margin:0 auto .6rem;stroke:var(--text3);transition:stroke .2s;fill:none}
-.choice-card.sel .choice-icon,.choice-card:hover .choice-icon{stroke:var(--accent)}
-label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
-.ri-icon{width:32px;height:32px;flex-shrink:0;stroke:var(--text3);transition:stroke .2s;fill:none}
-.radio-item.sel .ri-icon,.radio-item:hover .ri-icon{stroke:var(--accent)}
-.check-item.sel .ri-icon,.check-item:hover .ri-icon{stroke:var(--accent)}</style>
+}</style>
 </head>
 <body class="category-pneumatic">
 
@@ -301,10 +255,10 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
     <div class="pnav-menu">
       <a href="pneumatic-cylinder.html">실린더 선정</a>
       <a href="solenoid-valve.html">솔레노이드 밸브 선정</a>
-      <a href="pneumatic-fitting.html" class="active">피팅/튜빙 선정</a>
+      <a href="pneumatic-fitting.html">피팅/튜빙 선정</a>
       <a href="pneumatic-fr-unit.html">공기압 조절 유닛 선정</a>
-          <a href="pneumatic-gripper.html">공압 그리퍼 선정</a>
-          <a href="speed-controller.html">스피드 컨트롤러 선정</a>
+      <a href="pneumatic-gripper.html">공압 그리퍼 선정</a>
+      <a href="speed-controller.html" class="active">스피드 컨트롤러 선정</a>
     </div>
   </div>
 </nav>
@@ -316,10 +270,10 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 <!-- 헤더 -->
 <header>
   <div class="hdr">
-    <div class="hdr-icon">🔧</div>
+    <div class="hdr-icon">🎛️</div>
     <div>
-      <h1>공압 피팅/튜빙 선정 계산기<span class="cat-badge">💨 공압</span></h1>
-      <p>SMC · Festo · CKD 3사 동시 비교 — 유량 기반 튜브 OD 자동 계산 · 원터치 피팅 추천</p>
+      <h1>스피드 컨트롤러 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>SMC · Festo · CKD 3사 동시 비교 — 미터아웃/미터인 · 나사×튜브OD 치수 매칭 자동 필터</p>
     </div>
   </div>
 </header>
@@ -327,7 +281,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 <main>
   <!-- 인쇄 헤더 -->
   <div class="print-header">
-    <span style="font-weight:700">PartsOn — 공압 피팅/튜빙 선정 계산기</span>
+    <span style="font-weight:700">PartsOn — 스피드 컨트롤러 선정 계산기</span>
     <span id="print-date"></span>
   </div>
 
@@ -339,14 +293,14 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     <div class="guide-icon">💡</div>
     <div class="guide-text">
       <div class="guide-title">선정이 처음이세요? — 30초 가이드</div>
-      <div class="guide-sub">5단계로 최적 튜브 사이즈와 피팅 타입을 찾는 방법을 안내합니다. 클릭해서 펼쳐보세요.</div>
+      <div class="guide-sub">스피드 컨트롤러는 실린더 속도를 조절하는 부품입니다. 5단계로 치수에 맞는 모델을 찾는 방법을 안내합니다.</div>
       <div class="guide-steps" id="guide-steps">
         <div class="guide-step-list">
-          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">유량 조건 입력</b> — 필요 유량(L/min), 배관 길이, 사용 압력을 입력합니다. 유량은 솔레노이드 밸브 계산기 결과를 그대로 사용하세요.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">배관 형태·재질 선택</b> — 직선/방향전환/분기 형태와 튜브 재질(PU/PA)을 선택합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">1</div><div><b style="color:#fff">실린더 연결 조건</b> — 실린더 보어, 목표 속도, 연결된 튜브 외경(OD), 실린더 포트 나사를 입력합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">2</div><div><b style="color:#fff">제어 방식·취부 형태</b> — 미터아웃(표준)/미터인, 엘보형(실린더 직결)/인라인형을 선택합니다.</div></div>
           <div class="guide-step-item"><div class="guide-step-num">3</div><div><b style="color:#fff">메이커 선택</b> — SMC·Festo·CKD 중 비교할 메이커를 체크합니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 권장 튜브 OD와 배관 형태별 피팅 모델이 표시됩니다.</div></div>
-          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 3사 모델을 비교하고 선택 버튼을 눌러 선정 요약을 확인합니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">4</div><div><b style="color:#fff">결과 확인</b> — 나사×튜브OD 조합에 맞는 모델이 자동 필터링됩니다.</div></div>
+          <div class="guide-step-item"><div class="guide-step-num">5</div><div><b style="color:#fff">비교 후 선정</b> — 3사 모델을 비교하고 행을 클릭해 선정 요약을 확인합니다.</div></div>
         </div>
       </div>
     </div>
@@ -356,189 +310,161 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <!-- 면책 배너 -->
   <div class="disclaimer-banner">
     <div class="disclaimer-banner-icon">⚠️</div>
-    <div><b>면책 고지:</b> 이 계산기는 튜브 사이즈 초기 선정 참고용입니다. 권장 유속(8 m/s) 기준 계산이며, 정밀 압력 손실 계산이 필요한 장거리·복잡 배관은 별도 검토가 필요합니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b></div>
+    <div><b>면책 고지:</b> 이 계산기는 스피드 컨트롤러 초기 선정 참고용입니다. 치수(나사×튜브OD) 매칭 중심이며 유효단면적·정밀 유량 검토는 지원하지 않습니다. <b>최종 선정은 메이커 카탈로그를 확인하세요.</b></div>
   </div>
 
-  <!-- Step 1: 유량 조건 입력 -->
+  <!-- Step 1: 실린더 연결 조건 -->
   <div class="step-wrap card active" id="step-1">
     <div class="section-label">Step 1</div>
-    <div class="question">유량 조건 입력</div>
-    <div class="question-desc">배관을 통해 흘러야 할 유량과 사용 조건을 입력하세요.</div>
+    <div class="question">실린더 연결 조건</div>
+    <div class="question-desc">스피드 컨트롤러가 연결될 실린더의 조건을 입력하세요.</div>
 
     <div class="input-group">
-      <label><i class="ti ti-wind" aria-hidden="true"></i>필요 유량 Q
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">솔레노이드 밸브 계산기에서 확인한 <b>필요 유량</b>을 그대로 입력하세요.<br><br>모른다면 실린더 보어와 속도로 추정하세요.<br>예: Ø32 실린더, 200 mm/s → 약 9.7 L/min</div></span>
-      </label>
+      <label><i class="ti ti-circle-dot" aria-hidden="true"></i>실린더 보어 사이즈</label>
       <div class="input-wrap">
-        <input type="number" id="flow" min="0.1" step="0.5" placeholder="예: 9.7" oninput="calcTube()">
-        <span class="input-unit">L/min</span>
-      </div>
-      <div class="input-hint">솔레노이드 밸브 계산기 결과를 그대로 입력하세요.</div>
-      <button class="thrust-helper-toggle" id="th-toggle" onclick="thToggle()" type="button">
-        <span>💡 필요 유량을 모르신다면? 계산 도우미 열기</span>
-        <span class="th-arrow">▾</span>
-      </button>
-      <div class="thrust-helper-body" id="th-body">
-        <div class="th-tabs">
-          <button class="th-tab active" onclick="thTab(0)" type="button">실린더 스펙으로 계산</button>
-          <button class="th-tab" onclick="thTab(1)" type="button">직접 입력</button>
-        </div>
-        <div class="th-panels">
-          <!-- 탭 A: 실린더 스펙 -->
-          <div class="th-panel active" id="th-panel-0">
-            <div class="th-input-row">
-              <div class="th-field">
-                <label>보어 지름 D (mm)</label>
-                <input type="number" id="fh-bore" min="1" step="1" placeholder="예: 32" oninput="calcFlowHelper()">
-              </div>
-              <div class="th-field">
-                <label>스트로크 S (mm)</label>
-                <input type="number" id="fh-stroke" min="1" step="5" placeholder="예: 150" oninput="calcFlowHelper()">
-              </div>
-            </div>
-            <div class="th-input-row">
-              <div class="th-field">
-                <label>작동 횟수 (회/min)</label>
-                <input type="number" id="fh-cycles" min="1" step="1" placeholder="예: 30" oninput="calcFlowHelper()">
-              </div>
-              <div class="th-field">
-                <label><i class="ti ti-gauge" aria-hidden="true"></i>사용 압력</label>
-                <select id="fh-pressure" onchange="calcFlowHelper()">
-                  <option value="0.3">0.3 MPa</option>
-                  <option value="0.4">0.4 MPa</option>
-                  <option value="0.5" selected>0.5 MPa</option>
-                  <option value="0.6">0.6 MPa</option>
-                  <option value="0.7">0.7 MPa</option>
-                </select>
-              </div>
-            </div>
-            <div class="th-preview"><span class="th-preview-label">계산된 필요 유량:</span><span id="fh-result">— L/min</span></div>
-            <button class="th-apply-btn" id="fh-apply-btn" onclick="applyFlowHelper()" disabled type="button">✓ 이 값을 Q에 적용</button>
-            <div class="th-hint" style="margin-top:.5rem">Q = (π/4)×D²×S×n×(P/0.1013+1)×60×10⁻⁶ &nbsp;|&nbsp; 왕복 1회 기준</div>
-          </div>
-          <!-- 탭 B: 직접 입력 -->
-          <div class="th-panel" id="th-panel-1">
-            <div style="padding:.5rem 0;color:var(--text2);font-size:13px;line-height:1.7">
-              필요 유량 값을 이미 알고 계시다면<br>
-              위 "필요 유량 Q" 입력창에 직접 값을 입력하세요.<br><br>
-              <span style="color:var(--text3);font-size:12px">단위: L/min<br>솔레노이드 밸브 계산기 결과를 그대로 사용할 수 있습니다.</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="input-group">
-      <label><i class="ti ti-ruler" aria-hidden="true"></i>배관 길이
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">이번 버전에서는 <b>참고용</b>으로만 사용됩니다.<br>정밀 압력 손실 계산에는 배관 길이가 필요하지만, 이번 계산기는 유속 기준 간이 계산만 지원합니다.</div></span>
-      </label>
-      <div class="input-wrap">
-        <input type="number" id="pipelen" min="0.1" step="0.1" placeholder="예: 2">
-        <span class="input-unit">m</span>
-      </div>
-      <div class="input-hint">※ 배관 길이는 이번 계산에 직접 영향을 주지 않습니다 (참고용).</div>
-    </div>
-
-    <div class="input-group">
-      <label><i class="ti ti-gauge" aria-hidden="true"></i>사용 압력</label>
-      <div class="input-wrap">
-        <select id="pressure">
-          <option value="0.4">0.4 MPa — 저압 라인</option>
-          <option value="0.5" selected>0.5 MPa — 표준 (권장)</option>
-          <option value="0.6">0.6 MPa</option>
-          <option value="0.7">0.7 MPa — 고압 라인</option>
+        <select id="inp-bore" onchange="calcPreview()">
+          <option value="20">Ø20</option>
+          <option value="25">Ø25</option>
+          <option value="32" selected>Ø32</option>
+          <option value="40">Ø40</option>
+          <option value="50">Ø50</option>
+          <option value="63">Ø63</option>
+          <option value="80">Ø80</option>
+          <option value="100">Ø100</option>
         </select>
       </div>
+      <div class="input-hint">공압 실린더 계산기에서 선정한 보어를 선택하세요.</div>
     </div>
 
-    <!-- 계산 미리보기 -->
+    <div class="input-group">
+      <label><i class="ti ti-gauge" aria-hidden="true"></i>목표 속도
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">일반 자동화 설비의 실린더 속도는 <b>100~300 mm/s</b> 범위가 대부분입니다.<br><br>속도는 스피드 컨트롤러의 니들 밸브로 현장에서 조절하므로, 여기서는 필요 유량 추정 참고용으로만 사용됩니다.</div></span>
+      </label>
+      <div class="input-wrap">
+        <input type="number" id="inp-speed" min="10" step="10" value="200" oninput="calcPreview()">
+        <span class="input-unit">mm/s</span>
+      </div>
+      <div class="input-hint">일반 권장 범위: 100~300 mm/s</div>
+    </div>
+
+    <div class="input-group">
+      <label><i class="ti ti-circle" aria-hidden="true"></i>튜브 외경 OD</label>
+      <div class="input-wrap">
+        <select id="inp-od" onchange="calcPreview()">
+          <option value="4">OD4 mm</option>
+          <option value="6" selected>OD6 mm</option>
+          <option value="8">OD8 mm</option>
+          <option value="10">OD10 mm</option>
+          <option value="12">OD12 mm</option>
+        </select>
+      </div>
+      <div class="input-hint">피팅/튜빙 계산기에서 선정한 OD를 입력하세요.</div>
+    </div>
+
+    <div class="input-group">
+      <label><i class="ti ti-screwdriver" aria-hidden="true"></i>실린더 포트 나사
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">실린더 카탈로그의 포트 사양을 참고하세요.<br><br><b>Ø20~40</b>은 보통 <b>R1/8</b>(일부 M5),<br><b>Ø50~63</b>은 <b>R1/4</b>,<br><b>Ø80~100</b>은 R3/8~R1/2이 일반적입니다.</div></span>
+      </label>
+      <div class="input-wrap">
+        <select id="inp-thread">
+          <option value="M5">M5</option>
+          <option value="R1/8" selected>R1/8</option>
+          <option value="R1/4">R1/4</option>
+          <option value="R3/8">R3/8</option>
+          <option value="R1/2">R1/2</option>
+        </select>
+      </div>
+      <div class="input-hint">실린더 카탈로그의 포트 사양 참고. Ø20~40은 보통 R1/8, Ø50~63은 R1/4.</div>
+    </div>
+
+    <!-- 참고 유량 미리보기 -->
     <div class="calc-preview" id="calc-preview">
-      <span class="calc-preview-label">필요 내경:</span>
-      <span id="preview-d">— mm</span>
-      <span class="calc-preview-arrow">→ 추천 OD:</span>
-      <span class="calc-preview-recommend" id="preview-od">—</span>
+      <span class="calc-preview-label">참고 필요 유량:</span>
+      <span id="preview-q">— L/min</span>
+      <span class="calc-preview-label">(ANR·0.5MPa 기준 — 유효단면적 검토는 카탈로그 참조)</span>
     </div>
 
     <div class="btn-nav">
       <div></div>
-      <button class="btn btn-primary" onclick="goStep2()">다음: 배관 형태 선택 →</button>
+      <button class="btn btn-primary" onclick="goStep2()">다음: 제어 방식 선택 →</button>
     </div>
   </div>
 
-  <!-- Step 2: 배관 형태 및 재질 선택 -->
+  <!-- Step 2: 제어 방식·취부 형태 -->
   <div class="step-wrap card" id="step-2">
     <div class="section-label">Step 2</div>
-    <div class="question">배관 형태 및 재질 선택</div>
-    <div class="question-desc">필요한 배관 형태를 모두 선택하고 튜브 재질을 고르세요.</div>
+    <div class="question">제어 방식 · 취부 형태</div>
+    <div class="question-desc">유량을 제어하는 방향과 설치 방식을 선택하세요.</div>
 
-    <div class="input-group">
-      <label>배관 형태 (복수 선택 가능)</label>
-      <div class="check-group" id="shape-group">
-        <label class="check-item sel" id="shape-straight" aria-label="직선 연결 피팅">
-          <input type="checkbox" value="straight" checked onchange="toggleShape(this)">
-          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="6" y1="24" x2="42" y2="24" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="8" cy="24" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-            <circle cx="40" cy="24" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-          </svg>
-          <div>
-            <div class="ci-title">직선 연결</div>
-            <div class="ci-sub">스트레이트 피팅 — 직선 배관 연결. 가장 일반적인 형태.</div>
-          </div>
-        </label>
-        <label class="check-item" id="shape-elbow" aria-label="90도 방향전환 엘보 피팅">
-          <input type="checkbox" value="elbow" onchange="toggleShape(this)">
-          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M6,32 L18,32 Q28,32 28,22 L28,8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-            <circle cx="7" cy="32" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-            <circle cx="28" cy="7" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-          </svg>
-          <div>
-            <div class="ci-title">방향 전환 (90도)</div>
-            <div class="ci-sub">엘보 피팅 — 배관 방향이 90도로 꺾일 때 사용.</div>
-          </div>
-        </label>
-        <label class="check-item" id="shape-tee" aria-label="분기 티 피팅">
-          <input type="checkbox" value="tee" onchange="toggleShape(this)">
-          <svg class="ri-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="6" y1="20" x2="42" y2="20" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="24" y1="20" x2="24" y2="40" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="7" cy="20" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-            <circle cx="41" cy="20" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-            <circle cx="24" cy="41" r="4.5" stroke-width="1.5" fill="currentColor" fill-opacity="0.07"/>
-          </svg>
-          <div>
-            <div class="ci-title">분기 (1→2)</div>
-            <div class="ci-sub">티 피팅 — 하나의 배관을 두 방향으로 분기할 때 사용.</div>
-          </div>
-        </label>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.5rem">제어 방식</div>
+    <div class="choice-grid">
+      <div class="choice-card has-icon sel" id="ctrl-out" onclick="selControl('out',this)">
+        <svg class="choice-icon" viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+          <!-- 실린더 -->
+          <rect x="4" y="14" width="26" height="20" rx="2" stroke-width="2"/>
+          <line x1="14" y1="16" x2="14" y2="32" stroke-width="2"/>
+          <line x1="30" y1="24" x2="38" y2="24" stroke-width="2"/>
+          <!-- 배기측 조절 밸브 (실린더 → 밖) -->
+          <circle cx="46" cy="24" r="7" stroke-width="2"/>
+          <line x1="46" y1="17" x2="46" y2="11" stroke-width="2"/>
+          <path d="M42 11 L50 11" stroke-width="2"/>
+          <!-- 배기 화살표: 실린더에서 나가는 방향 -->
+          <path d="M53 24 L61 24 M58 21 L61 24 L58 27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="choice-title">미터아웃 (Meter-Out)<span class="choice-badge">권장</span></div>
+        <div class="choice-sub">배기 측 유량 제어 — 실린더 속도 제어의 표준. 부하 변동에도 속도가 안정적. <b>복동 실린더는 미터아웃이 표준.</b></div>
+      </div>
+      <div class="choice-card has-icon" id="ctrl-in" onclick="selControl('in',this)">
+        <svg class="choice-icon" viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+          <!-- 공급 화살표: 실린더로 들어가는 방향 -->
+          <path d="M3 24 L11 24 M8 21 L11 24 L8 27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- 공급측 조절 밸브 (밖 → 실린더) -->
+          <circle cx="18" cy="24" r="7" stroke-width="2"/>
+          <line x1="18" y1="17" x2="18" y2="11" stroke-width="2"/>
+          <path d="M14 11 L22 11" stroke-width="2"/>
+          <line x1="25" y1="24" x2="34" y2="24" stroke-width="2"/>
+          <!-- 실린더 -->
+          <rect x="34" y="14" width="26" height="20" rx="2" stroke-width="2"/>
+          <line x1="50" y1="16" x2="50" y2="32" stroke-width="2"/>
+        </svg>
+        <div class="choice-title">미터인 (Meter-In)</div>
+        <div class="choice-sub">공급 측 유량 제어 — 단동 실린더, 또는 미터아웃 사용이 어려운 특수 케이스(진공·저마찰 실린더 등)에 사용.</div>
       </div>
     </div>
 
-    <div class="input-group">
-      <label>튜브 재질
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>PU (폴리우레탄)</b>: 유연하고 굴곡에 강함. 일반 자동화 설비 표준.<br><br><b>PA (나일론)</b>: 강성이 높고 내열·내유성 우수. 고압 환경이나 진동이 많은 설비에 적합.</div></span>
-      </label>
-      <div class="radio-group">
-        <label class="radio-item sel" id="mat-pu" onclick="selMaterial('pu')">
-          <input type="radio" name="material" value="pu" checked onchange="selMaterial('pu')">
-          <div>
-            <div class="ri-title">PU (폴리우레탄) — 권장</div>
-            <div class="ri-sub">유연·굴곡성 우수. 일반 자동화 FA 현장 표준. 최대 1.0 MPa.</div>
-          </div>
-        </label>
-        <label class="radio-item" id="mat-pa" onclick="selMaterial('pa')">
-          <input type="radio" name="material" value="pa" onchange="selMaterial('pa')">
-          <div>
-            <div class="ri-title">PA (나일론) — 고압·고내구성</div>
-            <div class="ri-sub">내열·내유성 강점. 진동 환경·고압 배관에 적합. 최대 1.0 MPa.</div>
-          </div>
-        </label>
+    <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:.5rem">취부 형태</div>
+    <div class="choice-grid">
+      <div class="choice-card has-icon sel" id="mount-elbow" onclick="selMount('elbow',this)">
+        <svg class="choice-icon" viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+          <!-- 실린더 상면 -->
+          <rect x="8" y="34" width="48" height="10" rx="2" stroke-width="2"/>
+          <!-- 엘보형 스피드 컨트롤러: 포트에 직결, 90도 꺾임 -->
+          <path d="M28 34 L28 22 Q28 16 34 16 L46 16" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <rect x="23" y="24" width="10" height="10" rx="1.5" stroke-width="2"/>
+          <line x1="28" y1="24" x2="28" y2="18" stroke-width="0"/>
+          <!-- 니들 조절부 -->
+          <line x1="28" y1="24" x2="28" y2="19" stroke-width="0"/>
+          <circle cx="46" cy="16" r="3.5" stroke-width="1.5"/>
+        </svg>
+        <div class="choice-title">엘보형 (실린더 직결)<span class="choice-badge">일반적</span></div>
+        <div class="choice-sub">실린더 포트에 직접 체결하고 튜브를 90도 방향으로 연결. 가장 일반적인 형태.</div>
+      </div>
+      <div class="choice-card has-icon" id="mount-inline" onclick="selMount('inline',this)">
+        <svg class="choice-icon" viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg">
+          <!-- 인라인형: 배관 중간 삽입 -->
+          <line x1="4" y1="28" x2="22" y2="28" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="22" y="21" width="20" height="14" rx="3" stroke-width="2"/>
+          <line x1="32" y1="21" x2="32" y2="12" stroke-width="2"/>
+          <path d="M28 12 L36 12" stroke-width="2"/>
+          <line x1="42" y1="28" x2="60" y2="28" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div class="choice-title">인라인형 (배관 중간)</div>
+        <div class="choice-sub">튜브 배관 중간에 삽입. 실린더 포트 공간이 좁거나 원격 조절이 필요할 때.</div>
       </div>
     </div>
 
-    <div class="info-box">
-      💡 여러 배관 형태가 섞여 있다면 모두 체크하세요 — 필요한 피팅 종류를 한번에 추천해 드립니다.
+    <div class="info-box" id="ctrl-info">
+      💡 복동 실린더 속도 제어는 <b>미터아웃</b>이 표준입니다. 실린더 양쪽 포트에 1개씩, 총 2개를 사용하는 것이 일반적입니다.
     </div>
 
     <div class="btn-nav">
@@ -557,28 +483,24 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <label class="check-item sel" id="mk-smc">
         <input type="checkbox" value="smc" checked onchange="toggleMaker(this)">
         <div>
-          <div class="ci-title">🇯🇵 SMC — KQ2 피팅 + TU/TS 튜빙</div>
-          <div class="ci-sub">국내 유통망 최대. KQ2 원터치 피팅 시리즈. 수급 용이.</div>
+          <div class="ci-title">🇯🇵 SMC — AS 시리즈</div>
+          <div class="ci-sub">국내 유통망 최대. 원터치 피팅 일체형 엘보 AS 시리즈. 수급 용이.</div>
         </div>
       </label>
       <label class="check-item sel" id="mk-festo">
         <input type="checkbox" value="festo" checked onchange="toggleMaker(this)">
         <div>
-          <div class="ci-title">🇩🇪 Festo — QS 피팅 + PUN 튜빙</div>
-          <div class="ci-sub">정밀 제어·내구성 강점. QS 원터치 피팅. PUN 폴리우레탄 튜빙.</div>
+          <div class="ci-title">🇩🇪 Festo — GRLA 시리즈</div>
+          <div class="ci-sub">정밀 니들 조절·내구성 강점. QS 커넥터 일체형 엘보 GRLA 시리즈.</div>
         </div>
       </label>
       <label class="check-item sel" id="mk-ckd">
         <input type="checkbox" value="ckd" checked onchange="toggleMaker(this)">
         <div>
-          <div class="ci-title">🇯🇵 CKD — GW 피팅 + TAS 튜빙</div>
-          <div class="ci-sub">가격 경쟁력. ISO 표준 호환. GW 시리즈 원터치 피팅.</div>
+          <div class="ci-title">🇯🇵 CKD — SC3W 시리즈</div>
+          <div class="ci-sub">가격 경쟁력. 엘보형 SC3W 시리즈. (나사-호칭 매핑은 카탈로그 확인 중)</div>
         </div>
       </label>
-    </div>
-
-    <div class="info-box">
-      💡 SMC KQ2 시리즈는 국내 수급이 가장 원활합니다. Festo QS는 정밀도·내구성 강점. CKD GW는 가격 경쟁력이 우수합니다.
     </div>
 
     <div class="btn-nav">
@@ -593,6 +515,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
       <div class="section-label">Step 4</div>
       <div class="question">계산 결과</div>
       <div id="result-summary-bar" style="margin-bottom:1rem"></div>
+      <div id="excluded-note"></div>
     </div>
     <div class="result-grid" id="result-grid"></div>
     <div class="btn-nav">
@@ -605,7 +528,7 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
   <div class="step-wrap card" id="step-5">
     <div class="section-label">Step 5</div>
     <div class="question">상세 비교 및 선정</div>
-    <div class="question-desc">메이커별 모델을 비교하고 선택하세요.</div>
+    <div class="question-desc">메이커별 모델을 비교하고 행을 클릭해 선정하세요.</div>
 
     <div id="summary-box">
       <div class="sum-title">✅ 선정 완료</div>
@@ -622,10 +545,9 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
     </div>
 
     <div class="disclaimer">
-      이 계산기는 튜브 사이즈 초기 선정 참고용입니다. 최종 선정은 메이커 카탈로그를 확인하세요.<br>
-      계산식: d_required [mm] = √(4Q / π×8×60,000) × 1000 (권장 유속 8 m/s 적용)<br>
-      <b>정밀 압력 손실 계산이 필요한 장거리·복잡 배관은 별도 검토가 필요합니다.</b><br>
-      데이터 최종 검증: 2026.07 — SMC 튜빙 품번·내경 카탈로그 대조 완료, CKD 튜빙 시리즈는 검증 진행 중
+      이 계산기는 스피드 컨트롤러 초기 선정 참고용입니다. 나사×튜브OD 치수 매칭 중심이며, 유효단면적(유량 성능) 검토는 메이커 카탈로그를 확인하세요.<br>
+      미터인/미터아웃 사양은 주문 시 모델 사양 코드로 구분되므로 반드시 카탈로그에서 확인하세요.<br>
+      <b>데이터 최종 검증: 미완 (초기 데이터, 카탈로그 대조 예정)</b>
     </div>
 
     <div class="btn-nav">
@@ -638,182 +560,114 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
 
 <script>
 /* ──────────────────────────────────────────────
-   튜브 OD 사이즈 테이블 (3사 공통 규격)
+   보어별 단면적 [mm²] — 솔레노이드 밸브 계산기와 동일 테이블
 ──────────────────────────────────────────────── */
-/* 내경(id)은 3사 중 최소인 SMC TU 튜빙 실측 기준 (TU0425/0604/0805/1065/1208/1610) —
-   추천이 어느 메이커를 선택해도 보수적이 되도록 최소 내경 사용. 2026-07 카탈로그 검증.
-   qMax는 calcTube()와 동일 기준(유속 8 m/s): qMax = π/4 × id² × 8 × 60000 [L/min] —
-   기존 값이 공식 대비 2.5배 커서 표-공식 모순이었던 것을 재계산으로 일치시킴 */
-const OD_TABLE = [
-  {od:4,  id:2.5, qMax:2.3},
-  {od:6,  id:4.0, qMax:6.0},
-  {od:8,  id:5.0, qMax:9.4},
-  {od:10, id:6.5, qMax:15.9},
-  {od:12, id:8.0, qMax:24.1},
-  {od:16, id:10.0,qMax:37.6},
-];
+const BORE_TABLE = {20:314, 25:491, 32:804, 40:1257, 50:1963, 63:3117, 80:5027, 100:7854};
 
 /* ──────────────────────────────────────────────
-   피팅 제품 데이터
+   제품 데이터 — 나사×튜브OD 치수 매칭 중심 (2026-07 초기 데이터)
+   ⚠️ 데이터 품질 규칙: [추정] 표시 항목은 카탈로그 대조 전까지 TODO 주석 유지.
+   유량(유효단면적) 수치는 검증 전이므로 넣지 않음 — 치수 매칭만 지원.
+   미터인/미터아웃 구분 접미사는 확정 데이터가 없어 모델명에 반영하지 않음
+   (결과 화면에 "사양 코드 확인" 안내만 표시).
 ──────────────────────────────────────────────── */
-const FITTING_DATA = {
+const SC_DATA = {
   smc: {
-    name:'SMC', country:'🇯🇵',
-    fittingSeries:'KQ2 시리즈',
-    tubingSeries:{pu:'TU 튜빙', pa:'TS 튜빙'},
+    name:'SMC', country:'🇯🇵', series:'AS 시리즈',
     url:'https://www.smcworld.com',
-    models:{
-      4:  {straight:'KQ2H04', elbow:'KQ2L04', tee:'KQ2T04', tubing:{pu:'TU0425', pa:'TS0425'}, pMax:1.0},
-      6:  {straight:'KQ2H06', elbow:'KQ2L06', tee:'KQ2T06', tubing:{pu:'TU0604', pa:'TS0604'}, pMax:1.0},
-      8:  {straight:'KQ2H08', elbow:'KQ2L08', tee:'KQ2T08', tubing:{pu:'TU0805', pa:'TS0805'}, pMax:1.0},
-      /* SMC 튜빙 품번 2026-07 검증: TU1065(10×6.5)·TU1208(12×8)·TU1610(16×10)이 실제 라인업.
-         구 표기 TU1075/TU1209/TU1613은 비실존 품번이었음. 16mm 소프트나일론은 TS1612(16×12) */
-      10: {straight:'KQ2H10', elbow:'KQ2L10', tee:'KQ2T10', tubing:{pu:'TU1065', pa:'TS1065'}, pMax:1.0},
-      12: {straight:'KQ2H12', elbow:'KQ2L12', tee:'KQ2T12', tubing:{pu:'TU1208', pa:'TS1208'}, pMax:1.0},
-      16: {straight:'KQ2H16', elbow:'KQ2L16', tee:'KQ2T16', tubing:{pu:'TU1610', pa:'TS1612'}, pMax:1.0},
-    }
+    models:[
+      {model:'AS1201F', mount:'elbow',  thread:'M5',   ods:[4,6]},
+      {model:'AS2201F', mount:'elbow',  thread:'R1/8', ods:[4,6,8]},
+      {model:'AS2211F', mount:'elbow',  thread:'R1/4', ods:[6,8,10]},  // TODO: 카탈로그 확인 필요 [추정 — 나사×OD 조합]
+      {model:'AS3201F', mount:'elbow',  thread:'R3/8', ods:[8,10,12]},
+      {model:'AS4201F', mount:'elbow',  thread:'R1/2', ods:[10,12]},
+      {model:'AS1002F', mount:'inline', thread:null,   ods:[4,6]},
+      {model:'AS2052F', mount:'inline', thread:null,   ods:[6,8,10]},  // TODO: 카탈로그 확인 필요 [추정 — 인라인 OD 조합]
+    ]
   },
   festo: {
-    name:'Festo', country:'🇩🇪',
-    fittingSeries:'QS 시리즈',
-    tubingSeries:{pu:'PUN 튜빙', pa:'PLN 튜빙'},
+    name:'Festo', country:'🇩🇪', series:'GRLA 시리즈',
     url:'https://www.festo.com',
-    models:{
-      4:  {straight:'QS-4',  elbow:'QSL-4',  tee:'QST-4',  tubing:{pu:'PUN-4X0.75',   pa:'PLN-4X0.75'},  pMax:1.0},
-      6:  {straight:'QS-6',  elbow:'QSL-6',  tee:'QST-6',  tubing:{pu:'PUN-6X1',      pa:'PLN-6X1'},     pMax:1.0},
-      8:  {straight:'QS-8',  elbow:'QSL-8',  tee:'QST-8',  tubing:{pu:'PUN-8X1.25',   pa:'PLN-8X1.25'},  pMax:1.0},
-      10: {straight:'QS-10', elbow:'QSL-10', tee:'QST-10', tubing:{pu:'PUN-10X1.5',   pa:'PLN-10X1.5'},  pMax:1.0},
-      12: {straight:'QS-12', elbow:'QSL-12', tee:'QST-12', tubing:{pu:'PUN-12X2',     pa:'PLN-12X2'},    pMax:1.0},
-      16: {straight:'QS-16', elbow:'QSL-16', tee:'QST-16', tubing:{pu:'PUN-16X2.5',   pa:'PLN-16X2.5'},  pMax:1.0},
-    }
+    models:[
+      // TODO: 카탈로그 확인 필요 [추정 — GRLA 나사별 QS 커넥터 OD 조합 전체]
+      {model:'GRLA-M5',  mount:'elbow', thread:'M5',   ods:[4,6]},
+      {model:'GRLA-1/8', mount:'elbow', thread:'R1/8', ods:[4,6,8]},
+      {model:'GRLA-1/4', mount:'elbow', thread:'R1/4', ods:[6,8,10]},
+      {model:'GRLA-3/8', mount:'elbow', thread:'R3/8', ods:[8,10,12]},
+      {model:'GRLA-1/2', mount:'elbow', thread:'R1/2', ods:[10,12]},
+      {model:'GRO 계열', mount:'inline', thread:null,  ods:[4,6,8,10,12]}, // TODO: 카탈로그 확인 필요 [추정 — 인라인 시리즈명(GRO/GRE)·OD 조합]
+    ]
   },
   ckd: {
-    name:'CKD', country:'🇯🇵',
-    fittingSeries:'GW 시리즈',
-    tubingSeries:{pu:'TAS 튜빙', pa:'TAN 튜빙'},
+    name:'CKD', country:'🇯🇵', series:'SC3W 시리즈',
     url:'https://www.ckd.co.jp',
-    /* CKD GW 시리즈 형상 코드 2026-07 검증: GWS=스트레이트, GWL=엘보, GWT=티.
-       (구 표기는 GWL을 스트레이트, 비실존 GWE를 엘보로 잘못 매핑했었음)
-       실제 품번은 나사경 포함 2단 표기(예: GWS8-6) — 아래는 튜브경 기준 축약 표기.
-       TODO: CKD 튜빙 "TAS/TAN" 시리즈는 실존 미확인 (실제 CKD 우레탄 튜브는 U-95/NU 계열,
-       나일론은 F-15 계열 추정) — 카탈로그 확인 후 교체 필요. 사용자 확인 전 임의 교체 보류. */
-    models:{
-      4:  {straight:'GWS-04', elbow:'GWL-04', tee:'GWT-04', tubing:{pu:'TAS0425', pa:'TAN0425'}, pMax:1.0},
-      6:  {straight:'GWS-06', elbow:'GWL-06', tee:'GWT-06', tubing:{pu:'TAS0604', pa:'TAN0604'}, pMax:1.0},
-      8:  {straight:'GWS-08', elbow:'GWL-08', tee:'GWT-08', tubing:{pu:'TAS0805', pa:'TAN0805'}, pMax:1.0},
-      10: {straight:'GWS-10', elbow:'GWL-10', tee:'GWT-10', tubing:{pu:'TAS1075', pa:'TAN1075'}, pMax:1.0},
-      12: {straight:'GWS-12', elbow:'GWL-12', tee:'GWT-12', tubing:{pu:'TAS1209', pa:'TAN1209'}, pMax:1.0},
-      16: {straight:'GWS-16', elbow:'GWL-16', tee:'GWT-16', tubing:{pu:'TAS1613', pa:'TAN1613'}, pMax:1.0},
-    }
+    models:[
+      // TODO: 카탈로그 확인 필요 [추정 — SC3W 나사-호칭 매핑(6=R1/8, 8=R1/4...) 및 대응 OD 전체]
+      {model:'SC3W-M5', mount:'elbow', thread:'M5',   ods:[4,6]},
+      {model:'SC3W-6',  mount:'elbow', thread:'R1/8', ods:[4,6,8]},
+      {model:'SC3W-8',  mount:'elbow', thread:'R1/4', ods:[6,8,10]},
+      {model:'SC3W-10', mount:'elbow', thread:'R3/8', ods:[8,10,12]},
+      {model:'SC3W-15', mount:'elbow', thread:'R1/2', ods:[10,12]},
+      {model:'SC1 계열', mount:'inline', thread:null, ods:[4,6,8,10,12]}, // TODO: 카탈로그 확인 필요 [추정 — 인라인 시리즈명·OD 조합]
+    ]
   }
 };
 
-const SHAPE_LABEL = {straight:'스트레이트', elbow:'엘보', tee:'티'};
-const SHAPE_ICON  = {straight:'➡', elbow:'↩', tee:'🔱'};
+const THREAD_LABEL = {'M5':'M5', 'R1/8':'R1/8', 'R1/4':'R1/4', 'R3/8':'R3/8', 'R1/2':'R1/2'};
 
 /* ──────────────────────────────────────────────
    상태
 ──────────────────────────────────────────────── */
 const S = {
   step: 1,
-  flow: 0,
-  pipelen: 0,
-  pressure: 0.5,
-  dRequired: 0,
-  recommendedOD: null,
-  shapes: {straight:true, elbow:false, tee:false},
-  material: 'pu',
+  bore: 32,
+  speed: 200,
+  od: 6,
+  thread: 'R1/8',
+  qRef: 0,
+  control: 'out',   // out | in
+  mount: 'elbow',   // elbow | inline
   makers: {smc:true, festo:true, ckd:true},
   results: [],
+  excluded: [],
   picked: null,
 };
 
 /* ──────────────────────────────────────────────
-   유량 계산 도우미
+   참고 유량 미리보기 (솔레노이드 밸브 계산기와 동일 공식)
 ──────────────────────────────────────────────── */
-function thToggle() {
-  var tog = document.getElementById('th-toggle');
-  var body = document.getElementById('th-body');
-  tog.classList.toggle('open');
-  body.classList.toggle('open');
-}
-
-function thTab(idx) {
-  document.querySelectorAll('.th-tab').forEach(function(t,i){ t.classList.toggle('active', i===idx); });
-  document.querySelectorAll('.th-panel').forEach(function(p,i){ p.classList.toggle('active', i===idx); });
-}
-
-function calcFlowHelper() {
-  var D = parseFloat(document.getElementById('fh-bore').value);
-  var St = parseFloat(document.getElementById('fh-stroke').value);
-  var n = parseFloat(document.getElementById('fh-cycles').value);
-  var P = parseFloat(document.getElementById('fh-pressure').value);
-  var btn = document.getElementById('fh-apply-btn');
-  var res = document.getElementById('fh-result');
-
-  if (!D || !St || !n || !P) { res.textContent = '— L/min'; btn.disabled = true; return; }
-
-  var Q = (Math.PI / 4) * D * D * St * n * (P / 0.1013 + 1) * 60 * 1e-6;
-  res.textContent = Q.toFixed(1) + ' L/min';
-  btn.disabled = false;
-  btn._q = Q;
-}
-
-function applyFlowHelper() {
-  var btn = document.getElementById('fh-apply-btn');
-  if (!btn._q) return;
-  var Q = Math.round(btn._q * 10) / 10;
-  var inp = document.getElementById('flow');
-  inp.value = Q;
-  calcTube();
-  inp.classList.remove('input-highlight');
-  void inp.offsetWidth;
-  inp.classList.add('input-highlight');
-}
-
-/* ──────────────────────────────────────────────
-   튜브 계산
-──────────────────────────────────────────────── */
-function calcTube() {
-  const q = parseFloat(document.getElementById('flow').value) || 0;
-  S.flow = q;
+function calcPreview() {
+  S.bore = parseInt(document.getElementById('inp-bore').value);
+  S.speed = parseFloat(document.getElementById('inp-speed').value) || 0;
+  const area = BORE_TABLE[S.bore] || 804;
+  // Q [L/min ANR] = A×v×60/1e6 × 압축공기 환산(0.5 MPa 가정: P/0.1013+1 ≈ 5.94)
+  const q = (area * S.speed * 60) / 1000000 * (0.5 / 0.1013 + 1);
+  S.qRef = q;
   const preview = document.getElementById('calc-preview');
-
-  if (q <= 0) {
+  if (S.speed > 0) {
+    document.getElementById('preview-q').textContent = q.toFixed(1) + ' L/min';
+    preview.classList.add('show');
+  } else {
     preview.classList.remove('show');
-    S.dRequired = 0;
-    S.recommendedOD = null;
-    return;
   }
-
-  // d_required [mm] = sqrt(4Q / (π × 8 × 60000)) × 1000
-  const d = Math.sqrt((4 * q) / (Math.PI * 8 * 60000)) * 1000;
-  S.dRequired = d;
-
-  // 권장 OD 찾기: 내경이 d_required 이상인 가장 작은 OD
-  const rec = OD_TABLE.find(function(r) { return r.id >= d; }) || OD_TABLE[OD_TABLE.length - 1];
-  S.recommendedOD = rec.od;
-
-  document.getElementById('preview-d').textContent = d.toFixed(1) + ' mm';
-  document.getElementById('preview-od').textContent = 'OD' + rec.od;
-  preview.classList.add('show');
 }
 
 /* ──────────────────────────────────────────────
    선택 핸들러
 ──────────────────────────────────────────────── */
-function toggleShape(cb) {
-  S.shapes[cb.value] = cb.checked;
-  cb.closest('.check-item').classList.toggle('sel', cb.checked);
+function selControl(val, el) {
+  S.control = val;
+  document.getElementById('ctrl-out').classList.toggle('sel', val === 'out');
+  document.getElementById('ctrl-in').classList.toggle('sel', val === 'in');
+  document.getElementById('ctrl-info').innerHTML = val === 'out'
+    ? '💡 복동 실린더 속도 제어는 <b>미터아웃</b>이 표준입니다. 실린더 양쪽 포트에 1개씩, 총 2개를 사용하는 것이 일반적입니다.'
+    : '💡 <b>미터인</b>은 단동 실린더 또는 특수 케이스용입니다. 미터인 사양은 주문 시 모델 사양 코드로 구분되니 카탈로그에서 확인하세요.';
 }
 
-function selMaterial(m) {
-  S.material = m;
-  ['pu','pa'].forEach(function(v) {
-    const el = document.getElementById('mat-'+v);
-    el.classList.toggle('sel', v === m);
-    el.querySelector('input[type=radio]').checked = (v === m);
-  });
+function selMount(val, el) {
+  S.mount = val;
+  document.getElementById('mount-elbow').classList.toggle('sel', val === 'elbow');
+  document.getElementById('mount-inline').classList.toggle('sel', val === 'inline');
 }
 
 function toggleMaker(cb) {
@@ -825,7 +679,7 @@ function toggleMaker(cb) {
    스텝 바
 ──────────────────────────────────────────────── */
 const STEP_ICONS = ['ti-pencil','ti-adjustments','ti-building-factory-2','ti-list-check','ti-scale'];
-const STEP_LABELS = ['유량 조건','배관·재질','메이커','결과','비교·선정'];
+const STEP_LABELS = ['연결 조건','제어·취부','메이커','결과','비교·선정'];
 
 function renderStepsBar(cur) {
   const bar = document.getElementById('steps-bar');
@@ -864,50 +718,50 @@ function toggleGuide() {
    Step 이동 + 유효성 검사
 ──────────────────────────────────────────────── */
 function goStep2() {
-  calcTube();
-  if (S.flow <= 0) { alert('필요 유량을 입력하세요.'); return; }
-  if (!S.recommendedOD) { alert('유량 범위를 초과했습니다. 더 큰 사이즈는 직접 문의하세요.'); return; }
-  S.pressure = parseFloat(document.getElementById('pressure').value);
-  S.pipelen  = parseFloat(document.getElementById('pipelen').value) || 0;
+  calcPreview();
+  if (S.speed <= 0) { alert('목표 속도를 입력하세요.'); return; }
+  S.od = parseInt(document.getElementById('inp-od').value);
+  S.thread = document.getElementById('inp-thread').value;
   goStep(2);
 }
 
 function goStep3() {
-  const anyShape = Object.values(S.shapes).some(function(v) { return v; });
-  if (!anyShape) { alert('배관 형태를 1개 이상 선택하세요.'); return; }
   goStep(3);
 }
 
 /* ──────────────────────────────────────────────
-   계산 실행
+   계산 실행 — 나사×튜브OD 치수 매칭 필터
 ──────────────────────────────────────────────── */
 function runCalc() {
   const activeMakers = Object.keys(S.makers).filter(function(k) { return S.makers[k]; });
   if (activeMakers.length === 0) { alert('메이커를 1개 이상 선택하세요.'); return; }
 
-  const od = S.recommendedOD;
-  S.results = activeMakers.map(function(key) {
-    const mk = FITTING_DATA[key];
-    const m  = mk.models[od];
-    if (!m) return null;
-    return {
-      makerKey: key,
-      name: mk.name,
-      country: mk.country,
-      fittingSeries: mk.fittingSeries,
-      tubingSeries: mk.tubingSeries[S.material],
-      url: mk.url,
-      od: od,
-      tubing: m.tubing[S.material],
-      fittings: {
-        straight: m.straight,
-        elbow:    m.elbow,
-        tee:      m.tee,
-      },
-      pMax: m.pMax,
-    };
-  }).filter(Boolean);
+  S.results = [];
+  S.excluded = [];
 
+  activeMakers.forEach(function(key) {
+    const mk = SC_DATA[key];
+    const matches = mk.models.filter(function(m) {
+      if (m.mount !== S.mount) return false;
+      if (m.ods.indexOf(S.od) === -1) return false;
+      // 엘보형은 실린더 포트 나사도 일치해야 함. 인라인형은 튜브 OD만 매칭.
+      if (S.mount === 'elbow' && m.thread !== S.thread) return false;
+      return true;
+    });
+    if (matches.length === 0) {
+      S.excluded.push(mk.country + ' ' + mk.name + ': ' + (S.mount === 'elbow' ? THREAD_LABEL[S.thread] + '×OD' + S.od : '인라인 OD' + S.od) + ' 조합 없음');
+    } else {
+      matches.forEach(function(m) {
+        S.results.push({
+          makerKey: key, name: mk.name, country: mk.country,
+          series: mk.series, url: mk.url,
+          model: m.model, mount: m.mount, thread: m.thread, ods: m.ods,
+        });
+      });
+    }
+  });
+
+  S.picked = null;
   renderResults();
   goStep(4);
 }
@@ -915,45 +769,50 @@ function runCalc() {
 /* ──────────────────────────────────────────────
    결과 렌더
 ──────────────────────────────────────────────── */
+const CTRL_LABEL = {out:'미터아웃', in:'미터인'};
+const MOUNT_LABEL = {elbow:'엘보형 (실린더 직결)', inline:'인라인형 (배관 중간)'};
+
+function controlNote() {
+  return S.control === 'out'
+    ? '미터아웃 사양'
+    : '미터인 사양 — 주문 시 사양 코드 확인';
+}
+
 function renderResults() {
   const grid = document.getElementById('result-grid');
   const bar  = document.getElementById('result-summary-bar');
-  const activeShapes = Object.keys(S.shapes).filter(function(k) { return S.shapes[k]; });
+  const exNote = document.getElementById('excluded-note');
 
   bar.innerHTML = '<div style="font-size:13px;color:var(--text2);line-height:1.8">'
-    + '필요 내경 <b style="color:var(--accent);font-family:var(--mono)">' + S.dRequired.toFixed(1) + ' mm</b>'
-    + ' → 추천 OD <b style="color:var(--accent);font-family:var(--mono)">OD' + S.recommendedOD + '</b>'
-    + ' · 재질: <b>' + (S.material === 'pu' ? 'PU 폴리우레탄' : 'PA 나일론') + '</b>'
-    + ' · 유량: <b>' + S.flow + ' L/min</b>'
-    + '</div>';
+    + '조건: <b style="color:var(--accent)">' + (S.mount === 'elbow' ? THREAD_LABEL[S.thread] + ' × OD' + S.od : '인라인 · OD' + S.od) + '</b>'
+    + ' · ' + CTRL_LABEL[S.control] + ' · ' + MOUNT_LABEL[S.mount]
+    + ' · Ø' + S.bore + ' / ' + S.speed + ' mm/s'
+    + ' (참고 유량 ' + S.qRef.toFixed(1) + ' L/min ANR)'
+    + '<br>✅ 적합 모델 <b>' + S.results.length + '개</b></div>';
+
+  exNote.innerHTML = S.excluded.length
+    ? '<div class="info-box" style="margin-bottom:0">ℹ️ ' + S.excluded.join('<br>') + ' — 다른 OD/나사 조합을 검토하거나 메이커 카탈로그를 확인하세요.</div>'
+    : '';
 
   if (S.results.length === 0) {
-    grid.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div><div>조건에 맞는 모델이 없습니다.</div></div>';
+    grid.innerHTML = '<div class="no-result"><div class="no-result-icon">🔍</div><div>선택한 나사×튜브OD 조합에 맞는 모델이 없습니다.<br>튜브 OD 또는 포트 나사를 조정해 보세요.</div></div>';
     return;
   }
 
   grid.innerHTML = S.results.map(function(r) {
-    // 선택된 피팅 형태만 표시
-    var fittingHTML = activeShapes.map(function(shape) {
-      return '<div class="fitting-group">'
-        + '<div class="fitting-group-title">' + SHAPE_ICON[shape] + ' ' + SHAPE_LABEL[shape] + ' 피팅</div>'
-        + '<div class="fitting-tag-row"><span class="fitting-tag">' + r.fittings[shape] + '</span></div>'
-        + '</div>';
-    }).join('');
-
     return '<div class="result-card ok-card">'
       + '<div class="rc-maker">' + r.country + ' ' + r.name + '</div>'
-      + '<div class="rc-model">OD' + r.od + ' — ' + r.fittingSeries + '</div>'
-      + '<div class="rc-series">' + r.tubingSeries + '</div>'
-      + '<span class="rc-badge">✅ 적합</span>'
+      + '<div class="rc-model">' + r.model + '</div>'
+      + '<div class="rc-series">' + r.series + ' — ' + MOUNT_LABEL[r.mount] + '</div>'
+      + '<span class="rc-badge">✅ 치수 적합</span>'
       + '<div class="rc-rows">'
-      + '<div class="rc-row rc-highlight"><span class="rc-row-label">추천 튜브 OD</span><span class="rc-row-val">OD' + r.od + ' mm</span></div>'
-      + '<div class="rc-row"><span class="rc-row-label">튜빙 모델</span><span class="rc-row-val">' + r.tubing + '</span></div>'
-      + '<div class="rc-row"><span class="rc-row-label">최대 사용압력</span><span class="rc-row-val">' + r.pMax + ' MPa</span></div>'
-      + '<div class="rc-row"><span class="rc-row-label">재질</span><span class="rc-row-val">' + (S.material === 'pu' ? 'PU' : 'PA') + '</span></div>'
-      + '<div class="rc-divider"></div>'
-      + fittingHTML
-      + '</div></div>';
+      + '<div class="rc-row rc-highlight"><span class="rc-row-label">' + (r.mount === 'elbow' ? '나사 × 튜브 OD' : '튜브 OD') + '</span><span class="rc-row-val">' + (r.mount === 'elbow' ? THREAD_LABEL[r.thread] + ' × OD' + S.od : 'OD' + S.od) + '</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">대응 튜브 OD</span><span class="rc-row-val">' + r.ods.map(function(o){return 'OD'+o;}).join(' / ') + '</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">취부 형태</span><span class="rc-row-val">' + (r.mount === 'elbow' ? '엘보형' : '인라인형') + '</span></div>'
+      + '<div class="rc-row"><span class="rc-row-label">제어 방식</span><span class="rc-row-val">' + CTRL_LABEL[S.control] + '</span></div>'
+      + '</div>'
+      + (S.control === 'in' ? '<div class="rc-note">⚠️ 미터인 사양 — 주문 시 사양 코드 확인 (메이커별 미터인 모델 구분은 카탈로그 참조)</div>' : '')
+      + '</div>';
   }).join('');
 
   renderCompareTable();
@@ -965,21 +824,18 @@ function renderResults() {
 function renderCompareTable() {
   const head = document.getElementById('cmp-head');
   const body = document.getElementById('cmp-body');
-  const activeShapes = Object.keys(S.shapes).filter(function(k) { return S.shapes[k]; });
 
-  var shapeCols = activeShapes.map(function(s) { return '<th>' + SHAPE_ICON[s] + ' ' + SHAPE_LABEL[s] + '</th>'; }).join('');
-  head.innerHTML = '<th>메이커</th><th>튜브 OD</th><th>튜빙 모델</th>' + shapeCols + '<th>재질</th><th>최대압력</th><th>판정</th>';
+  head.innerHTML = '<th>메이커</th><th>시리즈</th><th>모델</th><th>' + (S.mount === 'elbow' ? '나사' : '취부') + '</th><th>대응 OD</th><th>제어 방식</th><th>판정</th>';
 
   body.innerHTML = S.results.map(function(r, idx) {
-    var shapeCells = activeShapes.map(function(s) { return '<td class="mono">' + r.fittings[s] + '</td>'; }).join('');
     var rowSel = S.picked === idx ? ' row-selected' : '';
     return '<tr class="comparison-row' + rowSel + '" role="button" tabindex="0" onclick="pickModel(' + idx + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \')pickModel(' + idx + ')">'
       + '<td>' + r.country + ' ' + r.name + '</td>'
-      + '<td class="mono">OD' + r.od + '</td>'
-      + '<td class="mono">' + r.tubing + '</td>'
-      + shapeCells
-      + '<td>' + (S.material === 'pu' ? 'PU' : 'PA') + '</td>'
-      + '<td class="mono">' + r.pMax + ' MPa</td>'
+      + '<td>' + r.series + '</td>'
+      + '<td class="mono">' + r.model + '</td>'
+      + '<td class="mono">' + (r.mount === 'elbow' ? THREAD_LABEL[r.thread] : '인라인') + '</td>'
+      + '<td class="mono">' + r.ods.join('/') + '</td>'
+      + '<td>' + controlNote() + '</td>'
       + '<td><span class="tag-ok">✅ 적합</span></td>'
       + '</tr>';
   }).join('');
@@ -988,30 +844,26 @@ function renderCompareTable() {
 function pickModel(idx) {
   S.picked = idx;
   const r = S.results[idx];
-  const activeShapes = Object.keys(S.shapes).filter(function(k) { return S.shapes[k]; });
 
   const sumBox  = document.getElementById('summary-box');
   const sumRows = document.getElementById('sum-rows');
   const links   = document.getElementById('maker-links');
 
-  var fittingRows = activeShapes.map(function(s) {
-    return '<div class="sum-row"><span>' + SHAPE_LABEL[s] + ' 피팅</span><span>' + r.fittings[s] + '</span></div>';
-  }).join('');
-
   sumRows.innerHTML = ''
     + '<div class="sum-row"><span>메이커</span><span>' + r.country + ' ' + r.name + '</span></div>'
-    + '<div class="sum-row"><span>피팅 시리즈</span><span>' + r.fittingSeries + '</span></div>'
-    + '<div class="sum-row"><span>튜브 OD</span><span>OD' + r.od + ' mm</span></div>'
-    + '<div class="sum-row"><span>튜빙 모델</span><span>' + r.tubing + '</span></div>'
-    + '<div class="sum-row"><span>재질</span><span>' + (S.material === 'pu' ? 'PU 폴리우레탄' : 'PA 나일론') + '</span></div>'
-    + '<div class="sum-row"><span>최대압력</span><span>' + r.pMax + ' MPa</span></div>'
-    + '<div class="sum-row"><span>필요 유량</span><span>' + S.flow + ' L/min</span></div>'
-    + fittingRows;
+    + '<div class="sum-row"><span>시리즈</span><span>' + r.series + '</span></div>'
+    + '<div class="sum-row"><span>모델</span><span>' + r.model + '</span></div>'
+    + '<div class="sum-row"><span>취부 형태</span><span>' + (r.mount === 'elbow' ? '엘보형' : '인라인형') + '</span></div>'
+    + (r.mount === 'elbow' ? '<div class="sum-row"><span>포트 나사</span><span>' + THREAD_LABEL[r.thread] + '</span></div>' : '')
+    + '<div class="sum-row"><span>튜브 OD</span><span>OD' + S.od + ' mm</span></div>'
+    + '<div class="sum-row"><span>제어 방식</span><span>' + controlNote() + '</span></div>'
+    + '<div class="sum-row"><span>대상 실린더</span><span>Ø' + S.bore + ' / ' + S.speed + ' mm/s</span></div>';
 
   links.innerHTML = '<a class="maker-link" href="' + r.url + '" target="_blank">🔗 ' + r.name + ' 공식 사이트</a>';
   sumBox.style.display = 'block';
 
-  var _lbl=document.getElementById('cmp-selected-label');if(_lbl){_lbl.style.display='block';document.getElementById('cmp-selected-name').textContent=r.name+' OD'+r.od}
+  var _lbl = document.getElementById('cmp-selected-label');
+  if (_lbl) { _lbl.style.display = 'block'; document.getElementById('cmp-selected-name').textContent = r.name + ' ' + r.model; }
   renderCompareTable();
 }
 
@@ -1021,6 +873,7 @@ function pickModel(idx) {
 window.addEventListener('DOMContentLoaded', function() {
   document.getElementById('print-date').textContent = new Date().toLocaleDateString('ko-KR');
   renderStepsBar(1);
+  calcPreview();
 });
 </script>
 <!-- ══ PartsOn 모바일 내비게이션 (공통 스니펫 — 전 페이지 동일, 수정 시 전 페이지 일괄 교체) ══ -->
@@ -1113,9 +966,3 @@ window.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
-
-
-
-
-
-
