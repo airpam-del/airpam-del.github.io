@@ -14,6 +14,35 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **배포 저장소:** `D:\여홍 업무\partson-live\` (GitHub 연결된 git 저장소)  
 **배포 방법:** `PartsOn 배포\` 파일을 `partson-live\`에 복사 후 git commit & push → 자동 배포
 
+## 공통 코드 구조 (2026-07-04 리팩토링)
+
+- **`js/common.js`** — 계산기 목록 **단일 출처** `CALCULATORS` 배열 + 네비게이션 렌더.
+  - `CALCULATORS`: `{file, cat:'electric'|'pneumatic', desk:'데스크톱 라벨', mob:'모바일 라벨'}`
+  - `renderNav()`: 계산기 페이지 `<div id="site-nav"></div>` 자리에 데스크톱 드롭다운 주입
+  - `renderMobileNav()`: 모바일 햄버거(pmnav) — 16개 전 페이지 공통
+  - 계산기 페이지 15개: 인라인 `<nav>` 대신 `<div id="site-nav"></div>` + `<script src="js/common.js">`
+  - **네비 CSS(`.partson-nav`/`.pnav-*`)는 각 페이지 인라인 유지** (CSS는 드리프트로 미추출 — 아래 참고)
+- **index.html**: 데스크톱 드롭다운·"N종" 통계는 CALCULATORS 기반 JS 렌더. 히어로 칩·CTA·툴카드는
+  SEO·무JS 복원력 위해 **정적 HTML 유지** + 개수 가드(불일치 시 콘솔 경고).
+
+### ✅ 새 계산기 추가 절차
+1. `계산기.html` 제작 (기존 공압/전동 페이지 복제 — 네비는 `<div id="site-nav"></div>` +
+   `<script src="js/common.js"></script>`만 넣으면 됨)
+2. **`js/common.js`의 `CALCULATORS` 배열에 1줄 추가** → 전 페이지 네비 드롭다운·모바일 메뉴·
+   index 통계 자동 반영
+3. index.html에 **정적 요소 3곳 수동 추가**(SEO): 히어로 칩(`.chip`), CTA 버튼(`.cta-group-btns`),
+   툴카드(`.tool-card`) — 누락 시 index 콘솔에 `[PartsOn] … 개수 불일치` 경고 표시됨
+4. sitemap.xml에 URL 추가
+
+### ⚠️ CSS는 왜 공통 추출 안 했나 (2026-07-04 조사)
+15개 페이지 CSS가 시간차 수작업으로 드리프트(바이트 동일 교집합 8개뿐, `.btn` 6변형 등).
+안전한 대형 common.css는 100+ 규칙 정본 통일이 필요 → 외형 변경 위험으로 보류. 상세 REFACTOR_PLAN.md.
+
+### 🔙 리팩토링 복구 (문제 시)
+- 병합 후 이상: `git reset --hard backup-before-refactor && git push --force origin main` → CNAME 재확인
+- 특정 커밋만: `git revert <커밋>`
+- **CNAME(partson.co.kr) 절대 삭제 금지** — 과거 삭제로 도메인 풀린 사고 있음
+
 ## 파일 구조
 
 ```
