@@ -142,6 +142,36 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
 .q-preview.show{display:flex;align-items:center;gap:.5rem}
 .q-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px}
 
+/* ── 보어 계산 도우미 ── */
+.bore-helper-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin-top:.4rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;text-decoration:none;width:100%}
+.bore-helper-toggle:hover{color:var(--accent-mid)}
+.bore-helper-toggle .bh-arrow{transition:transform .2s;display:inline-block;font-style:normal}
+.bore-helper-toggle.open .bh-arrow{transform:rotate(180deg)}
+.bore-helper-body{display:none;margin-top:.6rem;border:1.5px solid var(--accent-light);border-radius:10px;overflow:hidden;background:#fff}
+.bore-helper-body.open{display:block}
+.bh-tabs{display:flex;border-bottom:1px solid var(--border-light);background:#F8F7F5}
+.bh-tab{flex:1;padding:.55rem .5rem;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .15s;font-family:var(--font)}
+.bh-tab:hover{color:var(--accent)}
+.bh-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:#fff}
+.bh-panels{padding:1rem}
+.bh-panel{display:none}
+.bh-panel.active{display:block}
+.bh-input-row{display:flex;gap:.6rem;margin-bottom:.7rem;flex-wrap:wrap}
+.bh-input-row .bh-field{flex:1;min-width:120px}
+.bh-input-row .bh-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
+.bh-input-row .bh-field input,.bh-input-row .bh-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);color:var(--text);background:#fff;outline:none;transition:border-color .15s}
+.bh-input-row .bh-field input:focus,.bh-input-row .bh-field select:focus{border-color:var(--accent)}
+.bh-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin-bottom:.75rem;min-height:36px;font-family:var(--mono);font-weight:600;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.bh-preview .bh-preview-label{font-family:var(--font);font-weight:400;color:var(--text2);font-size:12px;margin-right:.25rem}
+.bh-preview .bh-arrow-sep{color:var(--accent-mid);font-weight:400}
+.bh-preview .bh-rec{background:var(--accent);color:#fff;border-radius:4px;padding:1px 8px;font-family:var(--font);font-weight:700}
+.bh-apply-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;transition:all .15s;font-family:var(--font)}
+.bh-apply-btn:hover{background:var(--accent-mid)}
+.bh-apply-btn:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
+.bh-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+@keyframes bhHighlightPulse{0%{background:#DBEAFE}50%{background:#BFDBFE}100%{background:#fff}}
+.bh-highlight{animation:bhHighlightPulse .7s ease-out}
+
 /* ── 체크박스 ── */
 .check-group{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem}
 .check-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 1rem;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all .15s;background:#fff}
@@ -355,6 +385,97 @@ document.addEventListener('click',function(e){if(!e.target.closest('.pnav-drop')
           <option value="80">Ø80 mm — 단면적 5,027 mm²</option>
           <option value="100">Ø100 mm — 단면적 7,854 mm²</option>
         </select>
+      </div>
+
+      <button class="bore-helper-toggle" id="bh-toggle" onclick="bhToggle()" type="button">
+        <span>💡 실린더 보어를 모르신다면? 계산 도우미 열기</span>
+        <span class="bh-arrow">▾</span>
+      </button>
+      <div class="bore-helper-body" id="bh-body">
+        <div class="bh-tabs">
+          <button class="bh-tab active" onclick="bhTab(0)" type="button">수평 이동 부하</button>
+          <button class="bh-tab" onclick="bhTab(1)" type="button">수직 리프트 부하</button>
+          <button class="bh-tab" onclick="bhTab(2)" type="button">필요 추력 직접</button>
+        </div>
+        <div class="bh-panels">
+          <!-- 탭 A: 수평 이동 -->
+          <div class="bh-panel active" id="bh-panel-0">
+            <div class="bh-input-row">
+              <div class="bh-field">
+                <label>부하 무게 (kg)</label>
+                <input type="number" id="bh-mass-h" min="0.1" step="0.1" placeholder="예: 20" oninput="bhCalcH()">
+              </div>
+              <div class="bh-field">
+                <label>마찰계수 μ</label>
+                <input type="number" id="bh-mu" min="0.05" step="0.05" value="0.15" oninput="bhCalcH()">
+              </div>
+              <div class="bh-field">
+                <label>사용 압력</label>
+                <select id="bh-pressure-h" onchange="bhCalcH()">
+                  <option value="0.3">0.3 MPa</option>
+                  <option value="0.4">0.4 MPa</option>
+                  <option value="0.5" selected>0.5 MPa</option>
+                  <option value="0.6">0.6 MPa</option>
+                  <option value="0.7">0.7 MPa</option>
+                </select>
+              </div>
+            </div>
+            <div class="bh-preview"><span class="bh-preview-label">필요 추력:</span><span id="bh-f-0">— N</span><span class="bh-arrow-sep">→ 권장 보어:</span><span class="bh-rec" id="bh-rec-0">—</span></div>
+            <button class="bh-apply-btn" id="bh-apply-0" onclick="bhApply(0)" disabled type="button">✓ 이 보어를 적용</button>
+            <div class="bh-hint" style="margin-top:.5rem">필요 추력 = 부하 무게 × 9.81 × μ × 안전계수(1.5) &nbsp;|&nbsp; 보어는 권장 추력(이론 추력 60%) 기준 산정</div>
+          </div>
+          <!-- 탭 B: 수직 리프트 -->
+          <div class="bh-panel" id="bh-panel-1">
+            <div class="bh-input-row">
+              <div class="bh-field">
+                <label>부하 무게 (kg)</label>
+                <input type="number" id="bh-mass-v" min="0.1" step="0.1" placeholder="예: 10" oninput="bhCalcV()">
+              </div>
+              <div class="bh-field">
+                <label>가속도 보정</label>
+                <select id="bh-accel" onchange="bhCalcV()">
+                  <option value="1.0">없음 (저속)</option>
+                  <option value="1.3" selected>포함 (×1.3 · 고속·충격)</option>
+                </select>
+              </div>
+              <div class="bh-field">
+                <label>사용 압력</label>
+                <select id="bh-pressure-v" onchange="bhCalcV()">
+                  <option value="0.3">0.3 MPa</option>
+                  <option value="0.4">0.4 MPa</option>
+                  <option value="0.5" selected>0.5 MPa</option>
+                  <option value="0.6">0.6 MPa</option>
+                  <option value="0.7">0.7 MPa</option>
+                </select>
+              </div>
+            </div>
+            <div class="bh-preview"><span class="bh-preview-label">필요 추력:</span><span id="bh-f-1">— N</span><span class="bh-arrow-sep">→ 권장 보어:</span><span class="bh-rec" id="bh-rec-1">—</span></div>
+            <button class="bh-apply-btn" id="bh-apply-1" onclick="bhApply(1)" disabled type="button">✓ 이 보어를 적용</button>
+            <div class="bh-hint" style="margin-top:.5rem">필요 추력 = 부하 무게 × 9.81 × 안전계수(1.5) × 가속 보정 &nbsp;|&nbsp; 보어는 권장 추력(이론 추력 60%) 기준 산정</div>
+          </div>
+          <!-- 탭 C: 필요 추력 직접 -->
+          <div class="bh-panel" id="bh-panel-2">
+            <div class="bh-input-row">
+              <div class="bh-field">
+                <label>필요 추력 (N)</label>
+                <input type="number" id="bh-f-direct" min="1" step="10" placeholder="예: 300" oninput="bhCalcD()">
+              </div>
+              <div class="bh-field">
+                <label>사용 압력</label>
+                <select id="bh-pressure-d" onchange="bhCalcD()">
+                  <option value="0.3">0.3 MPa</option>
+                  <option value="0.4">0.4 MPa</option>
+                  <option value="0.5" selected>0.5 MPa</option>
+                  <option value="0.6">0.6 MPa</option>
+                  <option value="0.7">0.7 MPa</option>
+                </select>
+              </div>
+            </div>
+            <div class="bh-preview"><span class="bh-preview-label">필요 추력:</span><span id="bh-f-2">— N</span><span class="bh-arrow-sep">→ 권장 보어:</span><span class="bh-rec" id="bh-rec-2">—</span></div>
+            <button class="bh-apply-btn" id="bh-apply-2" onclick="bhApply(2)" disabled type="button">✓ 이 보어를 적용</button>
+            <div class="bh-hint" style="margin-top:.5rem">공압 실린더 계산기에서 산출한 필요 추력을 그대로 입력하세요. 보어는 권장 추력(이론 추력 60%) 기준 산정.</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -737,6 +858,82 @@ function calcQ() {
   } else {
     preview.classList.remove('show');
   }
+}
+
+/* ──────────────────────────────────────────────
+   보어 계산 도우미 — 필요 추력 → 권장 표준 보어
+   권장 추력(이론 추력 × 60%) ≥ 필요 추력을 만족하는 최소 표준 보어 추천.
+   이론 추력 = P[MPa] × A[mm²] = P × (π/4)D² [N]  (공압 실린더 계산기와 동일 기준)
+──────────────────────────────────────────────── */
+var STD_BORES = [20,25,32,40,50,63,80,100];
+var _bhRec = [null, null, null];
+
+function bhToggle() {
+  var body = document.getElementById('bh-body');
+  var btn  = document.getElementById('bh-toggle');
+  var open = body.classList.toggle('open');
+  btn.classList.toggle('open', open);
+}
+
+function bhTab(idx) {
+  document.querySelectorAll('.bh-tab').forEach(function(t, i) { t.classList.toggle('active', i === idx); });
+  document.querySelectorAll('.bh-panel').forEach(function(p, i) { p.classList.toggle('active', i === idx); });
+}
+
+function bhRecommendBore(F, P) {
+  if (!F || F <= 0 || !P || P <= 0) return null;
+  for (var i = 0; i < STD_BORES.length; i++) {
+    var D = STD_BORES[i];
+    var area = BORE_TABLE[D];
+    var recThrust = P * area * 0.6;   // 권장 추력 [N] (이론 × 60%)
+    if (recThrust >= F) return D;
+  }
+  return null;
+}
+
+function bhRender(idx, F, P) {
+  var fEl = document.getElementById('bh-f-' + idx);
+  var recEl = document.getElementById('bh-rec-' + idx);
+  var btn = document.getElementById('bh-apply-' + idx);
+  if (!F || F <= 0) { fEl.textContent = '— N'; recEl.textContent = '—'; btn.disabled = true; _bhRec[idx] = null; return; }
+  fEl.textContent = Math.round(F) + ' N';
+  var bore = bhRecommendBore(F, P);
+  if (bore) { recEl.textContent = 'Ø' + bore; btn.disabled = false; _bhRec[idx] = bore; }
+  else { recEl.textContent = 'Ø100 초과'; btn.disabled = true; _bhRec[idx] = null; }
+}
+
+function bhCalcH() {
+  var m = parseFloat(document.getElementById('bh-mass-h').value);
+  var mu = parseFloat(document.getElementById('bh-mu').value) || 0.15;
+  var P = parseFloat(document.getElementById('bh-pressure-h').value);
+  var F = (m > 0) ? m * 9.81 * mu * 1.5 : 0;
+  bhRender(0, F, P);
+}
+
+function bhCalcV() {
+  var m = parseFloat(document.getElementById('bh-mass-v').value);
+  var a = parseFloat(document.getElementById('bh-accel').value) || 1.0;
+  var P = parseFloat(document.getElementById('bh-pressure-v').value);
+  var F = (m > 0) ? m * 9.81 * 1.5 * a : 0;
+  bhRender(1, F, P);
+}
+
+function bhCalcD() {
+  var F = parseFloat(document.getElementById('bh-f-direct').value);
+  var P = parseFloat(document.getElementById('bh-pressure-d').value);
+  bhRender(2, F, P);
+}
+
+function bhApply(idx) {
+  var bore = _bhRec[idx];
+  if (!bore) return;
+  var sel = document.getElementById('bore');
+  sel.value = String(bore);
+  sel.classList.add('bh-highlight');
+  setTimeout(function() { sel.classList.remove('bh-highlight'); }, 800);
+  calcQ();
+  document.getElementById('bh-body').classList.remove('open');
+  document.getElementById('bh-toggle').classList.remove('open');
 }
 
 /* ──────────────────────────────────────────────
