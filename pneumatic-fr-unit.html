@@ -48,6 +48,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .pnav-drop{position:relative}
 .pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
 .pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:#00C853!important}
 .pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:#0088CC!important}
 .pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:195px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .pnav-menu.open{display:block}
@@ -242,7 +243,7 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
 <!-- 내비게이션 -->
 <nav class="partson-nav">
   <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>
-  <div class="pnav-drop">
+  <div class="pnav-drop electric-drop">
     <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>
     <div class="pnav-menu">
       <a href="lmguide.html">LM Guide</a>
