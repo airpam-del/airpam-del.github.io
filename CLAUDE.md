@@ -14,6 +14,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **배포 저장소:** `D:\여홍 업무\partson-live\` (GitHub 연결된 git 저장소)  
 **배포 방법:** `PartsOn 배포\` 파일을 `partson-live\`에 복사 후 git commit & push → 자동 배포
 
+## SEO 구조 (2026-07-04 기초 공사)
+
+- **sitemap.xml**: index(priority 1.0) + 계산기 15개(0.8), admin 제외. `js/common.js`의
+  CALCULATORS 기반 생성 — 계산기 추가 시 sitemap도 갱신 필요(수기 또는 재생성 스크립트)
+- **robots.txt**: 전체 허용 + `Disallow: /admin.html` + Sitemap 경로
+- **페이지별 메타(정적, JS 주입 아님)**: title(`핵심키워드 | PartsOn`), meta description(80~120자),
+  keywords(3~5개), canonical, `robots: index,follow`(admin만 `noindex,nofollow`),
+  OG(title/description/type/url/image), twitter:card. 각 계산기 페이지 `<head>`에 직접 기입
+- **JSON-LD**: 계산기 15개 = `WebApplication`(EngineeringApplication, offers price 0),
+  index = `WebSite`. 크롤러가 리치결과로 인식
+- **검색엔진 인증**: index에 **네이버 실제 인증 코드 존재**(`naver-site-verification`, 보존 필수).
+  전 페이지 `<head>` 하단에 google 인증용 주석 플레이스홀더 있음 → 발급 코드 넣고 주석 해제
+- **OG 이미지**: `og-image.png`(공용, 1200×630) 존재 → 전 페이지 공유. TODO: 계산기별 맞춤 OG
+  이미지는 향후 개선(선택). make-og-image.html로 생성
+
+### 검색엔진 등록 절차 (사용자 작업)
+1. **구글 서치콘솔**(search.google.com/search-console): 속성 추가 → HTML 태그 인증 →
+   발급 코드를 index.html `<head>`의 `<!-- <meta name="google-site-verification" ...> -->`
+   주석 해제 후 삽입 → 배포 → 인증 → sitemap.xml 제출
+2. **네이버 서치어드바이저**(searchadvisor.naver.com): 이미 인증됨 → 사이트맵/RSS 제출만
+3. 메타 SEO 태그 수정 시 `$TEMP/seo-meta.js`(로컬 스크립트) 패턴 재사용 가능
+
 ## 공통 코드 구조 (2026-07-04 리팩토링)
 
 - **`js/common.js`** — 계산기 목록 **단일 출처** `CALCULATORS` 배열 + 네비게이션 렌더.
