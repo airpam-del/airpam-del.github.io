@@ -206,9 +206,9 @@ table.ctbl tr.rec-row.bad td{background:#FEF2F2}
 .disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
 
 /* 면책 공지 카드 (결과 상단) */
-.notice-card{background:#FEF2F2;border:1.5px solid #FECACA;border-left:4px solid var(--bad);border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#7F1D1D;line-height:1.7}
-.notice-card .notice-head{font-weight:700;color:var(--bad);margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
-.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#991B1B;margin-top:8px;font-weight:600}
+.notice-card{background:#EFF6FF;border:1.5px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:#1E40AF;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#1E40AF;margin-top:8px;font-weight:600}
 .notice-card details summary::-webkit-details-marker{display:none}
 .notice-card details summary::before{content:'▶ ';font-size:9px}
 .notice-card details[open] summary::before{content:'▼ '}
@@ -524,9 +524,8 @@ table.ctbl tr.rec-row.bad td{background:#FEF2F2}
 
     <!-- 면책 공지 카드 (결과 상단 - 펼침 가능) -->
     <div class="notice-card">
-      <div class="notice-head">⚠️ 면책 공지 — 반드시 확인하세요</div>
-      본 결과는 <strong>참고용 추정치</strong>이며, 실제 설계·구매·시공의 근거로 사용할 수 없습니다.
-      ISO 281 기본 수명 식을 단순화한 모델이므로 실제 베어링 수명·성능과 차이가 있을 수 있습니다.
+      <div class="notice-head">ℹ️ 참고 안내</div>
+      본 결과는 ISO 281 기준의 <strong>빠른 사전 검토용 추정치</strong>입니다. 최종 선정 시에는 제조사 카탈로그와 함께 확인하세요.
       <details>
         <summary>자세한 한계 및 면책 사항 보기</summary>
         <div class="detail-body">
