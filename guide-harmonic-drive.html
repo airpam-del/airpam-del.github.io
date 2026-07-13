@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>하모닉 드라이브 선정 방법 — 토크 검증, 래칫팅 방지, 수명 계산 | PartsOn</title>
+<meta name="description" content="하모닉 드라이브 선정 절차를 정리했습니다. 평균·최대 토크 검증, 래칫팅(이 넘김) 방지 기준, 플렉스플라인 피로 수명, 중공축 활용까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="하모닉 드라이브 선정, 하모닉 감속기, 래칫팅, 플렉스플라인, 중공 감속기, 로봇 손목">
+<link rel="canonical" href="https://partson.co.kr/guide-harmonic-drive.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="하모닉 드라이브 선정 방법 — 토크 검증, 래칫팅 방지, 수명 계산">
+<meta property="og:description" content="토크 검증, 래칫팅 방지, 플렉스플라인 수명까지 하모닉 드라이브 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-harmonic-drive.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"하모닉 드라이브 선정 방법 — 토크 검증, 래칫팅 방지, 수명 계산",
+"description":"하모닉 드라이브의 토크 검증, 래칫팅 방지 기준, 플렉스플라인 피로 수명 계산 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-harmonic-drive.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"래칫팅(ratcheting)이란 무엇인가요?",
+"acceptedAnswer":{"@type":"Answer","text":"순간 과대 토크로 플렉스플라인과 서큘러스플라인의 이가 건너뛰는 현상입니다. 한 번 발생하면 치형이 손상되어 정밀도가 회복되지 않으므로, 충격 토크가 래칫팅 한계 토크를 절대 넘지 않도록 선정해야 합니다."}},
+{"@type":"Question","name":"하모닉 드라이브의 수명은 무엇이 결정하나요?",
+"acceptedAnswer":{"@type":"Answer","text":"얇은 탄성 부품인 플렉스플라인의 피로와 웨이브 제너레이터 베어링 수명입니다. 평균 토크가 정격 이내면 통상 7,000~10,000시간 이상을 기대할 수 있습니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>하모닉 드라이브 선정 방법 — 토크 검증, 래칫팅 방지, 수명 계산</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>하모닉 드라이브는 탄성 기어(플렉스플라인)의 변형을 이용한 감속기로, 소형·경량으로 큰 감속비(30~160)와 제로 백래시급 정밀도(≤1 arcmin)를 얻습니다. 로봇 손목축, 반도체 장비 회전축의 표준입니다. 단, <strong>래칫팅</strong>이라는 고유 파손 모드가 있어 토크 검증이 특히 중요합니다.</p>
+
+<h2>1. 토크 검증 — 래칫팅이 최우선</h2>
+<div class="formula">① 평균 토크 Tm ≤ 정격 토크<br>② 기동/정지 최대 토크 ≤ 기동정지 허용 피크 토크<br>③ 비상정지·충돌 토크 ≤ 순간 최대 허용 토크<br>④ 어떤 경우에도 래칫팅 토크 미만 (절대 조건)</div>
+<div class="tip"><strong>경고:</strong> 래칫팅은 이가 한 칸 건너뛰며 치형이 손상되는 비가역 파손입니다. 한 번이라도 발생하면 교체해야 합니다. 충돌 가능성이 있는 축이면 충돌 토크를 반드시 산정해 여유를 확인하세요. PartsOn 계산기는 래칫팅 위험을 자동 경고합니다.</div>
+
+<h2>2. 수명 계산 — 플렉스플라인 피로</h2>
+<div class="formula">Lh = L₀ × (T₀ / Tm)³ × (N₀ / Nm)<br><br>L₀: 정격 수명 (통상 7,000~10,000시간)<br>T₀: 정격 토크, Tm: 평균 부하 토크<br>N₀: 정격 입력 회전수, Nm: 평균 입력 회전수</div>
+
+<h2>3. 감속비와 사이즈</h2>
+<ul>
+<li>감속비 30, 50, 80, 100, 120, 160 — 필요 출력 속도와 관성비로 결정</li>
+<li>사이즈(14, 17, 20, 25, 32...)는 토크 조건을 만족하는 최소값으로</li>
+<li>감속비가 낮을수록(30·50) 허용 토크가 줄어드는 모델이 많으니 비 확정 후 토크 재확인</li>
+</ul>
+
+<h2>4. 구조 형태 선택</h2>
+<table>
+<tr><th>형태</th><th>특징</th><th>용도</th></tr>
+<tr><td>컴포넌트 타입 (CSG/CSF)</td><td>3요소만 공급, 설계 자유도 높음</td><td>장비 내장 설계</td></tr>
+<tr><td>유닛 타입 (SHG/SHF)</td><td>베어링 내장, 바로 장착</td><td>일반적 선택</td></tr>
+<tr><td>중공축 타입 (SHF 중공)</td><td>중심에 배선·배관 통과 가능</td><td>로봇 관절, 회전 테이블</td></tr>
+</table>
+<p>중공축은 케이블 처리를 극적으로 단순화하므로 회전축에 배선이 지나가야 한다면 우선 검토하세요.</p>
+
+<h2>5. 선정 예제</h2>
+<p>로봇 손목축: 평균 토크 25 N·m, 기동정지 피크 60 N·m, 충돌 시 최대 110 N·m, 출력 30rpm 필요. 감속비 100 선택 시 입력 3,000rpm. 사이즈 25(정격 ≈ 51 N·m, 순간 허용 ≈ 127~180 N·m급) 검토 → 래칫팅 한계 대비 충돌 토크 여유 확인 후 확정합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/harmonic-drive.html">→ 하모닉 드라이브 선정 계산기에서 직접 계산해보기 (래칫팅 자동 경고, HDS·Leadshine 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 유성 감속기 대신 하모닉을 쓰면 안 되나요?</h3>
+<p>정밀도는 하모닉이 우수하지만 가격이 수 배이고 충격에 약합니다. 반전 정밀도가 중요하지 않은 일반 이송축은 <a href="guide-planetary-gearbox.html">유성 감속기</a>가 경제적입니다.</p>
+<h3>Q. 효율이 낮다고 들었는데?</h3>
+<p>감속비·회전수·온도에 따라 60~85% 수준으로 유성(94~97%)보다 낮습니다. 모터 용량 계산 시 효율을 반드시 반영하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-cycloidal-gearbox.html">사이클로이드 감속기 선정</a> · <a href="guide-planetary-gearbox.html">유성 감속기 선정</a> · <a href="guide-servo-motor.html">서보모터 용량 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

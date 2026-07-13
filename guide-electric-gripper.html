@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전동 그리퍼 선정 방법 — 파지력 계산과 협동로봇 호환성 확인 | PartsOn</title>
+<meta name="description" content="전동 그리퍼 선정 절차를 정리했습니다. 파지력 계산 공식(안전계수 2), 스트로크 결정, UR·두산·쿠카 협동로봇 호환성, IO-Link 통신 선택까지 설명합니다.">
+<meta name="keywords" content="전동 그리퍼 선정, 파지력 계산, 협동로봇 그리퍼, OnRobot, Schunk, IO-Link">
+<link rel="canonical" href="https://partson.co.kr/guide-electric-gripper.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="전동 그리퍼 선정 방법 — 파지력 계산과 협동로봇 호환성 확인">
+<meta property="og:description" content="파지력 계산, 스트로크 결정, 협동로봇 호환성까지 전동 그리퍼 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-electric-gripper.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"전동 그리퍼 선정 방법 — 파지력 계산과 협동로봇 호환성 확인",
+"description":"전동 그리퍼의 파지력 계산, 스트로크 결정, 협동로봇 호환성 확인 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-electric-gripper.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"전동 그리퍼 파지력은 어떻게 계산하나요?",
+"acceptedAnswer":{"@type":"Answer","text":"필요 파지력 = 워크 무게 × (1 + 가속도/g) × 안전계수 ÷ (마찰계수 × 접촉면 수)입니다. 마찰 파지 기준 안전계수 2 이상을 적용하며, 가감속이 큰 로봇 동작이라면 관성력을 반드시 포함합니다."}},
+{"@type":"Question","name":"공압 그리퍼 대신 전동을 쓰는 이유는?",
+"acceptedAnswer":{"@type":"Answer","text":"파지력·속도·위치를 프로그램으로 제어할 수 있고, 파지 여부·워크 크기 판별이 가능하며, 에어 배관이 필요 없습니다. 다품종 워크 대응과 협동로봇 적용에 유리합니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>전동 그리퍼 선정 방법 — 파지력 계산과 협동로봇 호환성 확인</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>전동 그리퍼는 파지력·속도·위치를 프로그램으로 제어할 수 있는 로봇 핸드입니다. 선정 순서는 ① 파지력 → ② 스트로크 → ③ 로봇 호환성 → ④ 통신 방식입니다.</p>
+
+<h2>1. 필요 파지력 계산</h2>
+<div class="formula">F = m × g × (1 + a/g) × SF / (μ × n)<br><br>m: 워크 질량 (kg), a: 로봇 가감속도 (m/s²)<br>SF: 안전계수 (마찰 파지 2 이상)<br>μ: 마찰계수 (금속-금속 0.1~0.2, 고무 패드 0.5~0.7)<br>n: 접촉면 수 (2조 평행 그리퍼 = 2)</div>
+<div class="tip"><strong>흔한 실수:</strong> 정지 상태 무게만으로 계산하는 것. 로봇이 가감속하면 관성력이 더해져 필요 파지력이 1.5~2배가 됩니다. 형상 파지(걸림 구조)가 가능하면 마찰 파지보다 안전계수를 낮출 수 있습니다.</div>
+
+<h2>2. 스트로크 결정</h2>
+<ul>
+<li>스트로크 ≥ (최대 워크 폭 − 최소 워크 폭) + 여유 4~10mm</li>
+<li>다품종 워크라면 최대·최소를 모두 커버하는지 확인</li>
+<li>스트로크가 크면 파지력·속도가 줄어드는 트레이드오프 존재</li>
+</ul>
+
+<h2>3. 협동로봇 호환성</h2>
+<p>협동로봇에 장착한다면 아래 3가지를 확인합니다.</p>
+<ul>
+<li><strong>플랜지 규격</strong> — ISO 9409-1-50-4-M6 (UR·두산 등 표준) 대응 여부</li>
+<li><strong>소프트웨어 플러그인</strong> — UR+ 인증, 두산 Mate, FANUC CRX 플러그인 등 (티칭 시간 단축)</li>
+<li><strong>가반중량</strong> — 그리퍼 자중 + 워크 ≤ 로봇 가반중량</li>
+</ul>
+
+<h2>4. 통신 방식</h2>
+<table>
+<tr><th>방식</th><th>특징</th></tr>
+<tr><td>디지털 I/O</td><td>열림/닫힘 단순 제어, 배선 간단, 저가</td></tr>
+<tr><td>IO-Link</td><td>파지력·위치 수치 제어, 파지 판별·진단 가능</td></tr>
+<tr><td>전용 프로토콜 (로봇 직결)</td><td>플러그인과 함께 사용, 세팅 최소화</td></tr>
+</table>
+
+<h2>5. 선정 예제</h2>
+<p>1.5kg 알루미늄 부품, 로봇 가속 5 m/s², 고무 패드(μ=0.5), 평행 2조: F = 1.5×9.8×(1+0.51)×2 / (0.5×2) = 약 44 N. 워크 폭 편차 20mm → 스트로크 편측 15mm 이상. Schunk EGP, OnRobot RG2급에서 파지력·스트로크 조건을 만족하는 모델을 비교 선정합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/electric-gripper.html">→ 전동 그리퍼 선정 계산기에서 직접 계산해보기 (Schunk·OnRobot 비교, UR·두산 호환 체크, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 파지력이 클수록 좋은 것 아닌가요?</h3>
+<p>과대 파지력은 워크 변형·파손의 원인입니다. 전동 그리퍼는 파지력을 수치로 제한할 수 있으므로 필요값 + 여유 20~30% 수준으로 설정하는 것이 좋습니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-gripper.html">공압 그리퍼 선정</a> · <a href="guide-servo-motor.html">서보모터 용량 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

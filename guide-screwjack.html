@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스크류잭 선정 방법 — 하중·좌굴 검토와 구동 토크·모터 출력 계산 | PartsOn</title>
+<meta name="description" content="스크류잭 선정 절차를 정리했습니다. 하중 결정, Euler 좌굴 검토, 웜기어 효율 기반 구동 토크 계산, 필요 모터 출력, 듀티(가동률) 제한까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="스크류잭 선정, 스크류잭 계산, 좌굴 검토, 웜기어 잭, 리프팅 잭, ZIMM">
+<link rel="canonical" href="https://partson.co.kr/guide-screwjack.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="스크류잭 선정 방법 — 하중·좌굴 검토와 구동 토크·모터 출력 계산">
+<meta property="og:description" content="하중 결정부터 좌굴 검토, 구동 토크·모터 출력 계산까지 스크류잭 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-screwjack.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"스크류잭 선정 방법 — 하중·좌굴 검토와 구동 토크·모터 출력 계산",
+"description":"스크류잭 하중 결정, Euler 좌굴 검토, 구동 토크와 모터 출력 계산 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-screwjack.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"스크류잭은 왜 듀티(가동률) 제한이 있나요?",
+"acceptedAnswer":{"@type":"Answer","text":"웜기어 효율이 낮아(20~40%) 손실이 열로 변합니다. 일반 사다리꼴 나사 잭은 가동률 20~30% 이하로 제한되며, 연속 가동이 필요하면 볼스크류 타입 잭을 선택해야 합니다."}},
+{"@type":"Question","name":"스크류잭의 셀프락(자립)이란?",
+"acceptedAnswer":{"@type":"Answer","text":"사다리꼴 나사 잭은 나사 마찰로 정지 시 하중이 역구동되지 않는 자립성이 있습니다. 볼스크류 타입은 자립성이 없어 브레이크 모터가 필수입니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>스크류잭 선정 방법 — 하중·좌굴 검토와 구동 토크·모터 출력 계산</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>스크류잭은 웜기어와 스크류로 무거운 하중을 정밀하게 승강시키는 부품입니다. 리프트 테이블, 스테이지 승강, 다점 동기 리프팅에 널리 쓰입니다. 선정 시 하중만 보고 고르면 좌굴·발열·역구동 문제가 생깁니다. 검증 순서대로 정리합니다.</p>
+
+<h2>1. 하중과 사용 조건 정리</h2>
+<ul>
+<li><strong>하중</strong> — 1대당 부담 하중 (다점 리프팅이면 불균형 계수 1.2~1.3 적용)</li>
+<li><strong>스트로크</strong>와 <strong>승강 속도</strong></li>
+<li><strong>하중 방향</strong> — 압축(밀어 올림) / 인장(매달림). 압축이면 좌굴 검토 필수</li>
+<li><strong>가동률</strong> — 시간당 몇 분 동작하는지 (발열 제한과 직결)</li>
+</ul>
+
+<h2>2. Euler 좌굴 검토 (압축 하중 시 필수)</h2>
+<div class="formula">허용 좌굴 하중 Pk = n × π² × E × I / L²  (안전율 3~4 적용)<br><br>E: 종탄성계수, I: 스크류 단면 2차 모멘트<br>L: 유효 좌굴 길이 (스트로크 + 여유), n: 단말 지지 조건 계수</div>
+<p>스트로크가 길수록 허용 하중이 급격히 감소합니다(L의 제곱 반비례). 같은 하중이라도 스트로크가 길면 한두 사이즈 위 모델이 필요합니다.</p>
+
+<h2>3. 구동 토크와 모터 출력 계산</h2>
+<div class="formula">구동 토크 T = (F × l) / (2π × η_total) (N·m)<br><br>F: 하중 (N), l: 스크류 리드 (m)<br>η_total: 종합 효율 = 나사 효율 × 웜기어 효율 (사다리꼴 나사 잭 통상 0.2~0.4)<br><br>모터 출력 P = T × 2π × N / 60 (W, N: 입력축 rpm)</div>
+<div class="tip"><strong>주의:</strong> 스크류잭은 효율이 낮은 것이 정상입니다. 이 낮은 효율 덕분에 셀프락(자립)이 생겨 정지 시 하중이 흘러내리지 않습니다. 효율이 좋은 볼스크류 타입은 반드시 브레이크가 필요합니다.</div>
+
+<h2>4. 가동률(듀티) 확인</h2>
+<p>웜기어 손실이 열로 축적되므로 사다리꼴 나사 잭은 통상 <strong>가동률 20~30% 이하, 연속 동작 수 분 이내</strong>로 제한됩니다. 사이클이 짧고 빈번하면 볼스크류 타입 또는 큰 사이즈로 발열 여유를 확보하세요.</p>
+
+<h2>5. 방식 선택</h2>
+<table>
+<tr><th>항목</th><th>트래블링 타입</th><th>로터리 타입</th></tr>
+<tr><td>구조</td><td>스크류가 상하 이동</td><td>스크류 회전, 너트가 이동</td></tr>
+<tr><td>적용</td><td>일반 승강 (가장 보편적)</td><td>스크류 돌출 공간이 없을 때</td></tr>
+</table>
+
+<h2>6. 선정 예제</h2>
+<p>2톤 하중을 4대 동기 리프팅, 스트로크 500mm, 속도 100mm/min: 1대당 하중 = 2,000/4 × 1.25 = 625 kgf. 스트로크 500mm 기준 좌굴 여유가 있는 모델(예: ZIMM ZE-10 이상)에서 시작해, 리드·기어비 조합으로 필요 입력 회전수와 모터 출력을 계산합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/screwjack.html">→ 스크류잭 선정 계산기에서 직접 계산해보기 (좌굴 자동 검토, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 여러 대를 한 모터로 연결할 수 있나요?</h3>
+<p>네. 커넥팅 샤프트와 베벨 기어박스로 2~8대를 기계적으로 동기 구동하는 것이 스크류잭의 대표 사용법입니다. 이때 모터 출력은 전체 잭의 소요 토크 합으로 계산합니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-ballscrew.html">볼스크류 선정 방법</a> · <a href="guide-planetary-gearbox.html">유성 감속기 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

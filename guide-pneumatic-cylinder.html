@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공압 실린더 선정 방법 — 추력 계산 공식과 보어 사이즈 결정 | PartsOn</title>
+<meta name="description" content="공압 실린더 선정 절차를 정리했습니다. 추력 계산 공식, 부하율 기준, 보어(튜브 내경) 선정, 단동·복동 구분, 공기 소비량 계산까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="공압 실린더 선정, 실린더 추력 계산, 보어 선정, 부하율, 에어 실린더 계산">
+<link rel="canonical" href="https://partson.co.kr/guide-pneumatic-cylinder.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="공압 실린더 선정 방법 — 추력 계산 공식과 보어 사이즈 결정">
+<meta property="og:description" content="추력 계산, 부하율 기준, 보어 선정까지. 예제와 함께 보는 공압 실린더 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-pneumatic-cylinder.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "공압 실린더 선정 방법 — 추력 계산 공식과 보어 사이즈 결정",
+  "description": "공압 실린더 추력 계산 공식, 부하율 기준, 보어 사이즈 선정 절차를 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-07-13",
+  "dateModified": "2026-07-13",
+  "mainEntityOfPage": "https://partson.co.kr/guide-pneumatic-cylinder.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "공압 실린더 추력은 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "이론 추력 = 실린더 단면적 × 공기압입니다. 전진 시 F = (π/4)×D²×P, 후진 시 로드 단면적을 빼고 계산합니다. 실제 사용 추력은 부하율(50~70%)을 적용합니다."}},
+    {"@type": "Question", "name": "부하율은 왜 50~70%로 잡나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "마찰 손실과 배압, 속도 확보를 위한 여유입니다. 정적 클램핑은 70%, 수평 이송은 50%, 고속·수직 동작은 30~50%를 권장합니다."}},
+    {"@type": "Question", "name": "단동과 복동 실린더는 언제 구분해 쓰나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "복동이 표준입니다. 단동(스프링 리턴)은 한 방향만 일을 하고 배관이 1개면 되는 간단한 클램프·이젝터 용도에 사용하며, 스프링 힘만큼 추력이 감소합니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>공압 실린더 선정 방법 — 추력 계산 공식과 보어 사이즈 결정</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>공압 실린더 선정의 핵심은 <strong>필요 추력을 만족하는 보어(튜브 내경)를 찾는 것</strong>입니다. 여기에 스트로크, 장착 형태, 쿠션, 속도 조건이 더해집니다. ISO 6431 표준 기준으로 선정 절차를 정리합니다.</p>
+
+<h2>1. 이론 추력 계산</h2>
+<div class="formula">전진(푸시) F = (π/4) × D² × P<br>후진(풀) F = (π/4) × (D² − d²) × P<br><br>D: 보어 지름 (mm), d: 로드 지름 (mm), P: 사용 압력 (MPa)<br>결과 단위: N</div>
+<p>예: 보어 50mm, 0.5MPa → 전진 추력 = 0.785 × 2,500 × 0.5 ≈ 981 N (약 100 kgf)</p>
+
+<h2>2. 부하율 적용 — 실제 사용 추력</h2>
+<p>이론 추력을 100% 쓸 수는 없습니다. 마찰·배압 손실과 속도 확보를 위해 부하율을 적용합니다.</p>
+<table>
+<tr><th>용도</th><th>권장 부하율</th></tr>
+<tr><td>정적 클램핑 (움직임 거의 없음)</td><td>70%</td></tr>
+<tr><td>수평 이송</td><td>50%</td></tr>
+<tr><td>고속 동작·수직 리프팅</td><td>30~50%</td></tr>
+</table>
+<div class="formula">필요 이론 추력 = 실제 필요 힘 / 부하율<br><br>예: 수평 이송에 50 kgf 필요 → 50/0.5 = 100 kgf → 보어 50 (0.5MPa 기준)</div>
+
+<h2>3. 보어 사이즈 결정</h2>
+<p>ISO 6431 표준 보어: 32, 40, 50, 63, 80, 100, 125mm. 위에서 구한 필요 이론 추력을 만족하는 최소 보어를 선택합니다. 압력은 공장 라인압(통상 0.4~0.6MPa)의 <strong>최저값</strong>으로 계산해야 안전합니다.</p>
+
+<h2>4. 스트로크와 로드 좌굴</h2>
+<ul>
+<li>스트로크가 길고(300mm 이상) 로드에 압축·횡하중이 걸리면 로드 좌굴을 검토합니다</li>
+<li>횡하중이 큰 경우 가이드 부착형 실린더 또는 외부 LM가이드 병용을 권장합니다</li>
+</ul>
+
+<h2>5. 속도와 쿠션</h2>
+<ul>
+<li>속도 제어는 <strong>미터아웃</strong>(배기 조절) 방식의 스피드 컨트롤러가 기본</li>
+<li>고속·중량물 정지 시 스트로크 끝 충격 흡수를 위해 에어쿠션 또는 쇼크업소버 적용</li>
+<li>필요 유량에 맞는 솔레노이드 밸브·배관 구경도 함께 확인 (밸브가 작으면 속도가 안 나옴)</li>
+</ul>
+
+<h2>6. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>용도</td><td>워크 수평 푸시, 필요 힘 60 kgf (≈588 N)</td></tr>
+<tr><td>사용 압력</td><td>0.5 MPa (최저 0.4 MPa)</td></tr>
+<tr><td>부하율</td><td>50%</td></tr>
+</table>
+<div class="formula">필요 이론 추력 = 588 / 0.5 = 1,176 N<br>0.4 MPa 기준: (π/4)×D² ≥ 1,176/0.4 = 2,940 mm² → D ≥ 61.2 mm<br>→ ISO 표준 보어 63 선정</div>
+
+<a class="cta" href="https://partson.co.kr/pneumatic-cylinder.html">→ 공압 실린더 선정 계산기에서 직접 계산해보기 (SMC·Festo·CKD 3사 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. SMC·Festo·CKD 어느 브랜드를 써야 하나요?</h3>
+<p>성능은 동급이며 기존 설비와의 호환성, 납기, 가격으로 결정하는 경우가 많습니다. PartsOn 계산기는 3사 동등 모델을 동시에 비교해 줍니다.</p>
+<h3>Q. 공기 소비량은 어떻게 구하나요?</h3>
+<p>1왕복 소비량 ≈ 실린더 체적 × (사용압+0.1)/0.1 (ANR 환산). 분당 왕복수를 곱하면 컴프레서 용량 검토에 사용할 수 있습니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-lmguide.html">LM가이드 선정 방법</a> · <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-ballscrew.html">볼스크류 선정 방법</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

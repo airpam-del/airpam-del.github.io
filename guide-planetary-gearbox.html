@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>유성 감속기 선정 방법 — 감속비·토크·백래시·관성비 매칭 기준 | PartsOn</title>
+<meta name="description" content="서보용 유성 감속기 선정 절차를 정리했습니다. 감속비 결정, 정격·가속 토크 검증, 백래시(1·3·5 arcmin) 선택, 관성비 매칭 공식까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="유성 감속기 선정, 감속비 계산, 백래시 arcmin, 관성비 매칭, 서보 감속기">
+<link rel="canonical" href="https://partson.co.kr/guide-planetary-gearbox.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="유성 감속기 선정 방법 — 감속비·토크·백래시·관성비 매칭 기준">
+<meta property="og:description" content="감속비 결정부터 토크 검증, 백래시 선택, 관성비 매칭까지 유성 감속기 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-planetary-gearbox.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"유성 감속기 선정 방법 — 감속비·토크·백래시·관성비 매칭 기준",
+"description":"서보용 유성 감속기의 감속비 결정, 토크 검증, 백래시 선택, 관성비 매칭 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-planetary-gearbox.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"유성 감속기 백래시는 몇 arcmin을 선택해야 하나요?",
+"acceptedAnswer":{"@type":"Answer","text":"일반 이송축은 5 arcmin, 정밀 위치결정은 3 arcmin, 왕복 반전이 잦은 고정밀 장비는 1 arcmin 이하를 권장합니다. 백래시가 작을수록 가격이 올라가므로 필요 이상 스펙은 낭비입니다."}},
+{"@type":"Question","name":"관성비 매칭을 위한 최적 감속비는?",
+"acceptedAnswer":{"@type":"Answer","text":"부하 관성은 감속비의 제곱으로 줄어듭니다. 이론상 최적 감속비 i = √(JL/JM)이며, 실무에서는 속도 조건과 함께 관성비 10 이하가 되는 감속비를 선택합니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>유성 감속기 선정 방법 — 감속비·토크·백래시·관성비 매칭 기준</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>유성 감속기는 서보모터와 조합해 토크 증대·관성비 개선·분해능 향상을 동시에 얻는 부품입니다. 선정 포인트는 감속비, 토크, 백래시, 관성비 4가지입니다.</p>
+
+<h2>1. 감속비 결정 — 두 가지 제약 사이에서</h2>
+<div class="formula">속도 제약: i ≤ 모터 정격 회전수 / 부하 필요 회전수<br>관성 제약: 관성비 = JL / (i² × JM) ≤ 10 (권장)<br><br>이론적 최적 감속비: i_opt = √(JL / JM)</div>
+<p>감속비를 키우면 관성비가 제곱으로 좋아지지만 출력 회전수가 줄어듭니다. 필요 속도를 만족하는 범위에서 관성비 10 이하가 되는 감속비를 고릅니다.</p>
+
+<h2>2. 토크 검증 3종</h2>
+<ul>
+<li><strong>정격(연속) 토크</strong> — 사이클 실효 토크 ≤ 감속기 정격 토크</li>
+<li><strong>가속 토크</strong> — 최대 토크 ≤ 감속기 가속 허용 토크 (통상 정격의 1.5~2배)</li>
+<li><strong>비상정지 토크</strong> — 순간 최대 ≤ 비상 허용 토크 (통상 정격의 2~3배, 횟수 제한 있음)</li>
+</ul>
+<div class="formula">출력축 토크 = 모터 토크 × i × η (η: 효율, 1단 ≈ 0.97 / 2단 ≈ 0.94)</div>
+
+<h2>3. 백래시 선택</h2>
+<table>
+<tr><th>백래시</th><th>적용</th></tr>
+<tr><td>5 arcmin (표준)</td><td>일반 이송·반송축, 한 방향 위주 동작</td></tr>
+<tr><td>3 arcmin (정밀)</td><td>위치결정 정밀도가 필요한 왕복축</td></tr>
+<tr><td>1 arcmin (고정밀)</td><td>반전이 잦은 고정밀 장비, 스캔 동작</td></tr>
+</table>
+<div class="tip"><strong>팁:</strong> 백래시는 반전할 때만 오차로 나타납니다. 한 방향으로만 도는 축이라면 5 arcmin으로 충분한 경우가 대부분입니다.</div>
+
+<h2>4. 그 외 확인 항목</h2>
+<ul>
+<li><strong>모터 장착</strong> — 모터 축경·플랜지 규격과 감속기 입력부 호환 (제조사 어댑터 리스트 확인)</li>
+<li><strong>출력축 하중</strong> — 레이디얼·액시얼 허용 하중 (풀리·피니언 직결 시 중요)</li>
+<li><strong>수명</strong> — 통상 20,000시간 (베어링 수명 기준)</li>
+</ul>
+
+<h2>5. 선정 예제</h2>
+<p>400W 서보(정격 1.27 N·m, JM=0.3×10⁻⁴ kg·m²)로 부하 관성 30×10⁻⁴ kg·m², 필요 출력 회전수 300rpm인 턴테이블 구동: 속도 제약 i ≤ 3,000/300 = 10. i=10 적용 시 관성비 = 30/(100×0.3) = 1.0 — 매우 양호. 출력 토크는 1.27×10×0.97 ≈ 12.3 N·m가 됩니다.</p>
+
+<a class="cta" href="https://partson.co.kr/planetary-gearbox.html">→ 유성 감속기 선정 계산기에서 직접 계산해보기 (Neugart·Apex·Shimpo 3사 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 1단과 2단 감속의 차이는?</h3>
+<p>감속비 3~10은 1단, 12~100은 2단 구성이 일반적입니다. 2단은 길이가 길어지고 효율이 약간 낮아지지만 큰 감속비를 얻습니다.</p>
+<h3>Q. 유성 감속기와 하모닉·사이클로이드는 어떻게 구분해 쓰나요?</h3>
+<p>일반 이송·반송은 유성, 로봇 관절처럼 제로 백래시·고감속이 필요하면 <a href="guide-harmonic-drive.html">하모닉 드라이브</a>나 <a href="guide-cycloidal-gearbox.html">사이클로이드 감속기</a>를 검토합니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-cycloidal-gearbox.html">사이클로이드 감속기 선정</a> · <a href="guide-harmonic-drive.html">하모닉 드라이브 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

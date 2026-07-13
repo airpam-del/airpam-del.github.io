@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공기압 조절 유닛(FR유닛) 선정 방법 — 필터·레귤레이터 사이즈와 필터 등급 | PartsOn</title>
+<meta name="description" content="에어 유닛(FRL/FR유닛) 선정 기준을 정리했습니다. 포트 사이즈·유량 결정, 필터 등급(5μm·0.3μm) 선택, 레귤레이터 압력 범위, 루브리케이터 필요 여부를 설명합니다.">
+<meta name="keywords" content="FR유닛 선정, 에어 유닛, 공기압 조절 유닛, 에어 필터 레귤레이터, SMC AW, FRL">
+<link rel="canonical" href="https://partson.co.kr/guide-pneumatic-fr-unit.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="공기압 조절 유닛(FR유닛) 선정 방법 — 필터·레귤레이터 사이즈와 필터 등급">
+<meta property="og:description" content="포트 사이즈·유량, 필터 등급, 압력 범위까지 FR유닛 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-pneumatic-fr-unit.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"공기압 조절 유닛(FR유닛) 선정 방법 — 필터·레귤레이터 사이즈와 필터 등급",
+"description":"FR유닛의 포트 사이즈·유량 결정, 필터 등급 선택, 레귤레이터 압력 범위 선정 기준을 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-pneumatic-fr-unit.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"루브리케이터(L)는 꼭 필요한가요?",
+"acceptedAnswer":{"@type":"Answer","text":"최신 실린더·밸브는 무급유(그리스 봉입) 설계라 대부분 필요 없습니다. 에어 공구나 급유 지정 기기가 있을 때만 사용하며, 한번 급유를 시작한 기기는 계속 급유해야 합니다."}},
+{"@type":"Question","name":"필터 등급 5μm와 0.3μm는 어떻게 구분하나요?",
+"acceptedAnswer":{"@type":"Answer","text":"일반 실린더·밸브 구동은 5μm 표준 필터로 충분합니다. 정밀 레귤레이터, 에어 베어링, 도장·클린 용도는 0.3μm 미스트 세퍼레이터를 추가합니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>공기압 조절 유닛(FR유닛) 선정 방법 — 필터·레귤레이터 사이즈와 필터 등급</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>FR유닛(에어 유닛)은 장비로 들어오는 압축공기의 이물질을 거르고(Filter) 압력을 일정하게 만드는(Regulator) 장비 공압의 관문입니다. 장비 1대당 1세트가 기본이며, 사이즈가 작으면 장비 전체 공압이 부족해집니다.</p>
+
+<h2>1. 구성 결정 — F.R 이냐 F.R.L 이냐</h2>
+<ul>
+<li><strong>F+R (표준)</strong> — 현대 장비 대부분. 무급유 기기 전제</li>
+<li><strong>F+R+L</strong> — 에어 공구, 급유 지정 기기가 있을 때만</li>
+<li>배치 순서는 상류부터 F → R → L 고정입니다</li>
+</ul>
+<div class="tip"><strong>주의:</strong> 무급유 기기에 급유하면 봉입 그리스가 씻겨나가 오히려 수명이 짧아집니다. 한번 급유한 기기는 계속 급유해야 하므로 신중히 결정하세요.</div>
+
+<h2>2. 사이즈 — 장비 총 유량으로 결정</h2>
+<div class="formula">장비 최대 소비 유량 = 동시 동작 실린더 유량 합 + 블로우·진공 소비<br>FR유닛 정격 유량 ≥ 최대 소비 유량 × 1.5<br><br>포트 사이즈 기준 (참고):<br>1/8" ~500 L/min · 1/4" ~1,500 L/min · 3/8" ~3,000 L/min · 1/2" ~6,000 L/min</div>
+<p>유량 부족 시 동시 동작에서 압력이 순간 강하해 간헐 오동작이 생깁니다. 원인 찾기 어려운 고장이므로 여유를 두세요.</p>
+
+<h2>3. 필터 등급</h2>
+<table>
+<tr><th>등급</th><th>용도</th></tr>
+<tr><td>5μm (표준)</td><td>일반 실린더·밸브 구동</td></tr>
+<tr><td>0.3μm (미스트 세퍼레이터)</td><td>정밀 레귤레이터 전단, 도장, 클린 용도 — 표준 필터 후단에 추가</td></tr>
+<tr><td>0.01μm (마이크로 미스트)</td><td>에어 베어링, 계측기 등 초청정</td></tr>
+</table>
+
+<h2>4. 레귤레이터 압력 범위와 부속</h2>
+<ul>
+<li>설정 압력이 조정 범위의 30~80% 구간에 오도록 선택 (예: 0.5MPa 사용 → 0.05~0.85MPa 범위형)</li>
+<li><strong>드레인 배출</strong> — 자동 배출(오토드레인) 권장, 수동은 관리 누락 위험</li>
+<li><strong>압력 스위치</strong> — 압력 저하 검출로 장비 인터록 구성</li>
+<li><strong>잔압 배기 밸브</strong> — 정비 시 안전을 위해 권장 (ISO 안전 요구)</li>
+</ul>
+
+<h2>5. 선정 예제</h2>
+<p>실린더 6개(동시 최대 3개 동작, 합산 약 400 L/min) + 블로우 200 L/min 장비: 최대 소비 약 600 L/min × 1.5 = 900 L/min → 1/4" 포트로 부족할 수 있어 3/8" 선택. 0.5MPa 사용 기준 SMC AW30/AW40, Festo LFR, CKD W3000 동급을 비교합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/pneumatic-fr-unit.html">→ 공기압 조절 유닛 선정 계산기에서 직접 계산해보기 (3사 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 컴프레서에 드라이어가 있는데도 필터가 필요한가요?</h3>
+<p>네. 배관을 지나며 생기는 응축수·녹·이물이 있으므로 장비 입구 필터는 필수입니다. 드라이어는 이슬점 관리, 필터는 최종 방어선 역할로 서로 다릅니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-solenoid-valve.html">솔레노이드 밸브 선정</a> · <a href="guide-pneumatic-fitting.html">피팅/튜빙 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공압 피팅·튜빙 선정 방법 — 튜브 외경 계산과 재질·형태 선택 | PartsOn</title>
+<meta name="description" content="공압 피팅과 튜브 선정 기준을 정리했습니다. 유량 기반 튜브 외경(OD) 계산, PU·PA(나일론) 재질 구분, 원터치 피팅 형태(직선·엘보·티), 나사 규격(R·G·M5)을 설명합니다.">
+<meta name="keywords" content="공압 피팅 선정, 튜브 외경 계산, 원터치 피팅, PU 튜브, 나일론 튜브, SMC KQ2">
+<link rel="canonical" href="https://partson.co.kr/guide-pneumatic-fitting.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="공압 피팅·튜빙 선정 방법 — 튜브 외경 계산과 재질·형태 선택">
+<meta property="og:description" content="유량 기반 튜브 OD 계산, PU·PA 재질 구분, 피팅 형태·나사 규격까지 정리한 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-pneumatic-fitting.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"공압 피팅·튜빙 선정 방법 — 튜브 외경 계산과 재질·형태 선택",
+"description":"유량 기반 튜브 외경 계산, 재질 구분, 원터치 피팅 형태와 나사 규격 선택 기준을 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-pneumatic-fitting.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"PU 튜브와 PA(나일론) 튜브는 어떻게 구분해 쓰나요?",
+"acceptedAnswer":{"@type":"Answer","text":"PU(우레탄)는 유연해 배선이 쉽고 가동부에 적합하지만 내압이 낮습니다. PA(나일론)는 내압·내열·내약품성이 좋아 고정 배관과 고압부에 적합하지만 딱딱합니다. 일반 장비 가동부는 PU, 메인 라인은 PA가 기본입니다."}},
+{"@type":"Question","name":"튜브 사이즈는 어떻게 정하나요?",
+"acceptedAnswer":{"@type":"Answer","text":"필요 유량과 허용 유속(통상 8 m/s)으로 필요 내경을 계산하고, 그에 맞는 표준 외경(φ4·6·8·10·12)을 선택합니다. 튜브가 가늘면 압력 손실로 실린더 속도가 저하됩니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>공압 피팅·튜빙 선정 방법 — 튜브 외경 계산과 재질·형태 선택</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>피팅과 튜브는 사소해 보이지만, 사이즈를 잘못 잡으면 압력 손실로 실린더 속도가 안 나오고, 재질을 잘못 고르면 파열·경화 사고가 생깁니다. 선정 기준을 정리합니다.</p>
+
+<h2>1. 튜브 사이즈 — 유량과 유속으로 계산</h2>
+<div class="formula">필요 내경 d (mm) = √( 4 × Q / (π × v × 60,000) ) × 1,000<br><br>Q: 유량 (L/min, 사용 압력 환산)<br>v: 허용 유속 — 통상 8 m/s 기준<br><br>표준 튜브: OD φ4(ID 2.5) / φ6(ID 4) / φ8(ID 5~6) / φ10(ID 6.5~7.5) / φ12(ID 8~9)</div>
+<div class="tip"><strong>간단 기준:</strong> 소형 실린더(보어 ~40) φ6, 중형(보어 50~80) φ8~10, 대형·고속 φ12. 배관이 5m 이상 길면 한 사이즈 위를 검토하세요.</div>
+
+<h2>2. 튜브 재질</h2>
+<table>
+<tr><th>재질</th><th>장점</th><th>주의</th><th>용도</th></tr>
+<tr><td>PU (우레탄)</td><td>유연, 배선 용이</td><td>내압 낮음 (0.5~0.8MPa급)</td><td>장비 내 가동부 (기본)</td></tr>
+<tr><td>PA (나일론)</td><td>내압·내열·내약품</td><td>딱딱함, 최소 곡률 큼</td><td>메인 라인, 고압부</td></tr>
+<tr><td>FEP/PFA</td><td>내약품·내열 최상</td><td>고가</td><td>약액·클린 환경</td></tr>
+</table>
+<p>스패터가 튀는 용접 라인은 난연 튜브, 식품 라인은 식품 대응 재질을 별도 확인하세요.</p>
+
+<h2>3. 피팅 형태</h2>
+<ul>
+<li><strong>직선 (스트레이트)</strong> — 기본</li>
+<li><strong>엘보 (L형)</strong> — 공간 제약·꺾임 방지. 회전형(스위블)이면 배선 정리 용이</li>
+<li><strong>티 (T형)·Y형</strong> — 분기</li>
+<li><strong>격벽(벌크헤드)</strong> — 패널 관통</li>
+<li><strong>이경 (리듀서)</strong> — 사이즈 변환</li>
+</ul>
+
+<h2>4. 나사 규격 — 혼동 주의</h2>
+<table>
+<tr><th>규격</th><th>특징</th></tr>
+<tr><td>R (PT, 테이퍼)</td><td>한국·일본 표준. 실런트 코팅형이 편리</td></tr>
+<tr><td>G (PF, 평행)</td><td>가스켓 실링. 유럽계 장비</td></tr>
+<tr><td>M5, M3</td><td>소형 기기 포트</td></tr>
+</table>
+<div class="tip"><strong>주의:</strong> R과 G는 육안으로 비슷하지만 호환되지 않습니다. 기기 포트 나사를 확인 후 피팅을 선정하세요.</div>
+
+<h2>5. 선정 예제</h2>
+<p>보어 63 실린더(0.5MPa, 중속) 배관: 필요 유량 계산 결과 약 200 L/min(ANR)이면 유속 8m/s 기준 내경 약 5.5mm → OD φ8 튜브 선택. 밸브 포트 R1/4 → "R1/4 × φ8 원터치 엘보"로 SMC KQ2L08-02S, Festo QS, CKD GW 동급을 비교합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/pneumatic-fitting.html">→ 피팅/튜빙 선정 계산기에서 직접 계산해보기 (OD 자동 계산, 3사 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 원터치 피팅에서 공기가 샙니다. 원인은?</h3>
+<p>대부분 튜브 절단면 불량(비스듬함·눌림)이나 삽입 깊이 부족입니다. 전용 튜브 커터로 직각 절단 후 끝까지 삽입하세요. 반복 탈착부는 O링 마모도 점검 대상입니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-solenoid-valve.html">솔레노이드 밸브 선정</a> · <a href="guide-pneumatic-fr-unit.html">공기압 조절 유닛 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

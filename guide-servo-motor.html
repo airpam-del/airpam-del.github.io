@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서보모터 용량 선정 방법 — 토크 계산, 관성비 검증, 용량 결정 절차 | PartsOn</title>
+<meta name="description" content="서보모터 용량 선정 절차를 정리했습니다. 부하 토크·가속 토크 계산, 관성비(부하관성/모터관성) 기준, 실효 토크 검증까지 공식과 예제로 설명합니다.">
+<meta name="keywords" content="서보모터 용량 선정, 서보모터 토크 계산, 관성비, 실효 토크, 서보모터 선정 방법">
+<link rel="canonical" href="https://partson.co.kr/guide-servo-motor.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="서보모터 용량 선정 방법 — 토크 계산, 관성비 검증, 용량 결정 절차">
+<meta property="og:description" content="부하 토크·가속 토크·관성비·실효 토크까지, 예제와 함께 보는 서보모터 용량 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-servo-motor.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "서보모터 용량 선정 방법 — 토크 계산, 관성비 검증, 용량 결정 절차",
+  "description": "서보모터 부하 토크·가속 토크 계산, 관성비 기준, 실효 토크 검증 절차를 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-07-13",
+  "dateModified": "2026-07-13",
+  "mainEntityOfPage": "https://partson.co.kr/guide-servo-motor.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "서보모터 관성비는 얼마까지 허용되나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "일반적으로 부하 관성 ÷ 모터 로터 관성이 10배 이하를 권장합니다. 고응답이 필요한 장비는 5배 이하, 저속 위주는 20~30배까지도 허용됩니다. 초과 시 감속기로 관성비를 낮춥니다(감속비의 제곱으로 감소)."}},
+    {"@type": "Question", "name": "실효 토크는 왜 확인하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "가속 시 순간 토크가 아무리 커도, 사이클 전체의 RMS 토크가 모터 정격 토크를 넘으면 과열됩니다. 실효 토크 ≤ 정격 토크 × 0.8 을 권장합니다."}},
+    {"@type": "Question", "name": "서보모터 용량은 무엇으로 결정되나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "최대 토크(가속 토크+부하 토크)가 모터 최대 토크 이내, 실효 토크가 정격 토크 이내, 관성비가 허용 범위 이내 — 이 3가지를 모두 만족하는 최소 용량을 선택합니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>서보모터 용량 선정 방법 — 토크 계산, 관성비 검증, 용량 결정 절차</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>서보모터 선정은 "몇 W짜리를 쓸까"가 아니라 <strong>토크·관성·속도 3가지 조건을 모두 만족하는 최소 용량</strong>을 찾는 과정입니다. 와트 수만 보고 고르면 가속이 안 되거나, 진동(헌팅)이 생기거나, 과열로 정지합니다. 검증 순서대로 정리합니다.</p>
+
+<h2>1. 부하 조건 정리</h2>
+<ul>
+<li><strong>기구 형태</strong> — 볼스크류 이송 / 벨트·풀리 / 랙&피니언 / 회전 테이블 / 롤 구동</li>
+<li><strong>이동체 질량 m</strong>, <strong>이송 속도 V</strong>, <strong>가감속 시간 ta</strong></li>
+<li><strong>사이클 패턴</strong> — 가속–등속–감속–정지 각 구간 시간</li>
+</ul>
+
+<h2>2. 부하 토크 TL 계산 (등속 시 필요 토크)</h2>
+<div class="formula">볼스크류 구동:<br>TL = (F × l) / (2π × η) (N·m)<br><br>F: 축방향 하중 (N) = 마찰력 + 외력 (+수직축이면 중력)<br>l: 리드 (m), η: 효율 (볼스크류 ≈ 0.9)</div>
+
+<h2>3. 부하 관성 JL 계산</h2>
+<div class="formula">직선 이동체: JL = m × (l / 2π)² (kg·m²)<br>스크류 축: Js = (π × ρ × L × D⁴) / 32<br><br>총 부하 관성 = 이동체 + 스크류 + 커플링 등 회전체 합산<br>감속기 사용 시: 모터축 환산 관성 = JL / (감속비)²</div>
+
+<h2>4. 가속 토크 Ta와 최대 토크 검증</h2>
+<div class="formula">Ta = (JL + JM) × (2π × N / 60) / ta<br><br>최대 필요 토크 Tmax = TL + Ta<br>조건: Tmax ≤ 모터 최대 토크 (통상 정격의 3배)</div>
+
+<h2>5. 실효(RMS) 토크 검증 — 놓치기 쉬운 항목</h2>
+<div class="formula">Trms = √[ (Ta²·ta + TL²·tc + Td²·td) / 사이클 시간 ]<br><br>조건: Trms ≤ 정격 토크 × 0.8 (여유율 20%)</div>
+<p>짧은 사이클로 가감속을 반복하는 장비일수록 실효 토크가 커집니다. 최대 토크는 만족해도 실효 토크에서 탈락하는 경우가 많습니다.</p>
+
+<h2>6. 관성비 검증</h2>
+<div class="formula">관성비 = JL(모터축 환산) / JM(로터 관성)<br><br>권장: 일반 10배 이하 / 고응답 장비 5배 이하<br>초과 시: 감속기 적용 → 관성비가 감속비²로 감소</div>
+<div class="tip"><strong>실무 팁:</strong> 관성비가 크면 게인을 올릴 수 없어 정정 시간이 길어지고 헌팅이 발생합니다. 용량을 키우기보다 감속기(유성 감속기 등)로 관성비를 잡는 것이 대부분 경제적입니다.</div>
+
+<h2>7. 선정 예제 (볼스크류 수평 이송)</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>이동체 질량</td><td>50 kg</td></tr>
+<tr><td>볼스크류</td><td>리드 10 mm, 축경 20, 길이 800 mm</td></tr>
+<tr><td>속도 / 가속 시간</td><td>500 mm/s (3,000 rpm) / 0.1 s</td></tr>
+</table>
+<p>부하 관성 ≈ 50 × (0.01/2π)² ≈ 1.27×10⁻⁴ kg·m² + 스크류 관성. 400W급 서보(로터 관성 ≈ 0.3~0.6×10⁻⁴)면 관성비 3~6배 수준으로 무난합니다. 이후 가속 토크와 실효 토크를 계산해 정격 1.27 N·m 이내인지 확인합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/servo_motor.html">→ 서보모터 선정 계산기에서 직접 계산해보기 (미쯔비시·파나소닉·LS산전 DB, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 수직축은 무엇이 다른가요?</h3>
+<p>중력이 상시 부하 토크로 작용하고, 정전 시 낙하 방지를 위해 브레이크 내장형 모터가 필요합니다. 브레이크 유무를 선정 단계에서 결정하세요.</p>
+<h3>Q. 여유를 얼마나 두어야 하나요?</h3>
+<p>실효 토크 기준 20% 이상, 최대 토크 기준 10~20% 여유를 권장합니다. 과도한 여유(2배 이상)는 관성비 악화와 비용 증가로 오히려 손해입니다.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-ballscrew.html">볼스크류 선정 방법</a> · <a href="guide-lmguide.html">LM가이드 선정 방법</a> · <a href="guide-bearing.html">베어링 선정 방법</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

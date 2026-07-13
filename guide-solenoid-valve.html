@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>솔레노이드 밸브 선정 방법 — 유량 계산, 3포트·5포트와 편솔·양솔 구분 | PartsOn</title>
+<meta name="description" content="공압 솔레노이드 밸브 선정 절차를 정리했습니다. 실린더 보어·속도 기반 필요 유량 계산, 3포트·5포트 구분, 편솔·양솔 선택, 유효 단면적(S)·Cv값 기준을 설명합니다.">
+<meta name="keywords" content="솔레노이드 밸브 선정, 공압 밸브 유량 계산, 5포트 밸브, 편솔 양솔, Cv값, SMC SY">
+<link rel="canonical" href="https://partson.co.kr/guide-solenoid-valve.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="솔레노이드 밸브 선정 방법 — 유량 계산, 3포트·5포트와 편솔·양솔 구분">
+<meta property="og:description" content="필요 유량 계산부터 포트 수·솔레노이드 방식 선택까지 솔레노이드 밸브 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-solenoid-valve.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"솔레노이드 밸브 선정 방법 — 유량 계산, 3포트·5포트와 편솔·양솔 구분",
+"description":"실린더 조건 기반 필요 유량 계산과 솔레노이드 밸브 형식 선택 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-solenoid-valve.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"편솔과 양솔은 어떻게 구분해 쓰나요?",
+"acceptedAnswer":{"@type":"Answer","text":"편솔(싱글)은 전원 차단 시 스프링으로 원위치 복귀 — 정전 시 안전 위치가 명확한 일반 용도에 적합합니다. 양솔(더블)은 마지막 위치를 유지 — 정전 시에도 실린더 위치를 유지해야 하는 클램프 등에 사용합니다."}},
+{"@type":"Question","name":"밸브 사이즈가 작으면 어떤 문제가 생기나요?",
+"acceptedAnswer":{"@type":"Answer","text":"유량이 부족해 실린더 속도가 목표에 못 미칩니다. 실린더 보어·속도로 필요 유량을 계산하고 밸브 유효 단면적(S) 또는 Cv값이 이를 만족하는지 확인해야 합니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>솔레노이드 밸브 선정 방법 — 유량 계산, 3포트·5포트와 편솔·양솔 구분</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>솔레노이드 밸브는 실린더의 방향을 전환하는 부품입니다. 형식(포트 수·솔레노이드 방식)은 회로 논리로, 사이즈는 <strong>필요 유량</strong>으로 결정합니다. 밸브가 작으면 실린더 속도가 안 나오고, 크면 비용·응답 손해입니다.</p>
+
+<h2>1. 포트 수 결정</h2>
+<table>
+<tr><th>형식</th><th>용도</th></tr>
+<tr><td>2포트</td><td>공기 공급 ON/OFF (블로우, 진공 파기)</td></tr>
+<tr><td>3포트</td><td>단동 실린더, 진공 패드 제어</td></tr>
+<tr><td>5포트</td><td>복동 실린더 (가장 일반적)</td></tr>
+</table>
+
+<h2>2. 중립 위치 (5포트 3위치)</h2>
+<ul>
+<li><strong>2위치</strong> — 일반 왕복 동작 (기본)</li>
+<li><strong>3위치 클로즈드 센터</strong> — 중간 정지 필요 시</li>
+<li><strong>3위치 이그조스트 센터</strong> — 중립에서 실린더 힘 제거 (수동 조작 허용)</li>
+<li><strong>3위치 프레셔 센터</strong> — 양측 가압 유지</li>
+</ul>
+
+<h2>3. 편솔 vs 양솔</h2>
+<div class="tip"><strong>정전 시 어떻게 되어야 하는가</strong>로 결정합니다. 편솔은 스프링 복귀로 항상 정해진 위치로 돌아가고, 양솔은 마지막 위치를 유지합니다. 클램프처럼 정전 중에도 잡고 있어야 하는 용도는 양솔입니다.</div>
+
+<h2>4. 필요 유량 계산 — 사이즈 결정</h2>
+<div class="formula">실린더 소비 유량 Q (L/min, ANR)<br>= (π/4) × D² × L × n × (P+0.1)/0.1 × 10⁻⁶ × 여유율<br><br>D: 보어 (mm), L: 스트로크 (mm), n: 분당 왕복수<br>P: 사용 압력 (MPa), 여유율 1.5~2<br><br>밸브 유량 능력: 유효 단면적 S (mm²) ≈ Cv × 18<br>밸브 S값이 필요 유량을 충족하는지 확인</div>
+<p>속도가 중요한 축은 밸브뿐 아니라 배관·피팅·스피드 컨트롤러까지 전체 경로에서 가장 좁은 곳이 병목이 됩니다.</p>
+
+<h2>5. 그 외 확인 항목</h2>
+<ul>
+<li><strong>전압</strong> — DC24V가 표준, 소비전력(저전력형 0.35~0.5W)</li>
+<li><strong>응답 시간</strong> — 고속 사이클이면 응답 10~20ms급 확인</li>
+<li><strong>매니폴드</strong> — 여러 축이면 매니폴드 집합 배치로 배관·배선 절감</li>
+<li><strong>수동 조작 버튼</strong> — 셋업 시 필수적으로 유용</li>
+</ul>
+
+<h2>6. 선정 예제</h2>
+<p>보어 50, 스트로크 300mm 실린더를 0.5초에 전진(0.5MPa): 평균 속도 600mm/s급 고속 동작으로 필요 유량이 크므로, S값 12mm² 이상급(예: SMC SY5000 시리즈급) 밸브에서 검토를 시작하고 배관 구경도 φ8 이상으로 맞춥니다.</p>
+
+<a class="cta" href="https://partson.co.kr/solenoid-valve.html">→ 솔레노이드 밸브 선정 계산기에서 직접 계산해보기 (유량 자동 계산, SMC·Festo·CKD 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 실린더보다 밸브를 한 사이즈 크게 잡아야 하나요?</h3>
+<p>속도 요구가 낮으면 표준 매칭으로 충분합니다. 고속 동작이거나 배관이 길면 유량 계산 후 한 사이즈 위를 검토하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-speed-controller.html">스피드 컨트롤러 선정</a> · <a href="guide-pneumatic-fitting.html">피팅/튜빙 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

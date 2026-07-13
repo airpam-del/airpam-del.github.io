@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공압 그리퍼 선정 방법 — 파지력 안전계수와 외부·내부 파지 구분 | PartsOn</title>
+<meta name="description" content="공압 그리퍼(에어척) 선정 절차를 정리했습니다. 워크 무게 대비 파지력 안전계수(10~20배), 외부·내부 파지 구분, 스트로크 적합성, SMC·Festo·CKD 비교 기준을 설명합니다.">
+<meta name="keywords" content="공압 그리퍼 선정, 에어척, 파지력 계산, MHZ2, 평행 그리퍼, 안전계수">
+<link rel="canonical" href="https://partson.co.kr/guide-pneumatic-gripper.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="공압 그리퍼 선정 방법 — 파지력 안전계수와 외부·내부 파지 구분">
+<meta property="og:description" content="파지력 안전계수, 외부·내부 파지, 스트로크 적합성까지 공압 그리퍼 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-pneumatic-gripper.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle",
+"headline":"공압 그리퍼 선정 방법 — 파지력 안전계수와 외부·내부 파지 구분",
+"description":"공압 그리퍼의 파지력 안전계수, 외부·내부 파지 구분, 스트로크 적합성 확인 절차를 설명합니다.",
+"author":{"@type":"Organization","name":"PartsOn"},
+"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr"},
+"datePublished":"2026-07-13","dateModified":"2026-07-13",
+"mainEntityOfPage":"https://partson.co.kr/guide-pneumatic-gripper.html"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"공압 그리퍼 파지력은 워크 무게의 몇 배가 필요한가요?",
+"acceptedAnswer":{"@type":"Answer","text":"마찰 파지 기준 워크 무게의 10~20배를 권장합니다. 이송 가감속·충격·마찰계수 불확실성을 반영한 값으로, 일반 반송은 10~15배, 고속 반송은 20배 수준을 적용합니다."}},
+{"@type":"Question","name":"외부 파지와 내부 파지의 차이는?",
+"acceptedAnswer":{"@type":"Answer","text":"외부 파지는 워크 바깥을 잡는 방식(닫힘 방향 힘), 내부 파지는 구멍에 넣어 벌리며 잡는 방식(열림 방향 힘)입니다. 같은 모델이라도 방향별 파지력이 다르므로 카탈로그의 해당 값으로 검토합니다."}}]}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>공압 그리퍼 선정 방법 — 파지력 안전계수와 외부·내부 파지 구분</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>공압 그리퍼(에어척)는 구조가 단순하고 저렴해 픽앤플레이스의 표준 부품입니다. 선정 핵심은 <strong>파지력 안전계수를 충분히 잡는 것</strong>과 <strong>파지 방식에 맞는 값으로 검토하는 것</strong>입니다.</p>
+
+<h2>1. 필요 파지력 — 무게의 10~20배</h2>
+<div class="formula">필요 파지력 F ≥ 워크 무게 × 안전계수<br><br>일반 반송: 10~15배<br>고속 반송·방향 전환: 20배<br><br>이론 근거: F = m×g×(1+a/g)/(μ×n) 에 마찰계수 불확실성 여유를 더한 실무값</div>
+<div class="tip"><strong>왜 이렇게 크게 잡나요?</strong> 마찰계수는 표면 상태·유분에 따라 크게 변하고, 공압은 압력 변동이 있으며, 이송 중 충격이 더해지기 때문입니다. 형상 파지(단차·홈에 걸리게 잡기)가 가능하면 계수를 크게 낮출 수 있습니다.</div>
+
+<h2>2. 외부 파지 vs 내부 파지</h2>
+<table>
+<tr><th>구분</th><th>방식</th><th>검토 파지력</th></tr>
+<tr><td>외부 파지</td><td>워크 바깥면을 조여서 잡음 (일반적)</td><td>닫힘 방향 파지력</td></tr>
+<tr><td>내부 파지</td><td>구멍·내경에 핑거를 넣고 벌려서 잡음</td><td>열림 방향 파지력</td></tr>
+</table>
+<p>같은 모델도 열림/닫힘 파지력이 다릅니다. 반드시 사용 방향의 값으로 검토하세요.</p>
+
+<h2>3. 스트로크와 파지 위치</h2>
+<ul>
+<li>스트로크(편측) ≥ 워크 치수 편차 + 여유 2~5mm</li>
+<li><strong>파지점 거리(오버행) 제한</strong> — 핑거가 길어질수록 모멘트로 인해 허용 파지력이 급감합니다. 카탈로그의 파지점 거리 그래프 확인 필수</li>
+<li>핑거 자체 무게도 개폐 속도·충격에 영향</li>
+</ul>
+
+<h2>4. 형태 선택</h2>
+<table>
+<tr><th>형태</th><th>용도</th></tr>
+<tr><td>평행 개폐형 (2조)</td><td>가장 범용 — 원형·각형 워크</td></tr>
+<tr><td>3조 평행형</td><td>원형 워크 센터링 파지</td></tr>
+<tr><td>지지점 개폐형 (앵귤러)</td><td>저가·경량, 개폐각 큼</td></tr>
+<tr><td>와이드형</td><td>큰 워크, 긴 스트로크</td></tr>
+</table>
+
+<h2>5. 선정 예제</h2>
+<p>0.3kg 원형 부품 픽앤플레이스, 일반 속도: 필요 파지력 = 0.3×9.8×15 ≈ 44 N. 파지점 거리 30mm 조건에서 유효 파지력 44N 이상인 모델을 SMC MHZ2, Festo HGPT, CKD HGW에서 보어별로 비교해 선정합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/pneumatic-gripper.html">→ 공압 그리퍼 선정 계산기에서 직접 계산해보기 (무게→파지력 자동 계산, 3사 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 전동 그리퍼와 어떻게 구분해 쓰나요?</h3>
+<p>단일 워크 반복 반송은 공압이 저렴하고 빠릅니다. 다품종 워크, 파지력 조절, 파지 판별이 필요하면 <a href="guide-electric-gripper.html">전동 그리퍼</a>를 검토하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-electric-gripper.html">전동 그리퍼 선정</a> · <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-solenoid-valve.html">솔레노이드 밸브 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

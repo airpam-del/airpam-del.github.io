@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>베어링 선정 방법 — L10 수명 계산 공식과 타입별 선정 기준 | PartsOn</title>
+<meta name="description" content="베어링 선정 절차를 정리했습니다. L10 수명 계산 공식, 등가 하중 계산, 깊은홈 볼베어링·앵귤러·원통롤러 타입별 선정 기준을 예제와 함께 설명합니다.">
+<meta name="keywords" content="베어링 선정, 베어링 L10 수명 계산, 등가 하중, 깊은홈 볼베어링, 베어링 수명 공식">
+<link rel="canonical" href="https://partson.co.kr/guide-bearing.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="베어링 선정 방법 — L10 수명 계산 공식과 타입별 선정 기준">
+<meta property="og:description" content="L10 수명 계산, 등가 하중, 타입별 선정 기준까지. 예제와 함께 보는 베어링 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-bearing.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "베어링 선정 방법 — L10 수명 계산 공식과 타입별 선정 기준",
+  "description": "베어링 L10 수명 계산 공식, 등가 하중 계산, 타입별 선정 기준을 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-07-13",
+  "dateModified": "2026-07-13",
+  "mainEntityOfPage": "https://partson.co.kr/guide-bearing.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "베어링 L10 수명이란 무엇인가요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "동일 조건에서 운전한 베어링 그룹의 90%가 박리 없이 도달하는 수명입니다. 볼베어링은 L10 = (C/P)^3 × 10^6 회전으로 계산합니다."}},
+    {"@type": "Question", "name": "레이디얼 하중과 액시얼 하중이 같이 걸리면 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "등가 하중 P = X·Fr + Y·Fa로 환산합니다. X, Y 계수는 베어링 타입과 Fa/Fr 비율에 따라 카탈로그에서 결정됩니다."}},
+    {"@type": "Question", "name": "베어링 수명은 몇 시간을 목표로 잡나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "일반 산업기계 20,000~30,000시간, 상시 가동 설비 40,000~60,000시간, 단속 사용 기계 8,000~12,000시간이 일반적인 목표입니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>베어링 선정 방법 — L10 수명 계산 공식과 타입별 선정 기준</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>베어링 선정의 핵심은 두 가지입니다. ① 하중 조건에 맞는 <strong>타입</strong>을 고르고, ② 요구 수명을 만족하는 <strong>사이즈</strong>를 찾는 것. 이 글은 실무 순서대로 그 과정을 정리합니다.</p>
+
+<h2>1. 하중 방향으로 타입 결정</h2>
+<table>
+<tr><th>하중 조건</th><th>적합 타입</th><th>특징</th></tr>
+<tr><td>레이디얼 위주, 경~중하중</td><td>깊은홈 볼베어링</td><td>가장 범용, 저렴, 고속 가능</td></tr>
+<tr><td>레이디얼 + 액시얼 복합</td><td>앵귤러 볼베어링</td><td>접촉각으로 액시얼 지지, 조합 사용</td></tr>
+<tr><td>중~대 레이디얼 하중</td><td>원통 롤러 베어링</td><td>선접촉으로 부하능력 큼</td></tr>
+<tr><td>대하중 + 조심(자동 정렬) 필요</td><td>구면 롤러 베어링</td><td>축 처짐·설치 오차 허용</td></tr>
+<tr><td>액시얼 전용</td><td>스러스트 베어링</td><td>축방향 하중 전담</td></tr>
+</table>
+
+<h2>2. 등가 하중 P 계산</h2>
+<p>레이디얼 하중 Fr과 액시얼 하중 Fa가 함께 작용하면 하나의 등가 하중으로 환산합니다.</p>
+<div class="formula">P = X·Fr + Y·Fa<br><br>X, Y: 베어링 타입·접촉각·Fa/Fr 비율에 따른 계수 (카탈로그 표 참조)<br>Fa/Fr이 한계값 e 이하이면 P = Fr로 계산</div>
+
+<h2>3. L10 수명 계산</h2>
+<div class="formula">L10 = (C / P)^p × 10⁶ (회전)<br><br>p = 3 (볼베어링) / 10/3 (롤러베어링)<br>C: 정격 동하중<br><br>시간 수명 Lh = L10 / (60 × N) (N: rpm)</div>
+<div class="tip"><strong>목표 수명 참고값:</strong> 일반 산업기계 20,000~30,000시간, 24시간 상시 가동 40,000~60,000시간, 단속 사용 8,000~12,000시간</div>
+
+<h2>4. 보정 계수 적용</h2>
+<p>실제 환경에서는 기본 L10에 보정이 필요합니다.</p>
+<ul>
+<li><strong>하중 계수 fw</strong> — 진동·충격 환경이면 하중을 1.2~3배로 보정</li>
+<li><strong>온도 계수</strong> — 120°C 초과 시 정격하중 감소</li>
+<li><strong>윤활 조건</strong> — 유막 형성이 나쁘면 수명 크게 감소 (ISO 281 수정 수명 참조)</li>
+</ul>
+
+<h2>5. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>레이디얼 하중 Fr</td><td>250 kgf (약 2,450 N)</td></tr>
+<tr><td>액시얼 하중 Fa</td><td>없음</td></tr>
+<tr><td>회전수</td><td>1,800 rpm</td></tr>
+<tr><td>목표 수명</td><td>30,000 시간</td></tr>
+</table>
+<div class="formula">필요 L10 = 30,000 × 60 × 1,800 = 3.24 × 10⁹ 회전<br>필요 C/P = (3,240)^(1/3) ≈ 14.8<br>필요 C = 14.8 × 2,450 N ≈ 36.3 kN → 6308 (C≈40.7kN) 급 선정</div>
+
+<a class="cta" href="https://partson.co.kr/bearing.html">→ 베어링 선정 계산기에서 직접 계산해보기 (타입별 비교, 무료)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 정격 동하중 C와 정격 정하중 C₀의 차이는?</h3>
+<p>C는 회전 중 수명 계산용, C₀는 정지·저속 상태에서 영구 변형 없이 견디는 한계입니다. 저속·요동 용도라면 C₀ 기준 안전율(일반 1.5~3)을 별도로 확인해야 합니다.</p>
+<h3>Q. 같은 사이즈면 어느 제조사든 수명이 같나요?</h3>
+<p>기본 치수는 ISO 규격으로 같지만 C값은 제조사·시리즈별로 다릅니다. 반드시 해당 제조사 카탈로그 값으로 계산하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-lmguide.html">LM가이드 선정 방법</a> · <a href="guide-ballscrew.html">볼스크류 선정 방법</a> · <a href="guide-servo-motor.html">서보모터 용량 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>
