@@ -1059,6 +1059,79 @@
       transform: translateY(-3px);
     }
 
+    /* ── 선정 가이드 섹션 ── */
+    .guide-section {
+      background: linear-gradient(180deg, var(--surface) 0%, rgba(0, 200, 83, 0.02) 100%);
+      border-top: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .guide-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+    }
+
+    .guide-group-label {
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .guide-group-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    .guide-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: .75rem;
+    }
+
+    .guide-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .5rem;
+      padding: 1rem 1.25rem;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s var(--ease-out);
+    }
+
+    .guide-link:hover {
+      border-color: var(--accent-bright);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .guide-link .g-arrow {
+      color: var(--text-muted);
+      font-size: 16px;
+      transition: color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
+      flex-shrink: 0;
+    }
+
+    .guide-link:hover .g-arrow {
+      color: var(--accent-bright);
+      transform: translateX(3px);
+    }
+
     /* ── 푸터 ── */
     footer {
       background: #0A0F0B;
@@ -1726,6 +1799,44 @@
   </div>
 </section>
 
+<!-- ── 선정 가이드 ── -->
+<section class="guide-section">
+  <div class="section-inner">
+    <div class="tools-header">
+      <div class="section-label">선정 가이드</div>
+      <h2 class="section-title">부품 선정이 처음이세요?</h2>
+      <p class="section-desc">계산 공식과 선정 절차를 단계별로 정리했습니다. 처음이라도 순서대로 따라오면 됩니다.</p>
+    </div>
+    <div class="guide-groups">
+      <div class="guide-group">
+        <div class="guide-group-label">⚡ 전동 부품</div>
+        <div class="guide-links">
+          <a href="guide-lmguide.html" class="guide-link"><span>LM가이드 선정 방법</span><span class="g-arrow">→</span></a>
+          <a href="guide-ballscrew.html" class="guide-link"><span>볼스크류 선정 방법</span><span class="g-arrow">→</span></a>
+          <a href="guide-bearing.html" class="guide-link"><span>베어링 선정 방법</span><span class="g-arrow">→</span></a>
+          <a href="guide-servo-motor.html" class="guide-link"><span>서보모터 용량 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-screwjack.html" class="guide-link"><span>스크류잭 선정 방법</span><span class="g-arrow">→</span></a>
+          <a href="guide-planetary-gearbox.html" class="guide-link"><span>유성 감속기 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-cycloidal-gearbox.html" class="guide-link"><span>사이클로이드 감속기 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-harmonic-drive.html" class="guide-link"><span>하모닉 드라이브 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-electric-gripper.html" class="guide-link"><span>전동 그리퍼 선정</span><span class="g-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="guide-group">
+        <div class="guide-group-label">💨 공압 부품</div>
+        <div class="guide-links">
+          <a href="guide-pneumatic-cylinder.html" class="guide-link"><span>공압 실린더 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-solenoid-valve.html" class="guide-link"><span>솔레노이드 밸브 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-pneumatic-fitting.html" class="guide-link"><span>피팅/튜빙 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-pneumatic-fr-unit.html" class="guide-link"><span>공기압 조절 유닛 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-pneumatic-gripper.html" class="guide-link"><span>공압 그리퍼 선정</span><span class="g-arrow">→</span></a>
+          <a href="guide-speed-controller.html" class="guide-link"><span>스피드 컨트롤러 선정</span><span class="g-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Why PartsOn ── -->
 <section class="why-section">
   <div class="section-inner">
@@ -1897,6 +2008,9 @@
       <a href="planetary-gearbox.html" class="footer-link">유성 감속기</a>
       <a href="cycloidal-gearbox.html" class="footer-link">사이클로이드</a>
       <a href="harmonic-drive.html" class="footer-link">하모닉 드라이브</a>
+      <a href="guide-lmguide.html" class="footer-link">LM가이드 선정 가이드</a>
+      <a href="guide-servo-motor.html" class="footer-link">서보모터 선정 가이드</a>
+      <a href="guide-pneumatic-cylinder.html" class="footer-link">공압 실린더 선정 가이드</a>
       <a href="admin.html" class="footer-link">공급사 관리</a>
     </div>
   </div>
