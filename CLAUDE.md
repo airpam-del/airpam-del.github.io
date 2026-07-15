@@ -14,6 +14,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **배포 저장소:** `D:\여홍 업무\partson-live\` (GitHub 연결된 git 저장소)  
 **배포 방법:** `PartsOn 배포\` 파일을 `partson-live\`에 복사 후 git commit & push → 자동 배포
 
+## 운영 규칙
+- 이 저장소는 PartsOn(https://partson.co.kr), GitHub Pages 배포 (main 푸시 = 1~2분 내 자동 배포)
+- 모든 작업 후: 검증 → 이번 작업 파일만 git add → 커밋 → push → 배포 확인 URL 안내
+- 커밋 메시지: "기능: 요약" / "수정: 요약" / "SEO: 요약" 형식
+- 작업 중이던 다른 수정 파일은 절대 커밋에 포함하지 않는다
+- 계산식·부품 데이터를 수정할 때는 변경 전후 값을 표로 보여주고 내 승인 후 진행
+- 새 페이지 추가 시 sitemap.xml 갱신 (admin.html 제외, 가이드 글 priority 0.7)
+- 가이드 글은 guide-lmguide.html을 템플릿으로 (title/OG/JSON-LD/공식/예제/CTA/FAQ 필수)
+- 큰 변경 전에는 어떤 파일을 어떻게 바꿀지 계획을 먼저 보여줄 것
+
 ## SEO 구조 (2026-07-04 기초 공사)
 
 - **sitemap.xml**: index(priority 1.0) + 계산기 15개(0.8), admin 제외. `js/common.js`의
