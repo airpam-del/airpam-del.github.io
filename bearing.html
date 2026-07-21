@@ -1217,7 +1217,7 @@ function findCandidates() {
     if (lifeOk&&s0Ok&&rpmOk) judge='ok';
     else if ((l10h>=lh*0.5)&&(s0>=0.5)&&(n<=nAllow*1.1)) judge='warn';
     else judge='bad';
-    return {name,OD,B,C,C0,nAllow,P,P0,P_eff,l10h,s0,cReq,judge};
+    return {name,OD,B,C,C0,nAllow,P,P0,P_eff,l10h,s0,cReq,judge,lifeOk,s0Ok,rpmOk};
   });
   return cands;
 }
