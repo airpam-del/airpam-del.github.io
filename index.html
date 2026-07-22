@@ -1144,7 +1144,7 @@
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       gap: 2rem;
     }
 
@@ -1154,11 +1154,38 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.5);
       letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* 링크 그룹(계산기 / 가이드) — 세로로 쌓고 각 그룹은 여러 줄 wrap */
+    .footer-groups {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-end;
+    }
+
+    .footer-group {
+      display: flex;
+      align-items: baseline;
+      gap: .9rem 1.25rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .footer-group-label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      letter-spacing: .5px;
+      color: rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
     }
 
     .footer-links {
       display: flex;
-      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: .9rem 2rem;
     }
 
     .footer-link {
@@ -1167,6 +1194,7 @@
       text-decoration: none;
       transition: all 0.3s var(--ease-out);
       position: relative;
+      white-space: nowrap;
     }
 
     .footer-link:hover {
@@ -1292,6 +1320,18 @@
       .footer-links {
         flex-direction: column;
         gap: 1rem;
+      }
+
+      .footer-groups {
+        align-items: center;
+        width: 100%;
+      }
+
+      .footer-group {
+        flex-direction: column;
+        align-items: center;
+        gap: .8rem;
+        justify-content: center;
       }
 
       .hero-cta {
@@ -1999,19 +2039,25 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">PartsOn</div>
-    <div class="footer-links">
-      <a href="lmguide.html" class="footer-link">LM Guide</a>
-      <a href="ballscrew.html" class="footer-link">볼스크류</a>
-      <a href="bearing.html" class="footer-link">베어링</a>
-      <a href="servo_motor.html" class="footer-link">서보모터</a>
-      <a href="screwjack.html" class="footer-link">스크류잭</a>
-      <a href="planetary-gearbox.html" class="footer-link">유성 감속기</a>
-      <a href="cycloidal-gearbox.html" class="footer-link">사이클로이드</a>
-      <a href="harmonic-drive.html" class="footer-link">하모닉 드라이브</a>
-      <a href="guide-lmguide.html" class="footer-link">LM가이드 선정 가이드</a>
-      <a href="guide-servo-motor.html" class="footer-link">서보모터 선정 가이드</a>
-      <a href="guide-pneumatic-cylinder.html" class="footer-link">공압 실린더 선정 가이드</a>
-      <a href="admin.html" class="footer-link">공급사 관리</a>
+    <div class="footer-groups">
+      <div class="footer-group">
+        <span class="footer-group-label">계산기</span>
+        <a href="lmguide.html" class="footer-link">LM Guide</a>
+        <a href="ballscrew.html" class="footer-link">볼스크류</a>
+        <a href="bearing.html" class="footer-link">베어링</a>
+        <a href="servo_motor.html" class="footer-link">서보모터</a>
+        <a href="screwjack.html" class="footer-link">스크류잭</a>
+        <a href="planetary-gearbox.html" class="footer-link">유성 감속기</a>
+        <a href="cycloidal-gearbox.html" class="footer-link">사이클로이드</a>
+        <a href="harmonic-drive.html" class="footer-link">하모닉 드라이브</a>
+      </div>
+      <div class="footer-group">
+        <span class="footer-group-label">가이드·기타</span>
+        <a href="guide-lmguide.html" class="footer-link">LM가이드 선정 가이드</a>
+        <a href="guide-servo-motor.html" class="footer-link">서보모터 선정 가이드</a>
+        <a href="guide-pneumatic-cylinder.html" class="footer-link">공압 실린더 선정 가이드</a>
+        <a href="admin.html" class="footer-link">공급사 관리</a>
+      </div>
     </div>
   </div>
   <div style="max-width:1200px;margin:1.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);text-align:center;font-size:12px;color:rgba(255,255,255,.3)">
