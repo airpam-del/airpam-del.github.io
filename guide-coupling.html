@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서보 커플링 선정 방법 — 토크·서비스팩터·축경으로 고르는 무백래시 강성 커플링 | PartsOn</title>
+<meta name="description" content="서보모터–볼스크류 이송축용 무백래시 강성 커플링(디스크·오브·죠·빔) 선정 방법을 정리했습니다. 필요 토크 계산(서비스팩터), 보어 범위 확인, 비틀림 강성·관성 검토를 성일기공 카탈로그 기준 예제와 함께 설명합니다.">
+<meta name="keywords" content="커플링 선정, 서보 커플링, 디스크 커플링, 오브 커플링, 올드햄, 죠 커플링, 빔 커플링, 무백래시, 비틀림 강성, 서비스팩터, 성일기공">
+<link rel="canonical" href="https://partson.co.kr/guide-coupling.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="서보 커플링 선정 방법 — 토크·서비스팩터·축경으로 고르는 무백래시 강성 커플링">
+<meta property="og:description" content="필요 토크 계산, 타입(디스크·오브·죠·빔) 선택, 보어·강성·관성 검토까지. 예제와 함께 보는 커플링 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-coupling.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "서보 커플링 선정 방법 — 토크·서비스팩터·축경으로 고르는 무백래시 강성 커플링",
+  "description": "서보용 강성 커플링(디스크·오브·죠·빔) 선정 절차, 필요 토크 계산 공식, 보어·비틀림 강성·관성 검토를 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-07-25",
+  "dateModified": "2026-07-25",
+  "mainEntityOfPage": "https://partson.co.kr/guide-coupling.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "커플링 필요 토크는 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "필요 토크 = 부하 토크 × 서비스 팩터로 계산합니다. 서비스 팩터는 균일 부하 1.5, 서보 가감속·정역전 2.0, 강한 충격·잦은 기동정지 3.0을 기준으로 잡습니다. 선정한 커플링의 정격 토크가 이 필요 토크 이상이어야 합니다."}},
+    {"@type": "Question", "name": "디스크 커플링과 오브(올드햄) 커플링은 어떻게 다른가요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "디스크 커플링은 비틀림 강성이 매우 높고 관성이 낮아 서보 이송축 위치 정밀도에 유리하지만 평행 오정렬 흡수는 제한적입니다(싱글). 오브(올드햄) 커플링은 평행 오정렬 흡수에 특화되어 있고 무백래시이지만 강성은 중간 수준입니다."}},
+    {"@type": "Question", "name": "커플링의 비틀림 강성이 왜 중요한가요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "비틀림 강성이 높을수록 부하가 걸릴 때 커플링이 덜 비틀려 위치 결정 오차와 정정 시간이 줄어듭니다. 강성과 관성이 함께 축계의 고유진동수를 결정하므로 고속·고정밀 서보 이송축일수록 고강성 저관성인 디스크 커플링이 유리합니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>서보 커플링 선정 방법 — 토크·서비스팩터·축경으로 고르는 무백래시 강성 커플링</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.07 업데이트</div>
+
+<p>커플링은 서보모터와 볼스크류·감속기 등을 연결해 토크를 전달하고, 축 사이의 미세한 오정렬을 흡수하는 부품입니다. 정밀 이송축에서는 정·역 전환 시 유격이 없는 <strong>무백래시 강성 커플링</strong>을 사용해야 위치 정밀도가 유지됩니다. 이 글에서는 타입 선택부터 필요 토크·보어·강성 검토까지의 선정 절차를 성일기공(SUNGIL) 카탈로그 기준 예제와 함께 정리합니다.</p>
+
+<h2>1. 선정에 필요한 조건 정리</h2>
+<p>계산을 시작하기 전에 다음을 먼저 확정합니다.</p>
+<ul>
+<li><strong>부하 토크 T<sub>load</sub></strong> — 전달할 토크. 보통 모터 정격 토크 또는 실제 부하 토크 (N·m)</li>
+<li><strong>피크 토크</strong> — 가감속 시 순간 최대 토크 (알고 있으면, N·m)</li>
+<li><strong>모터 축경 d₁ · 종동 축경 d₂</strong> — 커플링 보어에 들어갈 두 축 지름 (mm)</li>
+<li><strong>회전수 n</strong> — 최대 회전수 (rpm)</li>
+<li><strong>요구 사항</strong> — 무백래시 필수 여부, 허용 오정렬(각도·평행·축방향), 관성 최소화 여부</li>
+</ul>
+
+<h2>2. 필요 토크 계산 (서비스 팩터)</h2>
+<p>실제 운전에서는 가감속·정역전·충격에 의해 순간 토크가 부하 토크보다 커집니다. 이를 서비스 팩터로 반영합니다.</p>
+<div class="formula">필요 토크 T<sub>D</sub> = 부하 토크 T<sub>load</sub> × 서비스 팩터(SF)<br><br>SF: 균일 부하 1.5 / 서보 가감속·정역전 2.0 / 강한 충격·잦은 기동정지 3.0</div>
+<p>선정한 커플링의 <strong>정격 토크 ≥ T<sub>D</sub></strong> 여야 하며, 피크 토크를 알고 있다면 <strong>커플링 순간 최대 토크 ≥ 피크 토크</strong>도 함께 확인합니다. 디스크 커플링은 강성이 높은 대신 순간 최대 토크가 정격에 가까워 과부하 여유가 작으므로, 충격이 크면 서비스 팩터를 넉넉히 잡습니다.</p>
+
+<h2>3. 타입 선택 — 디스크·오브·죠·빔</h2>
+<p>무백래시 강성 커플링은 구조에 따라 특성이 뚜렷이 갈립니다. 성일기공 기준 대표 시리즈와 함께 정리하면 다음과 같습니다.</p>
+<table>
+<tr><th>타입</th><th>비틀림 강성</th><th>관성</th><th>허용 오정렬</th><th>대표 용도</th><th>성일기공 시리즈</th></tr>
+<tr><td>디스크(판스프링)</td><td>매우 높음</td><td>낮음</td><td>각·축방향 (평행은 더블)</td><td>서보 이송축 표준</td><td>SD · SCD</td></tr>
+<tr><td>오브(올드햄)</td><td>중간</td><td>중간</td><td>평행 우수</td><td>평행 오정렬 축·절연</td><td>SOH</td></tr>
+<tr><td>죠(Jaw)</td><td>가변(스파이더 경도)</td><td>중~높음</td><td>각·평행·축</td><td>진동·충격 흡수·범용</td><td>SJC</td></tr>
+<tr><td>빔(슬릿)</td><td>낮음</td><td>낮음</td><td>각·평행·축</td><td>소형·엔코더/센서축</td><td>SRB</td></tr>
+</table>
+<div class="tip"><strong>요약:</strong> 서보–볼스크류 정밀 이송은 <strong>디스크</strong>, 평행 오정렬이 큰 축은 <strong>오브(올드햄)</strong>, 진동·충격 흡수가 필요하면 <strong>죠</strong>, 소형·저토크 엔코더축은 <strong>빔</strong>이 기본 선택입니다.</div>
+
+<h2>4. 축경(보어) 확인</h2>
+<p>모터축과 종동축 지름이 모두 커플링의 <strong>보어 가공 범위(최소~최대)</strong> 안에 들어와야 합니다. 두 축 지름이 다른 경우도 대부분 한쪽씩 다른 보어로 가공할 수 있습니다.</p>
+<div class="formula">보어 최소 ≤ (모터 축경 d₁, 종동 축경 d₂) ≤ 보어 최대</div>
+<p>체결 방식은 <strong>클램프식</strong>(볼트로 조여 마찰 고정 — 축 손상 없음, 반복 탈착 용이)과 <strong>세트스크류식</strong>(무두볼트로 고정 — 저비용, 고토크·정밀에는 불리)이 있습니다. 서보 정밀 이송축에는 클램프식을 권장합니다.</p>
+
+<h2>5. 비틀림 강성과 관성 검토</h2>
+<p>토크·보어가 맞아도, 정밀도가 중요한 축에서는 비틀림 강성과 관성을 함께 봅니다.</p>
+<ul>
+<li><strong>비틀림 강성 K<sub>θ</sub> (N·m/rad)</strong> — 높을수록 부하 시 커플링이 덜 비틀려 위치 오차·정정 시간이 줄어듭니다. 디스크가 가장 높고, 빔이 낮습니다.</li>
+<li><strong>관성 J (kg·m²)</strong> — 커플링 자체 관성은 부하측에 더해집니다. 관성비(부하 관성 ÷ 모터 관성) 계산 시 커플링분을 가산하세요. 저관성이 중요하면 디스크·빔이 유리합니다.</li>
+</ul>
+<div class="formula">축계 고유진동수 f<sub>n</sub> ≈ (1 / 2π) × √(K<sub>θ</sub> / J)<br><br>강성↑·관성↓ → 고유진동수↑ → 고속 응답·안정성 유리</div>
+
+<h2>6. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>모터</td><td>0.75 kW · 3000 rpm → 정격 토크 ≈ 2.4 N·m</td></tr>
+<tr><td>운전</td><td>서보 가감속·정역전 (SF = 2.0)</td></tr>
+<tr><td>축경</td><td>모터 14 mm · 볼스크류 16 mm</td></tr>
+<tr><td>요구</td><td>무백래시 · 정밀 이송</td></tr>
+</table>
+<p>필요 토크 T<sub>D</sub> = 2.4 × 2.0 = <strong>4.8 N·m</strong>. 정밀 이송이므로 디스크 타입을 선택합니다. 성일기공 SD 시리즈에서 정격 토크 ≥ 4.8 N·m 이면서 보어 최대 ≥ 16 mm 인 최소 모델은 <strong>SDS-42</strong>(정격 8 N·m, 보어 ~18 mm)입니다. 토크 여유는 8 ÷ 4.8 ≈ <strong>×1.67</strong>로 적정합니다. 평행 오정렬이 크다면 더블 디스크(SDW) 또는 오브(SOH)를 검토합니다.</p>
+
+<h2>7. 타입·크기 선택이 애매할 때</h2>
+<ol>
+<li><strong>토크 여유가 부족하면</strong> — 한 사이즈 위 모델로 (정격 토크↑). 서비스 팩터가 과하지 않은지도 함께 점검.</li>
+<li><strong>평행 오정렬이 크면</strong> — 싱글 디스크 대신 더블 디스크, 또는 오브(올드햄)로.</li>
+<li><strong>진동·충격이 심하면</strong> — 죠(Jaw). 단, 스파이더 유격으로 완전 무백래시가 필요한 정밀 위치결정에는 부적합할 수 있음.</li>
+<li><strong>관성이 문제면</strong> — 디스크·빔 등 저관성 타입으로, 또는 보어 대비 작은 몸체 모델로.</li>
+</ol>
+
+<a class="cta" href="https://partson.co.kr/coupling.html">→ 커플링 선정 계산기에서 직접 계산해보기 (무료, 회원가입 불필요)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 무백래시가 왜 중요한가요?</h3>
+<p>백래시(유격)가 있으면 정·역 전환 시 그만큼 헛돌아 위치 오차가 생기고, 서보 제어에서 헌팅·진동의 원인이 됩니다. 디스크·오브·빔은 구조상 무백래시이고, 죠는 스파이더를 압입해 유격을 최소화하지만 완전한 무백래시가 필요하면 디스크·오브를 권장합니다.</p>
+<h3>Q. 서비스 팩터는 어떻게 정하나요?</h3>
+<p>부하 특성과 정역전 빈도로 정합니다. 연속·저충격이면 1.5, 서보의 일반적인 가감속·정역전이면 2.0, 강한 충격이나 잦은 기동정지가 있으면 3.0을 기준으로 잡습니다. 불확실하면 한 단계 높게 잡는 편이 안전합니다.</p>
+<h3>Q. 성일기공 외 브랜드도 쓸 수 있나요?</h3>
+<p>미키풀리·나베야(NBK)·R+W·KTR 등도 동급 무백래시 커플링을 취급합니다. 타입과 필요 정격 토크·보어가 정해지면 다른 브랜드에서도 같은 조건의 모델을 대조해 선택할 수 있습니다. 스펙은 각 사 카탈로그 값으로 확인하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-ballscrew.html">볼스크류 선정 방법</a> · <a href="guide-planetary-gearbox.html">유성 감속기 선정 방법</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>
