@@ -789,7 +789,7 @@ function renderResults() {
   }
 
   grid.innerHTML = S.results.map(function(r, idx) {
-    var badgeClass = r.margin >= 2 ? 'ok' : r.margin >= 1.2 ? 'ok' : 'ok';
+    var badgeClass = r.margin >= 1.2 ? 'ok' : 'caution';
     var badgeText  = '✅ 적합 (여유 '+(r.margin).toFixed(1)+'배)';
 
     // 압력 바 계산

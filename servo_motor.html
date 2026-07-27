@@ -1471,7 +1471,7 @@ function renderResultCard(idx) {
       <div class="res-item">
         <div class="r-lbl">피크 토크</div>
         <div class="r-val" style="color:${pkRatio<=100?'var(--ok)':'var(--bad)'}">${f2(r.T_peak)}</div>
-        <div class="r-unit">N·m &nbsp;<span style="font-size:10px">(정격의 ${f1(r.T_peak/m.Tr*100)}%)</span></div>
+        <div class="r-unit">N·m &nbsp;<span style="font-size:10px">(최대의 ${f1(pkRatio)}%)</span></div>
       </div>
       <div class="res-item">
         <div class="r-lbl">실효 토크 RMS</div>
