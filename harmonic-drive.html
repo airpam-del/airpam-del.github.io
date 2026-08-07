@@ -946,7 +946,7 @@ function renderStep4() {
         <div class="rc-divider"></div>
         <div class="rc-row"><span class="rc-row-label">정밀도 (히스테리시스)</span><span class="rc-row-val good">≤${m.prec} arcmin</span></div>
         <div class="rc-row"><span class="rc-row-label">효율</span><span class="rc-row-val${m.eff<80?' caution':''}">${m.eff}%${effWarn}</span></div>
-        <div class="rc-row"><span class="rc-row-label">예상 수명</span><span class="rc-row-val ${lifeColor}">${lifeText}<span style="font-size:10px;font-weight:400;color:var(--text3)"> (2,000rpm 기준)</span></span></div>
+        <div class="rc-row"><span class="rc-row-label">예상 수명</span><span class="rc-row-val ${lifeColor}">${lifeText}<span style="font-size:10px;font-weight:400;color:var(--text3)"> (${S.nInput.toLocaleString()} rpm 기준)</span></span></div>
       </div>
     </div>`;
   }).join('');
