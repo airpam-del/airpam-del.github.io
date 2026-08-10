@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>전동 액추에이터(전동실린더) 선정 계산기 | PartsOn</title>
+<meta name="description" content="전동 직선 액추에이터(전동실린더·로드형)를 워크로드·속도·스트로크·좌굴 기준으로 선정하세요. 공압실린더 대체 검토 포함. SMC LE(LEY) 카탈로그 기반 무료 계산기.">
+<meta name="keywords" content="전동 액추에이터 선정, 전동실린더, 로드형, 볼스크류, 워크로드, 좌굴, 공압실린더 대체, SMC, LEY, 리드">
+<meta property="og:title" content="전동 액추에이터(전동실린더) 선정 계산기 | PartsOn">
+<meta property="og:description" content="워크로드·속도·스트로크·좌굴 판정과 공압실린더 대비까지. SMC LE 기반 전동 액추에이터 선정 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/electric-actuator.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="워크로드·속도·스트로크·좌굴 판정과 공압실린더 대비까지. SMC LE 기반 전동 액추에이터 선정 계산기.">
+<meta name="twitter:title" content="전동 액추에이터(전동실린더) 선정 계산기 | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/electric-actuator.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A2A;--accent-light:#E8F0EC;--accent-mid:#2D6B4A;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input{font-family:var(--mono)}.check-val{font-family:var(--mono)}.hero-model{font-family:var(--mono)}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.steps-bar{display:flex;align-items:flex-start;margin-bottom:1.75rem;position:relative}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-node:not(:last-child)::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .2s}
+.step-node:not(:last-child).done::after{background:var(--accent)}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;position:relative;z-index:1}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:12px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;line-height:1.3}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-label.done{color:var(--accent)}.step-label.active{color:var(--accent);font-weight:600}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+.bearing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.bearing-card{padding:0;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;overflow:hidden;text-align:left;width:100%;font-family:inherit;display:flex;flex-direction:column;position:relative}
+.bearing-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.bearing-card.sel{border-color:var(--accent);background:var(--accent-light);box-shadow:0 0 0 1px var(--accent)}
+.bearing-card.sel .bearing-name{color:var(--accent)}
+.bearing-card.soon{opacity:.72}
+.bearing-svg{background:linear-gradient(135deg,#F8FAFC 0%,#EAF4EE 100%);padding:12px 8px;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--border);min-height:92px;height:92px;width:100%}
+.bearing-svg svg{width:100%;max-width:150px;height:74px;display:block;flex-shrink:0}
+.bearing-meta{padding:10px 12px}
+.bearing-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.bearing-code{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.bearing-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.soon-badge{display:inline-block;font-size:9px;font-weight:700;color:#8B4A1A;background:#FDF3EB;border:1px solid #F0C9A0;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle}
+.bearing-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;font-size:14px;font-weight:700;color:var(--accent);background:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent)}
+.opt-grid{display:grid;gap:8px}.opt-grid.col2{grid-template-columns:1fr 1fr}.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;width:100%;font-family:inherit}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-edit,.btn-restart{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;background:#fff;color:var(--text2);transition:all .15s}
+.btn-edit:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.btn-restart:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result-title{font-size:16px;font-weight:700;color:var(--text);flex:1}
+.hero-card{background:var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;transition:background .2s}
+.hero-card.warn{background:var(--warn)}.hero-card.bad{background:var(--bad)}
+.hero-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-img{width:120px;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:8px;padding:8px;display:flex;justify-content:center;align-items:center}
+.hero-img svg{width:100%;height:auto}
+.hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1.1}
+.hero-dim{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:3px}.hero-cap{font-size:12px;color:rgba(255,255,255,.7)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--card);border-radius:10px;padding:14px 16px;border:1.5px solid var(--border)}
+.check-card.ok{border-color:#BBF7D0;background:var(--ok-bg)}.check-card.warn{border-color:#FCD34D;background:var(--warn-bg)}.check-card.bad{border-color:#FECACA;background:var(--bad-bg)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.check-card.ok .check-label{color:var(--ok)}.check-card.warn .check-label{color:var(--warn)}.check-card.bad .check-label{color:var(--bad)}
+.check-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.check-card.ok .check-val{color:var(--ok)}.check-card.warn .check-val{color:var(--warn)}.check-card.bad .check-val{color:var(--bad)}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500;color:var(--text3)}
+.check-card.ok .check-judge{color:var(--ok)}.check-card.warn .check-judge{color:var(--warn)}.check-card.bad .check-judge{color:var(--bad)}
+.note-box{background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#22654A;line-height:1.8}
+.note-box strong{color:var(--accent)}
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto;min-width:660px}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl th:first-child{text-align:center;width:44px}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+table.ctbl tr.rec-row.warn td{background:#FFFBEB}table.ctbl tr.rec-row.bad td{background:#FEF2F2}
+.tag-rec{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.tag-rec.warn{background:var(--warn)}.tag-rec.bad{background:var(--bad)}
+.tag-ok{display:inline-block;font-size:11px;color:var(--ok);font-weight:600}
+.tag-warn{display:inline-block;font-size:11px;color:var(--warn);font-weight:600}
+.tag-bad{display:inline-block;font-size:11px;color:var(--bad);font-weight:600}
+table.typetbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.typetbl th{font-size:11px;color:var(--text3);font-weight:600;text-align:center;padding:8px;border-bottom:1.5px solid var(--border);background:var(--bg);white-space:nowrap}
+table.typetbl th:first-child{text-align:left}
+table.typetbl td{padding:8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+table.typetbl td:first-child{text-align:left;font-weight:600;color:var(--text)}
+table.typetbl tr:last-child td{border-bottom:none}
+.disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
+.notice-card{background:#EFF6FF;border:1.5px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:#1E40AF;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#1E40AF;margin-top:8px;font-weight:600}
+.notice-card details summary::-webkit-details-marker{display:none}
+.notice-card details summary::before{content:'▶ ';font-size:9px}
+.notice-card details[open] summary::before{content:'▼ '}
+.notice-card details .detail-body{margin-top:8px;padding-top:8px;border-top:1px dashed #FECACA;font-size:12px;color:#7F1D1D}
+.notice-card details .detail-body p{margin-bottom:5px}.notice-card details .detail-body strong{color:#991B1B}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+.notice-mini{background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid #3B82F6;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#1E3A5F;line-height:1.6}.notice-mini strong{color:#1E40AF}
+.warn-banner{background:var(--warn-bg);border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.info-banner{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#166534;line-height:1.6}
+@media(max-width:520px){.bearing-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.opt-grid.col3{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.hero-card{flex-direction:column;text-align:center;align-items:stretch}.hero-img{width:auto}.hero-img svg{max-width:160px;margin:0 auto}}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}.pnav-menu a.active{color:#4ade80;font-weight:600}
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.print-header{display:none}
+@media print{@page{size:A4;margin:12mm 14mm}.partson-nav,header,footer,.disclaimer,nav{display:none!important}.step-wrap{display:none!important}.print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}.ph-title{font-size:18px;font-weight:700;color:#1A3A2A}.ph-sub{font-size:12px;color:#6B6760;margin-top:2px}.ph-date{font-size:11px;color:#9E9B96;text-align:right}body{background:#fff!important;font-size:12px}main{padding:0!important;max-width:100%!important}#resultArea{display:block!important}table{break-inside:avoid;font-size:11px}.checks{grid-template-columns:1fr 1fr!important}a{color:inherit!important;text-decoration:none!important}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"전동 액추에이터(전동실린더) 선정 계산기","description":"전동 직선 액추에이터(로드형)를 워크로드·속도·스트로크·좌굴 기준으로 선정하는 무료 계산기. 공압실린더 대체 검토 포함.","url":"https://partson.co.kr/electric-actuator.html","applicationCategory":"EngineeringApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}}
+</script>
+</head>
+<body class="category-electric">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🛠️</div>
+    <div>
+      <h1>전동 액추에이터 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
+      <p>PartsOn Linear · 전동실린더(로드형) · SMC LE(LEY) 기준 · 공압실린더 대체 검토</p>
+    </div>
+  </div>
+</header>
+<a href="guide-electric-actuator.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF7EF;border:1px solid #B8E6C9;border-radius:10px;text-decoration:none;color:#1A5C2A;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">이 부품 선정 방법이 궁금하세요? — <b>선정 가이드 보기</b></span><span style="color:#00A344;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-node" id="sn1"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1"><i class="ti ti-versions" aria-hidden="true"></i>액추에이터<br>타입</div></div>
+    <div class="step-node" id="sn2"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2"><i class="ti ti-weight" aria-hidden="true"></i>부하·<br>운동</div></div>
+    <div class="step-node" id="sn3"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3"><i class="ti ti-adjustments" aria-hidden="true"></i>조건</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card step-wrap active" id="step1">
+    <div class="notice-mini"><strong>ℹ️ SMC LE 카탈로그 기반의 빠른 사전 검토 도구입니다.</strong> 최종 선정 시 제조사 카탈로그와 함께 확인하세요.</div>
+    <div class="question">액추에이터 타입을 선택하세요</div>
+    <div class="question-desc">구동 방식·형상에 따라 추력·속도·정밀도가 다릅니다. 공압실린더 대체는 로드형(볼스크류)이 표준입니다.</div>
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 전동 액추에이터가 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>전동 액추에이터(전동실린더)</strong>는 모터+볼스크류(또는 벨트)로 직선 운동을 내는 부품으로, 공압실린더보다 위치 제어·정지 정도·에너지 효율이 좋습니다.</p>
+          <p>• <strong>워크로드</strong> — 실을 수 있는 이동 질량(kg). 설치(수평/수직)에 따라 다릅니다.</p>
+          <p>• <strong>리드</strong> — 1회전당 전진량(mm). 작을수록 추력↑·속도↓, 클수록 속도↑·추력↓.</p>
+          <p>• <strong>추력(푸싱력)</strong> — 밀어내는 힘(N). 압입·프레스 용도에 중요.</p>
+          <p>• <strong>좌굴</strong> — 로드형 장스트로크 수직·압축에서 봉이 휘는 현상. 카탈로그 스트로크 한계를 지킵니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="bearing-grid" id="typeGrid"></div>
+    <div style="margin-top:1.25rem">
+      <div class="section-title-sm">타입별 특성 비교</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>타입</th><th>구동</th><th>추력</th><th>속도</th><th>정밀/모멘트</th><th>대표 용도</th></tr></thead>
+          <tbody>
+            <tr><td>로드형</td><td>볼스크류</td><td>높음</td><td>중간</td><td>—(가이드 별도)</td><td>공압실린더 대체·압입·이송</td></tr>
+            <tr><td>슬라이더 볼스크류</td><td>볼스크류</td><td>높음</td><td>중간</td><td>모멘트 견딤</td><td>정밀 이송·XY 스테이지</td></tr>
+            <tr><td>슬라이더 벨트</td><td>타이밍벨트</td><td>낮음</td><td>고속</td><td>모멘트 견딤</td><td>고속·장스트로크 반송</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="err-msg" id="err1">액추에이터 타입을 선택해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="go(2)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card step-wrap" id="step2">
+    <div class="question">부하와 운동 조건을 입력하세요</div>
+    <div class="question-desc">이동 질량(워크로드)·속도·스트로크·설치 방향으로 카탈로그 정격과 대조합니다.</div>
+    <div class="grid2" style="margin-bottom:1rem">
+      <div class="field"><label><i class="ti ti-weight" aria-hidden="true"></i>이동 질량 (워크로드) <button class="help-btn" onclick="openHelp('load')">?</button></label><div class="input-wrap"><input type="number" id="inLoad" placeholder="예: 10" min="0.1" step="0.1"><span class="unit">kg</span></div></div>
+      <div class="field"><label><i class="ti ti-ruler-2" aria-hidden="true"></i>스트로크</label><div class="input-wrap"><input type="number" id="inStroke" placeholder="예: 200" min="1" step="1"><span class="unit">mm</span></div></div>
+      <div class="field"><label><i class="ti ti-brand-speedtest" aria-hidden="true"></i>요구 속도</label><div class="input-wrap"><input type="number" id="inSpeed" placeholder="예: 300" min="1" step="10"><span class="unit">mm/s</span></div></div>
+      <div class="field"><label><i class="ti ti-arrow-up" aria-hidden="true"></i>설치 방향</label>
+        <div class="opt-grid col2"><button class="opt-btn sel" onclick="selOri('h',this)" type="button"><div class="opt-title" style="font-size:14px">수평</div></button><button class="opt-btn" onclick="selOri('v',this)" type="button"><div class="opt-title" style="font-size:14px">수직</div></button></div>
+      </div>
+    </div>
+    <div class="err-msg" id="err2">이동 질량·스트로크·요구 속도를 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(1)">← 이전</button><button class="btn btn-primary" onclick="go(3)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card step-wrap" id="step3">
+    <div class="question">추가 조건 (선택)</div>
+    <div class="question-desc">압입·프레스 등 미는 힘이 필요하면 필요 추력을 입력하세요. 없으면 비워도 됩니다.</div>
+    <div class="field" style="margin-bottom:1rem"><label><i class="ti ti-arrow-bar-to-right" aria-hidden="true"></i>필요 푸싱력 (선택) <button class="help-btn" onclick="openHelp('push')">?</button></label>
+      <div class="input-wrap" style="max-width:220px"><input type="number" id="inPush" placeholder="비워도 됩니다" min="0" step="1"><span class="unit">N</span></div>
+      <span class="hint">압입·클램프 등 정지 상태에서 미는 힘. 모델별 푸싱력과 대조합니다.</span></div>
+    <div class="err-msg" id="err3"></div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(2)">← 이전</button><button class="btn btn-primary" onclick="calcAndShow()">결과 보기 →</button></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultArea" style="display:none">
+    <div class="print-header"><div><div class="ph-title">PartsOn</div><div class="ph-sub">전동 액추에이터 선정 계산기 — 계산 결과</div></div><div class="ph-date" id="print-date"></div></div>
+    <div class="result-header"><span class="result-title">선정 결과</span><button class="btn-edit" onclick="goEdit()">← 조건 수정</button><button class="btn-restart" onclick="restart()">처음부터</button></div>
+    <div class="notice-card">
+      <div class="notice-head">ℹ️ 참고 안내</div>
+      본 결과는 SMC LE(LEY) 카탈로그 정격 기반의 <strong>빠른 사전 검토용 추정치</strong>입니다. 최종 선정 시 제조사 카탈로그·부하속도 그래프와 함께 확인하세요.
+      <details><summary>자세한 한계 및 면책 사항 보기</summary>
+        <div class="detail-body">
+          <p><strong>① 계산 모델</strong></p>
+          <p>• 카탈로그 <strong>워크로드(kg)·리드별 최대속도·스트로크·푸싱력</strong>과 입력을 대조합니다(SMC 정격은 가감속 3,000 mm/s² 기준).</p>
+          <p>• 워크로드는 수평/수직을 구분하며, 실제 부하속도는 가감속·듀티에 따라 달라집니다(카탈로그 부하속도 그래프 확인).</p>
+          <p>• 좌굴은 로드형 장스트로크 수직 압축에서 검토가 필요하며, <strong>카탈로그 스트로크 한계가 좌굴 안전 범위</strong>입니다.</p>
+          <p><strong>② 데이터 한계</strong></p>
+          <p>• 현재 <strong>로드형(SMC LEY 16/25/32/40, 스텝모터)</strong> 실데이터를 지원합니다. 슬라이더형(LEFS 볼스크류·LEFB 벨트)은 카탈로그 확보 후 추가 예정입니다.</p>
+          <p><strong>③ 실제 설계 시 확인</strong></p>
+          <p>• 제조사 부하속도 그래프·푸싱력-듀티, 허용 모멘트(슬라이더), 좌굴·측하중, 모터(스텝/서보)·드라이버·엔코더 사양.</p>
+          <p><strong>④ 책임 한계</strong></p>
+          <p>본 결과를 근거로 한 설계·구매에서 발생한 모든 직·간접 손해에 대해 PartsOn 및 작성자는 일체의 책임을 지지 않습니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="hero-card" id="heroCard">
+      <div class="hero-img" id="heroImg"></div>
+      <div class="hero-info"><div class="hero-label" id="heroLabel">추천 액추에이터</div><div class="hero-model" id="heroModel">—</div><div class="hero-dim" id="heroDim">—</div><div class="hero-cap" id="heroCap">—</div></div>
+    </div>
+    <div class="warn-banner" id="warnBanner" style="display:none"></div>
+    <div class="info-banner" id="infoBanner" style="display:none"></div>
+    <div class="checks">
+      <div class="check-card" id="cc1"><div class="check-label">워크로드 여유</div><div class="check-val" id="ccV1">—</div><div class="check-judge" id="ccJ1">—</div></div>
+      <div class="check-card" id="cc2"><div class="check-label">속도 (리드)</div><div class="check-val" id="ccV2">—</div><div class="check-judge" id="ccJ2">—</div></div>
+      <div class="check-card" id="cc3"><div class="check-label">스트로크</div><div class="check-val" id="ccV3">—</div><div class="check-judge" id="ccJ3">—</div></div>
+      <div class="check-card" id="cc4"><div class="check-label">푸싱력 / 좌굴</div><div class="check-val" id="ccV4">—</div><div class="check-judge" id="ccJ4">—</div></div>
+    </div>
+    <div class="note-box" id="noteBox"></div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm" id="cmpTitle">SMC LEY 사이즈·리드 비교</div>
+      <div class="tbl-wrap">
+        <table class="ctbl">
+          <thead><tr><th style="text-align:center">판정</th><th>모델</th><th>리드</th><th>워크로드(설치)</th><th>최대속도</th><th>푸싱력</th><th>최대스트로크</th><th>종합</th></tr></thead>
+          <tbody id="cmpTbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="cmpFoot"></div>
+    </div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm">전동 액추에이터 vs 공압실린더</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>항목</th><th>전동 액추에이터</th><th>공압실린더</th></tr></thead>
+          <tbody>
+            <tr><td>위치 제어</td><td>다점·정밀(서보/스텝)</td><td>양단 위치(중간 제어 어려움)</td></tr>
+            <tr><td>정지 정도·반복도</td><td>높음(±0.02 mm급)</td><td>낮음(쿠션·스토퍼 의존)</td></tr>
+            <tr><td>추력 조절</td><td>가변(푸싱력 설정)</td><td>압력으로 가변</td></tr>
+            <tr><td>속도</td><td>중간(리드 의존)</td><td>고속 용이</td></tr>
+            <tr><td>에너지·소음</td><td>효율↑·정숙</td><td>공압 손실·배기 소음</td></tr>
+            <tr><td>초기비용·구성</td><td>높음(모터+드라이버)</td><td>낮음·간단</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px">다점 위치·정밀 정지·에너지 절감이 핵심이면 전동, 고속·저가·단순 왕복이 핵심이면 공압이 유리합니다.</div>
+    </div>
+    <div class="supplier-section">
+      <div class="supplier-section-title">공급사 연결</div>
+      <div class="supplier-list">
+        <div class="supplier-card-item">
+          <div class="supplier-nm">전동 액추에이터 공급사</div>
+          <div class="supplier-br">SMC · IAI · Oriental Motor (국내 유통)</div>
+          <div class="supplier-ct"><a class="supplier-lnk" href="https://www.smcworld.com/products/pickup/en-jp/electric_actuator/" target="_blank" rel="noopener">▶ SMC 전동 액추에이터</a></div>
+          <div class="supplier-nt">형번·부하속도 그래프·모터 사양은 공식 카탈로그에서 최종 확인하세요.</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>※ 면책 공지</strong><br>
+      본 계산기는 카탈로그 정격(워크로드·리드·속도·스트로크) 대조 기반의 <strong>참고용 사전 검토 도구</strong>입니다. 부하속도 그래프(가감속·듀티), 허용 모멘트, 좌굴·측하중 등은 단순화·생략되었습니다.
+      실제 설계·발주 시 제조사 카탈로그와 자격 있는 엔지니어의 검토가 필수입니다.<br>
+      데이터 출처: SMC LEY 시리즈(로드형·스텝모터) 카탈로그 — 워크로드(H/V)·리드·최대속도·푸싱력·스트로크.<br>
+      데이터 최종 검증: 2026.08 — SMC LEY 사양표 대조. 슬라이더형(LEFS/LEFB)은 추가 예정.
+    </div>
+  </div>
+</main>
+
+<div id="help-overlay" onclick="closeHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><span id="help-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span><button onclick="closeHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button></div>
+    <p id="help-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SVG = {
+  rod: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="26" width="60" height="22" rx="3" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <rect x="18" y="20" width="20" height="34" rx="2" fill="#64748B" stroke="#334155" stroke-width="1"/>
+    <rect x="70" y="33" width="56" height="8" rx="2" fill="#CBD5E1" stroke="#334155" stroke-width="1.2"/>
+    <rect x="126" y="28" width="12" height="18" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M74 37h48" stroke="#64748B" stroke-width="1" stroke-dasharray="3 3"/>
+  </svg>`,
+  slider: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="40" width="130" height="18" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <rect x="46" y="22" width="42" height="20" rx="2" fill="#CBD5E1" stroke="#334155" stroke-width="1.4"/>
+    <rect x="50" y="42" width="34" height="4" fill="#64748B"/>
+    <circle cx="20" cy="49" r="4" fill="#64748B"/><circle cx="130" cy="49" r="4" fill="#64748B"/>
+    <path d="M28 49h94" stroke="#64748B" stroke-width="1.5" stroke-dasharray="4 3"/>
+  </svg>`,
+  belt: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <rect x="10" y="40" width="130" height="18" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <circle cx="24" cy="49" r="8" fill="none" stroke="#334155" stroke-width="1.4"/><circle cx="126" cy="49" r="8" fill="none" stroke="#334155" stroke-width="1.4"/>
+    <path d="M24 41h102 M24 57h102" stroke="#334155" stroke-width="1.4"/>
+    <rect x="54" y="22" width="42" height="20" rx="2" fill="#CBD5E1" stroke="#334155" stroke-width="1.4"/>
+  </svg>`,
+};
+
+const TYPE_META = {
+  rod:    { name:'로드형 (볼스크류)', code:'SMC LEY · 전동실린더', desc:'공압실린더 폼팩터·고추력. 압입·이송. 공압 대체 표준.', calc:true },
+  slider: { name:'슬라이더 볼스크류', code:'SMC LEFS · 카탈로그 필요', desc:'고정밀·모멘트 견딤. XY 스테이지·정밀 이송.', calc:false },
+  belt:   { name:'슬라이더 벨트', code:'SMC LEFB · 카탈로그 필요', desc:'고속·장스트로크·저추력. 반송·픽앤플레이스.', calc:false },
+};
+
+/* ══════════ SMC LEY 실데이터 (스텝모터) ══════════
+   각 리드: [워크로드H kg, 워크로드V kg, 푸싱력(max) N, 최대속도 mm/s]. 출처: SMC LEY 사양표. */
+const LEY = {
+  'LEY16': { strokeMax:300, motor:'28', leads:{ '10':[4,2,38,500], '5':[11,4,74,250], '2.5':[20,8,141,125] } },
+  'LEY25': { strokeMax:400, motor:'42', leads:{ '12':[12,8,122,500], '6':[30,16,238,250], '3':[30,30,452,125] } },
+  'LEY32': { strokeMax:500, motor:'56M', leads:{ '16':[20,11,189,500], '8':[40,22,370,250], '4':[40,43,707,125] } },
+  'LEY40': { strokeMax:500, motor:'56L', leads:{ '16':[30,13,283,300], '8':[60,27,553,150], '4':[60,53,1058,75] } },
+};
+
+/* ══════════ 순수 함수 ══════════ */
+// LEY 사이즈×리드 조합 평탄화
+function leyCombos(){
+  const out=[];
+  Object.keys(LEY).forEach(size=>{ const s=LEY[size];
+    Object.keys(s.leads).forEach(lead=>{ const a=s.leads[lead];
+      out.push({ size, lead:parseFloat(lead), strokeMax:s.strokeMax, workH:a[0], workV:a[1], pushF:a[2], vmax:a[3] });
+    });
+  });
+  return out;
+}
+// 선정 (input: load kg, speed mm/s, stroke mm, ori 'h'|'v', push N|null)
+function selectActuator(input){
+  const combos=leyCombos().map(c=>{
+    const workLoad = input.ori==='v' ? c.workV : c.workH;
+    const loadOk = workLoad >= input.load;
+    const speedOk = c.vmax >= input.speed;
+    const strokeOk = c.strokeMax >= input.stroke;
+    const pushOk = (input.push==null) ? true : (c.pushF >= input.push);
+    // 좌굴 경고(정성): 로드형 수직 + 스트로크가 최대의 85% 이상
+    const buckling = (input.ori==='v' && input.stroke > 0.85*c.strokeMax);
+    return Object.assign({}, c, { workLoad, loadOk, speedOk, strokeOk, pushOk, buckling,
+      adequate: loadOk && speedOk && strokeOk && pushOk });
+  });
+  // 추천: 적합 중 가장 작은 사이즈 → 그 중 최대 리드(고속)
+  const adeq = combos.filter(c=>c.adequate);
+  let rec=null;
+  if(adeq.length){
+    const sizeOrder={LEY16:1,LEY25:2,LEY32:3,LEY40:4};
+    adeq.sort((a,b)=> sizeOrder[a.size]-sizeOrder[b.size] || b.lead-a.lead);
+    rec=adeq[0];
+  }
+  return { combos, rec };
+}
+
+/* ══════════ 상태 ══════════ */
+const state={ type:null, load:null, stroke:null, speed:null, ori:'h', push:null };
+let currentStep=1;
+function fmt(v,d=1){if(v===null||v===undefined||!isFinite(v))return '—';return (+v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtInt(v){if(v===null||v===undefined||!isFinite(v))return '—';return Math.round(v).toLocaleString('ko-KR');}
+
+function initTypeGrid(){
+  const grid=document.getElementById('typeGrid'); grid.innerHTML='';
+  Object.keys(TYPE_META).forEach(key=>{
+    const m=TYPE_META[key];
+    const card=document.createElement('div'); card.className='bearing-card'+(m.calc?'':' soon');
+    card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+    card.onclick=()=>selType(key,card);
+    card.onkeydown=(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();selType(key,card);} };
+    card.innerHTML='<div class="bearing-svg">'+SVG[key]+'</div>'+
+      '<div class="bearing-meta"><div class="bearing-name">'+m.name+(m.calc?'':'<span class="soon-badge">준비중</span>')+'</div><div class="bearing-code">'+m.code+'</div><div class="bearing-desc">'+m.desc+'</div></div>';
+    grid.appendChild(card);
+  });
+}
+function selType(type,btn){
+  const m=TYPE_META[type];
+  document.querySelectorAll('#typeGrid .bearing-card').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel');
+  state.type=type; const err=document.getElementById('err1');
+  if(!m.calc){ err.style.display='block'; err.textContent=m.name+'은(는) 카탈로그 확보 후 추가 예정입니다. 현재는 로드형(SMC LEY)을 선택해 주세요.'; state.type=null; }
+  else err.style.display='none';
+}
+function selOri(o,btn){ state.ori=o; btn.parentElement.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+
+function go(step){ if(step>currentStep){ if(!validate(currentStep)) return; } showStep(step); }
+function showStep(step,pushHistory=true){
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  document.getElementById('resultArea').style.display='none';
+  if(pushHistory) history.pushState({eaStep:step},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);if(!sc)continue;sc.classList.remove('done','active');sl.classList.remove('done','active');sn.classList.remove('done');if(i<step){sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}else if(i===step){sc.classList.add('active');sl.classList.add('active');sc.onclick=null;}else{sc.onclick=null;}}
+  currentStep=step; window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate',e=>{ const n=e.state&&e.state.eaStep; if(n)showStep(n,false); else showStep(1,false); });
+
+function validate(step){
+  const err=document.getElementById('err'+step); if(err) err.style.display='none';
+  if(step===1){ if(!state.type){err.style.display='block';err.textContent='액추에이터 타입을 선택해 주세요.';return false;} }
+  if(step===2){
+    const l=parseFloat(document.getElementById('inLoad').value), s=parseFloat(document.getElementById('inStroke').value), v=parseFloat(document.getElementById('inSpeed').value);
+    if(isNaN(l)||l<=0||isNaN(s)||s<=0||isNaN(v)||v<=0){err.style.display='block';return false;}
+    state.load=l; state.stroke=s; state.speed=v;
+  }
+  if(step===3){ const p=parseFloat(document.getElementById('inPush').value); state.push=(isNaN(p)||p<=0)?null:p; }
+  return true;
+}
+
+function calcAndShow(){
+  if(!validate(3)){ showStep(3); return; }
+  const input={ load:state.load, stroke:state.stroke, speed:state.speed, ori:state.ori, push:state.push };
+  const res=selectActuator(input);
+  renderResult(res,input);
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('resultArea').style.display='block';
+  history.pushState({eaStep:'result'},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);sc.classList.remove('active');sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderResult(res,input){
+  const rec=res.rec;
+  document.getElementById('heroImg').innerHTML=SVG[state.type];
+  const heroCard=document.getElementById('heroCard');
+  const oriT = input.ori==='v'?'수직':'수평';
+  if(rec){ heroCard.className='hero-card'+(rec.buckling?' warn':'');
+    document.getElementById('heroModel').textContent=rec.size+' · 리드 '+rec.lead;
+    document.getElementById('heroDim').textContent='워크로드('+oriT+') '+fmtInt(rec.workLoad)+' kg · 최대 '+fmtInt(rec.vmax)+' mm/s · 푸싱 '+fmtInt(rec.pushF)+' N';
+    document.getElementById('heroCap').textContent='이동질량 '+fmt(input.load,1)+' kg · 요구 '+fmtInt(input.speed)+' mm/s · 스트로크 '+fmtInt(input.stroke)+' mm';
+  } else { heroCard.className='hero-card bad';
+    document.getElementById('heroModel').textContent='적합 모델 없음';
+    document.getElementById('heroDim').textContent='LEY 범위에서 조건을 만족하는 사이즈·리드가 없습니다.';
+    document.getElementById('heroCap').textContent='이동질량 '+fmt(input.load,1)+' kg · '+fmtInt(input.speed)+' mm/s · '+fmtInt(input.stroke)+' mm ('+oriT+')';
+  }
+  const cc=(id,cls,v,j)=>{document.getElementById('cc'+id).className='check-card '+cls;document.getElementById('ccV'+id).textContent=v;document.getElementById('ccJ'+id).textContent=j;};
+  if(rec){
+    cc(1, rec.workLoad/input.load>=1.2?'ok':'warn', '×'+fmt(rec.workLoad/input.load,2), '워크로드 '+fmtInt(rec.workLoad)+' kg('+oriT+') ≥ 부하');
+    cc(2,'ok', fmtInt(rec.vmax)+' mm/s', '리드 '+rec.lead+' · 요구 '+fmtInt(input.speed));
+    cc(3,'ok', fmtInt(rec.strokeMax)+' mm', '요구 '+fmtInt(input.stroke)+' mm 이내');
+    cc(4, rec.buckling?'warn':'ok', input.push!=null?(fmtInt(rec.pushF)+' N'):(rec.buckling?'좌굴 주의':'OK'), input.push!=null?('필요 '+fmtInt(input.push)+' N '+(rec.pushF>=input.push?'≥':'<')):(rec.buckling?'장스트로크 수직':'좌굴 여유'));
+  } else {
+    cc(1,'bad','부족','최대 워크로드 미달 가능'); cc(2,'bad','—','속도/스트로크 확인'); cc(3,'bad','—','—'); cc(4,'bad','—','—');
+  }
+
+  const warnB=document.getElementById('warnBanner'), infoB=document.getElementById('infoBanner'); const warns=[];
+  if(!rec){
+    const anyStroke=leyCombos().some(c=>c.strokeMax>=input.stroke);
+    if(!anyStroke) warns.push('요구 스트로크 '+fmtInt(input.stroke)+' mm가 LEY 최대(500 mm)를 넘습니다 — 슬라이더형(장스트로크) 또는 상위 시리즈를 검토하세요.');
+    else warns.push('요구 워크로드·속도 조합을 만족하는 LEY 사이즈·리드가 없습니다 — 부하/속도를 낮추거나 상위 시리즈를 검토하세요.');
+  }
+  if(rec && rec.buckling) warns.push('수직 장스트로크(최대의 85%↑)입니다 — <strong>좌굴·측하중</strong>에 주의하고 카탈로그 스트로크 한계를 지키세요.');
+  if(input.ori==='v') warns.push('수직 설치: 워크로드가 수평보다 작습니다. 정전 시 낙하 방지(브레이크·자기유지) 확인.');
+  if(warns.length){ warnB.style.display='block'; warnB.innerHTML='<strong>⚠️ 검토 필요</strong><br>'+warns.map(w=>'• '+w).join('<br>'); } else warnB.style.display='none';
+  if(rec && !rec.buckling){ infoB.style.display='block'; infoB.innerHTML='<strong>✅ 선정 적합</strong><br>• SMC <b>'+rec.size+' 리드 '+rec.lead+'</b> — 워크로드·속도·스트로크'+(input.push!=null?'·푸싱력':'')+' 조건을 만족합니다(워크로드 여유 ×'+fmt(rec.workLoad/input.load,2)+').'; } else infoB.style.display='none';
+
+  let note='<strong>선정 기준</strong> — 카탈로그 워크로드('+oriT+') ≥ 이동질량, 리드별 최대속도 ≥ 요구속도, 최대스트로크 ≥ 요구스트로크'+(input.push!=null?', 푸싱력 ≥ 필요 푸싱력':'')+'.';
+  note+='<br><strong>리드 트레이드오프</strong> — 리드가 작을수록 추력↑·속도↓, 클수록 속도↑·추력↓. 요구 속도를 만족하는 최대 리드를 우선했습니다.';
+  if(rec) note+='<br><strong>추천</strong> — SMC '+rec.size+'(모터 '+LEY[rec.size].motor+') 리드 '+rec.lead+' mm.';
+  note+='<br><strong>좌굴</strong> — 로드형 장스트로크 수직 압축은 좌굴 검토 필요. 카탈로그 스트로크 한계가 좌굴 안전 범위입니다.';
+  document.getElementById('noteBox').innerHTML=note;
+
+  renderCmp(res,input);
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})+' 계산';
+}
+function renderCmp(res,input){
+  const tb=document.getElementById('cmpTbody'); tb.innerHTML='';
+  const oriT=input.ori==='v'?'V':'H';
+  res.combos.forEach(c=>{
+    let judge,rowClass='';
+    if(c.adequate){ if(res.rec&&c.size===res.rec.size&&c.lead===res.rec.lead){judge='<span class="tag-rec">추천</span>';rowClass='rec-row';} else judge='<span class="tag-ok">적합</span>'; }
+    else { const rs=[]; if(!c.loadOk)rs.push('부하'); if(!c.speedOk)rs.push('속도'); if(!c.strokeOk)rs.push('스트로크'); if(!c.pushOk)rs.push('푸싱'); judge='<span class="tag-bad">'+rs.join('·')+'</span>'; }
+    tb.innerHTML+='<tr class="'+rowClass+'">'+
+      '<td style="text-align:center">'+judge+'</td>'+
+      '<td style="font-family:var(--mono);font-weight:600">'+c.size+'</td>'+
+      '<td>'+c.lead+' mm</td>'+
+      '<td>'+fmtInt(c.workLoad)+' kg ('+oriT+')</td>'+
+      '<td>'+fmtInt(c.vmax)+' mm/s</td>'+
+      '<td>'+fmtInt(c.pushF)+' N</td>'+
+      '<td>'+fmtInt(c.strokeMax)+' mm</td>'+
+      '<td>'+(c.adequate?'<span class="tag-ok">OK</span>':'<span class="tag-bad">부적합</span>')+'</td>'+
+    '</tr>';
+  });
+  const foots=[];
+  foots.push('이동질량 '+fmt(input.load,1)+' kg · 요구 '+fmtInt(input.speed)+' mm/s · 스트로크 '+fmtInt(input.stroke)+' mm · '+(input.ori==='v'?'수직':'수평')+(input.push!=null?' · 푸싱 '+fmtInt(input.push)+' N':''));
+  foots.push('SMC 정격은 가감속 3,000 mm/s² 기준. 실제 부하속도는 카탈로그 부하속도 그래프로 확인하세요.');
+  foots.push('슬라이더형(LEFS 볼스크류·LEFB 벨트)은 카탈로그 확보 시 추가됩니다.');
+  document.getElementById('cmpFoot').innerHTML=foots.map(f=>'• '+f).join('<br>');
+}
+
+function goEdit(){ showStep(currentStep>3?3:currentStep); }
+function restart(){
+  state.type=null; state.load=null; state.stroke=null; state.speed=null; state.ori='h'; state.push=null;
+  ['inLoad','inStroke','inSpeed','inPush'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.querySelectorAll('.bearing-card.sel,.opt-btn.sel').forEach(b=>b.classList.remove('sel'));
+  const h=document.querySelector('#step2 .opt-grid .opt-btn'); if(h)h.classList.add('sel');
+  showStep(1);
+}
+
+const HELP={
+  load:{title:'이동 질량 (워크로드)', desc:'액추에이터가 옮기는 이동 질량(kg)입니다.\n워크·지그·핸드 등을 합산합니다.\n카탈로그 워크로드(수평/수직)와 대조해 사이즈·리드를 정합니다.\nSMC 정격은 가감속 3,000 mm/s² 기준입니다.'},
+  push:{title:'필요 푸싱력', desc:'압입·클램프·프레스 등 정지 상태에서 밀어내는 힘(N)입니다.\n모델·리드별 푸싱력(최대)과 대조합니다.\n단순 이송이면 비워 두어도 됩니다.'},
+};
+function openHelp(k){ const h=HELP[k]; if(!h)return; document.getElementById('help-title').textContent=h.title; document.getElementById('help-desc').innerHTML=h.desc.replace(/\n/g,'<br>'); document.getElementById('help-overlay').style.display='flex'; }
+function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')) document.getElementById('help-overlay').style.display='none'; }
+
+initTypeGrid();
+window.ActuatorCalc={ leyCombos, selectActuator, LEY };
+</script>
+<script src="js/common.js"></script>
+</body></html>
