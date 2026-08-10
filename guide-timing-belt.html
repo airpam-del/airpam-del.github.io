@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타이밍벨트 선정 방법 — 설계동력·벨트폭·풀리 사이즈 계산 절차 | PartsOn</title>
+<meta name="description" content="타이밍벨트(GT2·HTD) 선정 방법을 단계별로 정리했습니다. 설계동력 계산, 서비스팩터, PCD·벨트길이·벨트속도·걸림치수, 필요 벨트폭 선정까지 게이츠 카탈로그 기준 예제와 함께 설명합니다.">
+<meta name="keywords" content="타이밍벨트 선정, 타이밍풀리 선정, 설계동력, 서비스팩터, GT2, HTD, 벨트폭, 걸림치수, PCD, 벨트길이, 게이츠">
+<link rel="canonical" href="https://partson.co.kr/guide-timing-belt.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="타이밍벨트 선정 방법 — 설계동력·벨트폭·풀리 사이즈 계산 절차">
+<meta property="og:description" content="설계동력 계산, PCD·벨트길이·속도·걸림치수, 필요 벨트폭 선정까지. 예제와 함께 보는 타이밍벨트 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-timing-belt.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "타이밍벨트 선정 방법 — 설계동력·벨트폭·풀리 사이즈 계산 절차",
+  "description": "타이밍벨트(GT2·HTD) 선정 절차, 설계동력 계산, PCD·벨트길이·속도·걸림치수, 필요 벨트폭 선정을 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-08-10",
+  "dateModified": "2026-08-10",
+  "mainEntityOfPage": "https://partson.co.kr/guide-timing-belt.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "타이밍벨트 설계동력은 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "설계동력 = 전달동력 × 서비스팩터로 계산합니다. 서비스팩터는 부하 특성과 가동 시간, 구동원 종류에 따라 1.2(경부하)~1.8(충격·정역) 범위로 잡습니다. 선정한 벨트의 정격 전달동력이 이 설계동력 이상이어야 합니다."}},
+    {"@type": "Question", "name": "GT2와 HTD 타이밍벨트는 어떻게 다른가요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "GT2/GT3는 HTD를 개량한 곡선 치형으로 백래시가 작고 정밀·고속에 유리하며, 게이츠 기준으로 같은 크기에서 HTD보다 약 2배의 전달용량을 갖습니다. HTD는 곡선 치형의 범용 동력전달용입니다. 서보 정밀 이송축에는 GT2/GT3를 권장합니다."}},
+    {"@type": "Question", "name": "걸림 치수(맞물림 치수)는 왜 6치 이상이어야 하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "벨트의 정격 전달용량은 소풀리에 6치 이상이 맞물리는 것을 전제로 산정됩니다. 6치 미만이면 이 하나당 하중이 커져 정격이 떨어지므로 보정계수(6치 미만)를 적용해 용량을 낮춰야 합니다. 소풀리를 키우거나 축간거리를 늘리면 걸림 치수가 늘어납니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>타이밍벨트 선정 방법 — 설계동력·벨트폭·풀리 사이즈 계산 절차</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.08 업데이트</div>
+
+<p>타이밍벨트(동기벨트)는 이(teeth)로 풀리와 맞물려 미끄러짐 없이 회전을 전달합니다. 서보 이송축·컨베이어·펌프 구동 등에서 널리 쓰이며, 치형(GT2·HTD)·피치·벨트폭·풀리 잇수를 조건에 맞게 골라야 합니다. 이 글에서는 게이츠(Gates) 카탈로그 기준의 선정 절차를 예제와 함께 정리합니다.</p>
+
+<h2>1. 선정에 필요한 조건 정리</h2>
+<ul>
+<li><strong>전달 동력 P</strong> — 벨트가 전달할 동력 (kW). 토크 T와 회전수 n을 알면 P = T·n/9550.</li>
+<li><strong>구동 축 회전수 n</strong> — 구동(모터측·빠른) 풀리 회전수 (rpm). 파워레이팅·벨트속도의 기준.</li>
+<li><strong>감속비 / 풀리 잇수</strong> — 소풀리 잇수 z₁, 종동 잇수 z₂ (또는 감속비 i = z₂/z₁).</li>
+<li><strong>축간거리 C</strong> — 두 축 중심 거리 (mm). 벨트 길이 결정.</li>
+<li><strong>부하 특성</strong> — 충격·정역·가동시간(서비스팩터 결정).</li>
+</ul>
+
+<h2>2. 설계동력 계산 (서비스팩터)</h2>
+<p>실제 운전의 충격·정역·연속 가동을 반영해 전달동력에 서비스팩터를 곱합니다.</p>
+<div class="formula">설계동력 P<sub>d</sub> = 전달동력 P × 서비스팩터(SF)<br><br>SF: 경부하 1.2 / 일반·서보 1.5 / 충격·정역 1.8 (게이츠 SF 표: 구동원×부하×가동시간, 1.0~2.5)</div>
+<p>선정한 벨트의 <strong>정격 전달동력 ≥ P<sub>d</sub></strong> 여야 합니다.</p>
+
+<h2>3. 치형·피치 선택</h2>
+<p>치형은 백래시·전달용량·정밀도를 좌우합니다. 서보 정밀 이송은 GT2/GT3, 일반 동력전달은 HTD가 표준입니다.</p>
+<table>
+<tr><th>치형</th><th>이 모양</th><th>백래시</th><th>전달용량</th><th>대표 용도</th></tr>
+<tr><td>GT2/GT3</td><td>개량 곡선</td><td>낮음</td><td>높음(HTD의 약 2배)</td><td>서보 이송·정밀 위치결정</td></tr>
+<tr><td>HTD</td><td>곡선</td><td>보통</td><td>높음</td><td>일반 동력전달·범용</td></tr>
+</table>
+<p>피치(이 간격)는 동력 규모로 정합니다. <strong>3M/5M</strong>은 소동력·정밀, <strong>8M</strong>은 일반 산업, <strong>14M</strong>은 대동력·고토크에 적합합니다.</p>
+
+<h2>4. 풀리 PCD·벨트 속도</h2>
+<p>풀리 피치원 지름(PCD)과 벨트 속도를 확인합니다.</p>
+<div class="formula">PCD = 피치 × 잇수 ÷ π<br><br>벨트 속도 v = PCD × π × n ÷ 60000 (m/s)</div>
+<div class="tip"><strong>속도 한계:</strong> 표준 타이밍벨트는 약 <strong>33 m/s(6500 fpm)</strong> 이내를 권장합니다. 이를 넘으면 원심력·소음이 커지므로 풀리를 줄이거나 고속용 벨트를 검토하세요.</div>
+
+<h2>5. 벨트 길이와 걸림 치수</h2>
+<p>축간거리와 두 풀리 지름으로 벨트 피치 길이를 구한 뒤, 가장 가까운 <strong>표준 길이</strong>로 맞춥니다.</p>
+<div class="formula">벨트 피치길이 L<sub>p</sub> ≈ 2C + (π/2)(PCD₁+PCD₂) + (PCD₂−PCD₁)² ÷ (4C)</div>
+<p>소풀리에 맞물리는 <strong>걸림 치수는 6치 이상</strong>이어야 정격이 유지됩니다. 감속비가 크면 소풀리 랩각이 줄어 걸림 치수가 감소하므로, 소풀리를 키우거나 축간거리를 늘려 확보합니다.</p>
+
+<h2>6. 필요 벨트 폭 선정</h2>
+<p>벨트 폭이 넓을수록 전달용량이 커집니다. 피치·소풀리 잇수·회전수에 대한 <strong>정격 전달동력(파워레이팅)</strong>을 폭·길이·걸림으로 보정해, 설계동력을 견디는 <strong>최소 표준 폭</strong>을 고릅니다.</p>
+<div class="formula">정격동력(폭 W) = 기준정격 × (W ÷ 기준폭) × 길이보정 × 걸림보정 ≥ 설계동력</div>
+<p>표준 폭 예(게이츠 GT2): 5M = 9·15·25 mm / 8M = 20·30·50·85 mm / 14M = 40·55·85·115·170 mm.</p>
+
+<h2>7. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>전달 동력</td><td>2.2 kW</td></tr>
+<tr><td>구동 회전수</td><td>1,500 rpm</td></tr>
+<tr><td>부하</td><td>일반 산업 (SF = 1.5)</td></tr>
+<tr><td>풀리</td><td>소 24T · 종동 48T (감속 2:1)</td></tr>
+<tr><td>축간거리</td><td>약 250 mm</td></tr>
+</table>
+<p>설계동력 P<sub>d</sub> = 2.2 × 1.5 = <strong>3.3 kW</strong>. GT2 8M(피치 8mm), 소풀리 24T → PCD ≈ 61 mm, 벨트속도 ≈ 4.8 m/s(한계 이내), 걸림 치수 ≈ 11치(≥6 OK). 표준 길이는 100T(800mm)급으로 매칭되며, 필요 폭은 <strong>20 mm</strong>에서 정격이 설계동력을 넘어 적합합니다. 같은 조건에서 5M은 폭이 부족하고 14M은 과대이므로 <strong>8M 20mm</strong>가 균형점입니다.</p>
+
+<h2>8. 용량이 부족할 때 대처법</h2>
+<ol>
+<li><strong>벨트 폭 증가</strong> — 폭에 비례해 전달용량 증가 (가장 직접적)</li>
+<li><strong>한 피치 위로</strong> — 5M→8M→14M (대동력용)</li>
+<li><strong>소풀리 잇수 증가</strong> — 걸림 치수·PCD 증가로 용량↑ (단 벨트속도 확인)</li>
+</ol>
+
+<a class="cta" href="https://partson.co.kr/timing-belt.html">→ 타이밍벨트 선정 계산기에서 직접 계산해보기 (무료, 회원가입 불필요)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 서비스팩터는 어떻게 정하나요?</h3>
+<p>부하 특성·정역 빈도·가동 시간과 구동원 종류로 정합니다. 균일·경부하는 1.2, 일반 산업이나 서보 가감속은 1.5, 충격·정역·중부하는 1.8을 기준으로 잡습니다. 게이츠 서비스팩터 표(1.0~2.5)를 참고하되 불확실하면 한 단계 높게 잡는 편이 안전합니다.</p>
+<h3>Q. 벨트 폭을 넓히는 것과 피치를 키우는 것 중 무엇이 나은가요?</h3>
+<p>폭을 넓히면 같은 피치에서 용량이 커져 소형·저관성 유지에 유리합니다. 폭을 최대로 해도 부족하거나 벨트속도가 너무 높으면 피치를 한 단계 키웁니다. 정밀·고속이면 GT 계열을, 대토크·저속이면 14M 등 큰 피치를 고려하세요.</p>
+<h3>Q. 게이츠 외에 다른 브랜드도 쓸 수 있나요?</h3>
+<p>반도(Bando)·미쓰보시 등도 GT/HTD 호환 타이밍벨트를 취급합니다. 피치·정격동력·표준 길이가 맞으면 다른 브랜드에서도 같은 조건의 벨트를 대조해 선택할 수 있습니다. 스펙은 각 사 카탈로그로 확인하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-coupling.html">커플링 선정 방법</a> · <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-planetary-gearbox.html">유성 감속기 선정 방법</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>
