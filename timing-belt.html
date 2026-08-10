@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>타이밍벨트·풀리 선정 계산기 (GT2·HTD) | PartsOn</title>
+<meta name="description" content="서보·동력전달용 타이밍벨트(GT2·HTD 5M·8M·14M)와 풀리를 설계동력·서비스팩터·축간거리 기준으로 선정하세요. 게이츠 카탈로그 파워레이팅 기반 무료 계산기.">
+<meta name="keywords" content="타이밍벨트 선정, 타이밍풀리, GT2, GT3, HTD, 5M 8M 14M, 설계동력, 서비스팩터, 벨트 폭, 게이츠, Gates">
+<meta property="og:title" content="타이밍벨트·풀리 선정 계산기 (GT2·HTD) | PartsOn">
+<meta property="og:description" content="설계동력·축간거리·벨트폭까지. 게이츠 파워레이팅 기반 타이밍벨트 선정 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/timing-belt.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="설계동력·축간거리·벨트폭까지. 게이츠 파워레이팅 기반 타이밍벨트 선정 계산기.">
+<meta name="twitter:title" content="타이밍벨트·풀리 선정 계산기 (GT2·HTD) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/timing-belt.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A2A;--accent-light:#E8F0EC;--accent-mid:#2D6B4A;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+  --pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input{font-family:var(--mono)}.check-val{font-family:var(--mono)}.hero-model{font-family:var(--mono)}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.steps-bar{display:flex;align-items:flex-start;margin-bottom:1.75rem;position:relative}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-node:not(:last-child)::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .2s}
+.step-node:not(:last-child).done::after{background:var(--accent)}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;position:relative;z-index:1}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:12px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;line-height:1.3}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-label.done{color:var(--accent)}.step-label.active{color:var(--accent);font-weight:600}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+.bearing-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bearing-card{padding:0;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;overflow:hidden;text-align:left;width:100%;font-family:inherit;display:flex;flex-direction:column;position:relative}
+.bearing-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.bearing-card.sel{border-color:var(--accent);background:var(--accent-light);box-shadow:0 0 0 1px var(--accent)}
+.bearing-card.sel .bearing-name{color:var(--accent)}
+.bearing-card.soon{opacity:.72}
+.bearing-svg{background:linear-gradient(135deg,#F8FAFC 0%,#EAF4EE 100%);padding:12px 8px;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--border);min-height:100px;height:100px;width:100%}
+.bearing-svg svg{width:100%;max-width:170px;height:80px;display:block;flex-shrink:0}
+.bearing-meta{padding:10px 12px}
+.bearing-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.bearing-code{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.bearing-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.soon-badge{display:inline-block;font-size:9px;font-weight:700;color:#8B4A1A;background:#FDF3EB;border:1px solid #F0C9A0;border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:middle}
+.bearing-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;font-size:14px;font-weight:700;color:var(--accent);background:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent)}
+.opt-grid{display:grid;gap:8px}.opt-grid.col2{grid-template-columns:1fr 1fr}.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;width:100%;font-family:inherit}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-edit,.btn-restart{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;background:#fff;color:var(--text2);transition:all .15s}
+.btn-edit:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.btn-restart:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result-title{font-size:16px;font-weight:700;color:var(--text);flex:1}
+.hero-card{background:var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;transition:background .2s}
+.hero-card.warn{background:var(--warn)}.hero-card.bad{background:var(--bad)}
+.hero-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-img{width:120px;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:8px;padding:8px;display:flex;justify-content:center;align-items:center}
+.hero-img svg{width:100%;height:auto}
+.hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1.1}
+.hero-dim{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:3px}.hero-cap{font-size:12px;color:rgba(255,255,255,.7)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--card);border-radius:10px;padding:14px 16px;border:1.5px solid var(--border)}
+.check-card.ok{border-color:#BBF7D0;background:var(--ok-bg)}.check-card.warn{border-color:#FCD34D;background:var(--warn-bg)}.check-card.bad{border-color:#FECACA;background:var(--bad-bg)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.check-card.ok .check-label{color:var(--ok)}.check-card.warn .check-label{color:var(--warn)}.check-card.bad .check-label{color:var(--bad)}
+.check-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.check-card.ok .check-val{color:var(--ok)}.check-card.warn .check-val{color:var(--warn)}.check-card.bad .check-val{color:var(--bad)}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500;color:var(--text3)}
+.check-card.ok .check-judge{color:var(--ok)}.check-card.warn .check-judge{color:var(--warn)}.check-card.bad .check-judge{color:var(--bad)}
+.note-box{background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#22654A;line-height:1.8}
+.note-box strong{color:var(--accent)}
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto;min-width:680px}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl th:first-child{text-align:center;width:44px}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+table.ctbl tr.rec-row.warn td{background:#FFFBEB}table.ctbl tr.rec-row.bad td{background:#FEF2F2}
+.tag-rec{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.tag-rec.warn{background:var(--warn)}.tag-rec.bad{background:var(--bad)}
+.tag-ok{display:inline-block;font-size:11px;color:var(--ok);font-weight:600}
+.tag-warn{display:inline-block;font-size:11px;color:var(--warn);font-weight:600}
+.tag-bad{display:inline-block;font-size:11px;color:var(--bad);font-weight:600}
+table.typetbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.typetbl th{font-size:11px;color:var(--text3);font-weight:600;text-align:center;padding:8px;border-bottom:1.5px solid var(--border);background:var(--bg);white-space:nowrap}
+table.typetbl th:first-child{text-align:left}
+table.typetbl td{padding:8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+table.typetbl td:first-child{text-align:left;font-weight:600;color:var(--text)}
+table.typetbl tr:last-child td{border-bottom:none}
+.disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
+.notice-card{background:#EFF6FF;border:1.5px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:#1E40AF;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#1E40AF;margin-top:8px;font-weight:600}
+.notice-card details summary::-webkit-details-marker{display:none}
+.notice-card details summary::before{content:'▶ ';font-size:9px}
+.notice-card details[open] summary::before{content:'▼ '}
+.notice-card details .detail-body{margin-top:8px;padding-top:8px;border-top:1px dashed #FECACA;font-size:12px;color:#7F1D1D}
+.notice-card details .detail-body p{margin-bottom:5px}.notice-card details .detail-body strong{color:#991B1B}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+.notice-mini{background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid #3B82F6;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#1E3A5F;line-height:1.6}.notice-mini strong{color:#1E40AF}
+.warn-banner{background:var(--warn-bg);border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.info-banner{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#166534;line-height:1.6}
+@media(max-width:480px){.opt-grid.col3{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.bearing-grid{grid-template-columns:1fr}.hero-card{flex-direction:column;text-align:center;align-items:stretch}.hero-img{width:auto}.hero-img svg{max-width:160px;margin:0 auto}}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}.pnav-menu a.active{color:#4ade80;font-weight:600}
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.print-header{display:none}
+@media print{@page{size:A4;margin:12mm 14mm}.partson-nav,header,footer,.disclaimer,nav{display:none!important}.step-wrap{display:none!important}.print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}.ph-title{font-size:18px;font-weight:700;color:#1A3A2A}.ph-sub{font-size:12px;color:#6B6760;margin-top:2px}.ph-date{font-size:11px;color:#9E9B96;text-align:right}body{background:#fff!important;font-size:12px}main{padding:0!important;max-width:100%!important}#resultArea{display:block!important}table{break-inside:avoid;font-size:11px}.checks{grid-template-columns:1fr 1fr!important}a{color:inherit!important;text-decoration:none!important}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"타이밍벨트·풀리 선정 계산기","description":"서보·동력전달용 타이밍벨트(GT2·HTD)와 풀리를 설계동력·서비스팩터·축간거리 기준으로 선정하는 무료 계산기.","url":"https://partson.co.kr/timing-belt.html","applicationCategory":"EngineeringApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}}
+</script>
+</head>
+<body class="category-electric">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔗</div>
+    <div>
+      <h1>타이밍벨트·풀리 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
+      <p>PartsOn Linear · GT2·HTD 5M·8M·14M · 게이츠(Gates) 파워레이팅 기준</p>
+    </div>
+  </div>
+</header>
+<a href="guide-timing-belt.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF7EF;border:1px solid #B8E6C9;border-radius:10px;text-decoration:none;color:#1A5C2A;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">이 부품 선정 방법이 궁금하세요? — <b>선정 가이드 보기</b></span><span style="color:#00A344;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-node" id="sn1"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1"><i class="ti ti-versions" aria-hidden="true"></i>벨트<br>치형</div></div>
+    <div class="step-node" id="sn2"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2"><i class="ti ti-bolt" aria-hidden="true"></i>동력·<br>회전수</div></div>
+    <div class="step-node" id="sn3"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3"><i class="ti ti-arrows-diff" aria-hidden="true"></i>감속비·<br>축간거리</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card step-wrap active" id="step1">
+    <div class="notice-mini"><strong>ℹ️ 게이츠 카탈로그 기반의 빠른 사전 검토 도구입니다.</strong> 최종 선정 시에는 제조사 카탈로그와 함께 확인하세요.</div>
+    <div class="question">벨트 치형을 선택하세요</div>
+    <div class="question-desc">치형(이 모양)에 따라 백래시·전달용량·정밀도가 다릅니다. 서보·정밀 이송은 GT, 일반 동력전달은 HTD가 표준입니다.</div>
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 타이밍벨트가 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>타이밍벨트</strong>는 이(teeth)로 풀리와 맞물려 미끄러짐 없이 회전을 동기 전달합니다.</p>
+          <p>• <strong>피치</strong> — 이와 이 사이 간격(mm). 3M/5M=소동력·정밀, 8M=일반, 14M=대동력.</p>
+          <p>• <strong>설계동력</strong> = 전달동력 × 서비스팩터(부하 특성 반영).</p>
+          <p>• <strong>벨트 폭</strong> — 넓을수록 전달용량↑. 설계동력을 견디는 최소 폭을 고릅니다.</p>
+          <p>• <strong>걸림 치수</strong> — 소풀리에 맞물리는 이 수. <strong>6치 이상</strong>이어야 정격이 유지됩니다.</p>
+          <p style="margin-top:8px"><strong>고르는 순서:</strong> 치형 → 동력·회전수·SF → 풀리 잇수·축간거리 → 벨트 폭·길이 선정</p>
+        </div>
+      </details>
+    </div>
+    <div class="bearing-grid" id="typeGrid"></div>
+    <div style="margin-top:1.25rem">
+      <div class="section-title-sm">치형별 특성 비교</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>치형</th><th>이 모양</th><th>백래시</th><th>전달용량</th><th>정밀/고속</th><th>대표 용도</th></tr></thead>
+          <tbody>
+            <tr><td>GT2/GT3</td><td>개량 곡선</td><td>낮음</td><td>높음</td><td>◎</td><td>서보 이송·정밀 위치</td></tr>
+            <tr><td>HTD</td><td>곡선</td><td>보통</td><td>높음</td><td>○</td><td>일반 동력전달·범용</td></tr>
+            <tr><td>T / AT</td><td>사다리꼴</td><td>낮음(AT)</td><td>중~높음</td><td>○</td><td>리니어 이송·직선 구동</td></tr>
+            <tr><td>2M/3M</td><td>개량 곡선(소)</td><td>낮음</td><td>낮음</td><td>◎</td><td>소형·엔코더·경부하</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="err-msg" id="err1">벨트 치형을 선택해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="go(2)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card step-wrap" id="step2">
+    <div class="question">전달 동력과 회전수를 입력하세요</div>
+    <div class="question-desc">전달 동력(kW) 또는 토크로 입력하고, 서비스팩터로 부하 특성을 반영합니다. (설계동력 = 전달동력 × 서비스팩터)</div>
+    <div class="opt-grid col2" id="powerModeGrid" style="margin-bottom:1rem">
+      <button class="opt-btn sel" onclick="selPowerMode('kw',this)"><div class="opt-title">동력(kW)</div><div class="sub">전달 동력을 직접</div></button>
+      <button class="opt-btn" onclick="selPowerMode('torque',this)"><div class="opt-title">토크(N·m)+회전수</div><div class="sub">토크로 환산</div></button>
+    </div>
+    <div id="kwArea">
+      <div class="field" style="margin-bottom:1rem"><label><i class="ti ti-bolt" aria-hidden="true"></i>전달 동력 P</label>
+        <div class="input-wrap" style="max-width:220px"><input type="number" id="inKW" placeholder="예: 2.2" min="0" step="0.1"><span class="unit">kW</span></div></div>
+    </div>
+    <div id="torqueArea" style="display:none">
+      <div class="grid2" style="margin-bottom:1rem">
+        <div class="field"><label><i class="ti ti-rotate-360" aria-hidden="true"></i>토크 T</label><div class="input-wrap"><input type="number" id="inTq" placeholder="예: 14" min="0" step="0.1"><span class="unit">N·m</span></div></div>
+        <div class="field"><label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>해당 축 회전수</label><div class="input-wrap"><input type="number" id="inTqRpm" placeholder="예: 1500" min="1" step="10"><span class="unit">rpm</span></div></div>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:1rem"><label><i class="ti ti-rotate-clockwise" aria-hidden="true"></i>구동(빠른) 축 회전수 n <button class="help-btn" onclick="openHelp('rpm')">?</button></label>
+      <div class="input-wrap" style="max-width:220px"><input type="number" id="inRPM" placeholder="예: 1500" min="1" step="10"><span class="unit">rpm</span></div>
+      <span class="hint">구동 풀리(모터측) 회전수. 파워레이팅·벨트속도 기준입니다.</span></div>
+    <div class="question" style="font-size:14px;margin-bottom:.5rem">서비스 팩터 (부하 특성) <button class="help-btn" onclick="openHelp('sf')">?</button></div>
+    <div class="opt-grid col3" id="sfGrid" style="margin-bottom:.5rem">
+      <button class="opt-btn" onclick="selSF(1.2,this)"><div class="opt-title">경부하</div><div class="sub">SF 1.2<br>균일·저충격</div></button>
+      <button class="opt-btn" onclick="selSF(1.5,this)"><div class="opt-title">보통</div><div class="sub">SF 1.5<br>일반 산업·서보</div></button>
+      <button class="opt-btn" onclick="selSF(1.8,this)"><div class="opt-title">중부하</div><div class="sub">SF 1.8<br>충격·정역</div></button>
+    </div>
+    <div class="err-msg" id="err2">동력(또는 토크·회전수)과 구동 회전수, 서비스팩터를 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(1)">← 이전</button><button class="btn btn-primary" onclick="go(3)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card step-wrap" id="step3">
+    <div class="question">감속비·풀리·축간거리를 입력하세요</div>
+    <div class="question-desc">소풀리 잇수와 감속비(또는 종동 잇수)로 풀리를 정하고, 축간거리로 벨트 길이를 계산합니다.</div>
+    <div class="opt-grid col2" id="ratioModeGrid" style="margin-bottom:1rem">
+      <button class="opt-btn sel" onclick="selRatioMode('ratio',this)"><div class="opt-title">감속비 입력</div><div class="sub">소풀리 잇수 + 비</div></button>
+      <button class="opt-btn" onclick="selRatioMode('teeth',this)"><div class="opt-title">잇수 직접</div><div class="sub">소·대 풀리 잇수</div></button>
+    </div>
+    <div class="grid2" style="margin-bottom:1rem">
+      <div class="field"><label><i class="ti ti-circle" aria-hidden="true"></i>소풀리 잇수 z₁ <button class="help-btn" onclick="openHelp('z1')">?</button></label><div class="input-wrap"><input type="number" id="inZ1" placeholder="예: 24" min="10" step="1"><span class="unit">T</span></div></div>
+      <div class="field" id="ratioField"><label><i class="ti ti-arrows-diff" aria-hidden="true"></i>감속비 i</label><div class="input-wrap"><input type="number" id="inRatio" placeholder="예: 2" min="1" step="0.1"><span class="unit">:1</span></div></div>
+      <div class="field" id="z2Field" style="display:none"><label><i class="ti ti-circle-dot" aria-hidden="true"></i>종동 잇수 z₂</label><div class="input-wrap"><input type="number" id="inZ2" placeholder="예: 48" min="10" step="1"><span class="unit">T</span></div></div>
+    </div>
+    <div class="field" style="margin-bottom:.5rem"><label><i class="ti ti-ruler-2" aria-hidden="true"></i>축간거리 C (희망값)</label>
+      <div class="input-wrap" style="max-width:220px"><input type="number" id="inC" placeholder="예: 250" min="10" step="1"><span class="unit">mm</span></div>
+      <span class="hint">가장 가까운 표준 벨트 길이로 자동 매칭합니다.</span></div>
+    <div class="err-msg" id="err3">소풀리 잇수·감속비(또는 종동 잇수)·축간거리를 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(2)">← 이전</button><button class="btn btn-primary" onclick="calcAndShow()">결과 보기 →</button></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultArea" style="display:none">
+    <div class="print-header"><div><div class="ph-title">PartsOn</div><div class="ph-sub">타이밍벨트 선정 계산기 — 계산 결과</div></div><div class="ph-date" id="print-date"></div></div>
+    <div class="result-header"><span class="result-title">선정 결과</span><button class="btn-edit" onclick="goEdit()">← 조건 수정</button><button class="btn-restart" onclick="restart()">처음부터</button></div>
+    <div class="notice-card">
+      <div class="notice-head">ℹ️ 참고 안내</div>
+      본 결과는 게이츠(Gates) PowerGrip 파워레이팅 기반의 <strong>빠른 사전 검토용 추정치</strong>입니다. 최종 선정 시 제조사 카탈로그와 함께 확인하세요.
+      <details><summary>자세한 한계 및 면책 사항 보기</summary>
+        <div class="detail-body">
+          <p><strong>① 계산 모델</strong></p>
+          <p>• 설계동력 = 전달동력 × 서비스팩터. 필요 폭 = 설계동력을 견디는 최소 표준 폭(파워레이팅 × 폭비 × 길이보정 × 걸림보정).</p>
+          <p>• 파워레이팅은 게이츠 GT2 표를 격자 보간했습니다. HTD는 게이츠 명시 관계(GT2≈2×HTD)로 보수적으로 환산합니다.</p>
+          <p>• 벨트 길이·PCD·속도·걸림치수는 표준 공학식이며, 벨트 길이는 표준 재고 길이로 매칭합니다.</p>
+          <p><strong>② 데이터 한계</strong></p>
+          <p>• GT2/HTD 5M·8M·14M만 지원합니다. T/AT·마이크로(2M/3M)는 다른 메이커/별책 카탈로그가 필요해 미지원입니다.</p>
+          <p>• 길이보정은 대표 구간값을 사용하며, 정밀 선정 시 게이츠 표의 정확한 길이·걸림 보정계수를 확인하세요.</p>
+          <p><strong>③ 실제 설계 시 확인</strong></p>
+          <p>• 게이츠/반도/미쓰보시 최신 카탈로그의 파워레이팅·표준 길이·풀리 사양, 초기 장력, 축·베어링 하중, 최소 풀리경(NEMA).</p>
+          <p>• 자격 있는 기계설계 기술자의 검토 및 승인.</p>
+          <p><strong>④ 책임 한계</strong></p>
+          <p>본 결과를 근거로 한 설계·구매에서 발생한 모든 직·간접 손해에 대해 PartsOn 및 작성자는 일체의 책임을 지지 않습니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="hero-card" id="heroCard">
+      <div class="hero-img" id="heroImg"></div>
+      <div class="hero-info"><div class="hero-label" id="heroLabel">추천 벨트</div><div class="hero-model" id="heroModel">—</div><div class="hero-dim" id="heroDim">—</div><div class="hero-cap" id="heroCap">—</div></div>
+    </div>
+    <div class="warn-banner" id="warnBanner" style="display:none"></div>
+    <div class="info-banner" id="infoBanner" style="display:none"></div>
+    <div class="checks">
+      <div class="check-card" id="cc1"><div class="check-label">설계 동력 (P×SF)</div><div class="check-val" id="ccV1">—</div><div class="check-judge" id="ccJ1">—</div></div>
+      <div class="check-card" id="cc2"><div class="check-label">필요 벨트 폭</div><div class="check-val" id="ccV2">—</div><div class="check-judge" id="ccJ2">—</div></div>
+      <div class="check-card" id="cc3"><div class="check-label">걸림 치수 (≥6)</div><div class="check-val" id="ccV3">—</div><div class="check-judge" id="ccJ3">—</div></div>
+      <div class="check-card" id="cc4"><div class="check-label">벨트 속도</div><div class="check-val" id="ccV4">—</div><div class="check-judge" id="ccJ4">—</div></div>
+    </div>
+    <div class="note-box" id="noteBox"></div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm" id="cmpTitle">피치별 선정 비교</div>
+      <div class="tbl-wrap">
+        <table class="ctbl">
+          <thead><tr><th style="text-align:center">판정</th><th>피치</th><th>소풀리 PCD</th><th>벨트 속도</th><th>걸림치수</th><th>표준 길이</th><th>필요 폭</th><th>동력 여유</th><th>종합</th></tr></thead>
+          <tbody id="cmpTbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="cmpFoot"></div>
+    </div>
+    <div class="supplier-section">
+      <div class="supplier-section-title">공급사 연결</div>
+      <div class="supplier-list">
+        <div class="supplier-card-item">
+          <div class="supplier-nm">타이밍벨트·풀리 공급사</div>
+          <div class="supplier-br">Gates · Bando · Mitsuboshi (국내 유통)</div>
+          <div class="supplier-ct">
+            <a class="supplier-lnk" href="https://www.gates.com/" target="_blank" rel="noopener">▶ Gates 공식</a>
+            <a class="supplier-lnk" href="https://www.bandousa.com/" target="_blank" rel="noopener">▶ Bando</a>
+          </div>
+          <div class="supplier-nt">형번·표준 길이·풀리 사양은 공식 카탈로그에서 최종 확인하세요.</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>※ 면책 공지</strong><br>
+      본 계산기는 설계동력·파워레이팅 기반의 <strong>참고용 사전 검토 도구</strong>입니다. 초기 장력, 정렬, 풀리 플랜지, 동적 밸런스 등 실제 성능 인자는 단순화·생략되었습니다.
+      실제 설계·발주 시 제조사 카탈로그와 자격 있는 엔지니어의 검토가 필수입니다.<br>
+      데이터 출처: Gates PowerGrip GT2 Drive Design Manual — 5M·8M·14M 파워레이팅·표준 길이/폭·서비스팩터·최소 풀리경. HTD는 GT2≈2×HTD 관계로 환산.<br>
+      데이터 최종 검증: 2026.08 — 게이츠 매뉴얼 표본 대조 (GT2 5M/8M/14M).
+    </div>
+  </div>
+</main>
+
+<div id="help-overlay" onclick="closeHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><span id="help-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span><button onclick="closeHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button></div>
+    <p id="help-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ══════════ 치형 SVG (벨트 단면 + 이 모양) ══════════ */
+const SVG = {
+  gt: `<svg viewBox="0 0 170 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="20" width="158" height="16" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M14 36 q7 22 14 0 M42 36 q7 22 14 0 M70 36 q7 22 14 0 M98 36 q7 22 14 0 M126 36 q7 22 14 0" fill="#64748B" stroke="#334155" stroke-width="1.2"/>
+    <line x1="6" y1="20" x2="164" y2="20" stroke="#475569" stroke-width="1"/>
+  </svg>`,
+  htd: `<svg viewBox="0 0 170 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="18" width="158" height="16" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M12 34 a9 11 0 0 0 18 0 M40 34 a9 11 0 0 0 18 0 M68 34 a9 11 0 0 0 18 0 M96 34 a9 11 0 0 0 18 0 M124 34 a9 11 0 0 0 18 0" fill="#64748B" stroke="#334155" stroke-width="1.2"/>
+  </svg>`,
+  at: `<svg viewBox="0 0 170 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="20" width="158" height="16" rx="1" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M14 36 l4 16 h10 l4 -16 Z M42 36 l4 16 h10 l4 -16 Z M70 36 l4 16 h10 l4 -16 Z M98 36 l4 16 h10 l4 -16 Z M126 36 l4 16 h10 l4 -16 Z" fill="#64748B" stroke="#334155" stroke-width="1.2"/>
+  </svg>`,
+  micro: `<svg viewBox="0 0 170 80" xmlns="http://www.w3.org/2000/svg">
+    <rect x="6" y="26" width="158" height="12" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M16 38 q4 12 8 0 M32 38 q4 12 8 0 M48 38 q4 12 8 0 M64 38 q4 12 8 0 M80 38 q4 12 8 0 M96 38 q4 12 8 0 M112 38 q4 12 8 0 M128 38 q4 12 8 0 M144 38 q4 12 8 0" fill="#64748B" stroke="#334155" stroke-width="1"/>
+  </svg>`,
+};
+
+const TYPE_META = {
+  gt:    { name:'GT2 / GT3', code:'게이츠 PowerGrip GT · 5M·8M·14M', desc:'개량 곡선치·저백래시·고정밀. 서보 이송축 표준.', calc:true },
+  htd:   { name:'HTD', code:'PowerGrip HTD · 5M·8M·14M', desc:'곡선치·고전달·범용. GT2가 상위호환.', calc:true },
+  at:    { name:'T / AT (사다리꼴)', code:'AT5·AT10 등 · 카탈로그 필요', desc:'리니어 이송용 사다리꼴치. 게이츠 외 메이커.', calc:false },
+  micro: { name:'2M / 3M (마이크로)', code:'GT 2MGT·3MGT · 카탈로그 필요', desc:'소형·엔코더·경부하. 별책 카탈로그 필요.', calc:false },
+};
+
+/* ══════════ 게이츠 GT2 파워레이팅 (참조폭 기준, rpm×소풀리잇수 → 정격 hp) ══════════
+   출처: Gates PowerGrip GT2 Drive Design Manual. 폭에 대해 선형 → 폭비로 스케일. */
+const PITCH = {
+  '5M':  { pitch:5,  ref:9,  widths:[9,15,25], minZ:14,
+           teeth:[20,24,28,32,36,40], rpm:[100,500,1000,2000,3600,6000],
+           hp:[[0.04,0.06,0.07,0.09,0.11,0.12],[0.22,0.31,0.40,0.49,0.58,0.66],[0.40,0.57,0.74,0.90,1.07,1.23],[0.77,1.12,1.47,1.82,2.16,2.49],[1.19,1.79,2.37,2.94,3.50,4.05],[1.65,2.52,3.37,4.19,4.99,5.77]],
+           stockTeeth:[60,71,75,80,81,85,90,100,107,113,115,116,120,125,130,140,150,160,163,170,180,200,230,260,290,320,344,351,420] },
+  '8M':  { pitch:8,  ref:20, widths:[20,30,50,85], minZ:22,
+           teeth:[24,28,32,36,40,48], rpm:[100,500,1000,2000,3200,5000],
+           hp:[[0.63,0.80,0.96,1.12,1.28,1.60],[2.78,3.53,4.27,5.01,5.74,7.20],[5.22,6.66,8.09,9.50,10.9,13.7],[9.73,12.5,15.2,17.9,20.6,25.8],[14.8,19.0,23.2,27.3,31.3,39.2],[21.7,27.9,34.0,40.0,45.7,56.7]],
+           stockTeeth:[48,60,70,75,80,90,100,105,110,115,120,130,133,140,145,150,153,160,180,189,198,200,220,225,250,275,300,325,350,381] },
+  '14M': { pitch:14, ref:40, widths:[40,55,85,115,170], minZ:28,
+           teeth:[32,36,40,48,56,64], rpm:[100,500,1000,2000],
+           hp:[[3.30,3.78,4.26,5.19,6.12,7.03],[17.8,20.5,23.1,28.3,33.4,38.4],[34.9,40.2,45.5,55.7,65.8,75.6],[62.9,72.5,81.9,100.1,117.4,134.0]],
+           stockTeeth:[69,85,100,115,127,135,150,165,175,185,200,225,240,250,275,309,327,354,380,410,440,490] },
+};
+const HP_PER_KW = 1/0.7457;   // 1 kW = 1.341 hp
+const V_LIMIT = 33;           // m/s (6500 fpm) 권장 상한
+const V_MAX = 40;             // m/s 절대 상한
+
+/* ══════════ 순수 함수 ══════════ */
+function pcd(pitchMM, z){ return pitchMM * z / Math.PI; }                 // mm
+function beltSpeed(pcdSmall, rpm){ return pcdSmall * Math.PI * rpm / 60000; } // m/s
+function powerFromTorque(T, rpm){ return T * rpm / 9550; }               // kW
+function designPowerKW(P, sf){ return P * sf; }
+// 2풀리 벨트 피치길이(mm)
+function beltPitchLength(pcd1, pcd2, C){
+  return 2*C + (Math.PI/2)*(pcd1+pcd2) + Math.pow(pcd2-pcd1,2)/(4*C);
+}
+// 걸림 치수 (소풀리 맞물림 이 수, 랩각 기준)
+function teethInMesh(z1, pcd1, pcd2, C){
+  const wrap = Math.PI - 2*Math.asin((pcd2-pcd1)/(2*C));   // rad (소풀리 랩각)
+  return Math.floor(z1 * wrap/(2*Math.PI));
+}
+function timFactor(tim){ if(tim>=6) return 1.0; if(tim===5) return 0.8; return 0.6; }
+function lengthFactor(lenMM){ if(lenMM<800) return 0.85; if(lenMM<1600) return 0.92; if(lenMM<2400) return 0.97; return 1.0; }
+// 이중 선형 보간 (rpm, 잇수 → hp), 격자 밖은 클램프
+function interpHP(pd, rpm, z){
+  const R=pd.rpm, Z=pd.teeth, H=pd.hp;
+  const cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  rpm=cl(rpm,R[0],R[R.length-1]); z=cl(z,Z[0],Z[Z.length-1]);
+  let ri=0; while(ri<R.length-2 && rpm>R[ri+1]) ri++;
+  let zi=0; while(zi<Z.length-2 && z>Z[zi+1]) zi++;
+  const rt=(rpm-R[ri])/(R[ri+1]-R[ri]), zt=(z-Z[zi])/(Z[zi+1]-Z[zi]);
+  const h00=H[ri][zi],h01=H[ri][zi+1],h10=H[ri+1][zi],h11=H[ri+1][zi+1];
+  return (h00*(1-zt)+h01*zt)*(1-rt) + (h10*(1-zt)+h11*zt)*rt;
+}
+// 표준 벨트 길이(잇수) 매칭
+function matchStockLength(pd, lenMM){
+  const teethExact = lenMM/pd.pitch;
+  let best=pd.stockTeeth[0];
+  for(const t of pd.stockTeeth){ if(Math.abs(t-teethExact)<Math.abs(best-teethExact)) best=t; }
+  return { teeth:best, lengthMM: best*pd.pitch };
+}
+// 특정 피치에 대한 선정
+function selectPitch(key, input){
+  const pd=PITCH[key], isHTD=input.family==='htd';
+  const z1=input.z1, z2=input.z2;
+  const p1=pcd(pd.pitch,z1), p2=pcd(pd.pitch,z2);
+  const v=beltSpeed(p1, input.rpm);
+  const stock=matchStockLength(pd, beltPitchLength(p1,p2,input.C));
+  const tim=teethInMesh(z1,p1,p2,input.C);
+  const baseHP=interpHP(pd, input.rpm, z1) * (isHTD?0.5:1.0);   // 참조폭 기준, HTD 환산
+  const lf=lengthFactor(stock.lengthMM), tf=timFactor(tim);
+  const designHP=input.designKW*HP_PER_KW;
+  // 필요 폭: 표준 폭 중 정격이 설계동력 이상인 최소
+  let chosenW=null, ratedHP=0;
+  for(const w of pd.widths){
+    const rHP=baseHP*(w/pd.ref)*lf*tf;
+    if(rHP>=designHP){ chosenW=w; ratedHP=rHP; break; }
+  }
+  if(chosenW===null){ chosenW=pd.widths[pd.widths.length-1]; ratedHP=baseHP*(chosenW/pd.ref)*lf*tf; }
+  const margin=ratedHP/designHP;
+  const z1ok=z1>=pd.minZ, timok=tim>=6, vok=v<=V_LIMIT, vmax=v<=V_MAX, widthok=(margin>=1);
+  return { key, pitch:pd.pitch, z1,z2, pcd1:p1,pcd2:p2, v, stock, tim, chosenW, ratedHP, designHP, margin,
+           z1ok, timok, vok, vmax, widthok, minZ:pd.minZ,
+           adequate: widthok && timok && vmax && z1ok };
+}
+function selectBelt(input){
+  const keys=Object.keys(PITCH);
+  const results=keys.map(k=>selectPitch(k,input));
+  // 추천: 적합한 것 중 가장 작은 피치(관성·소형 유리), 없으면 여유 최대
+  const adeq=results.filter(r=>r.adequate);
+  let rec=null;
+  if(adeq.length){ rec=adeq[0]; } // 5M→8M→14M 순, 첫 적합
+  else { rec=results.slice().sort((a,b)=>b.margin-a.margin)[0]; }
+  return { results, rec };
+}
+
+/* ══════════ 상태 ══════════ */
+const state={ type:null, powerMode:'kw', kw:null, tq:null, tqRpm:null, rpm:null, sf:null, ratioMode:'ratio', z1:null, z2:null, ratio:null, C:null };
+let currentStep=1;
+
+function fmt(v,d=1){if(v===null||v===undefined||!isFinite(v))return '—';return (+v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtInt(v){if(v===null||v===undefined||!isFinite(v))return '—';return Math.round(v).toLocaleString('ko-KR');}
+
+/* ══════════ Step 1 그리드 ══════════ */
+function initTypeGrid(){
+  const grid=document.getElementById('typeGrid'); grid.innerHTML='';
+  Object.keys(TYPE_META).forEach(key=>{
+    const m=TYPE_META[key];
+    const card=document.createElement('div');
+    card.className='bearing-card'+(m.calc?'':' soon');
+    card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+    card.onclick=()=>selType(key,card);
+    card.onkeydown=(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();selType(key,card);} };
+    card.innerHTML='<div class="bearing-svg">'+SVG[key]+'</div>'+
+      '<div class="bearing-meta"><div class="bearing-name">'+m.name+(m.calc?'':'<span class="soon-badge">준비중</span>')+'</div>'+
+      '<div class="bearing-code">'+m.code+'</div><div class="bearing-desc">'+m.desc+'</div></div>';
+    grid.appendChild(card);
+  });
+}
+function selType(type,btn){
+  const m=TYPE_META[type];
+  document.querySelectorAll('#typeGrid .bearing-card').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  state.type=type;
+  const err=document.getElementById('err1');
+  if(!m.calc){ err.style.display='block'; err.textContent=m.name+'은(는) 카탈로그 확보 후 추가 예정입니다. 현재는 GT2/GT3 또는 HTD를 선택해 주세요.'; state.type=null; }
+  else { err.style.display='none'; }
+}
+function selPowerMode(mode,btn){ state.powerMode=mode; document.querySelectorAll('#powerModeGrid .opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); document.getElementById('kwArea').style.display=mode==='kw'?'block':'none'; document.getElementById('torqueArea').style.display=mode==='torque'?'block':'none'; }
+function selSF(sf,btn){ state.sf=sf; document.querySelectorAll('#sfGrid .opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+function selRatioMode(mode,btn){ state.ratioMode=mode; document.querySelectorAll('#ratioModeGrid .opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); document.getElementById('ratioField').style.display=mode==='ratio'?'flex':'none'; document.getElementById('z2Field').style.display=mode==='teeth'?'flex':'none'; }
+
+/* ══════════ 스텝 네비 ══════════ */
+function go(step){ if(step>currentStep){ if(!validate(currentStep)) return; } showStep(step); }
+function showStep(step,pushHistory=true){
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  document.getElementById('resultArea').style.display='none';
+  if(pushHistory) history.pushState({tbStep:step},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);if(!sc)continue;sc.classList.remove('done','active');sl.classList.remove('done','active');sn.classList.remove('done');if(i<step){sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}else if(i===step){sc.classList.add('active');sl.classList.add('active');sc.onclick=null;}else{sc.onclick=null;}}
+  currentStep=step; window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate',e=>{ const n=e.state&&e.state.tbStep; if(n)showStep(n,false); else showStep(1,false); });
+
+function validate(step){
+  const err=document.getElementById('err'+step); if(err) err.style.display='none';
+  if(step===1){ if(!state.type){err.style.display='block';err.textContent='벨트 치형을 선택해 주세요.';return false;} }
+  if(step===2){
+    if(state.powerMode==='kw'){ const k=parseFloat(document.getElementById('inKW').value); if(isNaN(k)||k<=0){err.style.display='block';return false;} state.kw=k; }
+    else { const t=parseFloat(document.getElementById('inTq').value), r=parseFloat(document.getElementById('inTqRpm').value); if(isNaN(t)||t<=0||isNaN(r)||r<=0){err.style.display='block';return false;} state.tq=t; state.tqRpm=r; state.kw=powerFromTorque(t,r); }
+    const n=parseFloat(document.getElementById('inRPM').value); if(isNaN(n)||n<=0){err.style.display='block';return false;} state.rpm=n;
+    if(!state.sf){err.style.display='block';return false;}
+  }
+  if(step===3){
+    const z1=parseFloat(document.getElementById('inZ1').value); if(isNaN(z1)||z1<10){err.style.display='block';return false;} state.z1=z1;
+    if(state.ratioMode==='ratio'){ const i=parseFloat(document.getElementById('inRatio').value); if(isNaN(i)||i<1){err.style.display='block';return false;} state.ratio=i; state.z2=Math.round(z1*i); }
+    else { const z2=parseFloat(document.getElementById('inZ2').value); if(isNaN(z2)||z2<10){err.style.display='block';return false;} state.z2=z2; state.ratio=z2/z1; }
+    const C=parseFloat(document.getElementById('inC').value); if(isNaN(C)||C<=0){err.style.display='block';return false;} state.C=C;
+  }
+  return true;
+}
+
+/* ══════════ 결과 ══════════ */
+function calcAndShow(){
+  if(!validate(3)){ showStep(3); return; }
+  const input={ family:state.type, designKW:designPowerKW(state.kw,state.sf), rpm:state.rpm, z1:state.z1, z2:state.z2, C:state.C };
+  const res=selectBelt(input);
+  renderResult(res,input);
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('resultArea').style.display='block';
+  history.pushState({tbStep:'result'},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);sc.classList.remove('active');sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderResult(res,input){
+  const rec=res.rec, fam=TYPE_META[state.type].name;
+  document.getElementById('heroImg').innerHTML=SVG[state.type];
+  const heroCard=document.getElementById('heroCard');
+  const pitchName=rec.key, beltDesig=(state.type==='htd'? (rec.stock.teeth*rec.pitch)+'-'+pitchName+'(HTD)' : rec.stock.teeth+'-'+pitchName.replace('M','MGT'));
+  if(rec.adequate){ heroCard.className='hero-card'; }
+  else { heroCard.className='hero-card '+(rec.margin>=1?'warn':'bad'); }
+  document.getElementById('heroModel').textContent = fam+' '+pitchName+' × '+rec.chosenW+'mm';
+  document.getElementById('heroDim').textContent = '벨트 '+beltDesig+' · 풀리 '+rec.z1+'T / '+rec.z2+'T';
+  document.getElementById('heroCap').textContent = '설계동력 '+fmt(input.designKW,2)+' kW · 동력여유 ×'+fmt(rec.margin,2)+(rec.adequate?'':' · 조건 확인 필요');
+
+  const cc=(id,cls,v,j)=>{document.getElementById('cc'+id).className='check-card '+cls;document.getElementById('ccV'+id).textContent=v;document.getElementById('ccJ'+id).textContent=j;};
+  cc(1,'ok',fmt(input.designKW,2)+' kW','전달 '+fmt(state.kw,2)+' × SF '+fmt(state.sf,1));
+  cc(2, rec.widthok?'ok':'bad', rec.chosenW+' mm', rec.widthok?('정격 '+fmt(rec.ratedHP/HP_PER_KW,2)+' kW ≥ 설계'):'최대폭도 부족');
+  cc(3, rec.timok?'ok':'bad', rec.tim+' 치', rec.timok?'6치 이상 OK':'6치 미만 — 풀리↑ 필요');
+  cc(4, rec.vok?'ok':(rec.vmax?'warn':'bad'), fmt(rec.v,1)+' m/s', rec.vok?('한계 '+V_LIMIT+' m/s 이내'):(rec.vmax?'권장 초과(≤40)':'속도 초과'));
+
+  const warnB=document.getElementById('warnBanner'), infoB=document.getElementById('infoBanner');
+  const warns=[];
+  if(!rec.z1ok) warns.push('소풀리 잇수 '+rec.z1+'T가 '+pitchName+' 최소 권장('+rec.minZ+'T) 미만 — 잇수를 키우세요.');
+  if(!rec.timok) warns.push('걸림 치수 '+rec.tim+'치(<6) — 소풀리를 키우거나 축간거리를 늘리세요.');
+  if(!rec.vok && rec.vmax) warns.push('벨트 속도 '+fmt(rec.v,1)+' m/s가 권장 상한('+V_LIMIT+' m/s)을 초과 — 풀리를 줄이거나 확인.');
+  if(!rec.vmax) warns.push('벨트 속도 '+fmt(rec.v,1)+' m/s가 절대 상한('+V_MAX+' m/s) 초과 — 재설계 필요.');
+  if(!rec.widthok) warns.push(pitchName+' 최대폭으로도 설계동력 부족 — 더 큰 피치/풀리 검토.');
+  if(warns.length){ warnB.style.display='block'; warnB.innerHTML='<strong>⚠️ 검토 필요</strong><br>'+warns.map(w=>'• '+w).join('<br>'); } else warnB.style.display='none';
+  if(rec.adequate){ infoB.style.display='block'; infoB.innerHTML='<strong>✅ 선정 적합</strong><br>• '+fam+' '+pitchName+' 벨트 폭 '+rec.chosenW+'mm, 표준 길이 '+beltDesig+'로 조건을 만족합니다.'; } else infoB.style.display='none';
+
+  let note='<strong>선정 기준</strong> — 설계동력 = 전달동력 × 서비스팩터, 필요 폭 = 설계동력을 견디는 최소 표준 폭.';
+  note+='<br><strong>PCD</strong> — 소풀리 '+fmt(rec.pcd1,1)+' mm / 종동 '+fmt(rec.pcd2,1)+' mm (감속비 '+fmt(rec.z2/rec.z1,2)+':1)';
+  note+='<br><strong>벨트 길이</strong> — 표준 '+beltDesig+' (피치길이 '+fmtInt(rec.stock.lengthMM)+' mm, '+rec.stock.teeth+'치)';
+  if(state.type==='htd') note+='<br><strong>HTD 환산</strong> — 게이츠 명시 관계(GT2≈2×HTD)로 보수적으로 정격을 절반 적용했습니다.';
+  document.getElementById('noteBox').innerHTML=note;
+
+  renderCmp(res,input);
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})+' 계산';
+}
+function renderCmp(res,input){
+  document.getElementById('cmpTitle').textContent=TYPE_META[state.type].name+' 피치별 선정 비교';
+  const tb=document.getElementById('cmpTbody'); tb.innerHTML='';
+  res.results.forEach(r=>{
+    let judge, rowClass='';
+    if(r.adequate){ if(r.key===res.rec.key){ judge='<span class="tag-rec">추천</span>'; rowClass='rec-row'; } else judge='<span class="tag-ok">적합</span>'; }
+    else { const rs=[]; if(!r.widthok)rs.push('동력'); if(!r.timok)rs.push('걸림'); if(!r.vmax)rs.push('속도'); if(!r.z1ok)rs.push('잇수'); judge='<span class="tag-bad">'+rs.join('·')+'</span>'; }
+    tb.innerHTML+='<tr class="'+rowClass+'">'+
+      '<td style="text-align:center">'+judge+'</td>'+
+      '<td style="font-family:var(--mono);font-weight:600">'+r.key+'</td>'+
+      '<td>'+fmt(r.pcd1,1)+' mm</td>'+
+      '<td>'+fmt(r.v,1)+' m/s</td>'+
+      '<td>'+r.tim+' 치</td>'+
+      '<td>'+r.stock.teeth+'T ('+fmtInt(r.stock.lengthMM)+'mm)</td>'+
+      '<td>'+r.chosenW+' mm</td>'+
+      '<td>×'+fmt(r.margin,2)+'</td>'+
+      '<td>'+(r.adequate?'<span class="tag-ok">OK</span>':'<span class="tag-bad">부적합</span>')+'</td>'+
+    '</tr>';
+  });
+  const foots=[];
+  foots.push('설계동력 '+fmt(input.designKW,2)+' kW (전달 '+fmt(state.kw,2)+' × SF '+fmt(state.sf,1)+') · 구동 '+fmtInt(input.rpm)+' rpm · 소풀리 '+input.z1+'T');
+  foots.push('필요 폭은 게이츠 GT2 파워레이팅을 폭비·길이·걸림 보정한 최소 표준 폭입니다. 정밀 선정은 게이츠 표로 확인하세요.');
+  if(state.type==='htd') foots.push('HTD는 GT2≈2×HTD 관계로 보수 환산했습니다.');
+  document.getElementById('cmpFoot').innerHTML=foots.map(f=>'• '+f).join('<br>');
+}
+
+function goEdit(){ showStep(currentStep>3?3:currentStep); }
+function restart(){
+  state.type=null; state.kw=null; state.tq=null; state.tqRpm=null; state.rpm=null; state.sf=null; state.z1=null; state.z2=null; state.ratio=null; state.C=null;
+  ['inKW','inTq','inTqRpm','inRPM','inZ1','inRatio','inZ2','inC'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.querySelectorAll('.opt-btn.sel').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('#typeGrid .bearing-card.sel').forEach(b=>b.classList.remove('sel'));
+  document.querySelector('#powerModeGrid .opt-btn').classList.add('sel'); state.powerMode='kw'; document.getElementById('kwArea').style.display='block'; document.getElementById('torqueArea').style.display='none';
+  document.querySelector('#ratioModeGrid .opt-btn').classList.add('sel'); state.ratioMode='ratio'; document.getElementById('ratioField').style.display='flex'; document.getElementById('z2Field').style.display='none';
+  showStep(1);
+}
+
+const HELP={
+  rpm:{title:'구동 축 회전수', desc:'구동 풀리(보통 모터측·빠른 축)의 회전수입니다.\n파워레이팅과 벨트 속도의 기준이 됩니다.\n감속 구동이면 모터측(고속) 값을 넣으세요.'},
+  sf:{title:'서비스 팩터', desc:'부하 특성(충격·정역·가동시간)을 반영하는 계수입니다.\n설계동력 = 전달동력 × 서비스팩터.\n\n· 1.2 — 균일·경부하(계측·경컨베이어)\n· 1.5 — 일반 산업·서보 가감속\n· 1.8 — 충격·정역·중부하\n\n게이츠 서비스팩터 표(구동원×부하×가동시간, 1.0~2.5) 기준의 대표값입니다.'},
+  z1:{title:'소풀리 잇수 z₁', desc:'작은(구동) 풀리의 잇수입니다.\n작을수록 소형이지만 걸림 치수·최소 풀리경 제약이 커집니다.\n피치별 최소 권장: 5M≈14T, 8M≈22T, 14M≈28T.'},
+};
+function openHelp(k){ const h=HELP[k]; if(!h)return; document.getElementById('help-title').textContent=h.title; document.getElementById('help-desc').innerHTML=h.desc.replace(/\n/g,'<br>'); document.getElementById('help-overlay').style.display='flex'; }
+function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')) document.getElementById('help-overlay').style.display='none'; }
+
+initTypeGrid();
+window.TimingBeltCalc={ pcd, beltSpeed, powerFromTorque, designPowerKW, beltPitchLength, teethInMesh, interpHP, matchStockLength, selectPitch, selectBelt, PITCH };
+</script>
+<script src="js/common.js"></script>
+</body></html>
