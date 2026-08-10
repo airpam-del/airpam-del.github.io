@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>리니어모터 선정 계산기 (추력·RMS·듀티) | PartsOn</title>
+<meta name="description" content="고속·고정밀 직선구동 리니어모터(코어드·코어리스)를 필요추력·RMS추력·피크추력 2조건으로 선정하세요. 볼스크류 대체 검토 포함. Hiwin 카탈로그 기반 무료 계산기.">
+<meta name="keywords" content="리니어모터 선정, 코어드, 코어리스, ironless, RMS 추력, 연속추력, 피크추력, 볼스크류 대체, Hiwin, LMSA, LMC">
+<meta property="og:title" content="리니어모터 선정 계산기 (추력·RMS·듀티) | PartsOn">
+<meta property="og:description" content="필요추력·RMS·피크 2조건 판정과 볼스크류 대비 비교까지. Hiwin 기반 리니어모터 선정 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/linear-motor.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="필요추력·RMS·피크 2조건 판정과 볼스크류 대비 비교까지. Hiwin 기반 리니어모터 선정 계산기.">
+<meta name="twitter:title" content="리니어모터 선정 계산기 (추력·RMS·듀티) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/linear-motor.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A2A;--accent-light:#E8F0EC;--accent-mid:#2D6B4A;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
+  --pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-electric .cat-badge{background:var(--electric-badge-bg);color:var(--electric-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input{font-family:var(--mono)}.check-val{font-family:var(--mono)}.hero-model{font-family:var(--mono)}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.steps-bar{display:flex;align-items:flex-start;margin-bottom:1.75rem;position:relative}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-node:not(:last-child)::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .2s}
+.step-node:not(:last-child).done::after{background:var(--accent)}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;position:relative;z-index:1}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:12px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;line-height:1.3}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-label.done{color:var(--accent)}.step-label.active{color:var(--accent);font-weight:600}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+.bearing-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.bearing-card{padding:0;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;overflow:hidden;text-align:left;width:100%;font-family:inherit;display:flex;flex-direction:column;position:relative}
+.bearing-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.bearing-card.sel{border-color:var(--accent);background:var(--accent-light);box-shadow:0 0 0 1px var(--accent)}
+.bearing-card.sel .bearing-name{color:var(--accent)}
+.bearing-svg{background:linear-gradient(135deg,#F8FAFC 0%,#EAF4EE 100%);padding:12px 8px;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--border);min-height:92px;height:92px;width:100%}
+.bearing-svg svg{width:100%;max-width:150px;height:74px;display:block;flex-shrink:0}
+.bearing-meta{padding:10px 12px}
+.bearing-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.bearing-code{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.bearing-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.bearing-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;font-size:14px;font-weight:700;color:var(--accent);background:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent)}
+.opt-grid{display:grid;gap:8px}.opt-grid.col2{grid-template-columns:1fr 1fr}.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;width:100%;font-family:inherit}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-edit,.btn-restart{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;background:#fff;color:var(--text2);transition:all .15s}
+.btn-edit:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.btn-restart:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result-title{font-size:16px;font-weight:700;color:var(--text);flex:1}
+.hero-card{background:var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;transition:background .2s}
+.hero-card.warn{background:var(--warn)}.hero-card.bad{background:var(--bad)}
+.hero-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-img{width:120px;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:8px;padding:8px;display:flex;justify-content:center;align-items:center}
+.hero-img svg{width:100%;height:auto}
+.hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1.1}
+.hero-dim{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:3px}.hero-cap{font-size:12px;color:rgba(255,255,255,.7)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--card);border-radius:10px;padding:14px 16px;border:1.5px solid var(--border)}
+.check-card.ok{border-color:#BBF7D0;background:var(--ok-bg)}.check-card.warn{border-color:#FCD34D;background:var(--warn-bg)}.check-card.bad{border-color:#FECACA;background:var(--bad-bg)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.check-card.ok .check-label{color:var(--ok)}.check-card.warn .check-label{color:var(--warn)}.check-card.bad .check-label{color:var(--bad)}
+.check-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.check-card.ok .check-val{color:var(--ok)}.check-card.warn .check-val{color:var(--warn)}.check-card.bad .check-val{color:var(--bad)}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500;color:var(--text3)}
+.check-card.ok .check-judge{color:var(--ok)}.check-card.warn .check-judge{color:var(--warn)}.check-card.bad .check-judge{color:var(--bad)}
+.note-box{background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#22654A;line-height:1.8}
+.note-box strong{color:var(--accent)}
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto;min-width:640px}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl th:first-child{text-align:center;width:44px}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+table.ctbl tr.rec-row.warn td{background:#FFFBEB}table.ctbl tr.rec-row.bad td{background:#FEF2F2}
+.tag-rec{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.tag-rec.warn{background:var(--warn)}.tag-rec.bad{background:var(--bad)}
+.tag-ok{display:inline-block;font-size:11px;color:var(--ok);font-weight:600}
+.tag-warn{display:inline-block;font-size:11px;color:var(--warn);font-weight:600}
+.tag-bad{display:inline-block;font-size:11px;color:var(--bad);font-weight:600}
+table.typetbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.typetbl th{font-size:11px;color:var(--text3);font-weight:600;text-align:center;padding:8px;border-bottom:1.5px solid var(--border);background:var(--bg);white-space:nowrap}
+table.typetbl th:first-child{text-align:left}
+table.typetbl td{padding:8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+table.typetbl td:first-child{text-align:left;font-weight:600;color:var(--text)}
+table.typetbl tr:last-child td{border-bottom:none}
+.disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
+.notice-card{background:#EFF6FF;border:1.5px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:#1E40AF;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#1E40AF;margin-top:8px;font-weight:600}
+.notice-card details summary::-webkit-details-marker{display:none}
+.notice-card details summary::before{content:'▶ ';font-size:9px}
+.notice-card details[open] summary::before{content:'▼ '}
+.notice-card details .detail-body{margin-top:8px;padding-top:8px;border-top:1px dashed #FECACA;font-size:12px;color:#7F1D1D}
+.notice-card details .detail-body p{margin-bottom:5px}.notice-card details .detail-body strong{color:#991B1B}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+.notice-mini{background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid #3B82F6;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#1E3A5F;line-height:1.6}.notice-mini strong{color:#1E40AF}
+.warn-banner{background:var(--warn-bg);border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.info-banner{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#166534;line-height:1.6}
+@media(max-width:520px){.bearing-grid{grid-template-columns:1fr}}
+@media(max-width:480px){.opt-grid.col3{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.hero-card{flex-direction:column;text-align:center;align-items:stretch}.hero-img{width:auto}.hero-img svg{max-width:160px;margin:0 auto}}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}.partson-nav a.active{color:#fff;border-bottom:2px solid #4ade80}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}.pnav-menu a.active{color:#4ade80;font-weight:600}
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.print-header{display:none}
+@media print{@page{size:A4;margin:12mm 14mm}.partson-nav,header,footer,.disclaimer,nav{display:none!important}.step-wrap{display:none!important}.print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}.ph-title{font-size:18px;font-weight:700;color:#1A3A2A}.ph-sub{font-size:12px;color:#6B6760;margin-top:2px}.ph-date{font-size:11px;color:#9E9B96;text-align:right}body{background:#fff!important;font-size:12px}main{padding:0!important;max-width:100%!important}#resultArea{display:block!important}table{break-inside:avoid;font-size:11px}.checks{grid-template-columns:1fr 1fr!important}a{color:inherit!important;text-decoration:none!important}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"리니어모터 선정 계산기","description":"고속·고정밀 직선구동 리니어모터(코어드·코어리스)를 필요추력·RMS·피크 2조건으로 선정하는 무료 계산기.","url":"https://partson.co.kr/linear-motor.html","applicationCategory":"EngineeringApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}}
+</script>
+</head>
+<body class="category-electric">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🧲</div>
+    <div>
+      <h1>리니어모터 선정 계산기<span class="cat-badge">⚡ 전동</span></h1>
+      <p>PartsOn Linear · 코어드·코어리스 · Hiwin 카탈로그 기준 · 볼스크류 대체 검토</p>
+    </div>
+  </div>
+</header>
+<a href="guide-linear-motor.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF7EF;border:1px solid #B8E6C9;border-radius:10px;text-decoration:none;color:#1A5C2A;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">이 부품 선정 방법이 궁금하세요? — <b>선정 가이드 보기</b></span><span style="color:#00A344;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-node" id="sn1"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1"><i class="ti ti-versions" aria-hidden="true"></i>모터<br>타입</div></div>
+    <div class="step-node" id="sn2"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2"><i class="ti ti-activity" aria-hidden="true"></i>운동<br>프로파일</div></div>
+    <div class="step-node" id="sn3"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3"><i class="ti ti-adjustments" aria-hidden="true"></i>마찰·<br>조건</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card step-wrap active" id="step1">
+    <div class="notice-mini"><strong>ℹ️ Hiwin 카탈로그 기반의 빠른 사전 검토 도구입니다.</strong> 최종 선정 시 제조사·드라이브 F-V 곡선과 함께 확인하세요.</div>
+    <div class="question">리니어모터 타입을 선택하세요</div>
+    <div class="question-desc">철심 유무에 따라 추력밀도·코깅·발열이 다릅니다. 고추력·고듀티는 코어드, 정밀·저코깅은 코어리스가 유리합니다.</div>
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 리니어모터가 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>리니어모터</strong>는 회전을 거치지 않고 직접 직선 추력을 내는 모터입니다. 볼스크류보다 고속·고정밀·무백래시지만 발열·가격이 부담입니다.</p>
+          <p>• <strong>연속추력(Fc)</strong> — 발열 한계 내에서 계속 낼 수 있는 힘.</p>
+          <p>• <strong>피크추력(Fp)</strong> — 가속 시 1~2초 낼 수 있는 힘 (연속의 2~3배).</p>
+          <p>• <strong>선정 2조건</strong> — <strong>연속추력 ≥ RMS추력</strong> AND <strong>피크추력 ≥ 가속 필요추력</strong>. 둘 다 만족해야 합니다.</p>
+          <p>• <strong>RMS추력</strong> — 사이클(정지 포함) 동안 힘의 제곱평균제곱근. 발열을 지배합니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="bearing-grid" id="typeGrid"></div>
+    <div style="margin-top:1.25rem">
+      <div class="section-title-sm">타입별 특성 비교</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>타입</th><th>추력밀도</th><th>코깅</th><th>자기흡인력</th><th>이동자질량</th><th>대표 용도</th></tr></thead>
+          <tbody>
+            <tr><td>코어드(iron-core)</td><td>최고</td><td>있음</td><td>있음(가이드 부담)</td><td>보통</td><td>고추력·고듀티·수직축</td></tr>
+            <tr><td>코어리스(ironless U)</td><td>낮음</td><td>없음</td><td>없음</td><td>가벼움</td><td>고정밀·고가속·저진동</td></tr>
+            <tr><td>수랭 고추력(LMFA)</td><td>매우 높음</td><td>있음</td><td>있음</td><td>큼</td><td>대형·연속 대추력</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="err-msg" id="err1">모터 타입을 선택해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="go(2)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card step-wrap" id="step2">
+    <div class="question">운동 프로파일을 입력하세요</div>
+    <div class="question-desc">이동체 질량·속도·가속도·스트로크·정지시간으로 사이클을 구성해 RMS·피크 추력을 산출합니다.</div>
+    <div class="grid2" style="margin-bottom:1rem">
+      <div class="field"><label><i class="ti ti-weight" aria-hidden="true"></i>이동체 질량 m <button class="help-btn" onclick="openHelp('mass')">?</button></label><div class="input-wrap"><input type="number" id="inMass" placeholder="예: 20" min="0.1" step="0.1"><span class="unit">kg</span></div></div>
+      <div class="field"><label><i class="ti ti-ruler-2" aria-hidden="true"></i>스트로크</label><div class="input-wrap"><input type="number" id="inStroke" placeholder="예: 500" min="1" step="1"><span class="unit">mm</span></div></div>
+      <div class="field"><label><i class="ti ti-brand-speedtest" aria-hidden="true"></i>최대 속도 v</label><div class="input-wrap"><input type="number" id="inVmax" placeholder="예: 2" min="0.01" step="0.1"><span class="unit">m/s</span></div></div>
+      <div class="field"><label><i class="ti ti-trending-up" aria-hidden="true"></i>가속도 a</label><div class="input-wrap"><input type="number" id="inAccel" placeholder="예: 20" min="0.1" step="1"><span class="unit">m/s²</span></div></div>
+      <div class="field"><label><i class="ti ti-player-pause" aria-hidden="true"></i>정지 시간 (사이클당) <button class="help-btn" onclick="openHelp('dwell')">?</button></label><div class="input-wrap"><input type="number" id="inDwell" placeholder="예: 0.3" min="0" step="0.05"><span class="unit">s</span></div></div>
+      <div class="field"><label><i class="ti ti-arrow-up" aria-hidden="true"></i>설치 방향</label>
+        <div class="opt-grid col2"><button class="opt-btn sel" onclick="selOri('h',this)" type="button"><div class="opt-title" style="font-size:14px">수평</div></button><button class="opt-btn" onclick="selOri('v',this)" type="button"><div class="opt-title" style="font-size:14px">수직</div></button></div>
+      </div>
+    </div>
+    <div class="err-msg" id="err2">질량·스트로크·속도·가속도·정지시간을 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(1)">← 이전</button><button class="btn btn-primary" onclick="go(3)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card step-wrap" id="step3">
+    <div class="question">마찰·조건을 입력하세요</div>
+    <div class="question-desc">가이드 마찰계수를 반영합니다. 기본값(리니어 가이드) 0.05로 두어도 됩니다.</div>
+    <div class="field" style="margin-bottom:1rem"><label><i class="ti ti-friends" aria-hidden="true"></i>마찰계수 μ <button class="help-btn" onclick="openHelp('mu')">?</button></label>
+      <div class="input-wrap" style="max-width:200px"><input type="number" id="inMu" value="0.05" min="0" step="0.01"><span class="unit">—</span></div>
+      <span class="hint">리니어 가이드(구름) 0.003~0.01, 여유 포함 0.05 권장. 슬라이드(미끄럼)면 0.1~0.2.</span></div>
+    <div class="err-msg" id="err3"></div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(2)">← 이전</button><button class="btn btn-primary" onclick="calcAndShow()">결과 보기 →</button></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultArea" style="display:none">
+    <div class="print-header"><div><div class="ph-title">PartsOn</div><div class="ph-sub">리니어모터 선정 계산기 — 계산 결과</div></div><div class="ph-date" id="print-date"></div></div>
+    <div class="result-header"><span class="result-title">선정 결과</span><button class="btn-edit" onclick="goEdit()">← 조건 수정</button><button class="btn-restart" onclick="restart()">처음부터</button></div>
+    <div class="notice-card">
+      <div class="notice-head">ℹ️ 참고 안내</div>
+      본 결과는 Hiwin 카탈로그 추력 데이터 기반의 <strong>빠른 사전 검토용 추정치</strong>입니다. 최종 선정 시 제조사·드라이브의 F-V 곡선과 함께 확인하세요.
+      <details><summary>자세한 한계 및 면책 사항 보기</summary>
+        <div class="detail-body">
+          <p><strong>① 계산 모델</strong></p>
+          <p>• 사다리꼴 운동 프로파일을 가정합니다(S-curve 미반영). 필요추력 = 질량×가속 + 마찰 + (수직축)중력.</p>
+          <p>• 선정 2조건: 연속추력 ≥ RMS추력, 피크추력 ≥ 가속 필요추력. RMS는 정지구간을 포함한 사이클 기준.</p>
+          <p>• <strong>추력-속도(F-V) 곡선은 드라이브 버스전압에 의존</strong>합니다. 본 도구는 요구 속도가 일반 실용범위(~5 m/s)를 넘으면 경고만 하며, 정확한 속도별 가용추력은 카탈로그 F-V 곡선으로 확인하세요.</p>
+          <p><strong>② 데이터 한계</strong></p>
+          <p>• 연속/피크추력·이동자질량은 Hiwin 카탈로그(LMSA 코어드·LMC 코어리스·LMFA 수랭)에서 추출했습니다.</p>
+          <p>• 이동체 질량에는 <strong>이동자(코일) 질량을 포함</strong>해 입력하세요(순환 의존 회피). 각 모델의 이동자 질량은 비교표에 표시됩니다.</p>
+          <p><strong>③ 실제 설계 시 확인</strong></p>
+          <p>• 제조사 F-V 곡선·연속/피크추력·이동자질량, 드라이브 버스전압·전류, 방열(듀티·수랭), 코깅·자기흡인력에 따른 가이드/베어링 하중.</p>
+          <p>• 수직축은 정지 시에도 중력 상쇄 전류로 발열이 크므로 <strong>카운터밸런스(웨이트/스프링/공압)</strong>를 검토하세요.</p>
+          <p><strong>④ 책임 한계</strong></p>
+          <p>본 결과를 근거로 한 설계·구매에서 발생한 모든 직·간접 손해에 대해 PartsOn 및 작성자는 일체의 책임을 지지 않습니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="hero-card" id="heroCard">
+      <div class="hero-img" id="heroImg"></div>
+      <div class="hero-info"><div class="hero-label" id="heroLabel">추천 모터</div><div class="hero-model" id="heroModel">—</div><div class="hero-dim" id="heroDim">—</div><div class="hero-cap" id="heroCap">—</div></div>
+    </div>
+    <div class="warn-banner" id="warnBanner" style="display:none"></div>
+    <div class="info-banner" id="infoBanner" style="display:none"></div>
+    <div class="checks">
+      <div class="check-card" id="cc1"><div class="check-label">피크 필요추력</div><div class="check-val" id="ccV1">—</div><div class="check-judge" id="ccJ1">—</div></div>
+      <div class="check-card" id="cc2"><div class="check-label">RMS 추력</div><div class="check-val" id="ccV2">—</div><div class="check-judge" id="ccJ2">—</div></div>
+      <div class="check-card" id="cc3"><div class="check-label">연속추력 여유</div><div class="check-val" id="ccV3">—</div><div class="check-judge" id="ccJ3">—</div></div>
+      <div class="check-card" id="cc4"><div class="check-label">듀티 / 속도</div><div class="check-val" id="ccV4">—</div><div class="check-judge" id="ccJ4">—</div></div>
+    </div>
+    <div class="note-box" id="noteBox"></div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm" id="cmpTitle">Hiwin 동일 타입 모델 비교</div>
+      <div class="tbl-wrap">
+        <table class="ctbl">
+          <thead><tr><th style="text-align:center">판정</th><th>형번</th><th>연속추력</th><th>피크추력</th><th>이동자질량</th><th>연속/RMS</th><th>피크/필요</th><th>종합</th></tr></thead>
+          <tbody id="cmpTbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="cmpFoot"></div>
+    </div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm">볼스크류 vs 리니어모터</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>항목</th><th>리니어모터</th><th>볼스크류</th></tr></thead>
+          <tbody>
+            <tr><td>속도·가속</td><td>매우 높음</td><td>제한적(임계속도·리드)</td></tr>
+            <tr><td>정밀·반복도</td><td>높음(무백래시·직접구동)</td><td>양호(백래시·비틀림 존재)</td></tr>
+            <tr><td>강성·추력</td><td>추력 한정·저강성</td><td>고추력·고강성(감속효과)</td></tr>
+            <tr><td>발열</td><td>큼(코일 직접발열)</td><td>작음</td></tr>
+            <tr><td>수직 유지</td><td>홀딩 전류 발열(카운터밸런스)</td><td>자기잠금 가능(리드 작을 때)</td></tr>
+            <tr><td>가격·구성</td><td>높음(모터+엔코더+드라이브)</td><td>낮음·범용</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px">고속·고정밀·무백래시가 핵심이면 리니어모터, 고추력·고강성·저발열·저가가 핵심이면 볼스크류가 유리합니다.</div>
+    </div>
+    <div class="supplier-section">
+      <div class="supplier-section-title">공급사 연결</div>
+      <div class="supplier-list">
+        <div class="supplier-card-item">
+          <div class="supplier-nm">리니어모터 공급사</div>
+          <div class="supplier-br">HIWIN · Yaskawa · (국내 유통)</div>
+          <div class="supplier-ct"><a class="supplier-lnk" href="https://www.hiwin.com/linear-motors/" target="_blank" rel="noopener">▶ HIWIN 리니어모터</a></div>
+          <div class="supplier-nt">형번·F-V 곡선·이동자질량은 공식 카탈로그에서 최종 확인하세요.</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>※ 면책 공지</strong><br>
+      본 계산기는 사다리꼴 프로파일·추력 2조건 기반의 <strong>참고용 사전 검토 도구</strong>입니다. F-V 곡선(버스전압 의존), 방열, 코깅, 자기흡인력 등 실제 성능 인자는 단순화·생략되었습니다.
+      실제 설계·발주 시 제조사 카탈로그·드라이브 사양과 자격 있는 엔지니어의 검토가 필수입니다.<br>
+      데이터 출처: HIWIN 리니어모터 카탈로그 — LMSA(코어드)·LMC(코어리스)·LMFA(수랭) 연속/피크추력·이동자질량.<br>
+      데이터 최종 검증: 2026.08 — Hiwin 카탈로그 표본 대조.
+    </div>
+  </div>
+</main>
+
+<div id="help-overlay" onclick="closeHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><span id="help-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span><button onclick="closeHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button></div>
+    <p id="help-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SVG = {
+  ironcore: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="10" width="114" height="20" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M26 30v8 M40 30v8 M54 30v8 M68 30v8 M82 30v8 M96 30v8 M110 30v8 M124 30v8" stroke="#334155" stroke-width="2"/>
+    <rect x="18" y="46" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="32" y="46" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="46" y="46" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="60" y="46" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="74" y="46" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="88" y="46" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="102" y="46" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="116" y="46" width="14" height="14" fill="#1D4ED8" opacity="0.75"/>
+    <rect x="18" y="44" width="114" height="2" fill="#334155"/>
+  </svg>`,
+  ironless: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 8 h114 v10 h-104 v38 h104 v10 h-114 z" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <rect x="30" y="20" width="104" height="8" fill="#B91C1C" opacity="0.65"/>
+    <rect x="30" y="46" width="104" height="8" fill="#1D4ED8" opacity="0.65"/>
+    <rect x="40" y="30" width="84" height="14" rx="2" fill="#CBD5E1" stroke="#334155" stroke-width="1.2"/>
+    <path d="M48 30v14 M58 30v14 M68 30v14 M78 30v14 M88 30v14 M98 30v14 M108 30v14 M116 30v14" stroke="#64748B" stroke-width="1"/>
+  </svg>`,
+  watercool: `<svg viewBox="0 0 150 74" xmlns="http://www.w3.org/2000/svg">
+    <rect x="18" y="10" width="114" height="22" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M24 15 h102 M24 27 h102" stroke="#2563EB" stroke-width="2.4"/>
+    <path d="M26 32v8 M42 32v8 M58 32v8 M74 32v8 M90 32v8 M106 32v8 M122 32v8" stroke="#334155" stroke-width="2"/>
+    <rect x="18" y="48" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="32" y="48" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="46" y="48" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="60" y="48" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="74" y="48" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="88" y="48" width="14" height="14" fill="#1D4ED8" opacity="0.75"/><rect x="102" y="48" width="14" height="14" fill="#B91C1C" opacity="0.75"/><rect x="116" y="48" width="14" height="14" fill="#1D4ED8" opacity="0.75"/>
+  </svg>`,
+};
+
+const TYPE_META = {
+  ironcore:  { name:'코어드 (iron-core)', code:'HIWIN LMSA', desc:'철심 코일·최고 추력밀도. 코깅·흡인력 있음. 고추력·수직축.' },
+  ironless:  { name:'코어리스 (ironless U)', code:'HIWIN LMC', desc:'U형 무철심·코깅 0·경량. 고정밀·고가속·저진동.' },
+  watercool: { name:'수랭 고추력 (LMFA)', code:'HIWIN LMFA', desc:'수랭 철심·매우 높은 연속추력. 대형·연속 대추력.' },
+};
+
+/* ══════════ HIWIN 실데이터 [연속추력N, 피크추력N, 이동자질량kg(null=미표기)] ══════════
+   출처: HIWIN 리니어모터 카탈로그 (Continuous Force Fc / Peak Force Fp / Mass of forcer Mf) */
+const LM_DB = {
+  ironcore: {
+    'LMSA01': [52, 112, 0.49], 'LMSA11': [103, 289, 0.7], 'LMSA21': [181, 512, 1.1],
+    'LMSA31': [292, 823, 1.9], 'LMSA32': [544, 1535, 3.3], 'LMSAC5': [1579, 4458, 10.5],
+  },
+  ironless: {
+    'LMCC1': [24, 98, null], 'LMCC2': [49, 195, null], 'LMCC7': [98, 391, null], 'LMCC8': [147, 586, null],
+    'LMCCA': [195, 780, null], 'LMCF4': [128, 912, null], 'LMCCC': [293, 1173, null], 'LMCF8': [456, 1824, null], 'LMCFC': [684, 2736, null],
+  },
+  watercool: {
+    'LMFA62': [3958, 10413, null], 'LMFA63': [5938, 15620, null], 'LMFA64': [7917, 20827, null],
+  },
+};
+const G = 9.81;
+const V_TYPICAL = 5;   // m/s 실용 상한 (경고 기준)
+
+function lmModels(type){ return Object.keys(LM_DB[type]).map(n=>{const a=LM_DB[type][n];return {name:n, contF:a[0], peakF:a[1], mass:a[2]};}); }
+
+/* ══════════ 순수 함수 ══════════ */
+// 사다리꼴 프로파일 (stroke m, vmax m/s, a m/s²)
+function motionProfile(stroke, vmax, a){
+  let tAcc=vmax/a, dAcc=vmax*vmax/(2*a), vPeak=vmax, tConst;
+  if(2*dAcc >= stroke){ vPeak=Math.sqrt(a*stroke); tAcc=vPeak/a; dAcc=stroke/2; tConst=0; }
+  else { tConst=(stroke-2*dAcc)/vmax; }
+  const tDec=tAcc, tMove=tAcc+tConst+tDec;
+  return { tAcc, tConst, tDec, tMove, vPeak };
+}
+// 구간별 추력 (m kg, a m/s², orientation 'h'|'v', mu)
+function phaseForces(m, a, ori, mu){
+  const load = (ori==='v') ? (m*G + mu*m*G) : (mu*m*G);  // 등속 저항(수직=중력+가이드마찰)
+  return {
+    acc:  m*a + load,
+    con:  load,
+    dec:  -m*a + load,
+    dwell:(ori==='v') ? m*G : 0,   // 정지: 수직=중력홀딩, 수평=0
+  };
+}
+function rmsForce(F, p, dwell){
+  const tCyc = p.tMove + dwell;
+  const sum = F.acc*F.acc*p.tAcc + F.con*F.con*p.tConst + F.dec*F.dec*p.tDec + F.dwell*F.dwell*dwell;
+  return { frms: Math.sqrt(sum/tCyc), tCyc, duty: p.tMove/tCyc };
+}
+function selectMotor(type, input){
+  const p = motionProfile(input.stroke, input.vmax, input.accel);
+  const F = phaseForces(input.mass, input.accel, input.ori, input.mu);
+  const r = rmsForce(F, p, input.dwell);
+  const fpeak = Math.abs(F.acc);
+  const frms = r.frms;
+  const models = lmModels(type).map(mo=>{
+    const contOk = mo.contF >= frms, peakOk = mo.peakF >= fpeak;
+    return Object.assign({}, mo, { contOk, peakOk, contMargin:mo.contF/frms, peakMargin:mo.peakF/fpeak, adequate:contOk&&peakOk });
+  });
+  const adeq = models.filter(m=>m.adequate).sort((a,b)=>a.contF-b.contF);
+  const rec = adeq.length ? adeq[0] : null;
+  const vOk = input.vmax <= V_TYPICAL;
+  return { profile:p, forces:F, frms, fpeak, duty:r.duty, tCyc:r.tCyc, models, rec, vOk };
+}
+
+/* ══════════ 상태 ══════════ */
+const state={ type:null, mass:null, stroke:null, vmax:null, accel:null, dwell:null, ori:'h', mu:0.05 };
+let currentStep=1;
+function fmt(v,d=1){if(v===null||v===undefined||!isFinite(v))return '—';return (+v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtInt(v){if(v===null||v===undefined||!isFinite(v))return '—';return Math.round(v).toLocaleString('ko-KR');}
+
+function initTypeGrid(){
+  const grid=document.getElementById('typeGrid'); grid.innerHTML='';
+  Object.keys(TYPE_META).forEach(key=>{
+    const m=TYPE_META[key];
+    const card=document.createElement('div'); card.className='bearing-card';
+    card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+    card.onclick=()=>selType(key,card);
+    card.onkeydown=(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();selType(key,card);} };
+    card.innerHTML='<div class="bearing-svg">'+SVG[key]+'</div>'+
+      '<div class="bearing-meta"><div class="bearing-name">'+m.name+'</div><div class="bearing-code">'+m.code+'</div><div class="bearing-desc">'+m.desc+'</div></div>';
+    grid.appendChild(card);
+  });
+}
+function selType(type,btn){ state.type=type; document.querySelectorAll('#typeGrid .bearing-card').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); document.getElementById('err1').style.display='none'; }
+function selOri(o,btn){ state.ori=o; btn.parentElement.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+
+function go(step){ if(step>currentStep){ if(!validate(currentStep)) return; } showStep(step); }
+function showStep(step,pushHistory=true){
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  document.getElementById('resultArea').style.display='none';
+  if(pushHistory) history.pushState({lmStep:step},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);if(!sc)continue;sc.classList.remove('done','active');sl.classList.remove('done','active');sn.classList.remove('done');if(i<step){sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}else if(i===step){sc.classList.add('active');sl.classList.add('active');sc.onclick=null;}else{sc.onclick=null;}}
+  currentStep=step; window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate',e=>{ const n=e.state&&e.state.lmStep; if(n)showStep(n,false); else showStep(1,false); });
+
+function validate(step){
+  const err=document.getElementById('err'+step); if(err) err.style.display='none';
+  if(step===1){ if(!state.type){err.style.display='block';return false;} }
+  if(step===2){
+    const m=parseFloat(document.getElementById('inMass').value), s=parseFloat(document.getElementById('inStroke').value),
+          v=parseFloat(document.getElementById('inVmax').value), a=parseFloat(document.getElementById('inAccel').value),
+          d=parseFloat(document.getElementById('inDwell').value);
+    if(isNaN(m)||m<=0||isNaN(s)||s<=0||isNaN(v)||v<=0||isNaN(a)||a<=0||isNaN(d)||d<0){err.style.display='block';return false;}
+    state.mass=m; state.stroke=s/1000; state.vmax=v; state.accel=a; state.dwell=d;
+  }
+  if(step===3){ const mu=parseFloat(document.getElementById('inMu').value); state.mu=(isNaN(mu)||mu<0)?0.05:mu; }
+  return true;
+}
+
+function calcAndShow(){
+  if(!validate(3)){ showStep(3); return; }
+  const input={ mass:state.mass, stroke:state.stroke, vmax:state.vmax, accel:state.accel, dwell:state.dwell, ori:state.ori, mu:state.mu };
+  const res=selectMotor(state.type, input);
+  renderResult(res,input);
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('resultArea').style.display='block';
+  history.pushState({lmStep:'result'},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);sc.classList.remove('active');sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderResult(res,input){
+  const rec=res.rec, fam=TYPE_META[state.type].name;
+  document.getElementById('heroImg').innerHTML=SVG[state.type];
+  const heroCard=document.getElementById('heroCard');
+  if(rec){ heroCard.className='hero-card'; document.getElementById('heroModel').textContent=rec.name;
+    document.getElementById('heroDim').textContent=fam+' · 연속 '+fmtInt(rec.contF)+' N / 피크 '+fmtInt(rec.peakF)+' N';
+    document.getElementById('heroCap').textContent='RMS '+fmtInt(res.frms)+' N · 피크필요 '+fmtInt(res.fpeak)+' N · 연속여유 ×'+fmt(rec.contMargin,2);
+  } else { heroCard.className='hero-card bad'; document.getElementById('heroModel').textContent='적합 모델 없음';
+    document.getElementById('heroDim').textContent=fam+' 시리즈 최대 추력으로도 부족합니다.';
+    document.getElementById('heroCap').textContent='RMS '+fmtInt(res.frms)+' N · 피크필요 '+fmtInt(res.fpeak)+' N';
+  }
+  const cc=(id,cls,v,j)=>{document.getElementById('cc'+id).className='check-card '+cls;document.getElementById('ccV'+id).textContent=v;document.getElementById('ccJ'+id).textContent=j;};
+  cc(1,'ok',fmtInt(res.fpeak)+' N','질량×가속 + 마찰'+(state.ori==='v'?' + 중력':''));
+  cc(2,'ok',fmtInt(res.frms)+' N','사이클(정지 포함) 제곱평균');
+  if(rec){ cc(3, rec.contMargin>=1.2?'ok':'warn', '×'+fmt(rec.contMargin,2), '연속 '+fmtInt(rec.contF)+' N ≥ RMS'); }
+  else { cc(3,'bad','부족','최대 연속추력도 미달'); }
+  cc(4, res.vOk?'ok':'warn', fmtInt(res.duty*100)+'% / '+fmt(input.vmax,1)+' m/s', res.vOk?('사이클 '+fmt(res.tCyc,2)+' s'):('속도 '+V_TYPICAL+' m/s↑ — F-V 곡선 확인'));
+
+  const warnB=document.getElementById('warnBanner'), infoB=document.getElementById('infoBanner'); const warns=[];
+  if(!rec) warns.push(fam+' 시리즈로는 추력이 부족합니다 — 수랭(LMFA)·상위 시리즈 또는 가속도/듀티 완화를 검토하세요.');
+  if(!res.vOk) warns.push('요구 속도 '+fmt(input.vmax,1)+' m/s가 실용 상한('+V_TYPICAL+' m/s)을 넘습니다 — 드라이브 버스전압·F-V 곡선으로 가용추력을 확인하세요.');
+  if(state.ori==='v') warns.push('수직축: 정지 시에도 중력 상쇄 전류로 발열이 큽니다 — <strong>카운터밸런스(웨이트·스프링·공압)</strong>를 권장합니다.');
+  if(res.duty>0.6) warns.push('듀티 '+fmtInt(res.duty*100)+'%로 높습니다 — RMS 발열이 커지니 방열(수랭)·정지시간 확대를 검토하세요.');
+  if(warns.length){ warnB.style.display='block'; warnB.innerHTML='<strong>⚠️ 검토 필요</strong><br>'+warns.map(w=>'• '+w).join('<br>'); } else warnB.style.display='none';
+  if(rec && res.vOk && state.ori==='h'){ infoB.style.display='block'; infoB.innerHTML='<strong>✅ 선정 적합</strong><br>• '+fam+' <b>'+rec.name+'</b> — 연속·피크 2조건 만족(연속여유 ×'+fmt(rec.contMargin,2)+', 피크여유 ×'+fmt(rec.peakMargin,2)+').'; } else infoB.style.display='none';
+
+  let note='<strong>선정 2조건</strong> — 연속추력 ≥ RMS추력('+fmtInt(res.frms)+' N) AND 피크추력 ≥ 피크 필요추력('+fmtInt(res.fpeak)+' N).';
+  note+='<br><strong>운동 프로파일</strong> — 가속 '+fmt(res.profile.tAcc,3)+' s · 등속 '+fmt(res.profile.tConst,3)+' s · 도달속도 '+fmt(res.profile.vPeak,2)+' m/s'+(res.profile.tConst<=0?' (삼각형 — 최대속도 미도달)':'');
+  note+='<br><strong>사이클</strong> — 이동 '+fmt(res.profile.tMove,3)+' s + 정지 '+fmt(input.dwell,2)+' s = '+fmt(res.tCyc,3)+' s (듀티 '+fmtInt(res.duty*100)+'%)';
+  if(rec && rec.mass!=null) note+='<br><strong>이동자 질량</strong> — '+fmt(rec.mass,2)+' kg (입력 이동체 질량에 포함돼 있어야 정확)';
+  document.getElementById('noteBox').innerHTML=note;
+
+  renderCmp(res,input);
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})+' 계산';
+}
+function renderCmp(res,input){
+  document.getElementById('cmpTitle').textContent='HIWIN '+TYPE_META[state.type].name+' 모델 비교';
+  const tb=document.getElementById('cmpTbody'); tb.innerHTML='';
+  res.models.forEach(m=>{
+    let judge,rowClass='';
+    if(m.adequate){ if(res.rec&&m.name===res.rec.name){judge='<span class="tag-rec">추천</span>';rowClass='rec-row';} else judge='<span class="tag-ok">적합</span>'; }
+    else { const rs=[]; if(!m.contOk)rs.push('연속'); if(!m.peakOk)rs.push('피크'); judge='<span class="tag-bad">'+rs.join('·')+'</span>'; }
+    tb.innerHTML+='<tr class="'+rowClass+'">'+
+      '<td style="text-align:center">'+judge+'</td>'+
+      '<td style="font-family:var(--mono);font-weight:600">'+m.name+'</td>'+
+      '<td>'+fmtInt(m.contF)+' N</td>'+
+      '<td>'+fmtInt(m.peakF)+' N</td>'+
+      '<td>'+(m.mass!=null?fmt(m.mass,2)+' kg':'—')+'</td>'+
+      '<td>×'+fmt(m.contMargin,2)+'</td>'+
+      '<td>×'+fmt(m.peakMargin,2)+'</td>'+
+      '<td>'+(m.adequate?'<span class="tag-ok">OK</span>':'<span class="tag-bad">부적합</span>')+'</td>'+
+    '</tr>';
+  });
+  const foots=[];
+  foots.push('RMS추력 '+fmtInt(res.frms)+' N · 피크 필요추력 '+fmtInt(res.fpeak)+' N · 듀티 '+fmtInt(res.duty*100)+'%'+(state.ori==='v'?' · 수직(중력 반영)':''));
+  foots.push('연속/RMS ≥ 1, 피크/필요 ≥ 1 이면 적합. 여유 1.2~1.5 이상 권장(발열·변동 대비).');
+  foots.push('이동자(코일) 질량은 입력 이동체 질량에 포함하세요. F-V 곡선(속도별 가용추력)은 카탈로그 확인.');
+  document.getElementById('cmpFoot').innerHTML=foots.map(f=>'• '+f).join('<br>');
+}
+
+function goEdit(){ showStep(currentStep>3?3:currentStep); }
+function restart(){
+  state.type=null; state.mass=null; state.stroke=null; state.vmax=null; state.accel=null; state.dwell=null; state.ori='h'; state.mu=0.05;
+  ['inMass','inStroke','inVmax','inAccel','inDwell'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('inMu').value='0.05';
+  document.querySelectorAll('.bearing-card.sel,.opt-btn.sel').forEach(b=>b.classList.remove('sel'));
+  const h=document.querySelector('#step2 .opt-grid .opt-btn'); if(h)h.classList.add('sel');
+  showStep(1);
+}
+
+const HELP={
+  mass:{title:'이동체 질량', desc:'이동하는 부분 전체의 질량입니다(kg).\n워크·지그·테이블 + 리니어모터 이동자(코일) 질량을 포함해 입력하세요.\n이동자 질량은 선택한 모델에 따라 다르며 비교표에 표시됩니다.'},
+  dwell:{title:'정지 시간', desc:'1 사이클 중 이동하지 않고 멈춰 있는 시간(초)입니다.\nRMS추력(발열) 계산에 쓰입니다. 정지시간이 길수록 듀티가 낮아져 여유가 커집니다.\n수직축은 정지 중에도 중력 유지 전류가 흘러 발열합니다.'},
+  mu:{title:'마찰계수 μ', desc:'가이드의 마찰계수입니다.\n· 리니어 가이드(구름): 0.003~0.01\n· 여유 포함 권장: 0.05\n· 미끄럼 가이드: 0.1~0.2\n마찰력 = μ × 질량 × 중력가속도.'},
+};
+function openHelp(k){ const h=HELP[k]; if(!h)return; document.getElementById('help-title').textContent=h.title; document.getElementById('help-desc').innerHTML=h.desc.replace(/\n/g,'<br>'); document.getElementById('help-overlay').style.display='flex'; }
+function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')) document.getElementById('help-overlay').style.display='none'; }
+
+initTypeGrid();
+window.LinearMotorCalc={ motionProfile, phaseForces, rmsForce, selectMotor, lmModels, LM_DB };
+</script>
+<script src="js/common.js"></script>
+</body></html>
