@@ -20,6 +20,7 @@ var CALCULATORS = [
   { file: 'electric-gripper.html',  cat: 'electric',  desk: '전동 그리퍼 선정',     mob: '전동 그리퍼 선정' },
   { file: 'coupling.html',          cat: 'electric',  desk: '커플링 선정',         mob: '커플링 선정' },
   { file: 'timing-belt.html',       cat: 'electric',  desk: '타이밍벨트 선정',      mob: '타이밍벨트·풀리 선정' },
+  { file: 'linear-motor.html',      cat: 'electric',  desk: '리니어모터 선정',      mob: '리니어모터 선정' },
   { file: 'pneumatic-cylinder.html',cat: 'pneumatic', desk: '실린더 선정',         mob: '실린더 선정' },
   { file: 'solenoid-valve.html',    cat: 'pneumatic', desk: '솔레노이드 밸브 선정',  mob: '솔레노이드 밸브 선정' },
   { file: 'pneumatic-fitting.html', cat: 'pneumatic', desk: '피팅/튜빙 선정',      mob: '피팅/튜빙 선정' },
