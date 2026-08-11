@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>진공 흡착패드 선정 계산기 (흡착력·패드 수) | PartsOn</title>
+<meta name="description" content="진공 흡착패드(평형·벨로우즈·스폰지·타원)를 워크 질량·자세·안전계수 기준으로 선정하세요. 필요 흡착력과 패드 수·크기를 F=면적×진공압으로 계산하는 무료 계산기.">
+<meta name="keywords" content="진공패드 선정, 흡착패드, 흡착력 계산, 벨로우즈 패드, 스폰지 패드, 안전계수, 픽앤플레이스, SMC ZP, 진공압">
+<meta property="og:title" content="진공 흡착패드 선정 계산기 (흡착력·패드 수) | PartsOn">
+<meta property="og:description" content="필요 흡착력·패드 수·크기를 자세별 안전계수로 계산. 진공 흡착패드 선정 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/vacuum-pad.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="필요 흡착력·패드 수·크기를 자세별 안전계수로 계산. 진공 흡착패드 선정 계산기.">
+<meta name="twitter:title" content="진공 흡착패드 선정 계산기 (흡착력·패드 수) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/vacuum-pad.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A2A;--accent-light:#E8F0EC;--accent-mid:#2D6B4A;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px}
+.category-pneumatic .cat-badge{background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input{font-family:var(--mono)}.check-val{font-family:var(--mono)}.hero-model{font-family:var(--mono)}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.steps-bar{display:flex;align-items:flex-start;margin-bottom:1.75rem;position:relative}
+.step-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-node:not(:last-child)::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .2s}
+.step-node:not(:last-child).done::after{background:var(--accent)}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border);background:#fff;color:var(--text3);transition:all .2s;position:relative;z-index:1}
+.step-circle.done{background:var(--accent);border-color:var(--accent);color:#fff;cursor:pointer}
+.step-circle.active{background:#fff;border-color:var(--accent);color:var(--accent)}
+.step-label{font-size:12px;color:var(--text3);margin-top:5px;text-align:center;white-space:nowrap;line-height:1.3}.step-label .ti{font-size:11px;vertical-align:-1px;margin-right:3px}
+.step-label.done{color:var(--accent)}.step-label.active{color:var(--accent);font-weight:600}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.beginner-tip{background:#FFFBEB;border:1px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:1rem;font-size:13px;color:#78350F;line-height:1.7}
+.beginner-tip strong{color:#92400E}.beginner-tip details{cursor:pointer}
+.beginner-tip summary{font-weight:600;outline:none;list-style:none;display:flex;align-items:center;gap:6px}
+.beginner-tip summary::-webkit-details-marker{display:none}
+.beginner-tip summary::before{content:'▶';font-size:10px;transition:transform .2s}
+.beginner-tip details[open] summary::before{transform:rotate(90deg)}
+.beginner-tip .tip-body{margin-top:10px;padding-top:10px;border-top:1px dashed #FCD34D}
+.beginner-tip .tip-body p{margin-bottom:6px}
+.bearing-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bearing-card{padding:0;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;transition:all .15s;overflow:hidden;text-align:left;width:100%;font-family:inherit;display:flex;flex-direction:column;position:relative}
+.bearing-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.bearing-card.sel{border-color:var(--accent);background:var(--accent-light);box-shadow:0 0 0 1px var(--accent)}
+.bearing-card.sel .bearing-name{color:var(--accent)}
+.bearing-svg{background:linear-gradient(135deg,#F8FAFC 0%,#EAF4EE 100%);padding:12px 8px;display:flex;justify-content:center;align-items:center;border-bottom:1px solid var(--border);min-height:96px;height:96px;width:100%}
+.bearing-svg svg{width:100%;max-width:150px;height:78px;display:block;flex-shrink:0}
+.bearing-meta{padding:10px 12px}
+.bearing-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.bearing-code{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.bearing-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.bearing-card.sel::after{content:'✓';position:absolute;top:8px;right:10px;font-size:14px;font-weight:700;color:var(--accent);background:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--accent)}
+.opt-grid{display:grid;gap:8px}.opt-grid.col2{grid-template-columns:1fr 1fr}.opt-grid.col3{grid-template-columns:1fr 1fr 1fr}
+.opt-btn{padding:12px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;text-align:center;cursor:pointer;transition:all .15s;position:relative;width:100%;font-family:inherit}
+.opt-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.opt-btn.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+.opt-btn.sel .sub{color:rgba(255,255,255,.7)}
+.opt-btn.sel::after{content:'✓';position:absolute;top:10px;right:12px;font-size:13px;font-weight:700}
+.opt-title{font-size:15px;font-weight:600}.sub{font-size:13px;color:var(--text2);margin-top:2px;font-weight:400}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:14px;font-weight:500;color:var(--text2)}
+.input-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;background:#FAFBFC;transition:border-color .15s}
+.input-wrap:focus-within{border-color:var(--accent-mid);background:#fff}
+.input-wrap input{border:none;outline:none;background:transparent;font-size:15px;color:var(--text);padding:10px 12px;flex:1;width:100%;font-family:inherit}
+.input-wrap .unit{font-size:13px;color:var(--text3);padding-right:12px;white-space:nowrap;font-weight:500}
+.hint{font-size:13px;color:var(--text3);margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav-row{display:flex;gap:8px;margin-top:1.25rem}
+.btn{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}.btn-primary:hover{background:var(--accent-mid)}
+.btn-back{background:transparent;color:var(--text2)}.btn-back:hover{background:var(--accent-light);border-color:var(--accent-mid);color:var(--accent)}
+.err-msg{font-size:13px;color:var(--bad);margin-top:8px;display:none}
+.result-header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.btn-edit,.btn-restart{height:36px;padding:0 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);font-family:inherit;background:#fff;color:var(--text2);transition:all .15s}
+.btn-edit:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.btn-restart:hover{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.result-title{font-size:16px;font-weight:700;color:var(--text);flex:1}
+.hero-card{background:var(--accent);border-radius:var(--radius);padding:20px 22px;margin-bottom:12px;color:#fff;position:relative;overflow:hidden;display:flex;gap:18px;align-items:center;transition:background .2s}
+.hero-card.warn{background:var(--warn)}.hero-card.bad{background:var(--bad)}
+.hero-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-img{width:120px;flex-shrink:0;background:rgba(255,255,255,.12);border-radius:8px;padding:8px;display:flex;justify-content:center;align-items:center}
+.hero-img svg{width:100%;height:auto}
+.hero-info{flex:1;min-width:0;position:relative;z-index:1}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:6px}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;line-height:1.1}
+.hero-dim{font-size:13px;color:rgba(255,255,255,.85);margin-bottom:3px}.hero-cap{font-size:12px;color:rgba(255,255,255,.7)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.check-card{background:var(--card);border-radius:10px;padding:14px 16px;border:1.5px solid var(--border)}
+.check-card.ok{border-color:#BBF7D0;background:var(--ok-bg)}.check-card.warn{border-color:#FCD34D;background:var(--warn-bg)}.check-card.bad{border-color:#FECACA;background:var(--bad-bg)}
+.check-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:.4px;margin-bottom:6px}
+.check-card.ok .check-label{color:var(--ok)}.check-card.warn .check-label{color:var(--warn)}.check-card.bad .check-label{color:var(--bad)}
+.check-val{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+.check-card.ok .check-val{color:var(--ok)}.check-card.warn .check-val{color:var(--warn)}.check-card.bad .check-val{color:var(--bad)}
+.check-judge{font-size:12px;margin-top:3px;font-weight:500;color:var(--text3)}
+.check-card.ok .check-judge{color:var(--ok)}.check-card.warn .check-judge{color:var(--warn)}.check-card.bad .check-judge{color:var(--bad)}
+.note-box{background:var(--accent-light);border:1px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#22654A;line-height:1.8}
+.note-box strong{color:var(--accent)}
+.section-title-sm{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px;border:1px solid var(--border);background:var(--card)}
+table.ctbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto;min-width:560px}
+table.ctbl th{font-size:12px;color:var(--text3);font-weight:600;text-align:left;padding:9px 10px;border-bottom:1.5px solid var(--border);white-space:nowrap;vertical-align:middle;background:var(--bg)}
+table.ctbl th:first-child{text-align:center;width:44px}
+table.ctbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:middle}
+table.ctbl tr:last-child td{border-bottom:none}
+table.ctbl tr.rec-row td{font-weight:700;background:#F0FDF4}
+.tag-rec{display:inline-block;font-size:10px;padding:2px 6px;border-radius:4px;background:var(--accent);color:#fff;font-weight:600;white-space:nowrap}
+.tag-ok{display:inline-block;font-size:11px;color:var(--ok);font-weight:600}
+.tag-bad{display:inline-block;font-size:11px;color:var(--bad);font-weight:600}
+table.typetbl{width:100%;border-collapse:collapse;font-size:13px;min-width:520px}
+table.typetbl th{font-size:11px;color:var(--text3);font-weight:600;text-align:center;padding:8px;border-bottom:1.5px solid var(--border);background:var(--bg);white-space:nowrap}
+table.typetbl th:first-child{text-align:left}
+table.typetbl td{padding:8px;border-bottom:1px solid var(--border);text-align:center;white-space:nowrap}
+table.typetbl td:first-child{text-align:left;font-weight:600;color:var(--text)}
+table.typetbl tr:last-child td{border-bottom:none}
+.disclaimer{font-size:11px;color:var(--text3);line-height:1.7;padding:14px 0;border-top:1px solid var(--border);margin-top:1rem}
+.notice-card{background:#EFF6FF;border:1.5px solid #BFDBFE;border-left:4px solid #3B82F6;border-radius:10px;padding:14px 16px;margin-bottom:12px;font-size:13px;color:#1E3A5F;line-height:1.7}
+.notice-card .notice-head{font-weight:700;color:#1E40AF;margin-bottom:6px;display:flex;align-items:center;gap:6px;font-size:13px}
+.notice-card details summary{cursor:pointer;outline:none;list-style:none;font-size:12px;color:#1E40AF;margin-top:8px;font-weight:600}
+.notice-card details summary::-webkit-details-marker{display:none}
+.notice-card details summary::before{content:'▶ ';font-size:9px}
+.notice-card details[open] summary::before{content:'▼ '}
+.notice-card details .detail-body{margin-top:8px;padding-top:8px;border-top:1px dashed #FECACA;font-size:12px;color:#7F1D1D}
+.notice-card details .detail-body p{margin-bottom:5px}.notice-card details .detail-body strong{color:#991B1B}
+.help-btn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--border);color:var(--text2);font-size:10px;font-weight:700;cursor:pointer;border:none;margin-left:5px;transition:background .15s;vertical-align:middle;flex-shrink:0}
+.help-btn:hover{background:var(--accent-mid);color:#fff}
+.notice-mini{background:#EFF6FF;border:1px solid #BFDBFE;border-left:3px solid #3B82F6;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#1E3A5F;line-height:1.6}.notice-mini strong{color:#1E40AF}
+.warn-banner{background:var(--warn-bg);border:1.5px solid #FCD34D;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.6}
+.info-banner{background:var(--accent-light);border:1.5px solid #B4DCC7;border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#166534;line-height:1.6}
+@media(max-width:480px){.opt-grid.col3{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.bearing-grid{grid-template-columns:1fr}.hero-card{flex-direction:column;text-align:center;align-items:stretch}.hero-img{width:auto}.hero-img svg{max-width:160px;margin:0 auto}}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}.pnav-menu a.active{color:#38BDF8;font-weight:600}
+.supplier-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem}
+.supplier-section-title{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:.75rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.supplier-list{display:flex;flex-direction:column;gap:10px}
+.supplier-card-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.supplier-nm{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.supplier-br{font-size:11px;font-family:monospace;color:var(--accent);margin-bottom:6px}
+.supplier-ct{display:flex;gap:14px;flex-wrap:wrap}
+.supplier-lnk{font-size:12px;color:var(--text2);text-decoration:none;font-family:monospace}
+.supplier-lnk:hover{color:var(--accent);text-decoration:underline}
+.supplier-nt{font-size:11px;color:var(--text3);margin-top:4px}
+.print-header{display:none}
+@media print{@page{size:A4;margin:12mm 14mm}.partson-nav,header,footer,.disclaimer,nav{display:none!important}.step-wrap{display:none!important}.print-header{display:flex!important;justify-content:space-between;align-items:flex-end;padding-bottom:10px;border-bottom:2px solid #1A3A2A;margin-bottom:14px}.ph-title{font-size:18px;font-weight:700;color:#1A3A2A}.ph-sub{font-size:12px;color:#6B6760;margin-top:2px}.ph-date{font-size:11px;color:#9E9B96;text-align:right}body{background:#fff!important;font-size:12px}main{padding:0!important;max-width:100%!important}#resultArea{display:block!important}table{break-inside:avoid;font-size:11px}.checks{grid-template-columns:1fr 1fr!important}a{color:inherit!important;text-decoration:none!important}}
+</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"진공 흡착패드 선정 계산기","description":"진공 흡착패드(평형·벨로우즈·스폰지·타원)를 워크 질량·자세·안전계수 기준으로 선정하고 필요 흡착력·패드 수를 계산하는 무료 계산기.","url":"https://partson.co.kr/vacuum-pad.html","applicationCategory":"EngineeringApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},"publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}}
+</script>
+</head>
+<body class="category-pneumatic">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔵</div>
+    <div>
+      <h1>진공 흡착패드 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>PartsOn · 픽앤플레이스 흡착 · F=면적×진공압 · SMC ZP 규격 기준</p>
+    </div>
+  </div>
+</header>
+<a href="guide-vacuum-pad.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF2FA;border:1px solid #BBD9F2;border-radius:10px;text-decoration:none;color:#1A3A5C;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">이 부품 선정 방법이 궁금하세요? — <b>선정 가이드 보기</b></span><span style="color:#0071B8;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="steps-bar" id="stepsBar">
+    <div class="step-node" id="sn1"><div class="step-circle active" id="sc1">1</div><div class="step-label active" id="sl1"><i class="ti ti-versions" aria-hidden="true"></i>패드<br>형상</div></div>
+    <div class="step-node" id="sn2"><div class="step-circle" id="sc2">2</div><div class="step-label" id="sl2"><i class="ti ti-box" aria-hidden="true"></i>워크·<br>자세</div></div>
+    <div class="step-node" id="sn3"><div class="step-circle" id="sc3">3</div><div class="step-label" id="sl3"><i class="ti ti-gauge" aria-hidden="true"></i>진공·<br>안전</div></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="card step-wrap active" id="step1">
+    <div class="notice-mini"><strong>ℹ️ 표준식(F=면적×진공압)과 안전계수 기반의 빠른 사전 검토 도구입니다.</strong> 최종 선정 시 제조사 카탈로그와 함께 확인하세요.</div>
+    <div class="question">패드 형상을 선택하세요</div>
+    <div class="question-desc">워크 표면(평면·곡면·거침)과 추종성에 따라 형상을 고릅니다. 평면은 평형, 곡면·단차는 벨로우즈, 거친 면은 스폰지가 유리합니다.</div>
+    <div class="beginner-tip">
+      <details>
+        <summary>💡 진공패드가 처음이세요? — 30초 가이드 펼치기</summary>
+        <div class="tip-body">
+          <p><strong>진공패드</strong>는 대기압과 진공의 압력차로 워크를 흡착합니다.</p>
+          <p>• <strong>흡착력</strong> = 유효 흡착면적 × 진공압. 면적↑·진공압↑ → 흡착력↑.</p>
+          <p>• <strong>안전계수(SF)</strong> — 자세에 따라: 수평 들기·이송 4, 수직·측면 8, 정지 유지 2.</p>
+          <p>• <strong>필요 패드 수</strong> = 필요 흡착력 ÷ 패드 1개 흡착력.</p>
+          <p>• <strong>형상</strong> — 평면=평형, 곡면·단차=벨로우즈, 거친 면=스폰지, 길고 좁은 워크=타원.</p>
+        </div>
+      </details>
+    </div>
+    <div class="bearing-grid" id="typeGrid"></div>
+    <div style="margin-top:1.25rem">
+      <div class="section-title-sm">형상별 특성 비교</div>
+      <div class="tbl-wrap">
+        <table class="typetbl">
+          <thead><tr><th>형상</th><th>적합 표면</th><th>추종성</th><th>흡착력</th><th>대표 용도</th></tr></thead>
+          <tbody>
+            <tr><td>평형(flat)</td><td>평면·매끈</td><td>낮음</td><td>높음</td><td>판재·유리·정밀 위치</td></tr>
+            <tr><td>벨로우즈</td><td>곡면·단차·경사</td><td>높음</td><td>중간</td><td>곡면 워크·높이차 흡수</td></tr>
+            <tr><td>스폰지</td><td>거침·요철·다공</td><td>매우 높음</td><td>낮음</td><td>거친 표면·목재·대형</td></tr>
+            <tr><td>타원(oval)</td><td>길고 좁은 면</td><td>낮음</td><td>중~높음</td><td>프로파일·판재 가장자리</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="err-msg" id="err1">패드 형상을 선택해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-primary" onclick="go(2)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="card step-wrap" id="step2">
+    <div class="question">워크와 자세를 입력하세요</div>
+    <div class="question-desc">워크 질량·흡착 자세·이송 가속도로 필요 흡착력을 산출합니다.</div>
+    <div class="grid2" style="margin-bottom:1rem">
+      <div class="field"><label><i class="ti ti-weight" aria-hidden="true"></i>워크 질량 m</label><div class="input-wrap"><input type="number" id="inMass" placeholder="예: 2" min="0.01" step="0.1"><span class="unit">kg</span></div></div>
+      <div class="field"><label><i class="ti ti-trending-up" aria-hidden="true"></i>이송 가속도 <button class="help-btn" onclick="openHelp('acc')">?</button></label><div class="input-wrap"><input type="number" id="inAcc" value="0" min="0" step="0.5"><span class="unit">m/s²</span></div></div>
+    </div>
+    <div class="question" style="font-size:14px;margin-bottom:.5rem">흡착 자세 (안전계수) <button class="help-btn" onclick="openHelp('sf')">?</button></div>
+    <div class="opt-grid col3" id="posGrid" style="margin-bottom:1rem">
+      <button class="opt-btn" onclick="selPos('lift',this)"><div class="opt-title">수평 들기</div><div class="sub">SF 4<br>패드 위·수직 이송</div></button>
+      <button class="opt-btn" onclick="selPos('vertical',this)"><div class="opt-title">수직·측면</div><div class="sub">SF 8<br>전단·측면 흡착</div></button>
+      <button class="opt-btn" onclick="selPos('static',this)"><div class="opt-title">정지 유지</div><div class="sub">SF 2<br>이송 없음</div></button>
+    </div>
+    <div class="question" style="font-size:14px;margin-bottom:.5rem">워크 표면</div>
+    <div class="opt-grid col3" id="surfGrid">
+      <button class="opt-btn sel" onclick="selSurf('flat',this)"><div class="opt-title" style="font-size:14px">평면</div></button>
+      <button class="opt-btn" onclick="selSurf('curved',this)"><div class="opt-title" style="font-size:14px">곡면·단차</div></button>
+      <button class="opt-btn" onclick="selSurf('rough',this)"><div class="opt-title" style="font-size:14px">거침·요철</div></button>
+    </div>
+    <div class="err-msg" id="err2">워크 질량·흡착 자세를 입력해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(1)">← 이전</button><button class="btn btn-primary" onclick="go(3)">다음 →</button></div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="card step-wrap" id="step3">
+    <div class="question">진공압과 안전계수를 확인하세요</div>
+    <div class="question-desc">진공압과 (선택) 목표 패드 수를 입력합니다. 안전계수는 자세에 따라 자동 설정되며 수정할 수 있습니다.</div>
+    <div class="grid2" style="margin-bottom:1rem">
+      <div class="field"><label><i class="ti ti-gauge" aria-hidden="true"></i>진공압 (게이지) <button class="help-btn" onclick="openHelp('vac')">?</button></label><div class="input-wrap"><input type="number" id="inVac" value="70" min="10" max="95" step="5"><span class="unit">kPa</span></div><span class="hint">일반 -60~-90 kPa. 진공펌프/이젝터 성능에 따름.</span></div>
+      <div class="field"><label><i class="ti ti-shield-check" aria-hidden="true"></i>안전계수 SF</label><div class="input-wrap"><input type="number" id="inSF" value="4" min="1" step="0.5"><span class="unit">×</span></div><span class="hint">자세 선택 시 자동. 필요시 상향 조정.</span></div>
+      <div class="field"><label><i class="ti ti-circles" aria-hidden="true"></i>목표 패드 수 (선택)</label><div class="input-wrap" style="max-width:160px"><input type="number" id="inN" placeholder="예: 4" min="1" step="1"><span class="unit">개</span></div><span class="hint">지정 시 이 개수로 되는 최소 지름 추천.</span></div>
+    </div>
+    <div class="err-msg" id="err3">진공압과 안전계수를 확인해 주세요.</div>
+    <div class="nav-row"><button class="btn btn-back" onclick="go(2)">← 이전</button><button class="btn btn-primary" onclick="calcAndShow()">결과 보기 →</button></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultArea" style="display:none">
+    <div class="print-header"><div><div class="ph-title">PartsOn</div><div class="ph-sub">진공 흡착패드 선정 계산기 — 계산 결과</div></div><div class="ph-date" id="print-date"></div></div>
+    <div class="result-header"><span class="result-title">선정 결과</span><button class="btn-edit" onclick="goEdit()">← 조건 수정</button><button class="btn-restart" onclick="restart()">처음부터</button></div>
+    <div class="notice-card">
+      <div class="notice-head">ℹ️ 참고 안내</div>
+      본 결과는 표준식(F=유효면적×진공압)과 자세별 안전계수 기반의 <strong>빠른 사전 검토용 추정치</strong>입니다. 최종 선정 시 제조사 카탈로그·유효면적과 함께 확인하세요.
+      <details><summary>자세한 한계 및 면책 사항 보기</summary>
+        <div class="detail-body">
+          <p><strong>① 계산 모델</strong></p>
+          <p>• 패드 1개 흡착력 = π(지름/2)² × 진공압(이론). 필요 흡착력 = 질량 × (중력 + 이송가속) × 안전계수.</p>
+          <p>• 유효 흡착면적은 립 접촉·누설로 명목보다 다소 작습니다. 본 도구는 명목 지름으로 이론력을 계산하고, <strong>안전계수가 그 여유를 흡수</strong>합니다(표준 관행).</p>
+          <p>• 안전계수: 수평 들기·이송 4, 수직·측면 8, 정지 유지 2 (SMC·업계 기준). 워크가 얇거나 통기성이면 상향하세요.</p>
+          <p><strong>② 데이터 한계</strong></p>
+          <p>• 패드 지름은 SMC ZP 등 <strong>표준 규격</strong>을 사용합니다. 실제 유효면적·흡착력은 제조사 카탈로그 값을 확인하세요.</p>
+          <p><strong>③ 실제 설계 시 확인</strong></p>
+          <p>• 제조사 유효면적·형상별 흡착력, 진공발생기(이젝터/펌프) 유량·도달진공, 워크 통기성·표면 상태, 패드 재질(NBR·실리콘·우레탄)·마킹.</p>
+          <p><strong>④ 책임 한계</strong></p>
+          <p>본 결과를 근거로 한 설계·구매에서 발생한 모든 직·간접 손해에 대해 PartsOn 및 작성자는 일체의 책임을 지지 않습니다.</p>
+        </div>
+      </details>
+    </div>
+    <div class="hero-card" id="heroCard">
+      <div class="hero-img" id="heroImg"></div>
+      <div class="hero-info"><div class="hero-label" id="heroLabel">추천 패드</div><div class="hero-model" id="heroModel">—</div><div class="hero-dim" id="heroDim">—</div><div class="hero-cap" id="heroCap">—</div></div>
+    </div>
+    <div class="warn-banner" id="warnBanner" style="display:none"></div>
+    <div class="info-banner" id="infoBanner" style="display:none"></div>
+    <div class="checks">
+      <div class="check-card" id="cc1"><div class="check-label">필요 흡착력</div><div class="check-val" id="ccV1">—</div><div class="check-judge" id="ccJ1">—</div></div>
+      <div class="check-card" id="cc2"><div class="check-label">패드 1개 흡착력</div><div class="check-val" id="ccV2">—</div><div class="check-judge" id="ccJ2">—</div></div>
+      <div class="check-card" id="cc3"><div class="check-label">필요 패드 수</div><div class="check-val" id="ccV3">—</div><div class="check-judge" id="ccJ3">—</div></div>
+      <div class="check-card" id="cc4"><div class="check-label">형상-표면 적합</div><div class="check-val" id="ccV4">—</div><div class="check-judge" id="ccJ4">—</div></div>
+    </div>
+    <div class="note-box" id="noteBox"></div>
+    <div class="card" style="padding:1.25rem;margin-bottom:1rem">
+      <div class="section-title-sm" id="cmpTitle">지름별 패드 수 비교</div>
+      <div class="tbl-wrap">
+        <table class="ctbl">
+          <thead><tr><th style="text-align:center">판정</th><th>패드 지름</th><th>유효면적</th><th>1개 흡착력</th><th>필요 패드 수</th><th>합계 여유</th><th>종합</th></tr></thead>
+          <tbody id="cmpTbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6" id="cmpFoot"></div>
+    </div>
+    <div class="supplier-section">
+      <div class="supplier-section-title">공급사 연결</div>
+      <div class="supplier-list">
+        <div class="supplier-card-item">
+          <div class="supplier-nm">진공패드 공급사</div>
+          <div class="supplier-br">SMC · Festo · CKD · PIAB · Schmalz (국내 유통)</div>
+          <div class="supplier-ct"><a class="supplier-lnk" href="https://www.smcworld.com/products/pickup/en-jp/vacuum/" target="_blank" rel="noopener">▶ SMC 진공기기</a></div>
+          <div class="supplier-nt">형번·유효면적·재질은 공식 카탈로그에서 최종 확인하세요.</div>
+        </div>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>※ 면책 공지</strong><br>
+      본 계산기는 표준식(F=유효면적×진공압)·자세별 안전계수 기반의 <strong>참고용 사전 검토 도구</strong>입니다. 유효면적 립 보정, 워크 통기성, 진공발생기 유량 등은 단순화·생략되었습니다.
+      실제 설계·발주 시 제조사 카탈로그와 자격 있는 엔지니어의 검토가 필수입니다.<br>
+      데이터 기준: 표준 흡착력식(F=P·A) · 안전계수 SMC·업계 기준(수평 4·수직/측면 8·정지 2) · 패드 지름 SMC ZP 표준 규격.<br>
+      데이터 최종 검증: 2026.08.
+    </div>
+  </div>
+</main>
+
+<div id="help-overlay" onclick="closeHelp(event)" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;padding:1.5rem;max-width:320px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.18)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><span id="help-title" style="font-size:14px;font-weight:600;color:#0F0E0C"></span><button onclick="closeHelp()" style="border:none;background:#F4F2ED;border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;color:#6B7280">닫기</button></div>
+    <p id="help-desc" style="font-size:13px;color:#4B5563;line-height:1.7;margin:0"></p>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+const SVG = {
+  flat: `<svg viewBox="0 0 150 78" xmlns="http://www.w3.org/2000/svg">
+    <rect x="66" y="6" width="18" height="18" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M40 30 q35 -8 70 0 l-6 22 q-29 8 -58 0 Z" fill="#38BDF8" fill-opacity="0.35" stroke="#0369A1" stroke-width="1.4"/>
+    <path d="M40 30 q35 -8 70 0" fill="none" stroke="#0369A1" stroke-width="1.4"/>
+    <line x1="34" y1="60" x2="116" y2="60" stroke="#64748B" stroke-width="2"/>
+  </svg>`,
+  bellows: `<svg viewBox="0 0 150 78" xmlns="http://www.w3.org/2000/svg">
+    <rect x="66" y="4" width="18" height="14" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <path d="M60 18 h30 M56 26 h38 M60 34 h30 M52 42 q23 12 46 0" fill="none" stroke="#0369A1" stroke-width="1.6"/>
+    <path d="M60 18 v8 M90 18 v8 M56 26 v8 M94 26 v8 M60 34 v8 M90 34 v8" stroke="#38BDF8" stroke-width="3" stroke-opacity="0.5"/>
+    <path d="M52 42 q23 12 46 0" fill="#38BDF8" fill-opacity="0.3"/>
+    <line x1="40" y1="58" x2="110" y2="58" stroke="#64748B" stroke-width="2"/>
+  </svg>`,
+  sponge: `<svg viewBox="0 0 150 78" xmlns="http://www.w3.org/2000/svg">
+    <rect x="66" y="6" width="18" height="14" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <rect x="40" y="24" width="70" height="26" rx="3" fill="#38BDF8" fill-opacity="0.28" stroke="#0369A1" stroke-width="1.4"/>
+    <circle cx="52" cy="34" r="2.4" fill="#0369A1" opacity="0.5"/><circle cx="64" cy="40" r="2.4" fill="#0369A1" opacity="0.5"/><circle cx="76" cy="32" r="2.4" fill="#0369A1" opacity="0.5"/><circle cx="88" cy="41" r="2.4" fill="#0369A1" opacity="0.5"/><circle cx="99" cy="35" r="2.4" fill="#0369A1" opacity="0.5"/><circle cx="58" cy="45" r="2" fill="#0369A1" opacity="0.5"/><circle cx="94" cy="28" r="2" fill="#0369A1" opacity="0.5"/>
+    <line x1="34" y1="58" x2="116" y2="58" stroke="#64748B" stroke-width="2"/>
+  </svg>`,
+  oval: `<svg viewBox="0 0 150 78" xmlns="http://www.w3.org/2000/svg">
+    <rect x="66" y="6" width="18" height="16" rx="2" fill="#94A3B8" stroke="#334155" stroke-width="1.2"/>
+    <ellipse cx="75" cy="42" rx="46" ry="15" fill="#38BDF8" fill-opacity="0.32" stroke="#0369A1" stroke-width="1.4"/>
+    <ellipse cx="75" cy="42" rx="38" ry="9" fill="none" stroke="#0369A1" stroke-width="1" stroke-opacity="0.6"/>
+    <line x1="24" y1="62" x2="126" y2="62" stroke="#64748B" stroke-width="2"/>
+  </svg>`,
+};
+
+const TYPE_META = {
+  flat:    { name:'평형 (flat)', code:'SMC ZP 평형 패드', desc:'평면·매끈 워크. 흡착력·정밀 위치 우수.', shape:'circle', fit:['flat'] },
+  bellows: { name:'벨로우즈', code:'SMC ZP 벨로우즈', desc:'곡면·단차·경사. 주름 추종성 우수.', shape:'circle', fit:['curved','flat'] },
+  sponge:  { name:'스폰지', code:'SMC ZP 스폰지 패드', desc:'거친 면·요철·다공성. 표면 추종 최고.', shape:'circle', fit:['rough','curved'] },
+  oval:    { name:'타원 (oval)', code:'SMC ZP 타원 패드', desc:'길고 좁은 워크. 좁은 폭에 큰 면적.', shape:'oval', fit:['flat'] },
+};
+
+/* 표준 패드 규격 (SMC ZP 기준). 원형=지름 mm, 타원=[장경,단경] mm */
+const STD_DIA = {
+  flat:    [4,6,8,10,15,20,25,32,40,50,63,80,100],
+  bellows: [15,20,30,40,50],
+  sponge:  [40,50,63,80,100,125],
+  oval:    [[20,40],[25,50],[30,60],[40,80]],
+};
+const SF_BY_POS = { lift:4, vertical:8, static:2 };
+const G = 9.81;
+
+/* ══════════ 순수 함수 ══════════ */
+// 필요 흡착력 (N)
+function requiredForce(m, a, sf){ return m*(G+a)*sf; }
+// 패드 1개 흡착력 (N): 원형 지름 d(mm), 진공압 P(kPa)
+function padForceCircle(d, P){ const A=Math.PI*Math.pow(d/2000,2); return A*(P*1000); }
+function padForceOval(maj, min, P){ const A=Math.PI*(maj/2000)*(min/2000); return A*(P*1000); }
+function padArea(d){ return Math.PI*Math.pow(d/2,2); }          // mm²
+function padAreaOval(maj,min){ return Math.PI*(maj/2)*(min/2); } // mm²
+function padsNeeded(Freq, Fpad){ return Math.max(1, Math.ceil(Freq/Fpad)); }
+
+function selectPad(type, input){
+  const Freq = requiredForce(input.mass, input.acc, input.sf);
+  const isOval = TYPE_META[type].shape==='oval';
+  const dias = STD_DIA[type];
+  const combos = dias.map(d=>{
+    const dim = isOval ? d[0]+'×'+d[1] : String(d);
+    const area = isOval ? padAreaOval(d[0],d[1]) : padArea(d);
+    const fpad = isOval ? padForceOval(d[0],d[1],input.vac) : padForceCircle(d,input.vac);
+    const n = padsNeeded(Freq, fpad);
+    const totalMargin = (fpad*n)/Freq;
+    return { d, dim, area, fpad, n, totalMargin };
+  });
+  // 추천: 목표 패드 수 지정 시 그 이하가 되는 최소 지름, 아니면 ≤4개 되는 최소 지름
+  const target = input.targetN || 4;
+  let rec = combos.find(c=>c.n<=target) || combos[combos.length-1];
+  const surfaceOk = TYPE_META[type].fit.includes(input.surface);
+  return { Freq, combos, rec, surfaceOk };
+}
+
+/* ══════════ 상태 ══════════ */
+const state={ type:null, mass:null, acc:0, pos:null, sf:4, surface:'flat', vac:70, targetN:null };
+let currentStep=1;
+function fmt(v,d=1){if(v===null||v===undefined||!isFinite(v))return '—';return (+v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});}
+function fmtInt(v){if(v===null||v===undefined||!isFinite(v))return '—';return Math.round(v).toLocaleString('ko-KR');}
+
+function initTypeGrid(){
+  const grid=document.getElementById('typeGrid'); grid.innerHTML='';
+  Object.keys(TYPE_META).forEach(key=>{
+    const m=TYPE_META[key];
+    const card=document.createElement('div'); card.className='bearing-card';
+    card.setAttribute('role','button'); card.setAttribute('tabindex','0');
+    card.onclick=()=>selType(key,card);
+    card.onkeydown=(e)=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();selType(key,card);} };
+    card.innerHTML='<div class="bearing-svg">'+SVG[key]+'</div>'+
+      '<div class="bearing-meta"><div class="bearing-name">'+m.name+'</div><div class="bearing-code">'+m.code+'</div><div class="bearing-desc">'+m.desc+'</div></div>';
+    grid.appendChild(card);
+  });
+}
+function selType(type,btn){ state.type=type; document.querySelectorAll('#typeGrid .bearing-card').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); document.getElementById('err1').style.display='none'; }
+function selPos(p,btn){ state.pos=p; document.querySelectorAll('#posGrid .opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); state.sf=SF_BY_POS[p]; const sfi=document.getElementById('inSF'); if(sfi) sfi.value=state.sf; }
+function selSurf(s,btn){ state.surface=s; document.querySelectorAll('#surfGrid .opt-btn').forEach(b=>b.classList.remove('sel')); btn.classList.add('sel'); }
+
+function go(step){ if(step>currentStep){ if(!validate(currentStep)) return; } showStep(step); }
+function showStep(step,pushHistory=true){
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+step).classList.add('active');
+  document.getElementById('resultArea').style.display='none';
+  if(pushHistory) history.pushState({vpStep:step},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);if(!sc)continue;sc.classList.remove('done','active');sl.classList.remove('done','active');sn.classList.remove('done');if(i<step){sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}else if(i===step){sc.classList.add('active');sl.classList.add('active');sc.onclick=null;}else{sc.onclick=null;}}
+  currentStep=step; window.scrollTo({top:0,behavior:'smooth'});
+}
+window.addEventListener('popstate',e=>{ const n=e.state&&e.state.vpStep; if(n)showStep(n,false); else showStep(1,false); });
+
+function validate(step){
+  const err=document.getElementById('err'+step); if(err) err.style.display='none';
+  if(step===1){ if(!state.type){err.style.display='block';return false;} }
+  if(step===2){
+    const m=parseFloat(document.getElementById('inMass').value); const a=parseFloat(document.getElementById('inAcc').value);
+    if(isNaN(m)||m<=0){err.style.display='block';return false;} state.mass=m; state.acc=(isNaN(a)||a<0)?0:a;
+    if(!state.pos){err.style.display='block';err.textContent='흡착 자세를 선택해 주세요.';return false;}
+  }
+  if(step===3){
+    const v=parseFloat(document.getElementById('inVac').value); const sf=parseFloat(document.getElementById('inSF').value);
+    if(isNaN(v)||v<=0||isNaN(sf)||sf<1){err.style.display='block';return false;} state.vac=v; state.sf=sf;
+    const n=parseFloat(document.getElementById('inN').value); state.targetN=(isNaN(n)||n<1)?null:Math.round(n);
+  }
+  return true;
+}
+
+function calcAndShow(){
+  if(!validate(3)){ showStep(3); return; }
+  const input={ mass:state.mass, acc:state.acc, sf:state.sf, surface:state.surface, vac:state.vac, targetN:state.targetN };
+  const res=selectPad(state.type, input);
+  renderResult(res,input);
+  document.querySelectorAll('.step-wrap').forEach(s=>s.classList.remove('active'));
+  document.getElementById('resultArea').style.display='block';
+  history.pushState({vpStep:'result'},'');
+  for(let i=1;i<=3;i++){const sc=document.getElementById('sc'+i),sl=document.getElementById('sl'+i),sn=document.getElementById('sn'+i);sc.classList.remove('active');sc.classList.add('done');sl.classList.add('done');sn.classList.add('done');sc.onclick=()=>go(i);}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderResult(res,input){
+  const rec=res.rec, fam=TYPE_META[state.type].name;
+  document.getElementById('heroImg').innerHTML=SVG[state.type];
+  document.getElementById('heroCard').className='hero-card'+(res.surfaceOk?'':' warn');
+  document.getElementById('heroModel').textContent='ø'+rec.dim+' × '+rec.n+'개';
+  document.getElementById('heroDim').textContent=fam+' · 1개 '+fmt(rec.fpad,1)+' N · 합계 '+fmt(rec.fpad*rec.n,1)+' N';
+  document.getElementById('heroCap').textContent='필요 흡착력 '+fmt(res.Freq,1)+' N (SF '+fmt(input.sf,1)+') · 여유 ×'+fmt(rec.totalMargin,2);
+
+  const cc=(id,cls,v,j)=>{document.getElementById('cc'+id).className='check-card '+cls;document.getElementById('ccV'+id).textContent=v;document.getElementById('ccJ'+id).textContent=j;};
+  cc(1,'ok', fmt(res.Freq,1)+' N', '질량 '+fmt(state.mass,1)+' × (g+'+fmt(state.acc,1)+') × SF'+fmt(input.sf,1));
+  cc(2,'ok', fmt(rec.fpad,1)+' N', 'ø'+rec.dim+' · 진공 '+fmtInt(input.vac)+' kPa');
+  cc(3,'ok', rec.n+' 개', '합계 '+fmt(rec.fpad*rec.n,1)+' N ≥ 필요');
+  cc(4, res.surfaceOk?'ok':'warn', res.surfaceOk?'적합':'재검토', res.surfaceOk?(fam+' ↔ '+surfName(state.surface)):(fam+'은 '+surfName(state.surface)+'에 불리'));
+
+  const warnB=document.getElementById('warnBanner'), infoB=document.getElementById('infoBanner'); const warns=[];
+  if(!res.surfaceOk){ warns.push(fam+' 패드는 '+surfName(state.surface)+' 표면에 불리합니다 — '+recShape(state.surface)+'를 검토하세요.'); }
+  if(input.sf<4 && state.pos!=='static') warns.push('안전계수 '+fmt(input.sf,1)+'가 낮습니다 — 이송이 있으면 4 이상(수직/측면 8)을 권장합니다.');
+  if(rec.n>8) warns.push('필요 패드 수 '+rec.n+'개로 많습니다 — 더 큰 지름·형상 또는 진공압 상향을 검토하세요.');
+  if(warns.length){ warnB.style.display='block'; warnB.innerHTML='<strong>⚠️ 검토 필요</strong><br>'+warns.map(w=>'• '+w).join('<br>'); } else warnB.style.display='none';
+  if(res.surfaceOk){ infoB.style.display='block'; infoB.innerHTML='<strong>✅ 선정 적합</strong><br>• '+fam+' <b>ø'+rec.dim+' × '+rec.n+'개</b> — 합계 흡착력 '+fmt(rec.fpad*rec.n,1)+' N (필요 '+fmt(res.Freq,1)+' N, 여유 ×'+fmt(rec.totalMargin,2)+').'; } else infoB.style.display='none';
+
+  let note='<strong>흡착력식</strong> — 패드 1개 흡착력 = π(지름/2)² × 진공압, 필요 흡착력 = 질량 × (중력+이송가속) × 안전계수.';
+  note+='<br><strong>안전계수</strong> — '+posName(state.pos)+' → SF '+fmt(input.sf,1)+' (수평 들기 4·수직/측면 8·정지 2 기준).';
+  note+='<br><strong>패드 배치</strong> — 여러 개 시 무게중심 대칭 배치, 워크 강성 고려. 유효면적은 립 접촉으로 명목보다 다소 작아 안전계수로 여유 확보.';
+  document.getElementById('noteBox').innerHTML=note;
+
+  renderCmp(res,input);
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'})+' 계산';
+}
+function surfName(s){ return {flat:'평면',curved:'곡면·단차',rough:'거침·요철'}[s]||s; }
+function posName(p){ return {lift:'수평 들기',vertical:'수직·측면',static:'정지 유지'}[p]||p; }
+function recShape(s){ return {flat:'평형',curved:'벨로우즈',rough:'스폰지'}[s]||'다른 형상'; }
+function renderCmp(res,input){
+  document.getElementById('cmpTitle').textContent=TYPE_META[state.type].name+' 지름별 패드 수';
+  const tb=document.getElementById('cmpTbody'); tb.innerHTML='';
+  res.combos.forEach(c=>{
+    const isRec=res.rec&&c.dim===res.rec.dim;
+    tb.innerHTML+='<tr class="'+(isRec?'rec-row':'')+'">'+
+      '<td style="text-align:center">'+(isRec?'<span class="tag-rec">추천</span>':'<span class="tag-ok">가능</span>')+'</td>'+
+      '<td style="font-family:var(--mono);font-weight:600">ø'+c.dim+'</td>'+
+      '<td>'+fmtInt(c.area)+' mm²</td>'+
+      '<td>'+fmt(c.fpad,1)+' N</td>'+
+      '<td>'+c.n+' 개</td>'+
+      '<td>×'+fmt(c.totalMargin,2)+'</td>'+
+      '<td>'+(c.n<=(input.targetN||8)?'<span class="tag-ok">OK</span>':'<span class="tag-bad">패드多</span>')+'</td>'+
+    '</tr>';
+  });
+  const foots=[];
+  foots.push('필요 흡착력 '+fmt(res.Freq,1)+' N · 진공압 '+fmtInt(input.vac)+' kPa · 안전계수 '+fmt(input.sf,1)+' · '+posName(state.pos));
+  foots.push('1개 흡착력은 명목 지름 이론값입니다(F=π(d/2)²×P). 실제 유효면적·흡착력은 제조사 카탈로그를 확인하세요.');
+  document.getElementById('cmpFoot').innerHTML=foots.map(f=>'• '+f).join('<br>');
+}
+
+function goEdit(){ showStep(currentStep>3?3:currentStep); }
+function restart(){
+  state.type=null; state.mass=null; state.acc=0; state.pos=null; state.sf=4; state.surface='flat'; state.vac=70; state.targetN=null;
+  ['inMass','inN'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('inAcc').value='0'; document.getElementById('inVac').value='70'; document.getElementById('inSF').value='4';
+  document.querySelectorAll('.bearing-card.sel,.opt-btn.sel').forEach(b=>b.classList.remove('sel'));
+  const sf=document.querySelector('#surfGrid .opt-btn'); if(sf)sf.classList.add('sel');
+  showStep(1);
+}
+
+const HELP={
+  acc:{title:'이송 가속도', desc:'픽앤플레이스 이송 시 워크에 걸리는 가속도(m/s²)입니다.\n필요 흡착력 = 질량 × (중력 g + 이송가속) × 안전계수.\n정지 유지만이면 0으로 두세요. 고속 이송이면 실제 가속도를 입력합니다.'},
+  sf:{title:'안전계수 (자세)', desc:'흡착 자세에 따른 안전계수입니다.\n· 수평 들기·수직 이송: 4\n· 수직 흡착·측면(전단): 8\n· 정지 유지(이송 없음): 2\n\n워크가 얇거나 통기성이 있으면 더 높게 잡으세요. (SMC·업계 기준)'},
+  vac:{title:'진공압 (게이지)', desc:'대기압 대비 진공의 크기(kPa)입니다.\n일반 진공펌프·이젝터로 -60~-90 kPa를 얻습니다.\n흡착력 = 유효면적 × 진공압 이므로 진공압이 클수록 흡착력이 커집니다.\n통기성 워크는 도달 진공이 낮아질 수 있습니다.'},
+};
+function openHelp(k){ const h=HELP[k]; if(!h)return; document.getElementById('help-title').textContent=h.title; document.getElementById('help-desc').innerHTML=h.desc.replace(/\n/g,'<br>'); document.getElementById('help-overlay').style.display='flex'; }
+function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')) document.getElementById('help-overlay').style.display='none'; }
+
+initTypeGrid();
+window.VacuumPadCalc={ requiredForce, padForceCircle, padForceOval, padsNeeded, selectPad, STD_DIA, SF_BY_POS };
+</script>
+<script src="js/common.js"></script>
+</body></html>
