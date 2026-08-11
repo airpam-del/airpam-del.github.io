@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>진공 흡착패드 선정 방법 — 흡착력·안전계수·패드 수 계산 절차 | PartsOn</title>
+<meta name="description" content="진공 흡착패드(평형·벨로우즈·스폰지·타원) 선정 방법을 단계별로 정리했습니다. 흡착력=면적×진공압, 자세별 안전계수(4·8·2), 필요 패드 수 산출, 형상-표면 매칭까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="진공패드 선정, 흡착패드, 흡착력 계산, 안전계수, 벨로우즈 패드, 스폰지 패드, 필요 패드 수, 픽앤플레이스, SMC ZP">
+<link rel="canonical" href="https://partson.co.kr/guide-vacuum-pad.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PartsOn">
+<meta property="og:title" content="진공 흡착패드 선정 방법 — 흡착력·안전계수·패드 수 계산 절차">
+<meta property="og:description" content="흡착력=면적×진공압, 자세별 안전계수, 필요 패드 수까지. 예제와 함께 보는 진공패드 선정 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-vacuum-pad.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "진공 흡착패드 선정 방법 — 흡착력·안전계수·패드 수 계산 절차",
+  "description": "진공 흡착패드 선정 절차, 흡착력=면적×진공압 계산, 자세별 안전계수, 필요 패드 수 산출을 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-08-11",
+  "dateModified": "2026-08-11",
+  "mainEntityOfPage": "https://partson.co.kr/guide-vacuum-pad.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "진공패드 흡착력은 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "패드 1개 흡착력 = 유효 흡착면적 × 진공압으로 계산합니다. 원형 패드는 A=π(지름/2)², 타원은 A=π×장반경×단반경입니다. 예로 지름 40mm 패드를 -70kPa로 흡착하면 이론 흡착력은 약 88N입니다."}},
+    {"@type": "Question", "name": "안전계수는 자세에 따라 얼마로 잡나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "수평 들기·수직 이송은 4, 수직 흡착·측면(전단)은 8, 정지 유지만이면 2를 기준으로 잡습니다(SMC·업계 기준). 워크가 얇거나 통기성이 있거나 표면이 불안정하면 더 높게 잡습니다."}},
+    {"@type": "Question", "name": "필요 패드 수는 어떻게 정하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "필요 흡착력(= 질량 × (중력 + 이송가속) × 안전계수)을 패드 1개 흡착력으로 나눈 뒤 올림합니다. 여러 개를 쓸 때는 워크 무게중심에 대칭으로 배치하고 워크 강성을 고려합니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>진공 흡착패드 선정 방법 — 흡착력·안전계수·패드 수 계산 절차</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.08 업데이트</div>
+
+<p>진공 흡착패드는 대기압과 진공의 압력차로 워크를 잡는 픽앤플레이스의 핵심 부품입니다. 워크 표면(평면·곡면·거침)에 맞는 형상을 고르고, 필요 흡착력을 자세별 안전계수로 산출해 패드 크기·개수를 정합니다. 이 글에서는 표준식과 SMC ZP 규격 기준으로 선정 절차를 예제와 함께 정리합니다.</p>
+
+<h2>1. 선정에 필요한 조건 정리</h2>
+<ul>
+<li><strong>워크 질량 m</strong> — 잡을 대상의 질량 (kg)</li>
+<li><strong>흡착 자세</strong> — 수평 들기 / 수직·측면 / 정지 유지 (안전계수 결정)</li>
+<li><strong>이송 가속도</strong> — 픽앤플레이스 이송 시 가속 (m/s²)</li>
+<li><strong>워크 표면</strong> — 평면 / 곡면·단차 / 거침·요철 (형상 결정)</li>
+<li><strong>진공압</strong> — 진공펌프·이젝터 도달 진공 (kPa)</li>
+</ul>
+
+<h2>2. 형상 선택</h2>
+<p>워크 표면과 추종성에 맞는 형상을 고릅니다.</p>
+<table>
+<tr><th>형상</th><th>적합 표면</th><th>추종성</th><th>흡착력</th></tr>
+<tr><td>평형(flat)</td><td>평면·매끈</td><td>낮음</td><td>높음</td></tr>
+<tr><td>벨로우즈</td><td>곡면·단차·경사</td><td>높음</td><td>중간</td></tr>
+<tr><td>스폰지</td><td>거침·요철·다공</td><td>매우 높음</td><td>낮음</td></tr>
+<tr><td>타원(oval)</td><td>길고 좁은 면</td><td>낮음</td><td>중~높음</td></tr>
+</table>
+
+<h2>3. 필요 흡착력 계산 (안전계수)</h2>
+<div class="formula">필요 흡착력 F = 질량 m × (중력 g + 이송가속 a) × 안전계수 SF<br><br>SF: 수평 들기·수직 이송 4 / 수직·측면(전단) 8 / 정지 유지 2 (g = 9.81 m/s²)</div>
+<div class="tip"><strong>안전계수:</strong> 워크가 얇거나 통기성이 있거나 표면이 불안정하면 기준보다 높게 잡으세요. 진공 누설·순간 정전에 대비한 여유입니다.</div>
+
+<h2>4. 패드 1개 흡착력 = 면적 × 진공압</h2>
+<div class="formula">원형 패드: F<sub>pad</sub> = π(지름/2)² × 진공압<br>타원 패드: F<sub>pad</sub> = π × 장반경 × 단반경 × 진공압<br><br>(면적 m², 진공압 Pa → 힘 N. 예: ø40 mm, -70 kPa → 약 88 N)</div>
+<p>유효 흡착면적은 립 접촉·누설로 명목 면적보다 다소 작습니다. 실무에서는 명목 지름으로 이론력을 계산하고 <strong>안전계수가 그 여유를 흡수</strong>합니다.</p>
+
+<h2>5. 필요 패드 수</h2>
+<div class="formula">필요 패드 수 N = ⌈ 필요 흡착력 ÷ 패드 1개 흡착력 ⌉</div>
+<p>여러 개를 쓸 때는 워크 <strong>무게중심에 대칭</strong>으로 배치하고, 워크 강성(휨)과 흡착 위치를 고려합니다. 지름을 키우면 패드 수를 줄일 수 있고, 지름을 줄이면 배치 자유도가 커집니다.</p>
+
+<h2>6. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>워크 질량</td><td>2 kg (평판, 평면)</td></tr>
+<tr><td>자세 / 이송가속</td><td>수평 들기(SF 4) / 0</td></tr>
+<tr><td>진공압</td><td>-70 kPa</td></tr>
+</table>
+<p>필요 흡착력 F = 2 × 9.81 × 4 ≈ <strong>78.5 N</strong>. 평형 패드 ø20 mm의 1개 흡착력은 π(0.01)² × 70,000 ≈ <strong>22 N</strong>이므로, 필요 패드 수 = 78.5 ÷ 22 = 3.6 → <strong>4개</strong>. 합계 88 N으로 필요 흡착력을 넘습니다. 더 적은 개수를 원하면 ø32(1개 약 56 N)로 2개를 쓸 수 있습니다.</p>
+
+<h2>7. 진공발생·통기성 확인</h2>
+<p>흡착력은 <strong>도달 진공압</strong>에 비례하므로, 진공펌프·이젝터의 유량·도달 진공이 충분한지 확인합니다. 골판지·목재처럼 <strong>통기성</strong>이 있는 워크는 누설로 도달 진공이 낮아지므로, 유량이 큰 발생기와 큰 패드·스폰지 형상을 검토합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/vacuum-pad.html">→ 진공 흡착패드 선정 계산기에서 직접 계산해보기 (무료, 회원가입 불필요)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 곡면 워크는 어떤 패드를 쓰나요?</h3>
+<p>곡면·단차·경사면은 주름이 있는 벨로우즈 패드가 표면을 잘 추종해 안정적으로 흡착합니다. 표면이 거칠거나 다공성이면 스폰지 패드가 유리합니다. 평면·매끈한 면은 평형 패드가 흡착력·위치 정밀도에서 가장 좋습니다.</p>
+<h3>Q. 패드 재질은 어떻게 고르나요?</h3>
+<p>NBR은 범용·내마모, 실리콘은 고온·식품, 우레탄은 내마모·비마킹, 도전성 재질은 정전기 대응에 적합합니다. 워크 오염(마킹)이 문제면 비마킹·마크프리 패드를 선택하세요.</p>
+<h3>Q. SMC 외에 다른 브랜드도 쓸 수 있나요?</h3>
+<p>Festo·CKD·PIAB·Schmalz 등도 다양한 형상의 진공패드를 취급합니다. 형상·유효면적·흡착력이 맞으면 다른 브랜드에서도 같은 조건의 패드를 대조해 선택할 수 있습니다. 스펙은 각 사 카탈로그로 확인하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-gripper.html">공압 그리퍼 선정</a> · <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-electric-actuator.html">전동 액추에이터 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

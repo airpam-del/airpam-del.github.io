@@ -27,7 +27,8 @@ var CALCULATORS = [
   { file: 'pneumatic-fitting.html', cat: 'pneumatic', desk: '피팅/튜빙 선정',      mob: '피팅/튜빙 선정' },
   { file: 'pneumatic-fr-unit.html', cat: 'pneumatic', desk: '공기압 조절 유닛 선정', mob: '공기압 조절 유닛 선정' },
   { file: 'pneumatic-gripper.html', cat: 'pneumatic', desk: '공압 그리퍼 선정',     mob: '공압 그리퍼 선정' },
-  { file: 'speed-controller.html',  cat: 'pneumatic', desk: '스피드 컨트롤러 선정',  mob: '스피드 컨트롤러 선정' }
+  { file: 'speed-controller.html',  cat: 'pneumatic', desk: '스피드 컨트롤러 선정',  mob: '스피드 컨트롤러 선정' },
+  { file: 'vacuum-pad.html',        cat: 'pneumatic', desk: '진공 흡착패드 선정',    mob: '진공 흡착패드 선정' }
 ];
 
 /* 현재 페이지 파일명 */
