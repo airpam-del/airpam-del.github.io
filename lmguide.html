@@ -224,6 +224,16 @@
 .print-header{display:none}
 .print-pdf-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;background:#1A3A2A;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin:1rem 0;font-family:inherit;transition:background .15s}
 .print-pdf-btn:hover{background:#2D6B4A}
+/* ── 견적 문의 / 이메일 버튼 ── */
+.inq-row{display:flex;gap:8px;margin:4px 0 14px}
+.inq-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:48px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.inq-btn-primary{background:#1A3A2A;color:#fff;box-shadow:0 2px 8px rgba(26,58,42,.22)}
+.inq-btn-primary:hover{background:#2D6B4A}
+.pdf-row{display:flex;gap:8px;margin:1rem 0;flex-wrap:wrap}
+.pdf-row .print-pdf-btn{margin:0;flex:1;min-width:180px}
+.email-btn{flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:8px;height:44px;background:#0071B8;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.email-btn:hover{background:#0088CC}
+@media print{.inq-row,.pdf-row,.email-btn{display:none!important}}
 /* ── CAD 도면 다운로드 ── */
 .cad-section{margin-top:1.25rem;background:var(--accent);border-radius:12px;padding:1.25rem 1.5rem}
 .cad-section-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:.9rem;display:flex;align-items:center;gap:8px}
@@ -444,6 +454,13 @@
         <div><div class="rec-label">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="s-rec-model">size 15</div></div>
         <div class="rec-specs" id="s-rec-specs">예상 수명 378,426 km<br>184.6년 · 안전율 24.4배</div>
       </div>
+      <div class="inq-row">
+        <button class="inq-btn inq-btn-primary" onclick="lmInquiry('s',false)">📩 이 사양으로 견적 문의</button>
+      </div>
+      <div class="supplier-section hidden" id="s-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="s-supplier-list"></div>
+      </div>
       <div class="safety-row safety-ok" id="s-safety-row"><div class="dot"></div><span id="s-safety-text">적합 — 안전율 및 수명 기준 충족</span></div>
       <div class="compare-section">
         <div class="compare-header">사이즈별 비교 검토</div>
@@ -469,16 +486,15 @@
       </div>
       <div class="note">※ 최대속도의 65% 평균속도 적용 (간이 계산). 정밀 계산은 Advanced 탭을 이용하세요.</div>
       <div class="note">※ TBI·PMI의 정정격하중(C₀)은 추정값입니다. 정확한 값은 메이커 카탈로그를 확인하세요.</div>
-      <div class="supplier-section hidden" id="s-supplier-section">
-        <div class="supplier-section-title">공급사 연결</div>
-        <div class="supplier-list" id="s-supplier-list"></div>
-      </div>
       <div class="cad-section hidden" id="s-cad-section">
         <div class="cad-section-title">CAD 도면 다운로드</div>
         <div class="cad-btns" id="s-cad-btns"></div>
         <div class="cad-note">※ 버튼 클릭 후 해당 제조사 페이지에서 사이즈를 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
       </div>
-      <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
+      <div class="pdf-row">
+        <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
+        <button class='email-btn' onclick="lmInquiry('s',true)">📧 결과를 이메일로 받기</button>
+      </div>
     </div>
   </div>
 
@@ -625,6 +641,13 @@
         <div><div class="rec-label">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="a-rec-model">—</div></div>
         <div class="rec-specs" id="a-rec-specs">—</div>
       </div>
+      <div class="inq-row">
+        <button class="inq-btn inq-btn-primary" onclick="lmInquiry('a',false)">📩 이 사양으로 견적 문의</button>
+      </div>
+      <div class="supplier-section hidden" id="a-supplier-section">
+        <div class="supplier-section-title">공급사 연결</div>
+        <div class="supplier-list" id="a-supplier-list"></div>
+      </div>
       <div class="safety-row" id="a-safety-row"><div class="dot"></div><span id="a-safety-text">—</span></div>
       <div class="compare-section">
         <div class="compare-header">사이즈별 비교 검토</div>
@@ -650,14 +673,14 @@
       </div>
       <div class="note">※ Bosch Rexroth NRTVG · THK HSR · HIWIN HGH · TBI TRH · PMI MSA 5개사 C₁₀₀ 평균값 기준 (ISO 14728-1). 최종 선정은 제조사 카탈로그로 검증하시기 바랍니다.</div>
       <div class="note">※ TBI·PMI의 정정격하중(C₀)은 추정값입니다. 정확한 값은 메이커 카탈로그를 확인하세요.</div>
-      <div class="supplier-section hidden" id="a-supplier-section">
-        <div class="supplier-section-title">공급사 연결</div>
-        <div class="supplier-list" id="a-supplier-list"></div>
-      </div>
       <div class="cad-section hidden" id="a-cad-section">
         <div class="cad-section-title">📐 CAD 도면 다운로드</div>
         <div class="cad-btns" id="a-cad-btns"></div>
         <div class="cad-note">※ TraceParts에서 사이즈를 직접 선택해 다운로드하세요. 링크가 작동하지 않으면 <a href="https://www.traceparts.com" target="_blank" rel="noopener">traceparts.com</a>에서 직접 검색하세요.</div>
+      </div>
+      <div class="pdf-row">
+        <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
+        <button class='email-btn' onclick="lmInquiry('a',true)">📧 결과를 이메일로 받기</button>
       </div>
     </div>
   </div>
@@ -1235,6 +1258,16 @@ function lmDoPrint(){
   const d = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
   ['lm-print-date','lm-print-date2'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=d;});
   window.print();
+}
+
+/* 견적 문의 — 해당 탭(s/a)의 추천 모델·사양을 읽어 공통 모달 호출 */
+function lmInquiry(tab, emailOnly){
+  var modelEl = document.getElementById(tab + '-rec-model');
+  var specEl  = document.getElementById(tab + '-rec-specs');
+  var model = modelEl ? modelEl.textContent.trim() : '';
+  var spec  = specEl ? specEl.innerHTML.replace(/<br\s*\/?>/gi, ' · ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim() : '';
+  if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('LM Guide 견적 문의'); return; }
+  poOpenInquiry({ calc: 'LM Guide 선정', model: model, spec: spec, emailOnly: !!emailOnly });
 }
 </script>
 

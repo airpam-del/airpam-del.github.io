@@ -152,3 +152,127 @@ if (document.readyState === 'loading') {
 } else {
   poInitNav();
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   견적 문의 (구글 앱스스크립트 웹앱 → 시트 기록 + Gmail 알림)
+   ▶ 엔드포인트는 여기 한 곳에서 관리 (URL만 바꾸면 전 계산기 반영)
+   ▶ 각 계산기: poOpenInquiry({calc, model, spec, emailOnly}) 호출만
+   ▶ CORS 프리플라이트 회피: Content-Type text/plain + mode:no-cors 단순요청
+   ═══════════════════════════════════════════════════════════════ */
+var INQUIRY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwHsYy-IOmiKPy5WenV3SLvoCNGaiFa3Ul5ta2bUPw13WJGpsx93aVZmoqWdId5Ik9AfA/exec';
+var INQUIRY_FALLBACK_EMAIL = 'airpam@naver.com';
+var _poInqCtx = { calc: '', model: '', spec: '', emailOnly: false };
+
+function poEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function poValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+function poInjectInquiryUI() {
+  if (document.getElementById('po-inq-overlay')) return;
+  var style = document.createElement('style');
+  style.textContent = [
+    '#po-inq-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:16px;font-family:inherit}',
+    '#po-inq-overlay.open{display:flex}',
+    '.po-inq-box{background:#fff;border-radius:14px;max-width:420px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.28)}',
+    '.po-inq-head{background:var(--accent,#1A3A2A);color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}',
+    '.po-inq-head h3{font-size:16px;font-weight:600;margin:0}',
+    '.po-inq-x{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:7px;font-size:14px;cursor:pointer;line-height:1}',
+    '.po-inq-body{padding:18px 20px}',
+    '.po-inq-ctx{background:#F4F2ED;border-radius:9px;padding:11px 13px;font-size:12px;color:#4B5563;line-height:1.7;margin-bottom:15px}',
+    '.po-inq-ctx b{color:var(--accent,#1A3A2A)}',
+    '.po-inq-f{margin-bottom:11px}',
+    '.po-inq-f label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}',
+    '.po-inq-f input,.po-inq-f textarea{width:100%;border:1.5px solid #D8D4CC;border-radius:8px;padding:9px 11px;font-size:14px;font-family:inherit;color:#1A1814;outline:none;background:#FAFBFC}',
+    '.po-inq-f input:focus,.po-inq-f textarea:focus{border-color:var(--accent-mid,#2D6B4A);background:#fff}',
+    '.po-inq-f textarea{resize:vertical;min-height:52px}',
+    '.po-inq-req{color:#B91C1C}',
+    '.po-inq-submit{width:100%;height:46px;background:var(--accent,#1A3A2A);color:#fff;border:none;border-radius:9px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit}',
+    '.po-inq-submit:disabled{opacity:.6;cursor:default}',
+    '.po-inq-err{font-size:12px;color:#B91C1C;margin-top:9px;display:none}',
+    '.po-inq-priv{font-size:10.5px;color:#9E9B96;margin-top:11px;line-height:1.6}',
+    '.po-inq-done{padding:34px 22px;text-align:center;display:none}',
+    '.po-inq-done .po-ic{font-size:40px;line-height:1}',
+    '.po-inq-done h4{font-size:17px;color:var(--accent,#1A3A2A);margin:12px 0 6px}',
+    '.po-inq-done p{font-size:13px;color:#4B5563;line-height:1.7;margin:0}',
+    '.po-inq-done a{color:var(--accent-mid,#2D6B4A);font-weight:600}',
+    '.po-inq-close2{margin-top:18px;height:40px;padding:0 20px;background:#F4F2ED;color:#4B5563;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}'
+  ].join('');
+  document.head.appendChild(style);
+  var ov = document.createElement('div');
+  ov.id = 'po-inq-overlay';
+  ov.innerHTML =
+    '<div class="po-inq-box" role="dialog" aria-modal="true">' +
+      '<div class="po-inq-head"><h3 id="po-inq-title">📩 견적 문의</h3><button class="po-inq-x" onclick="poCloseInquiry()" aria-label="닫기">✕</button></div>' +
+      '<div class="po-inq-body" id="po-inq-form">' +
+        '<div class="po-inq-ctx" id="po-inq-ctx"></div>' +
+        '<div class="po-inq-f" id="po-inq-f-name"><label>이름 <span class="po-inq-req">*</span></label><input id="po-inq-name" type="text" autocomplete="name"></div>' +
+        '<div class="po-inq-f" id="po-inq-f-phone"><label>연락처 <span class="po-inq-req">*</span></label><input id="po-inq-phone" type="tel" autocomplete="tel" placeholder="010-0000-0000"></div>' +
+        '<div class="po-inq-f"><label>이메일 <span class="po-inq-req">*</span></label><input id="po-inq-email" type="email" autocomplete="email" placeholder="name@company.com"></div>' +
+        '<div class="po-inq-f" id="po-inq-f-company"><label>회사 (선택)</label><input id="po-inq-company" type="text" autocomplete="organization"></div>' +
+        '<div class="po-inq-f" id="po-inq-f-memo"><label>메모 (선택)</label><textarea id="po-inq-memo" placeholder="수량 · 납기 · 요청사항 등"></textarea></div>' +
+        '<button class="po-inq-submit" id="po-inq-submit" onclick="poSubmitInquiry()">문의 보내기</button>' +
+        '<div class="po-inq-err" id="po-inq-err"></div>' +
+        '<div class="po-inq-priv">입력하신 정보는 견적 응대 목적으로만 사용됩니다.</div>' +
+      '</div>' +
+      '<div class="po-inq-done" id="po-inq-done"></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function (e) { if (e.target === ov) poCloseInquiry(); });
+}
+
+function poOpenInquiry(ctx) {
+  poInjectInquiryUI();
+  ctx = ctx || {};
+  _poInqCtx = { calc: ctx.calc || '부품 선정', model: ctx.model || '', spec: ctx.spec || '', emailOnly: !!ctx.emailOnly };
+  document.getElementById('po-inq-form').style.display = 'block';
+  document.getElementById('po-inq-done').style.display = 'none';
+  document.getElementById('po-inq-title').textContent = _poInqCtx.emailOnly ? '📧 결과를 이메일로 받기' : '📩 견적 문의';
+  document.getElementById('po-inq-ctx').innerHTML = '<b>' + poEsc(_poInqCtx.calc) + '</b>' +
+    (_poInqCtx.model ? ' · 추천 <b>' + poEsc(_poInqCtx.model) + '</b>' : '') +
+    (_poInqCtx.spec ? '<br>' + poEsc(_poInqCtx.spec) : '');
+  ['name', 'phone', 'company', 'memo'].forEach(function (f) {
+    var el = document.getElementById('po-inq-f-' + f); if (el) el.style.display = _poInqCtx.emailOnly ? 'none' : 'block';
+  });
+  document.getElementById('po-inq-submit').textContent = _poInqCtx.emailOnly ? '이메일로 결과 받기' : '문의 보내기';
+  document.getElementById('po-inq-submit').disabled = false;
+  document.getElementById('po-inq-err').style.display = 'none';
+  ['po-inq-name', 'po-inq-phone', 'po-inq-email', 'po-inq-company', 'po-inq-memo'].forEach(function (id) { var e = document.getElementById(id); if (e) e.value = ''; });
+  document.getElementById('po-inq-overlay').classList.add('open');
+  setTimeout(function () { var f = document.getElementById(_poInqCtx.emailOnly ? 'po-inq-email' : 'po-inq-name'); if (f) f.focus(); }, 40);
+}
+function poCloseInquiry() { var o = document.getElementById('po-inq-overlay'); if (o) o.classList.remove('open'); }
+function poInqErr(msg) { var e = document.getElementById('po-inq-err'); e.textContent = msg; e.style.display = 'block'; }
+
+function poSubmitInquiry() {
+  var email = document.getElementById('po-inq-email').value.trim();
+  var eo = _poInqCtx.emailOnly;
+  var name = eo ? '' : document.getElementById('po-inq-name').value.trim();
+  var phone = eo ? '' : document.getElementById('po-inq-phone').value.trim();
+  var company = eo ? '' : document.getElementById('po-inq-company').value.trim();
+  var memo = eo ? '결과 이메일 요청' : document.getElementById('po-inq-memo').value.trim();
+  document.getElementById('po-inq-err').style.display = 'none';
+  if (!poValidEmail(email)) { poInqErr('올바른 이메일 주소를 입력해 주세요.'); document.getElementById('po-inq-email').focus(); return; }
+  if (!eo) {
+    if (!name) { poInqErr('이름을 입력해 주세요.'); return; }
+    if (!phone) { poInqErr('연락처를 입력해 주세요.'); return; }
+  }
+  var payload = { calc: _poInqCtx.calc, model: _poInqCtx.model, spec: _poInqCtx.spec, name: name, phone: phone, email: email, company: company, memo: memo, ts: new Date().toISOString(), page: (location.pathname.split('/').pop() || 'index.html') };
+  var btn = document.getElementById('po-inq-submit');
+  btn.disabled = true; btn.textContent = '전송 중…';
+  fetch(INQUIRY_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
+    .then(function () { poInqDone(true); })
+    .catch(function () { poInqDone(false); });
+}
+function poInqDone(ok) {
+  document.getElementById('po-inq-form').style.display = 'none';
+  var d = document.getElementById('po-inq-done'); d.style.display = 'block';
+  var eo = _poInqCtx.emailOnly;
+  if (ok) {
+    d.innerHTML = '<div class="po-ic">✅</div><h4>' + (eo ? '요청이 접수되었습니다' : '문의가 접수되었습니다') + '</h4>' +
+      '<p>' + (eo ? '입력하신 이메일로 결과를 보내드리겠습니다.' : '확인 후 빠르게 연락드리겠습니다. 감사합니다.') + '</p>' +
+      '<button class="po-inq-close2" onclick="poCloseInquiry()">닫기</button>';
+  } else {
+    d.innerHTML = '<div class="po-ic">⚠️</div><h4>전송에 실패했습니다</h4>' +
+      '<p>네트워크 확인 후 다시 시도하시거나,<br>아래로 직접 연락 주세요.<br><a href="mailto:' + INQUIRY_FALLBACK_EMAIL + '">' + INQUIRY_FALLBACK_EMAIL + '</a></p>' +
+      '<button class="po-inq-close2" onclick="poCloseInquiry()">닫기</button>';
+  }
+}
