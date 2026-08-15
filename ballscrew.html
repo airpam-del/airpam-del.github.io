@@ -687,6 +687,10 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:1.5rem}
         <div><div class="rec-lbl">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="s-rec-model">—</div></div>
         <div class="rec-specs" id="s-rec-specs">—</div>
       </div>
+      <div class="po-inq-row">
+        <button class="po-inq-primary" onclick="bsInquiry('s',false)">📩 이 사양으로 견적 문의</button>
+        <button class="po-inq-email" onclick="bsInquiry('s',true)">📧 결과 이메일로 받기</button>
+      </div>
       <div class="safety" id="s-safety-row"><div class="dot"></div><span id="s-safety-text">—</span></div>
       <div style="margin-top:1rem">
         <div class="section-title-sm">사이즈별 비교 검토</div>
@@ -791,6 +795,10 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:1.5rem}
         <div class="res-item"><div class="r-lbl">모멘트 Mz</div><div class="r-val" id="a-res-mz">—</div><div class="r-unit">kgf·mm</div></div>
       </div>
       <div class="rec-row"><div><div class="rec-lbl">5개사 평균 기준 추천 사이즈</div><div class="rec-model" id="a-rec-model">—</div></div><div class="rec-specs" id="a-rec-specs">—</div></div>
+      <div class="po-inq-row">
+        <button class="po-inq-primary" onclick="bsInquiry('a',false)">📩 이 사양으로 견적 문의</button>
+        <button class="po-inq-email" onclick="bsInquiry('a',true)">📧 결과 이메일로 받기</button>
+      </div>
       <div class="safety" id="a-safety-row"><div class="dot"></div><span id="a-safety-text">—</span></div>
       <div style="margin-top:1rem">
         <div class="section-title-sm">사이즈별 비교 검토</div>
@@ -1561,6 +1569,16 @@ function bsDoPrint(){
   document.getElementById('bs-print-date').textContent =
     new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric'}) + ' 계산';
   window.print();
+}
+function bsInquiry(tab, emailOnly){
+  var mEl = document.getElementById(tab+'-rec-model');
+  var sEl = document.getElementById(tab+'-rec-specs');
+  var model = mEl ? (mEl.textContent||'').trim() : '';
+  if (model === '—') model = '';
+  var spec = sEl ? (sEl.textContent||'').replace(/\s+/g,' ').trim() : '';
+  if (spec === '—') spec = '';
+  if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('볼스크류 견적 문의'); return; }
+  poOpenInquiry({ calc: '볼스크류 선정', model: model, spec: spec.slice(0,300), emailOnly: !!emailOnly });
 }
 </script>
 

@@ -145,7 +145,49 @@ function renderMobileNav() {
   });
 }
 
-function poInitNav() { renderNav(); renderMobileNav(); }
+function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); }
+
+/* 결과 영역 문의 버튼 스타일 (로드 시 주입) */
+function poInjectResultBtnCSS() {
+  if (document.getElementById('po-inq-btn-style')) return;
+  var st = document.createElement('style'); st.id = 'po-inq-btn-style';
+  st.textContent = [
+    '.po-inq-row{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 14px}',
+    '.po-inq-row button{flex:1;min-width:168px;display:flex;align-items:center;justify-content:center;gap:7px;height:48px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}',
+    '.po-inq-primary{background:var(--accent,#1A3A2A);color:#fff;box-shadow:0 2px 8px rgba(26,58,42,.22)}',
+    '.po-inq-primary:hover{filter:brightness(1.12)}',
+    '.po-inq-email{background:#0071B8;color:#fff}',
+    '.po-inq-email:hover{background:#0088CC}',
+    '@media print{.po-inq-row{display:none!important}}'
+  ].join('');
+  (document.head || document.documentElement).appendChild(st);
+}
+
+/* hero-card 계열 계산기 공통 문의 (heroModel/heroDim/heroCap 자동 읽기) */
+function poInquiryHero(calcName, emailOnly) {
+  var m = document.getElementById('heroModel'), d = document.getElementById('heroDim'), c = document.getElementById('heroCap');
+  var model = m ? m.textContent.trim() : '';
+  var parts = [];
+  [d, c].forEach(function (e) { if (e) { var t = e.textContent.trim(); if (t && t !== '—') parts.push(t); } });
+  if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:' + 'airpam@naver.com'; return; }
+  poOpenInquiry({ calc: calcName, model: model, spec: parts.join(' · '), emailOnly: !!emailOnly });
+}
+
+/* 범용 문의 리더 — 여러 결과 구조에서 추천 모델/사양을 best-effort로 읽음 */
+function poText(sel) { try { var e = document.querySelector(sel); if (!e) return ''; var t = (e.textContent || '').trim(); return t === '—' ? '' : t; } catch (x) { return ''; } }
+function poInquiryAuto(calcName, emailOnly) {
+  var model = poText('#heroModel');
+  if (!model) { var mk = poText('.result-card .rc-maker'), md = poText('.result-card .rc-model'); model = (mk + ' ' + md).trim(); }
+  if (!model) model = poText('#cmp-selected-name') || poText('#s-rec-model') || poText('#a-rec-model');
+  if (!model) model = poText('#nav-model') || poText('.rh-model');
+  var spec = '';
+  var hd = poText('#heroDim'), hc = poText('#heroCap');
+  if (hd || hc) spec = [hd, hc].filter(Boolean).join(' · ');
+  else spec = poText('#result-desc') || poText('#result-summary-bar') || poText('.rh-specs') || poText('#result-card');
+  spec = (spec || '').replace(/\s+/g, ' ').trim();
+  if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:' + 'airpam@naver.com'; return; }
+  poOpenInquiry({ calc: calcName, model: model, spec: spec.slice(0, 300), emailOnly: !!emailOnly });
+}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', poInitNav);
