@@ -1058,6 +1058,10 @@ function bsRender(){
       <div class="result-hero-main">φ${r.d0} × 리드 ${r.lead} mm</div>
       <div class="result-hero-sub">지지: ${supportLabel} &nbsp;·&nbsp; 유효 길이 ≈ ${Math.round(r.Ls*1000)} mm &nbsp;·&nbsp; 골지름 ${r.dr} mm<br>운전 ${Math.round(r.nm_op)} rpm &nbsp;·&nbsp; 허용 상한 ${Math.round(r.nm_allowed)} rpm</div>
     </div>
+    <div class="po-inq-row">
+      <button class="po-inq-primary" onclick="bsInquiry('wiz',false)">📩 이 사양으로 견적 문의</button>
+      <button class="po-inq-email" onclick="bsInquiry('wiz',true)">📧 결과 이메일로 받기</button>
+    </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
       <div class="check-card ${lifeClass}">
         <div class="check-label">수명 L₁₀</div>
@@ -1571,11 +1575,19 @@ function bsDoPrint(){
   window.print();
 }
 function bsInquiry(tab, emailOnly){
-  var mEl = document.getElementById(tab+'-rec-model');
-  var sEl = document.getElementById(tab+'-rec-specs');
-  var model = mEl ? (mEl.textContent||'').trim() : '';
+  var model = '', spec = '';
+  if (tab === 'wiz') {
+    var mW = document.querySelector('#bs-result-body .result-hero-main');
+    var sW = document.querySelector('#bs-result-body .result-hero-sub');
+    model = mW ? (mW.textContent||'').replace(/\s+/g,' ').trim() : '';
+    spec  = sW ? (sW.textContent||'').replace(/\s+/g,' ').trim() : '';
+  } else {
+    var mEl = document.getElementById(tab+'-rec-model');
+    var sEl = document.getElementById(tab+'-rec-specs');
+    model = mEl ? (mEl.textContent||'').trim() : '';
+    spec  = sEl ? (sEl.textContent||'').replace(/\s+/g,' ').trim() : '';
+  }
   if (model === '—') model = '';
-  var spec = sEl ? (sEl.textContent||'').replace(/\s+/g,' ').trim() : '';
   if (spec === '—') spec = '';
   if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('볼스크류 견적 문의'); return; }
   poOpenInquiry({ calc: '볼스크류 선정', model: model, spec: spec.slice(0,300), emailOnly: !!emailOnly });
