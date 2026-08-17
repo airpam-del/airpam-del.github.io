@@ -69,22 +69,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | timing-belt | PITCH (Gates GT2) | 파워레이팅 | O | Gates PowerGrip GT2 DDM (페이지·확인일 없음) |
 | linear-motor | LM_DB (HIWIN LMSA/LMC/LMFA) | 연속·피크추력·질량 | O | HIWIN 리니어모터 카탈로그 (버전·확인일 없음) |
 | electric-actuator | LEY (SMC LEY) | 워크로드·푸싱력·속도 | O | SMC LEY 사양표 (문서번호·확인일 없음) |
-| lmguide | MAKER_DATA (5개사 LM가이드) | C₁₀₀ 정격 | P | 5개사 평균·ISO 14728-1, 페이지/확인일 없음 |
-| ballscrew | BS_DATA (THK/HIWIN/TBI/Rexroth) | C·C0·골지름 | P | 4개사 평균(그라운드), 페이지/확인일 없음 |
+| lmguide | MAKER_DATA (5개사 LM가이드) | C₁₀₀ 정격 | O | 5개사 평균·ISO 14728-1, 출처+확인일 2026-08 |
+| ballscrew | BS_DATA (THK/HIWIN/TBI/Rexroth) | C·C0·골지름 | O | 4개사 평균(그라운드), 출처+확인일 2026-08 |
 | bearing | BRG_DB (NSK: DGBB 6000/6200/6300·ACBB 7200/7300·CRB NJ·SBB 1200/1300·SRB 22200/22300) | C·C0·허용회전수 | O | NSK 카탈로그, DGBB 대표형번(6205/6206/6210) 대조 완료(2026-08). ⚠️ CRB는 구정격(비-E) 주의 |
-| pneumatic-cylinder | MAKERS (SMC) | 시리즈 보어범위 | P | 구조 주석만, 카탈로그 출처 없음 (면적표는 기하계산) |
-| pneumatic-fitting | FITTING_DATA (SMC KQ2/TU/TS) | 튜브OD·qMax | P | 시리즈·qMax 공식화(2026-07), 페이지/확인일 없음 |
-| pneumatic-fr-unit | FR_DATA (SMC AW 등) | 유량·압력범위 | P | url·시리즈, 값 카탈로그 페이지/확인일 없음 |
-| pneumatic-gripper | MAKERS (SMC MHZ2 등) | 파지력 | P | url·조건(0.5MPa/L20), 2026-07 검증, 페이지 없음 |
-| electric-gripper | MAKERS (Schunk EGP 등) | 파지력·스트로크 | P | url·완제품 필터링, 페이지/확인일 없음 |
-| vacuum-pad | STD_DIA (SMC ZP) | 표준 패드 규격 | P | ZP 시리즈 규격(힘은 물리식 직접계산) |
+| pneumatic-cylinder | MAKERS (SMC) | 시리즈 보어범위 | O | SMC 카탈로그 출처+확인일(면적표는 기하계산) |
+| pneumatic-fitting | FITTING_DATA (SMC KQ2/TU/TS) | 튜브OD·qMax | O | SMC 출처+확인일, qMax 공식화. CKD/Festo는 각 사 기준 |
+| pneumatic-fr-unit | FR_DATA (SMC AW 등) | 유량·압력범위 | P | SMC AW 출처+확인일. ⚠️ CKD W는 실존 미확인(SMC 미러) |
+| pneumatic-gripper | MAKERS (SMC MHZ2 등) | 파지력 | O | SMC 카탈로그, Ø16 외34/내45N 재확인(2026-08) |
+| electric-gripper | MAKERS (Schunk EGP 등) | 파지력·스트로크 | O | Schunk EGP, EGP40 35~140N 재확인(2026-08) |
+| vacuum-pad | STD_DIA (SMC ZP) | 표준 패드 규격 | O | SMC ZP 출처+확인일(힘은 물리식 직접계산) |
 | servo_motor | MOTORS (미쯔비시 HG-KR 등) | 토크·관성 | F | `// TODO: J값 카탈로그 대조 미완`(관성 참고용) |
 | speed-controller | SC_DATA (SMC AS) | 치수 매칭 | F | `⚠️ [추정] TODO`·유량 미검증이라 미포함 명시 |
 | screwjack | ZE_MODELS (ZIMM ZE) | 정격·나사·이송 | O | zimm.com ZE-Series, **하중·Tr나사 8종 전수 일치**(2026-08) |
 | planetary-gearbox | PG_DATA (Neugart PLE/PLN + Apex AB/AD) | 토크·비율·백래시 | P | Neugart 제품페이지 출처, torqueRange는 보수적(T2D~중간) 명시. Apex 원문 대조 미완 |
 | cycloidal-gearbox | CG_DATA (Sumitomo Cyclo/Fine) | 토크·비율·수명 | X | **"제품 데이터" 헤더뿐, 출처 없음** (카탈로그 다운로드 서버 차단 → PDF 확보 대기) |
 
-집계(2026-08-17 보강 후): O 9 · P 9 · F 2 · X 1
+집계(2026-08-17 보강 후): O 15 · P 2 · F 2 · X 1
+(P 잔여: planetary=Apex 원문 대조 미완·Neugart 정밀정격, pneumatic-fr-unit=CKD 실존 미확인 / X: cycloidal=카탈로그 PDF 대기)
 
 ### 리스크 목록 (진행 현황)
 1. ~~**screwjack / ZIMM ZE_MODELS**~~ → ✅ **해소**: zimm.com ZE-Series 카탈로그와 정격하중·Tr나사 전수 일치, 출처 주석 추가(커밋 d56bc9e). 기어비/효율은 라인별 대조 미완.

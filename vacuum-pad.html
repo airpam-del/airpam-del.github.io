@@ -389,7 +389,8 @@ const TYPE_META = {
   oval:    { name:'타원 (oval)', code:'SMC ZP 타원 패드', desc:'길고 좁은 워크. 좁은 폭에 큰 면적.', shape:'oval', fit:['flat'] },
 };
 
-/* 표준 패드 규격 (SMC ZP 기준). 원형=지름 mm, 타원=[장경,단경] mm */
+/* 표준 패드 규격 (SMC ZP 진공패드 카탈로그 기준, smcworld.com, 확인일 2026-08).
+   원형=지름 mm, 타원=[장경,단경] mm. 흡착력은 표값이 아니라 F=π(d/2)²·진공압 물리식으로 직접 계산. */
 const STD_DIA = {
   flat:    [4,6,8,10,15,20,25,32,40,50,63,80,100],
   bellows: [15,20,30,40,50],
