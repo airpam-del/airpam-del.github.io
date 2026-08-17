@@ -24,6 +24,78 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 가이드 글은 guide-lmguide.html을 템플릿으로 (title/OG/JSON-LD/공식/예제/CTA/FAQ 필수)
 - 큰 변경 전에는 어떤 파일을 어떻게 바꿀지 계획을 먼저 보여줄 것
 
+## 데이터 출처 규칙 (2026-08-17 제정)
+
+계산기가 늘면서 생소한 메이커 데이터의 근거를 추적할 수 없는 문제를 막기 위한 규칙.
+**모든 부품/메이커 스펙 데이터(토크·하중·수명·보어·추력·유량·정격 등)에 적용.**
+
+### 1) 출처 주석 필수
+- 데이터 배열/객체(`MODELS`, `*_DATA`, `*_DB`, `MAKERS` 등) **바로 위 또는 옆**에 출처 주석을 단다.
+- 형식:
+  ```js
+  // 출처: <제조사> <카탈로그명/버전> <페이지 또는 URL> (확인일 YYYY-MM)
+  ```
+  예: `// 출처: HIWIN Linear Motor Catalog E11-1 p.42 (확인일 2026-08)`
+- 여러 메이커를 한 배열에 묶으면, 메이커별로 시리즈·출처를 구분해 적는다.
+  (평균·환산값이면 "N개사 평균", "ANR 환산" 등 가공 방식도 명시)
+
+### 2) 근거 미확보 값 표기
+- 출처를 확보하지 못한 값은 **원칙적으로 코드에 넣지 않는다.**
+- 부득이 넣어야 하면 값 옆에 명시:
+  ```js
+  { ..., torque: 12 }, // ⚠️ 추정값 - 근거 미확보
+  ```
+  그리고 **화면(결과)에도 "추정값" 뱃지**를 표시해 사용자가 알 수 있게 한다.
+- 이미 관례로 쓰던 표기(`// TODO: 카탈로그 대조 미완`, `[추정]`)도 같은 의미로 인정하되,
+  신규 작성 시에는 `⚠️ 추정값 - 근거 미확보`로 통일한다.
+
+### 3) 커밋 게이트
+- **새 메이커/데이터를 추가하거나 값을 바꿀 때, 출처 주석(또는 추정값 표기)이 없으면 커밋하지 않는다.**
+- 데이터 값 변경은 기존 운영 규칙대로 변경 전후 표 + 사용자 승인 후 진행.
+
+### 4) 현황
+- 전수 점검 결과는 아래 "데이터 출처 점검" 참조. 출처 없는 데이터는 리스크 목록으로 관리하며,
+  사용자가 우선순위를 정하면 카탈로그 확인 후 주석을 보강한다(점검 단계에서는 값 변경 없음).
+
+## 데이터 출처 점검 (2026-08-17 전수 현황, 값 변경 없음)
+
+등급: **O 양호**(카탈로그/URL/확인월 명시) · **P 부분**(메이커·시리즈·근거 개요는 있으나 카탈로그 버전/페이지/확인일 미흡) · **F 플래그**(추정·미검증을 코드에 정직하게 표시) · **X 미흡**(데이터 배열에 출처 주석 없음)
+
+| 계산기 | 데이터(메이커/시리즈) | 데이터종류 | 등급 | 근거 상태 |
+|---|---|---|---|---|
+| harmonic-drive | HD_MODELS (harmonicdrive.net CSF/SHF/CSF-2XH) | 정격·피크·순간최대토크 | O | `harmonicdrive.net … 정격표 (2026-07)` |
+| solenoid-valve | VALVE_DATA (SMC SY/SYJ, Festo) | 유효유량 | O | C값 환산·Festo 표준정격, 2026-07 검증 |
+| coupling | COUP_DB (성일기공 SDS/SCD/오브/죠/빔) | 정격·피크토크·보어·강성 | O | 성일기공 카탈로그(2026), 근사보어 플래그 |
+| timing-belt | PITCH (Gates GT2) | 파워레이팅 | O | Gates PowerGrip GT2 DDM (페이지·확인일 없음) |
+| linear-motor | LM_DB (HIWIN LMSA/LMC/LMFA) | 연속·피크추력·질량 | O | HIWIN 리니어모터 카탈로그 (버전·확인일 없음) |
+| electric-actuator | LEY (SMC LEY) | 워크로드·푸싱력·속도 | O | SMC LEY 사양표 (문서번호·확인일 없음) |
+| lmguide | MAKER_DATA (5개사 LM가이드) | C₁₀₀ 정격 | P | 5개사 평균·ISO 14728-1, 페이지/확인일 없음 |
+| ballscrew | BS_DATA (THK/HIWIN/TBI/Rexroth) | C·C0·골지름 | P | 4개사 평균(그라운드), 페이지/확인일 없음 |
+| bearing | BRG_DB (6000/6200/6300·30200·51200·NA4900) | C·C0·허용회전수 | P | ISO 281 언급, **메이커/카탈로그 미표기(업계 일반값)** |
+| pneumatic-cylinder | MAKERS (SMC) | 시리즈 보어범위 | P | 구조 주석만, 카탈로그 출처 없음 (면적표는 기하계산) |
+| pneumatic-fitting | FITTING_DATA (SMC KQ2/TU/TS) | 튜브OD·qMax | P | 시리즈·qMax 공식화(2026-07), 페이지/확인일 없음 |
+| pneumatic-fr-unit | FR_DATA (SMC AW 등) | 유량·압력범위 | P | url·시리즈, 값 카탈로그 페이지/확인일 없음 |
+| pneumatic-gripper | MAKERS (SMC MHZ2 등) | 파지력 | P | url·조건(0.5MPa/L20), 2026-07 검증, 페이지 없음 |
+| electric-gripper | MAKERS (Schunk EGP 등) | 파지력·스트로크 | P | url·완제품 필터링, 페이지/확인일 없음 |
+| vacuum-pad | STD_DIA (SMC ZP) | 표준 패드 규격 | P | ZP 시리즈 규격(힘은 물리식 직접계산) |
+| servo_motor | MOTORS (미쯔비시 HG-KR 등) | 토크·관성 | F | `// TODO: J값 카탈로그 대조 미완`(관성 참고용) |
+| speed-controller | SC_DATA (SMC AS) | 치수 매칭 | F | `⚠️ [추정] TODO`·유량 미검증이라 미포함 명시 |
+| screwjack | ZE_MODELS (ZIMM ZE) | 정격·나사·이송 | X | **데이터 배열에 출처 주석 없음**(메이커는 UI만) |
+| planetary-gearbox | PG_DATA (Neugart PLE/PLN) | 토크·비율·백래시 | X | **"제품 데이터" 헤더뿐, 출처 없음** |
+| cycloidal-gearbox | CG_DATA (Sumitomo Cyclo/Fine) | 토크·비율·수명 | X | **"제품 데이터" 헤더뿐, 출처 없음** |
+
+집계: O 6 · P 9 · F 2 · X 3 (계산기 20종 기준; ballscrew는 LM가이드 중복 배열 MAKER_DATA도 보유 → 주석 없음)
+
+### 리스크 목록 (출처 주석 전혀 없음 = 최우선 보강 대상)
+1. **screwjack / ZIMM ZE_MODELS** — 정격하중·나사·이송량. (메모리: ZE-200 비율 미확인 기록)
+2. **planetary-gearbox / Neugart PG_DATA** — PLE/PLN 토크·백래시. (메모리: PLE 단수·백래시 미확인)
+3. **cycloidal-gearbox / Sumitomo CG_DATA** — Cyclo 6000/Fine Cyclo 토크. (메모리: Sumitomo 토크 미확인)
+4. **ballscrew / MAKER_DATA(L1231, LM가이드 중복)** — 출처 주석 없음. lmguide 주석 복사로 즉시 해소 가능.
+
+### 값 자체가 실존 미확인(별도 트랙, 출처 규칙과 병행) — 기존 작업이력에서 이월
+- CKD HGW 그리퍼, CKD TAS/TAN 튜빙, CKD 3F 밸브 (SMC 미러 근사 패턴 의심)
+- 상세는 "작업 이력 2026-07-03" 참조. 출처 확보 시 값 재검증 필요.
+
 ## SEO 구조 (2026-07-04 기초 공사)
 
 - **sitemap.xml**: index(priority 1.0) + 계산기 15개(0.8), admin 제외. `js/common.js`의
