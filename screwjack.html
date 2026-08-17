@@ -648,6 +648,9 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:2rem;font-fam
 //  DATA TABLES
 // ═══════════════════════════════════════════
 
+// 출처: ZIMM ZE-Series 스크류잭 카탈로그 — zimm.com/product-catalogue/screw-jack-ze-series (확인일 2026-08)
+//   정격하중[kN]·사다리꼴나사(Tr) = ZIMM ZE R-Trapezoidal 표와 전수 일치 확인(ZE-5~ZE-200).
+//   기어비(i_N/i_L)·효율(ETA_GEAR)은 ZIMM ZE 웜기어 규격 기반값(라인별 카탈로그 대조는 미완).
 const ZE_MODELS = [
   // model, rated[kN], screwTr, pitch[mm], coreTr[mm], coreBall[mm], i_N, i_L, feed_N[mm/rev], feed_L[mm/rev]
   { model:'ZE-5',   rated:5,   screw:'Tr18×4',  pitch:4,  coreTr:12.9, coreBall:12.9, i_N:4,  i_L:16, feed_N:1.00, feed_L:0.25 },
