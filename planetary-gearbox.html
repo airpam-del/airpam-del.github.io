@@ -675,6 +675,14 @@ main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
    제품 데이터
 ═══════════════════════════════════ */
 const PG_DATA = {
+  // ── 출처: Neugart 유성감속기 (PLE Economy Line + PLN Precision Line) ─────────────
+  //   neugart.com/en-us/gearboxes/economy-gearboxes/ple (제품페이지·PLE 카탈로그, 확인일 2026-08)
+  //   ⚠️ torqueRange = 보수적 선정용 정격값(연속토크 T2D ~ 중간 밴드 근사). Neugart는 T2D(연속)·
+  //   T2max(최대)·T2N(정격)을 감속비별 '범위'로 표기 → 단일 정격값이 아님. 현재 값은 안전측(과소평가측)
+  //   근사이며, 사이즈별 정밀 정격은 카탈로그 정격표(프레임×감속비) 확보 시 교체 예정.
+  //   참고(제품페이지 Stage1 실측): T2max PLE040 8~24 / 060 24~61 / 080 60~175 / 120 152~310 / 160 450~720 N·m,
+  //   T2D(연속) PLE040 4~13 / 060 13~24 / 080 32~84 / 120 80~165 / 160 340~380 N·m.
+  //   bl=백래시(arcmin, PLE 22'/PLN 1'), eff=효율%. ───────────────────────────────
   neugart: {
     name: 'Neugart',
     series: [
@@ -691,6 +699,10 @@ const PG_DATA = {
       { series:'PLN142', ratios:[3,4,5,7,10,15,20,25,35,50,70,100], torqueRange:[280,600],maxRpm:3000,  bl:1,  eff:97, stage:2 },
     ]
   },
+  // ── 출처: Apex Dynamics AB(표준 백래시)·AD(고정밀) 시리즈 공표 정격 기준 ──────────
+  //   프레임별 정격토크 AB/AD 042=14 · 060=40 · 090=120 · 115=250 · 142=500 N·m,
+  //   백래시 1단 AB 5'/AD 3' (2단 +2'). ⚠️ 이번 세션 카탈로그 원문 대조 미완 —
+  //   apexdynamics 카탈로그로 정격·감속비 재확인 권장. ─────────────────────────────
   apex: {
     name: 'Apex Dynamics',
     series: [

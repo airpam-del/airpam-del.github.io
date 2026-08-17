@@ -80,17 +80,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | vacuum-pad | STD_DIA (SMC ZP) | 표준 패드 규격 | P | ZP 시리즈 규격(힘은 물리식 직접계산) |
 | servo_motor | MOTORS (미쯔비시 HG-KR 등) | 토크·관성 | F | `// TODO: J값 카탈로그 대조 미완`(관성 참고용) |
 | speed-controller | SC_DATA (SMC AS) | 치수 매칭 | F | `⚠️ [추정] TODO`·유량 미검증이라 미포함 명시 |
-| screwjack | ZE_MODELS (ZIMM ZE) | 정격·나사·이송 | X | **데이터 배열에 출처 주석 없음**(메이커는 UI만) |
-| planetary-gearbox | PG_DATA (Neugart PLE/PLN) | 토크·비율·백래시 | X | **"제품 데이터" 헤더뿐, 출처 없음** |
-| cycloidal-gearbox | CG_DATA (Sumitomo Cyclo/Fine) | 토크·비율·수명 | X | **"제품 데이터" 헤더뿐, 출처 없음** |
+| screwjack | ZE_MODELS (ZIMM ZE) | 정격·나사·이송 | O | zimm.com ZE-Series, **하중·Tr나사 8종 전수 일치**(2026-08) |
+| planetary-gearbox | PG_DATA (Neugart PLE/PLN + Apex AB/AD) | 토크·비율·백래시 | P | Neugart 제품페이지 출처, torqueRange는 보수적(T2D~중간) 명시. Apex 원문 대조 미완 |
+| cycloidal-gearbox | CG_DATA (Sumitomo Cyclo/Fine) | 토크·비율·수명 | X | **"제품 데이터" 헤더뿐, 출처 없음** (카탈로그 다운로드 서버 차단 → PDF 확보 대기) |
 
-집계: O 6 · P 9 · F 2 · X 3 (계산기 20종 기준; ballscrew는 LM가이드 중복 배열 MAKER_DATA도 보유 → 주석 없음)
+집계(2026-08-17 보강 후): O 8 · P 10 · F 2 · X 1
 
-### 리스크 목록 (출처 주석 전혀 없음 = 최우선 보강 대상)
-1. **screwjack / ZIMM ZE_MODELS** — 정격하중·나사·이송량. (메모리: ZE-200 비율 미확인 기록)
-2. **planetary-gearbox / Neugart PG_DATA** — PLE/PLN 토크·백래시. (메모리: PLE 단수·백래시 미확인)
-3. **cycloidal-gearbox / Sumitomo CG_DATA** — Cyclo 6000/Fine Cyclo 토크. (메모리: Sumitomo 토크 미확인)
-4. **ballscrew / MAKER_DATA(L1231, LM가이드 중복)** — 출처 주석 없음. lmguide 주석 복사로 즉시 해소 가능.
+### 리스크 목록 (진행 현황)
+1. ~~**screwjack / ZIMM ZE_MODELS**~~ → ✅ **해소**: zimm.com ZE-Series 카탈로그와 정격하중·Tr나사 전수 일치, 출처 주석 추가(커밋 d56bc9e). 기어비/효율은 라인별 대조 미완.
+2. ~~**planetary-gearbox / Neugart PG_DATA**~~ → ✅ **출처 주석 완료(값 유지)**: 값(torqueRange)이 틀린 게 아니라 Neugart의 T2D(연속)~중간 밴드에 걸친 보수적 근사임을 확인. Neugart는 T2D/T2max/T2N을 감속비별 범위로 표기 → 단일 정격 아님. 정밀 정격 교체는 프레임×감속비 정격표 확보 시. **Apex AB/AD는 원문 대조 미완.**
+3. **cycloidal-gearbox / Sumitomo CG_DATA** — Cyclo 6000/Fine Cyclo 토크. **보류**: 카탈로그 PDF가 Sumitomo·배포사 미러 모두 서버 차단(HTML 반환). 사용자가 PDF 제공 시 pdftotext로 대조 예정.
+4. ~~**ballscrew / MAKER_DATA(L1231)**~~ → ✅ **해소**: lmguide와 동일 5개사 LM가이드 데이터 확인, 출처 주석 추가.
 
 ### 값 자체가 실존 미확인(별도 트랙, 출처 규칙과 병행) — 기존 작업이력에서 이월
 - CKD HGW 그리퍼, CKD TAS/TAN 튜빙, CKD 3F 밸브 (SMC 미러 근사 패턴 의심)
