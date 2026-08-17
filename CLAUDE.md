@@ -71,7 +71,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | electric-actuator | LEY (SMC LEY) | 워크로드·푸싱력·속도 | O | SMC LEY 사양표 (문서번호·확인일 없음) |
 | lmguide | MAKER_DATA (5개사 LM가이드) | C₁₀₀ 정격 | P | 5개사 평균·ISO 14728-1, 페이지/확인일 없음 |
 | ballscrew | BS_DATA (THK/HIWIN/TBI/Rexroth) | C·C0·골지름 | P | 4개사 평균(그라운드), 페이지/확인일 없음 |
-| bearing | BRG_DB (6000/6200/6300·30200·51200·NA4900) | C·C0·허용회전수 | P | ISO 281 언급, **메이커/카탈로그 미표기(업계 일반값)** |
+| bearing | BRG_DB (NSK: DGBB 6000/6200/6300·ACBB 7200/7300·CRB NJ·SBB 1200/1300·SRB 22200/22300) | C·C0·허용회전수 | O | NSK 카탈로그, DGBB 대표형번(6205/6206/6210) 대조 완료(2026-08). ⚠️ CRB는 구정격(비-E) 주의 |
 | pneumatic-cylinder | MAKERS (SMC) | 시리즈 보어범위 | P | 구조 주석만, 카탈로그 출처 없음 (면적표는 기하계산) |
 | pneumatic-fitting | FITTING_DATA (SMC KQ2/TU/TS) | 튜브OD·qMax | P | 시리즈·qMax 공식화(2026-07), 페이지/확인일 없음 |
 | pneumatic-fr-unit | FR_DATA (SMC AW 등) | 유량·압력범위 | P | url·시리즈, 값 카탈로그 페이지/확인일 없음 |
@@ -84,7 +84,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | planetary-gearbox | PG_DATA (Neugart PLE/PLN + Apex AB/AD) | 토크·비율·백래시 | P | Neugart 제품페이지 출처, torqueRange는 보수적(T2D~중간) 명시. Apex 원문 대조 미완 |
 | cycloidal-gearbox | CG_DATA (Sumitomo Cyclo/Fine) | 토크·비율·수명 | X | **"제품 데이터" 헤더뿐, 출처 없음** (카탈로그 다운로드 서버 차단 → PDF 확보 대기) |
 
-집계(2026-08-17 보강 후): O 8 · P 10 · F 2 · X 1
+집계(2026-08-17 보강 후): O 9 · P 9 · F 2 · X 1
 
 ### 리스크 목록 (진행 현황)
 1. ~~**screwjack / ZIMM ZE_MODELS**~~ → ✅ **해소**: zimm.com ZE-Series 카탈로그와 정격하중·Tr나사 전수 일치, 출처 주석 추가(커밋 d56bc9e). 기어비/효율은 라인별 대조 미완.
