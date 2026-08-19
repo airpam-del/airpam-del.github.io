@@ -24,6 +24,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 가이드 글은 guide-lmguide.html을 템플릿으로 (title/OG/JSON-LD/공식/예제/CTA/FAQ 필수)
 - 큰 변경 전에는 어떤 파일을 어떻게 바꿀지 계획을 먼저 보여줄 것
 
+## 계산기 테스트 하네스 규칙 (2026-08-19 제정)
+
+### 구조
+- `calc/<계산기>.calc.js` — 순수 함수 (DOM 비의존), CommonJS export
+- `tests/<계산기>.test.js` — node:test 기반 단위 테스트
+- `tests/run-all.js` — 전체 실행기 (`node tests/run-all.js`)
+- `tests/package.json` + `calc/package.json` — `{"type":"commonjs"}` (루트는 ESM)
+
+### 수정 규칙
+1. **계산식·부품 데이터 변경 시**: `calc/*.calc.js` 수정 → 대응 테스트 업데이트 → 전체 통과 확인 후 커밋
+2. **테스트 실패 상태로 push 금지** — `node tests/run-all.js` 에서 ❌ 없을 때만 push
+3. **새 계산기 추가 시**: `calc/<계산기>.calc.js` + `tests/<계산기>.test.js` 쌍으로 생성, `tests/run-all.js`의 `TEST_FILES` 배열에 추가
+4. **테스트는 계산식 정합성을 검증**하는 것이지 비즈니스 요건을 정의하는 게 아님 — 계산식 변경 시 사용자 승인 후 테스트도 함께 수정
+
+### 현황 (2026-08-19)
+15개 계산기 × calc.js + test.js 완비. 총 142개 테스트 전통과.
+
+---
+
 ## 데이터 출처 규칙 (2026-08-17 제정)
 
 계산기가 늘면서 생소한 메이커 데이터의 근거를 추적할 수 없는 문제를 막기 위한 규칙.
