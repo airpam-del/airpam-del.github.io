@@ -69,4 +69,73 @@ function calcL10km(C100, P) {
   return Math.pow(C100 / P, 3) * 100;
 }
 
-module.exports = { calcAvgSpeed, getfw, getVerdict, selectModel, calcL10km, LM_MODELS, LM_MIN_YEARS };
+/* ══════════════════════════════════════════════════════════════
+   렌더 파이프라인 — lmguide.html calcSimple/calcAdvanced + buildCompareTable
+   + renderSafety 의 무손실 사본 (계산식 불변). lmguide.html은 이 모듈을
+   로드하지 않는 병렬 사본이므로, html 로직을 고치면 여기도 동일 유지할 것.
+   입력 계약:
+     simple  : { mode:'simple',   load, speed, hours, blocks, sets, dirFactor, selectedSizes? }
+     advanced: { mode:'advanced', load, speed, hours, blocks, sets, dirFactor,
+                 stroke, tn, blockDist, railDist, height, eccentric, selectedSizes? }
+   ══════════════════════════════════════════════════════════════ */
+function lmSafetyText(verdictText) {
+  if (verdictText === '적합')      return '적합 — 안전율 및 수명 기준 충족';
+  if (verdictText === '수명 부족') return '주의 — 안전율은 충족하나 수명이 ' + LM_MIN_YEARS + '년 미만입니다';
+  if (verdictText === '주의')      return '주의 — 안전율이 권장 기준(4배)보다 낮습니다';
+  return '부적합 — 상위 사이즈 또는 블록 수 증가를 권장합니다';
+}
+
+function lmComputeP(input) {
+  const fw = getfw(input.speed);
+  const totalBlocks = (input.blocks || 1) * (input.sets || 1);
+  if (input.mode === 'advanced') {
+    const pload = (input.load / totalBlocks) * input.dirFactor * fw;
+    const My = input.load * (input.height || 0);
+    const Mz = input.load * (input.eccentric || 0);
+    const blockDist = input.blockDist || 0, railDist = input.railDist || 0;
+    const Fmy = blockDist > 0 ? (2 * My) / (blockDist * totalBlocks) : 0;
+    const Fmz = railDist  > 0 ? (2 * Mz) / (railDist  * totalBlocks) : 0;
+    return { P: pload + Fmy + Fmz, pload, fw };
+  }
+  const P = (input.load / totalBlocks) * input.dirFactor * fw;
+  return { P, pload: P, fw };
+}
+
+function lmRowFor(size, P, input, avgSpeed) {
+  const m = LM_MODELS.find(x => x.size === size);
+  const L10km = Math.pow(m.C100 / P, 3) * 100;
+  let years, opHours = null;
+  if (input.mode === 'advanced') {
+    years   = (L10km / ((avgSpeed * 3600 * input.hours) / 1e6)) / 365;
+    opHours = L10km / ((avgSpeed * 3600) / 1e6);
+  } else {
+    years = (L10km / ((input.speed * 0.65 * 3600 * input.hours) / 1e6)) / 365;
+  }
+  const ratio = m.C0 / P;
+  const v = getVerdict(ratio, years);
+  return { size, L10km, years, opHours, ratio, verdict: v.text, verdictCls: v.cls };
+}
+
+function computeLM(input) {
+  const { P, pload } = lmComputeP(input);
+  const avgSpeed = input.mode === 'advanced'
+    ? calcAvgSpeed(input.speed, input.stroke, input.tn).avgSpeed
+    : null;
+  const sel = selectModel(P, input.speed, input.hours, input.mode, input.tn, input.stroke);
+  const summaryRow = lmRowFor(sel.size, P, input, avgSpeed);
+  const sizes = [...new Set([sel.size, ...(input.selectedSizes || [])])].sort((a, b) => a - b);
+  const rows = sizes.map(s => lmRowFor(s, P, input, avgSpeed));
+  return {
+    P, pload, avgSpeed,
+    recommended: { size: sel.size, C100: sel.C100, C0: sel.C0 },
+    summary: { L10km: summaryRow.L10km, years: summaryRow.years, ratio: summaryRow.ratio, verdict: summaryRow.verdict },
+    safetyText: lmSafetyText(summaryRow.verdict),
+    rows,
+  };
+}
+
+module.exports = {
+  calcAvgSpeed, getfw, getVerdict, selectModel, calcL10km,
+  lmComputeP, lmRowFor, lmSafetyText, computeLM,
+  LM_MODELS, LM_MIN_YEARS,
+};
