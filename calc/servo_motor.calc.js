@@ -47,8 +47,124 @@ function evalMotor(m, p) {
   const ok_ir   = ir <= 10;
   const pass = ok_rpm && ok_Trms && ok_Tpk && ok_ir;
 
+  const fails = [];
+  if (!ok_rpm)  fails.push(`RPM 초과(${Math.round(n_motor)} > ${m.nmax})`);
+  if (!ok_Trms) fails.push(`실효토크 초과`);
+  if (!ok_Tpk)  fails.push(`순시토크 초과`);
+  if (!ok_ir)   fails.push(`관성비 과대`);
+
   return { m, pass, Jm, JL, Jt, ir, T_acc, T_peak, T_rms, T_dec, n_motor,
-           ok_rpm, ok_Trms, ok_Tpk, ok_ir };
+           ok_rpm, ok_Trms, ok_Tpk, ok_ir, reason: fails.join(' · ') };
 }
 
-module.exports = { evalMotor, MOTORS };
+/* ══════════════════════════════════════════════════════════════
+   부하 물리계산 — servo_motor.html calcLoad 무손실 사본 (5개 기구)
+   servo_motor.html은 이 모듈을 로드하지 않는 병렬 사본이므로,
+   html calcLoad/showResult 를 고치면 여기도 동일 유지할 것.
+   상수: G=9.81, RHO=7.85e-6 kg/mm³
+   입력 키 = DOM id 의 camelCase (op·bt·gr·bs·rp·cv·idx·rot 접두사)
+   ══════════════════════════════════════════════════════════════ */
+const SV_G = 9.81, SV_RHO = 7.85e-6;
+
+function computeServoLoad(input) {
+  const lt = input.lt, dt = input.dt;
+  const tacc = input.opTacc, tdec = input.opTdec, tcycle = input.opTcycle;
+
+  let ratio = 1, eta_drive = 1, J_drive = 0;
+  if (dt === 'belt') {
+    const Dd = input.btDrive, Dn = input.btDriven, bm = input.btMass;
+    eta_drive = input.btEta;
+    ratio = Dn / Dd;
+    J_drive = bm * Math.pow(Dd / 2 / 1000, 2);
+  } else if (dt === 'gear' || dt === 'chain') {
+    ratio = input.grRatio;
+    eta_drive = input.grEta;
+    J_drive = input.grJ * 1e-4;
+  }
+
+  let n_motor = 0, J_load = 0, T_drive = 0, alpha_motor = 0;
+  let eta_mech = 1;
+
+  if (lt === 'ballscrew') {
+    const lead = input.bsLead, ds = input.bsDiam, Ls = input.bsLen;
+    eta_mech = input.bsEta;
+    const mass = input.bsMass, mu = input.bsMu, ori = input.bsOri, cb = input.bsCb, Fext = input.bsExtload;
+    const speed = input.opSpeed;
+    n_motor = (speed / lead * 60) * ratio;
+    const r = lead / (2 * Math.PI) / 1000;
+    const J_screw = (Math.PI * SV_RHO / 32) * Math.pow(ds, 4) * Ls * 1e-9;
+    J_load = J_screw + mass * r * r;
+    const W = mass * SV_G;
+    const Ff = mu * W;
+    const Fg = (ori === 'v' && !cb) ? W : 0;
+    T_drive = (Fext + Ff + Fg) * (lead / 1000) / (2 * Math.PI * eta_mech * eta_drive) / ratio;
+    const omega_m = speed / 1000 * 2 * Math.PI / (lead / 1000) * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'rack') {
+    const D = input.rpDiam, mass = input.rpMass, rackM = input.rpRackMass;
+    eta_mech = input.rpEta;
+    const mu = input.rpMu, ori = input.rpOri, Fext = input.rpExtload, speed = input.opSpeed;
+    const r = D / 2 / 1000;
+    n_motor = speed * 60 / (Math.PI * D) * ratio;
+    J_load = (mass + rackM) * r * r;
+    const totM = mass + rackM;
+    const Ff = mu * totM * SV_G;
+    const Fg = (ori === 'v') ? totM * SV_G : 0;
+    T_drive = (Fext + Ff + Fg) * r / (eta_mech * eta_drive) / ratio;
+    const omega_m = speed / 1000 / r * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'conveyor') {
+    const D = input.cvRoller, mass = input.cvMass, bm = input.cvBeltMass;
+    eta_mech = input.cvEta;
+    const mu = input.cvMu, ang = input.cvAngle * Math.PI / 180, speed = input.opSpeed;
+    const r = D / 2 / 1000;
+    n_motor = speed * 60 / (Math.PI * D) * ratio;
+    J_load = (mass + bm) * r * r;
+    const Ff = (mass + bm) * SV_G * Math.cos(ang) * mu;
+    const Fg = (mass + bm) * SV_G * Math.sin(ang);
+    T_drive = (Ff + Fg) * r / (eta_mech * eta_drive) / ratio;
+    const omega_m = speed / 1000 / r * ratio;
+    alpha_motor = omega_m / tacc;
+
+  } else if (lt === 'index') {
+    const D = input.idxDiam, mass = input.idxMass, div = input.idxDiv, tIdx = input.idxTime;
+    const alpha = input.idxDist, Tres = input.idxResist;
+    const theta = 2 * Math.PI / div;
+    const ta = Math.min(tacc, tIdx * 0.4);
+    const omega_max = theta / ((ta + tdec) / 2 + Math.max(0, tIdx - ta - tdec));
+    n_motor = omega_max * ratio * 60 / (2 * Math.PI);
+    const r = D / 2 / 1000;
+    J_load = alpha * mass * r * r;
+    T_drive = Tres / (eta_drive) / ratio;
+    alpha_motor = omega_max * ratio / ta;
+
+  } else if (lt === 'rotary') {
+    const D = input.rotDiam, mass = input.rotMass, trpm = input.rotRpm;
+    eta_mech = input.rotEta;
+    const Tres = input.rotResist;
+    n_motor = trpm * ratio;
+    const r = D / 2 / 1000;
+    J_load = 0.5 * mass * r * r;
+    T_drive = Tres / (eta_mech * eta_drive) / ratio;
+    const omega_m = n_motor * 2 * Math.PI / 60;
+    alpha_motor = omega_m / tacc;
+  }
+
+  return { n_motor, J_load, T_drive, alpha_motor, ratio, eta_drive, J_drive, tacc, tdec, tcycle };
+}
+
+/* 선정 파이프라인 — servo_motor.html showResult 기준 */
+function computeServo(input) {
+  const p = computeServoLoad(input);
+  const allResults = MOTORS.map(m => evalMotor(m, p));
+  const allPassing = allResults.filter(r => r.pass).sort((a, b) => a.m.power - b.m.power);
+  return {
+    p, allResults, allPassing,
+    recommended: allPassing.length ? allPassing[0] : null,
+    noFit: allPassing.length === 0,
+  };
+}
+
+module.exports = { evalMotor, computeServoLoad, computeServo, MOTORS };
