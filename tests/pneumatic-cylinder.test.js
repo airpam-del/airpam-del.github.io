@@ -1,61 +1,104 @@
 'use strict';
+/* ══════════════════════════════════════════════════════════════
+   PartsOn 공압 실린더 계산 테스트 — 순수 Node
+   대상: ../calc/pneumatic-cylinder.calc.js (pneumatic-cylinder.html 무손실 사본)
+   ══════════════════════════════════════════════════════════════ */
 const { test } = require('node:test');
 const assert   = require('node:assert/strict');
-const { calcCylinderResults, BORE_TABLE, ETA }
-  = require('../calc/pneumatic-cylinder.calc.js');
+const { computePC, BORE_TABLE, MAKERS, ETA } = require('../calc/pneumatic-cylinder.calc.js');
 
-/* ── 기본 구조 ── */
-test('calcCylinderResults: BORE_TABLE 길이만큼 반환', () => {
-  const rs = calcCylinderResults(0.5, 0.7, 500, false);
-  assert.equal(rs.length, BORE_TABLE.length);
-});
+const near = (a, b, rel = 1e-9) => {
+  if (a === b) return;
+  const d = Math.abs(a - b), s = Math.max(Math.abs(a), Math.abs(b), 1);
+  assert.ok(d / s <= rel, `expected ${a} ≈ ${b}`);
+};
 
-/* ── 추력 계산 공식 ── */
-test('calcCylinderResults: F_push_theo = P × A_full × ETA', () => {
-  const P = 0.5, rs = calcCylinderResults(P, 0.7, 1, false);
-  for (const [i, r] of rs.entries()) {
-    const expected = P * BORE_TABLE[i].A_full * ETA;
-    assert.ok(Math.abs(r.F_push_theo - expected) < 0.001,
-      `D=${BORE_TABLE[i].D}: ${r.F_push_theo} ≠ ${expected}`);
+/* ── B) 골든 (computePC) ── */
+const ALL = { smc: true, festo: true, ckd: true };
+const GOLDEN = [
+  { label: '0.5MPa·LF0.6·필요200N·복동 → SMC CM2B Ø40 (ok)',
+    input: { pressure: 0.5, loadFactor: 0.6, fRequired: 200, cylinderType: 'double', direction: 'push', makers: ALL },
+    expect: { needPull: true, n: 22, maker: 'smc', series: 'CM2B', D: 40, F_push_rec: 320.535, F_pull_rec: 269.28, status: 'ok' } },
+  { label: '0.5MPa·LF0.7·필요1000N·양방향 → SMC CA2 Ø80 (ok)',
+    input: { pressure: 0.5, loadFactor: 0.7, fRequired: 1000, cylinderType: 'double', direction: 'both', makers: ALL },
+    expect: { needPull: true, n: 22, maker: 'smc', series: 'CA2', D: 80, F_push_rec: 1495.5324999999998, F_pull_rec: 1349.4599999999998, status: 'ok' } },
+  { label: '필요 50000N·단동 → 최소 보어 부적합',
+    input: { pressure: 0.5, loadFactor: 0.6, fRequired: 50000, cylinderType: 'single', direction: 'push', makers: ALL },
+    expect: { needPull: false, n: 22, maker: 'smc', series: 'CM2(단동)', D: 20, F_push_rec: 80.07, F_pull_rec: null, status: 'bad' } },
+];
+for (const g of GOLDEN) {
+  test(`골든: ${g.label}`, () => {
+    const r = computePC(g.input); const c = r.recommended; const e = g.expect;
+    assert.equal(r.needPull, e.needPull);
+    assert.equal(r.results.length, e.n, '결과 수');
+    assert.equal(c.maker.key, e.maker); assert.equal(c.series.name, e.series); assert.equal(c.D, e.D);
+    near(c.F_push_rec, e.F_push_rec); assert.equal(c.F_pull_rec, e.F_pull_rec);
+    assert.equal(c.status, e.status);
+  });
+}
+
+/* ── C) 고유 불변식 — 시드 랜덤 150개 ── */
+function makeRng(seed) { let s = seed >>> 0; return () => { s = (1664525 * s + 1013904223) >>> 0; return s / 4294967296; }; }
+const rng = makeRng(20260817);
+const pick = (a) => a[Math.floor(rng() * a.length)];
+const ri = (lo, hi) => lo + rng() * (hi - lo);
+const order = { ok: 0, warn: 1, bad: 2 };
+
+function randomInput() {
+  const makers = { smc: rng() < 0.85, festo: rng() < 0.7, ckd: rng() < 0.7 };
+  if (!makers.smc && !makers.festo && !makers.ckd) makers.smc = true;
+  return {
+    pressure: pick([0.3, 0.4, 0.5, 0.6, 0.7]), loadFactor: pick([0.5, 0.6, 0.7]),
+    fRequired: Math.round(ri(10, 5000)), cylinderType: pick(['single', 'double']),
+    direction: pick(['push', 'pull', 'both']), makers,
+  };
+}
+
+test('불변식: 무작위 입력 150개', () => {
+  let withResult = 0, okSeen = 0, warnSeen = 0, badSeen = 0;
+  for (let i = 0; i < 150; i++) {
+    const input = randomInput();
+    const r = computePC(input);
+    const ctx = `#${i} ${JSON.stringify(input)}`;
+
+    // (6) needPull
+    assert.equal(r.needPull, input.cylinderType === 'double' || input.direction === 'both');
+
+    for (const x of r.results) {
+      // (2) 필터
+      assert.ok(input.makers[x.maker.key], `메이커 — ${ctx}`);
+      assert.ok(x.D >= x.series.minD && x.D <= x.series.maxD, `보어 범위 — ${ctx}`);
+      assert.ok(input.pressure >= x.series.pMin && input.pressure <= x.series.pMax, `압력 범위 — ${ctx}`);
+      // series는 활성 타입 리스트에서 선택됨
+      const list = input.cylinderType === 'single' ? x.maker.series.single : x.maker.series.double;
+      assert.ok(list.includes(x.series), `시리즈 타입 — ${ctx}`);
+
+      // (4) 단위
+      near(x.F_push_theo, input.pressure * x.A_full * ETA);
+      near(x.F_push_rec, x.F_push_theo * input.loadFactor);
+      if (r.needPull) { near(x.F_pull_theo, input.pressure * x.A_rod * ETA); near(x.F_pull_rec, x.F_pull_theo * input.loadFactor); }
+      else { assert.equal(x.F_pull_theo, null); assert.equal(x.F_pull_rec, null); }
+
+      // (1) 판정 ↔ 조건
+      const pushOk = x.F_push_rec >= input.fRequired;
+      const pullOk = !r.needPull || (x.F_pull_rec !== null && x.F_pull_rec >= input.fRequired);
+      const theoOk = x.F_push_theo >= input.fRequired;
+      const exp = (pushOk && pullOk) ? 'ok' : (theoOk && !pushOk) ? 'warn' : 'bad';
+      assert.equal(x.status, exp, `status — ${ctx}`);
+      if (x.status === 'ok') okSeen++; if (x.status === 'warn') warnSeen++; if (x.status === 'bad') badSeen++;
+
+      // (5) undefined/NaN 없음
+      for (const k of ['D', 'A_full', 'F_push_theo', 'F_push_rec']) assert.ok(Number.isFinite(x[k]), `${k} — ${ctx}`);
+    }
+
+    // (3) 정렬 + 추천
+    for (let j = 1; j < r.results.length; j++) {
+      const a = r.results[j - 1], b = r.results[j];
+      assert.ok((order[a.status] - order[b.status] || a.D - b.D) <= 0, `정렬 — ${ctx}`);
+    }
+    assert.equal(r.recommended, r.results.length ? r.results[0] : null, `추천 — ${ctx}`);
+    if (r.recommended) withResult++;
   }
-});
-test('calcCylinderResults: F_push_rec = F_push_theo × loadFactor', () => {
-  const lf = 0.7, rs = calcCylinderResults(0.5, lf, 1, false);
-  for (const r of rs) {
-    assert.ok(Math.abs(r.F_push_rec - r.F_push_theo * lf) < 0.001);
-  }
-});
-
-/* ── needPull=false → F_pull_theo/rec null ── */
-test('needPull=false 이면 F_pull_theo = null', () => {
-  const rs = calcCylinderResults(0.5, 0.7, 100, false);
-  for (const r of rs) assert.equal(r.F_pull_theo, null);
-});
-test('needPull=true 이면 F_pull_theo > 0', () => {
-  const rs = calcCylinderResults(0.5, 0.7, 100, true);
-  for (const r of rs) assert.ok(r.F_pull_theo > 0);
-});
-
-/* ── status 판정 ── */
-test('status: fRequired 매우 작을 때 최소 보어도 ok', () => {
-  const rs = calcCylinderResults(0.5, 0.7, 1, false);
-  assert.equal(rs[0].status, 'ok');
-});
-test('status: fRequired 매우 클 때 최대 보어도 bad 가능', () => {
-  const rs = calcCylinderResults(0.1, 0.3, 1e9, false);
-  assert.equal(rs[rs.length - 1].status, 'bad');
-});
-test('status: warn = theoOk && !pushOk 조건', () => {
-  // P=0.5, A_full[0]=314, ETA=0.85, theo=133.45N, rec=133.45*0.3=40N
-  // fRequired 90 → theoOk=true, pushOk=false → warn
-  const rs = calcCylinderResults(0.5, 0.3, 90, false);
-  assert.equal(rs[0].status, 'warn');
-});
-
-/* ── 불변식 ── */
-test('불변식: 보어 클수록 F_push_theo 증가', () => {
-  const rs = calcCylinderResults(0.5, 0.7, 1, false);
-  for (let i = 1; i < rs.length; i++) {
-    assert.ok(rs[i].F_push_theo > rs[i-1].F_push_theo);
-  }
+  assert.ok(withResult >= 60, `결과 케이스 부족: ${withResult}`);
+  assert.ok(okSeen > 0 && warnSeen > 0 && badSeen > 0, `분기 미관측 (ok=${okSeen} warn=${warnSeen} bad=${badSeen})`);
 });
