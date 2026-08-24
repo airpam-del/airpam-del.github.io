@@ -20,6 +20,37 @@ const ETA_SCREW_SINGLE = {
   'Tr55×9':0.34,'Tr60×9':0.32,'Tr70×12':0.35
 };
 
+// η_gear: [1500N, 1500L, 1000N, 1000L, 750N, 750L, 500N, 500L] — screwjack.html ETA_GEAR
+const ETA_GEAR = {
+  'ZE-5':   [0.82,0.70,0.82,0.67,0.82,0.65,0.82,0.62],
+  'ZE-10':  [0.84,0.74,0.82,0.72,0.84,0.70,0.84,0.67],
+  'ZE-25':  [0.87,0.72,0.86,0.70,0.85,0.68,0.83,0.65],
+  'ZE-35':  [0.87,0.64,0.87,0.64,0.86,0.64,0.85,0.63],
+  'ZE-50':  [0.87,0.66,0.86,0.66,0.85,0.66,0.84,0.65],
+  'ZE-100': [0.88,0.67,0.87,0.65,0.87,0.65,0.85,0.65],
+  'ZE-150': [0.89,0.67,0.89,0.66,0.88,0.65,0.87,0.63],
+  'ZE-200': [0.90,0.77,0.90,0.77,0.90,0.77,0.90,0.76],
+};
+
+// 시스템 레이아웃 토크 배율 — screwjack.html LAYOUTS
+const LAYOUTS = {
+  1: [{ label:'단독',   mult:1.0 }],
+  2: [{ label:'A형',    mult:2.1 }, { label:'T형',      mult:2.4 }],
+  4: [{ label:'H형',    mult:4.9 }, { label:'직렬 I형', mult:3.6 }, { label:'T형', mult:3.5 }],
+  6: [{ label:'복합',   mult:7.1 }],
+};
+
+function getEtaGear(model, gr) {
+  const arr = ETA_GEAR[model.model];
+  if (!arr) return 0.85;
+  return gr === 'L' ? arr[1] : arr[0];
+}
+function getEtaScrew(model, screwType) {
+  if (screwType === 'ball') return 0.90;
+  const base = ETA_SCREW_SINGLE[model.screw] || 0.35;
+  return screwType === 'tr2' ? base * 1.5 : base;
+}
+
 /**
  * 좌굴 계산
  * @param {object} model  ZE_MODELS 항목
@@ -56,13 +87,8 @@ function calcTorqueMotor(model, F_kN, v, gr, screwType, msf, layoutMult) {
     : model.feed_N * model.pitch;
   const n_rpm = v * 60 / feedPerRev;
 
-  let eta_screw;
-  if (screwType === 'ball') eta_screw = 0.90;
-  else {
-    const base = ETA_SCREW_SINGLE[model.screw] || 0.35;
-    eta_screw = screwType === 'tr2' ? base * 1.5 : base;
-  }
-  const eta_gear = 0.85; // 근사값 (N모드 1500rpm 기준)
+  const eta_screw = getEtaScrew(model, screwType);
+  const eta_gear  = getEtaGear(model, gr); // screwjack.html: ETA_GEAR[model][N=0/L=1]
 
   const pitchM = model.pitch / 1000;
   const MG = (F_kN * 1000 * pitchM) / (2 * Math.PI * eta_gear * eta_screw * i);
@@ -73,4 +99,57 @@ function calcTorqueMotor(model, F_kN, v, gr, screwType, msf, layoutMult) {
   return { n_rpm, MG, PM, PM_rec, MR, MA, eta_gear, eta_screw, i, feedPerRev };
 }
 
-module.exports = { calcBuckling, calcTorqueMotor, ZE_MODELS, ETA_SCREW_SINGLE };
+/* ══════════════════════════════════════════════════════════════
+   선정 파이프라인 — screwjack.html buildModelCards + buildStep5 무손실 사본
+   screwjack.html은 이 모듈을 로드하지 않는 병렬 사본이므로, html 로직을
+   고치면 여기도 동일 유지할 것.
+   ⚠️ 좌굴은 총하중(S.F), 토크는 잭당(F_jack=F/qty) 기준 — html과 동일.
+   입력 계약 input = { F_kg, qty, layout(index), L, euler, vsf, msf,
+                       screw:'tr1'|'tr2'|'ball', gr:'N'|'L', v, actMode:'R'|'L',
+                       selectedModel? }
+   ══════════════════════════════════════════════════════════════ */
+function computeSJ(input) {
+  const F_total = input.F_kg * 9.81 / 1000;   // kg → kN (getInputs)
+  const qty = input.qty, F_jack = F_total / qty;
+  const { L, euler, vsf, msf, screw, gr, v, actMode } = input;
+
+  // 후보: 정격 하중 + 좌굴(총하중 기준)
+  const candidates = ZE_MODELS.map(m => {
+    const loadPass = m.rated >= F_jack;
+    const buck = calcBuckling(m, F_total, L, euler, vsf, screw);
+    return { m, loadPass, buck, pass: loadPass && buck.pass };
+  });
+  const recommended = (candidates.find(c => c.pass) || {}).m || null;
+
+  const selected = input.selectedModel
+    ? (ZE_MODELS.find(m => m.model === input.selectedModel) || null)
+    : recommended;
+
+  if (!selected) {
+    return { F_total, F_jack, candidates, recommended, selected: null, torque: null, alerts: [], needBrake: null };
+  }
+
+  const layoutMult = (LAYOUTS[qty] && LAYOUTS[qty][input.layout]) ? LAYOUTS[qty][input.layout].mult : 1.0;
+  const torque = calcTorqueMotor(selected, F_jack, v, gr, screw, msf, layoutMult);
+  const buck = calcBuckling(selected, F_total, L, euler, vsf, screw);
+  const isSelfLocking = screw === 'tr1' && getEtaScrew(selected, screw) < 0.5;
+  const needBrake = !isSelfLocking;
+
+  // 경고 (buildStep5 조건과 동일, 메시지 대신 type 플래그)
+  const alerts = [];
+  alerts.push(buck.pass ? { type: 'buckOk', cls: 'ab-ok' } : { type: 'buckDanger', cls: 'ab-danger' });
+  if (F_jack < selected.rated * 0.15) alerts.push({ type: 'minLoad', cls: 'ab-warn' });
+  if (actMode === 'R') {
+    const coreD = screw === 'ball' ? selected.coreBall : selected.coreTr;
+    const n_kr = 4.73e6 * coreD / (L ** 2);
+    if (torque.n_rpm > 0.8 * n_kr) alerts.push({ type: 'critRpm', cls: 'ab-warn', n_kr });
+  }
+  if (needBrake) alerts.push({ type: 'selfLock', cls: 'ab-info' });
+
+  return { F_total, F_jack, candidates, recommended, selected, torque, buck, alerts, needBrake };
+}
+
+module.exports = {
+  calcBuckling, calcTorqueMotor, computeSJ, getEtaGear, getEtaScrew,
+  ZE_MODELS, ETA_SCREW_SINGLE, ETA_GEAR, LAYOUTS,
+};
