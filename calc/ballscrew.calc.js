@@ -52,9 +52,10 @@ function bsCalcFa(W, dir, ang, vmax, tacc) {
  * @param {number} extra 여유 길이 [mm]
  * @param {number} tacc 가속시간 [s]
  */
-function bsFindBest(Fa, S, vmax, Lreq, kFactor, extra, tacc) {
+function bsFindBest(Fa, S, vmax, Lreq, kFactor, extra, tacc, W) {
   extra = extra || 100;
   tacc  = tacc  || 0.1;
+  W     = W     || 0;
   const results = [];
   for (const [key, dat] of Object.entries(BS_DATA)) {
     const parts = key.split('x');
@@ -81,13 +82,51 @@ function bsFindBest(Fa, S, vmax, Lreq, kFactor, extra, tacc) {
     const lifeOk  = L10h >= Lreq, buckOk = buckSF >= 3.5, dnsOk = Dn <= DN_LIMIT, statOk = statSF >= 3.0;
     const penalty = (lifeOk?0:2000)+(buckOk?0:1000)+(dnsOk?0:500)+(statOk?0:500);
     const tiebreak = (d0/63)*10 + (lead/40)*1;
+    // 가속 토크·출력 (스크류+테이블 관성) — ballscrew.html bsFindBest 와 동일
+    const rho     = 7800, Ltot = (S + extra + 200) / 1000;
+    const J_screw = (Math.PI/2) * rho * Ltot * (dr_m/2)**4;
+    const J_table = W * (lead/1000/(2*Math.PI))**2;
+    const J_total = J_screw + J_table;
+    const alpha   = (nm_op*2*Math.PI/60) / tacc;
     const T_run   = Fa_safe * (lead/1000) / (2 * Math.PI * 0.9);
+    const T_acc   = J_total * alpha;
+    const T_total = T_run + T_acc;
+    const P_kW    = T_total * (nm_op*2*Math.PI/60) / 1000;
     results.push({ d0, lead, nm_op, nm_avg, nm_allowed:nAllowed, L10h, Fb_N, buckSF, Dn, statSF,
                    lifeOk, buckOk, dnsOk, statOk, score:penalty+tiebreak,
-                   C, C0, dr, Ls, allOk:lifeOk&&buckOk&&dnsOk&&statOk, T_run });
+                   C, C0, dr, Ls, allOk:lifeOk&&buckOk&&dnsOk&&statOk,
+                   T_run, T_acc, T_total, P_kW, J_screw, J_table });
   }
   results.sort((a, b) => a.score - b.score);
   return results;
 }
 
-module.exports = { bsCalcFa, bsFindBest, BS_DATA, DN_LIMIT };
+/* ══════════════════════════════════════════════════════════════
+   위저드 파이프라인 — ballscrew.html bsRender 의 무손실 사본 (계산식 불변)
+   ballscrew.html은 이 모듈을 로드하지 않는 병렬 사본이므로, html bsRender/
+   bsFindBest 를 고치면 여기도 동일 유지할 것.
+   입력 계약 input = { W[kg], dir, angle[deg], vmax[mm/s], tacc[s], S[mm],
+                       extra[mm], life[h], support(kFactor 문자열), h_day }
+   ══════════════════════════════════════════════════════════════ */
+function computeBS(input) {
+  const { W, dir, angle, vmax, tacc, S, extra, life, support } = input;
+  const Fa = bsCalcFa(W, dir, angle, vmax, tacc);
+  const Lreq = parseFloat(life), kFactor = parseFloat(support);
+  const combos = bsFindBest(Fa, S, vmax, Lreq, kFactor, extra, tacc, W);
+  if (!combos.length) {
+    return { Fa, Lreq, kFactor, combos: [], recommended: null, noOk: true, classes: null, alts: [] };
+  }
+  const bestOk = combos.find(c => c.allOk);
+  const r = bestOk || combos[0];
+  const noOk = !bestOk;
+  const classes = {
+    life: r.lifeOk ? 'ok' : r.L10h >= Lreq * 0.7 ? 'warn' : 'bad',
+    buck: r.buckOk ? 'ok' : r.buckSF >= 2 ? 'warn' : 'bad',
+    dns:  r.dnsOk  ? 'ok' : r.Dn <= DN_LIMIT * 1.1 ? 'warn' : 'bad',
+    stat: r.statOk ? 'ok' : 'warn',
+  };
+  const alts = combos.filter(c => (c.d0 !== r.d0 || c.lead !== r.lead) && (noOk ? true : c.allOk)).slice(0, 4);
+  return { Fa, Lreq, kFactor, combos, recommended: r, noOk, classes, alts };
+}
+
+module.exports = { bsCalcFa, bsFindBest, computeBS, BS_DATA, DN_LIMIT };
