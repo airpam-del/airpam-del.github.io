@@ -660,5 +660,9 @@ function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')
 initTypeGrid();
 window.TimingBeltCalc={ pcd, beltSpeed, powerFromTorque, designPowerKW, beltPitchLength, teethInMesh, interpHP, matchStockLength, selectPitch, selectBelt, PITCH };
 </script>
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['벨트 타입',state.type],['전달동력',state.kw,'kW'],['토크',state.tq,'N·m'],['회전수',state.rpm,'rpm'],['서비스팩터',state.sf],['잇수 z1',state.z1],['잇수 z2',state.z2],['감속비',state.ratio],['축간거리',state.C,'mm']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>

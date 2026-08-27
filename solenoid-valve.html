@@ -1209,6 +1209,10 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['실린더 보어',S.bore,'mm'],['피스톤 속도',S.speed,'mm/s'],['필요유량',S.qRequired?Math.round(S.qRequired):null,'L/min'],['포트',S.ports+'포트'],['작동방식',S.actuator==='single'?'싱글':'더블'],['전원',S.voltage]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

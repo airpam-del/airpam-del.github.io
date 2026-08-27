@@ -1057,6 +1057,10 @@ document.getElementById('print-date').textContent = new Date().toLocaleDateStrin
 renderStepsBar(1);
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['연속토크',S.tCont,'N·m'],['피크토크',S.tPeak,'N·m'],['입력회전수',S.nInput,'rpm'],['감속비',S.ratio],['요구수명',S.lh,'h'],['샤프트',S.shaft],['정밀도',S.precision,'arcmin']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

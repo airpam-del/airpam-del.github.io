@@ -597,5 +597,10 @@ function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')
 initTypeGrid();
 window.LinearMotorCalc={ motionProfile, phaseForces, rmsForce, selectMotor, lmModels, LM_DB };
 </script>
+<script>
+function poGetInputs(){try{
+    var tm={ironcore:'코어드',ironless:'코어리스',watercool:'수랭'};
+    return poInputsStr([['타입',tm[state.type]||state.type],['질량',state.mass,'kg'],['스트로크',state.stroke,'mm'],['최대속도',state.vmax,'m/s'],['가속도',state.accel,'m/s²'],['정지시간',state.dwell,'s'],['설치',state.ori==='v'?'수직':'수평'],['마찰계수',state.mu]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>

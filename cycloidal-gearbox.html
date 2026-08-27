@@ -1160,6 +1160,10 @@ function thApply(tabIdx) {
 }
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['부하토크',S.tLoad,'N·m'],['입력회전수',S.nInput,'rpm'],['감속비',S.ratio],['요구수명',S.lh,'h'],['서비스팩터',S.sf],['운전패턴(duty)',S.duty],['역방향',S.reverse?'예':'아니오']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

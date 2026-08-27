@@ -896,6 +896,10 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['포트',S.port],['필요유량',S.flow,'L/min'],['공급압',S.supplyP,'MPa'],['설정압',S.setP,'MPa'],['필터등급',S.filter],['드레인',S.drain]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

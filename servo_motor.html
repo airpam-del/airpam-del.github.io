@@ -1748,6 +1748,20 @@ function closeHelp(e) {
 </div>
 
 
+<script>
+function poGetInputs(){try{
+    var lm={ballscrew:'볼스크류',rack:'랙&피니언',conveyor:'컨베이어',index:'인덱스',rotary:'회전'},dm={direct:'직결',belt:'벨트',gear:'기어',chain:'체인'};
+    var r=[['부하 형태',lm[S.lt]||S.lt],['전달 방식',dm[S.dt]||S.dt]];
+    if(S.dt==='belt')r.push(['구동풀리',poVal('bt-drive'),'mm'],['종동풀리',poVal('bt-driven'),'mm']);
+    else if(S.dt==='gear'||S.dt==='chain')r.push(['감속비',poVal('gr-ratio')]);
+    r.push(['이송속도',poVal('op-speed'),'mm/s'],['가속시간',poVal('op-tacc'),'s'],['사이클',poVal('op-tcycle'),'s']);
+    if(S.lt==='ballscrew')r.push(['리드',poVal('bs-lead'),'mm'],['샤프트경',poVal('bs-diam'),'mm'],['질량',poVal('bs-mass'),'kg'],['설치',S['bs-ori']==='v'?'수직':'수평']);
+    else if(S.lt==='rack')r.push(['피니언경',poVal('rp-diam'),'mm'],['질량',poVal('rp-mass'),'kg'],['설치',S['rp-ori']==='v'?'수직':'수평']);
+    else if(S.lt==='conveyor')r.push(['롤러경',poVal('cv-roller'),'mm'],['질량',poVal('cv-mass'),'kg'],['경사각',poVal('cv-angle'),'°']);
+    else if(S.lt==='index')r.push(['테이블경',poVal('idx-diam'),'mm'],['질량',poVal('idx-mass'),'kg'],['분할수',poVal('idx-div')],['인덱스시간',poVal('idx-time'),'s']);
+    else if(S.lt==='rotary')r.push(['직경',poVal('rot-diam'),'mm'],['질량',poVal('rot-mass'),'kg'],['목표rpm',poVal('rot-rpm')]);
+    return poInputsStr(r);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

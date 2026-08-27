@@ -590,5 +590,9 @@ function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')
 initTypeGrid();
 window.ActuatorCalc={ leyCombos, selectActuator, LEY };
 </script>
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['타입',state.type],['부하',state.load,'kg'],['스트로크',state.stroke,'mm'],['속도',state.speed,'mm/s'],['설치',state.ori==='v'?'수직':'수평'],['푸싱력',state.push,'N']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>

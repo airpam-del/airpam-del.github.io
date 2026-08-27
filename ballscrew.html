@@ -1597,6 +1597,14 @@ function bsInquiry(tab, emailOnly){
 }
 </script>
 
+<script>
+function poGetInputs(){try{
+    var dm={horizontal:'수평',vertical:'수직',incline:'경사'},sm={'0.5':'한쪽 고정-자유','1.0':'양쪽 지지','1.4286':'고정-지지(K=0.7)','2.0':'양쪽 고정(K=0.5)'};
+    var r=[['질량',BS.W,'kg'],['설치',dm[BS.dir]||BS.dir]];
+    if(BS.dir==='incline')r.push(['경사각',BS.angle,'°']);
+    r.push(['스트로크',BS.S,'mm'],['최대속도',BS.vmax,'mm/s'],['가속시간',BS.tacc,'s'],['요구수명',BS.life,'h'],['지지방식',sm[BS.support]||BS.support]);
+    return poInputsStr(r);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

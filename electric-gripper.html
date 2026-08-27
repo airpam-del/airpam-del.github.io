@@ -902,6 +902,11 @@ renderStepsBar(1);
 document.getElementById('print-date').textContent = new Date().toLocaleDateString('ko-KR');
 </script>
 
+<script>
+function poGetInputs(){try{
+    var cm={dio:'디지털 I/O',iolink:'IO-Link'};
+    return poInputsStr([['워크 무게',S.weight,'g'],['워크 폭',S.width,'mm'],['로봇',S.robot],['통신',cm[S.comm]||S.comm]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

@@ -565,5 +565,9 @@ function closeHelp(e){ if(!e||e.target===document.getElementById('help-overlay')
 initTypeGrid();
 window.VacuumPadCalc={ requiredForce, padForceCircle, padForceOval, padsNeeded, selectPad, STD_DIA, SF_BY_POS };
 </script>
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['패드 타입',state.type],['워크 질량',state.mass,'kg'],['이송 가속',state.acc,'m/s²'],['자세',state.pos],['안전계수',state.sf],['표면',state.surface],['진공압',state.vac,'kPa']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>

@@ -1088,6 +1088,10 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['실린더 보어',S.bore,'mm'],['피스톤 속도',S.speed,'mm/s'],['튜브 OD',S.od,'mm'],['포트 나사',S.thread],['제어',S.control==='out'?'미터아웃':'미터인'],['마운트',S.mount==='elbow'?'엘보':'인라인']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

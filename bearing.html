@@ -1442,6 +1442,11 @@ function closeBrgHelp(e) {
 </div>
 
 
+<script>
+function poGetInputs(){try{
+    var tm={DGBB:'깊은홈 볼',ACBB:'앵귤러 볼',CRB:'원통 롤러',SBB:'자동조심 볼',SRB:'자동조심 롤러',TRB:'테이퍼 롤러',TBB:'스러스트 볼',NRB:'니들 롤러'};
+    return poInputsStr([['베어링 종류',tm[state.type]||state.type],[state.searchBy==='bore'?'내경':'외경',state.dimVal,'mm'],['반경하중 Fr',state.fr,'kgf'],['축하중 Fa',state.fa,'kgf'],['회전수',state.n,'rpm'],['하중계수 fw',state.fw],['온도계수 ft',state.ft],['목표수명',state.lh,'h']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>
 

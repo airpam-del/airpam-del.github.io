@@ -1095,6 +1095,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function poGetInputs(){try{
+    var dm={push:'전진',pull:'후진',both:'양방향'};
+    return poInputsStr([['필요추력',S.fRequired?Math.round(S.fRequired):null,'N'],['공급압',S.pressure,'MPa'],['방향',dm[S.direction]||S.direction],['스트로크',S.stroke,'mm'],['타입',S.cylinderType==='single'?'단동':'복동'],['부하율',S.loadFactor]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

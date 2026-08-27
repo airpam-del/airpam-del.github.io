@@ -1030,6 +1030,10 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['유량',S.flow,'L/min'],['공급압',S.pressure,'MPa'],['튜브 재질',S.material==='pu'?'폴리우레탄(PU)':'나일론(PA)'],['배관 길이',S.pipelen,'m']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

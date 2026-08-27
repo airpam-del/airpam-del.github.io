@@ -1139,5 +1139,9 @@ initTypeGrid();
 window.CouplingCalc = { requiredTorque, boreFits, selectCoupling, typeAdvice, coupModels, COUP_DB };
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['타입',state.type],['부하토크',state.loadTorque,'N·m'],['서비스팩터',state.sf],['피크토크',state.peak,'N·m'],['축경1',state.d1,'mm'],['축경2',state.d2,'mm'],['회전수',state.rpm,'rpm']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body></html>

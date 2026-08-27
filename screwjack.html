@@ -1355,6 +1355,11 @@ renderStepsBar(1);
 renderLayoutOpts();
 </script>
 
+<script>
+function poGetInputs(){try{
+    var sm={tr1:'사다리꼴 단선',tr2:'사다리꼴 복선',ball:'볼스크류'};
+    return poInputsStr([['하중',poVal('inp-F'),'kgf'],['스트로크',poVal('inp-L'),'mm'],['이송속도',poVal('inp-v'),'mm/s'],['잭 수량',S.qty],['스크류 타입',sm[S.screw]||S.screw],['기어비',S.gr==='L'?'저속(L)':'표준(N)'],['안전율 vsf',S.vsf],['모터안전율 msf',S.msf]]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>

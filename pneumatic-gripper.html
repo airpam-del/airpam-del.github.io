@@ -901,6 +901,10 @@ renderStepsBar(1);
 document.getElementById('print-date').textContent = new Date().toLocaleDateString('ko-KR');
 </script>
 
+<script>
+function poGetInputs(){try{
+    return poInputsStr([['워크 무게',S.weight,'g'],['워크 폭',S.width,'mm'],['공급압',S.pressure,'MPa'],['파지 방향',S.gripDir==='outer'?'외부':'내부'],['작동방식',S.actuator==='double'?'복동':'단동'],['파지점 거리',S.gripL,'mm']]);}catch(e){return '';}}
+</script>
 <script src="js/common.js"></script>
 </body>
 </html>
