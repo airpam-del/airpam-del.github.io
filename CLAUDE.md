@@ -116,6 +116,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - CKD HGW 그리퍼, CKD TAS/TAN 튜빙, CKD 3F 밸브 (SMC 미러 근사 패턴 의심)
 - 상세는 "작업 이력 2026-07-03" 참조. 출처 확보 시 값 재검증 필요.
 
+## 계산기 수정 규칙
+- 계산기(*.html) 또는 /calc/*.js 를 수정하면, 커밋 전에 반드시
+  `node tests/run-all.js` 를 실행하고 전부 통과해야 한다.
+- 계산식·판정 로직을 바꾸면 해당 골든 케이스 값도 함께 갱신하고,
+  변경 전후 값을 사용자에게 표로 보여준 뒤 승인받는다.
+- 새 경고·판정 메시지를 추가하면, 그 메시지의 불변식 테스트도 같이 추가한다.
+- 테스트가 실패하는 상태로는 절대 커밋/푸시하지 않는다.
+
 ## SEO 구조 (2026-07-04 기초 공사)
 
 - **sitemap.xml**: index(priority 1.0) + 계산기 15개(0.8), admin 제외. `js/common.js`의
