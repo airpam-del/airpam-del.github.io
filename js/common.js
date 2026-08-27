@@ -198,15 +198,40 @@ if (document.readyState === 'loading') {
 /* ═══════════════════════════════════════════════════════════════
    견적 문의 (구글 앱스스크립트 웹앱 → 시트 기록 + Gmail 알림)
    ▶ 엔드포인트는 여기 한 곳에서 관리 (URL만 바꾸면 전 계산기 반영)
-   ▶ 각 계산기: poOpenInquiry({calc, model, spec, emailOnly}) 호출만
+   ▶ 각 계산기: poOpenInquiry({calc, model, spec, inputs, emailOnly}) 호출.
+     inputs 미지정 시 계산기가 정의한 전역 poGetInputs() 를 자동 사용(표준).
    ▶ CORS 프리플라이트 회피: Content-Type text/plain + mode:no-cors 단순요청
    ═══════════════════════════════════════════════════════════════ */
 var INQUIRY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwHsYy-IOmiKPy5WenV3SLvoCNGaiFa3Ul5ta2bUPw13WJGpsx93aVZmoqWdId5Ik9AfA/exec';
 var INQUIRY_FALLBACK_EMAIL = 'airpam@naver.com';
-var _poInqCtx = { calc: '', model: '', spec: '', emailOnly: false };
+var _poInqCtx = { calc: '', model: '', spec: '', inputs: '', emailOnly: false };
 
 function poEsc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 function poValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+/* ── 입력값(inputs) 표준 헬퍼 ──────────────────────────────────
+   각 계산기는 자신의 입력 필드를 읽어 사람이 읽기 쉬운 여러 줄 문자열을 만든다.
+   · poVal(id)        : 폼 필드 값(select는 표시 텍스트) 읽기
+   · poInputsStr(rows): [['라벨', 값, '단위'?], ...] → "라벨: 값 단위\n..." (빈 값 제외)
+   자동 연결: 계산기가 전역 poGetInputs() 를 정의하면 poOpenInquiry 가 자동으로 사용.
+   ──────────────────────────────────────────────────────────── */
+function poVal(id) {
+  var e = document.getElementById(id);
+  if (!e) return '';
+  if (e.tagName === 'SELECT') { var o = e.options[e.selectedIndex]; return o ? String(o.textContent || o.value).trim() : ''; }
+  if (e.type === 'checkbox') return e.checked ? '예' : '아니오';
+  return (e.value != null ? String(e.value) : '').trim();
+}
+function poInputsStr(rows) {
+  var out = [];
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i]; if (!r) continue;
+    var v = r[1]; if (v == null) continue;
+    v = String(v).trim(); if (v === '' || v === '—') continue;
+    out.push(r[0] + ': ' + v + (r[2] ? ' ' + r[2] : ''));
+  }
+  return out.join('\n');
+}
 
 function poInjectInquiryUI() {
   if (document.getElementById('po-inq-overlay')) return;
@@ -264,13 +289,18 @@ function poInjectInquiryUI() {
 function poOpenInquiry(ctx) {
   poInjectInquiryUI();
   ctx = ctx || {};
-  _poInqCtx = { calc: ctx.calc || '부품 선정', model: ctx.model || '', spec: ctx.spec || '', emailOnly: !!ctx.emailOnly };
+  // inputs: 명시적으로 넘기지 않으면 계산기가 정의한 전역 poGetInputs() 를 자동 사용
+  var inputs = (ctx.inputs != null && String(ctx.inputs).trim() !== '')
+    ? String(ctx.inputs)
+    : (typeof window.poGetInputs === 'function' ? (window.poGetInputs() || '') : '');
+  _poInqCtx = { calc: ctx.calc || '부품 선정', model: ctx.model || '', spec: ctx.spec || '', inputs: inputs, emailOnly: !!ctx.emailOnly };
   document.getElementById('po-inq-form').style.display = 'block';
   document.getElementById('po-inq-done').style.display = 'none';
   document.getElementById('po-inq-title').textContent = _poInqCtx.emailOnly ? '📧 결과를 이메일로 받기' : '📩 견적 문의';
   document.getElementById('po-inq-ctx').innerHTML = '<b>' + poEsc(_poInqCtx.calc) + '</b>' +
     (_poInqCtx.model ? ' · 추천 <b>' + poEsc(_poInqCtx.model) + '</b>' : '') +
-    (_poInqCtx.spec ? '<br>' + poEsc(_poInqCtx.spec) : '');
+    (_poInqCtx.spec ? '<br>' + poEsc(_poInqCtx.spec) : '') +
+    (_poInqCtx.inputs ? '<br><span style="color:#8A8680;font-weight:600">［입력값］</span><br>' + poEsc(_poInqCtx.inputs).replace(/\n/g, '<br>') : '');
   ['name', 'phone', 'company', 'memo'].forEach(function (f) {
     var el = document.getElementById('po-inq-f-' + f); if (el) el.style.display = _poInqCtx.emailOnly ? 'none' : 'block';
   });
@@ -297,7 +327,7 @@ function poSubmitInquiry() {
     if (!name) { poInqErr('이름을 입력해 주세요.'); return; }
     if (!phone) { poInqErr('연락처를 입력해 주세요.'); return; }
   }
-  var payload = { calc: _poInqCtx.calc, model: _poInqCtx.model, spec: _poInqCtx.spec, name: name, phone: phone, email: email, company: company, memo: memo, ts: new Date().toISOString(), page: (location.pathname.split('/').pop() || 'index.html') };
+  var payload = { calc: _poInqCtx.calc, model: _poInqCtx.model, spec: _poInqCtx.spec, inputs: _poInqCtx.inputs, name: name, phone: phone, email: email, company: company, memo: memo, ts: new Date().toISOString(), page: (location.pathname.split('/').pop() || 'index.html') };
   var btn = document.getElementById('po-inq-submit');
   btn.disabled = true; btn.textContent = '전송 중…';
   fetch(INQUIRY_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })

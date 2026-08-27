@@ -1267,8 +1267,23 @@ function lmInquiry(tab, emailOnly){
   var specEl  = document.getElementById(tab + '-rec-specs');
   var model = modelEl ? modelEl.textContent.trim() : '';
   var spec  = specEl ? specEl.innerHTML.replace(/<br\s*\/?>/gi, ' · ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim() : '';
+  // 사용자 입력값 (탭별) — 계산 로직 미변경, 입력 필드만 읽음
+  var inputs = (tab === 'a')
+    ? poInputsStr([
+        ['하중', poVal('a-load'), 'kgf'], ['이송 속도', poVal('a-speed'), 'mm/s'],
+        ['스트로크', poVal('a-stroke'), 'mm'], ['가감속 시간', poVal('a-tn'), 's'],
+        ['가동 시간', poVal('a-hours'), 'h/일'], ['블록 수', poVal('a-blocks')],
+        ['레일 세트', poVal('a-sets')], ['설치 방향', poVal('a-direction')],
+        ['블록 간격', poVal('a-block-dist'), 'mm'], ['레일 간격', poVal('a-rail-dist'), 'mm'],
+        ['중심 높이', poVal('a-height'), 'mm'], ['편심량', poVal('a-eccentric'), 'mm']
+      ])
+    : poInputsStr([
+        ['하중', poVal('s-load'), 'kgf'], ['이송 속도', poVal('s-speed'), 'mm/s'],
+        ['가동 시간', poVal('s-hours'), 'h/일'], ['블록 수', poVal('s-blocks')],
+        ['레일 세트', poVal('s-sets')], ['설치 방향', poVal('s-direction')]
+      ]);
   if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('LM Guide 견적 문의'); return; }
-  poOpenInquiry({ calc: 'LM Guide 선정', model: model, spec: spec, emailOnly: !!emailOnly });
+  poOpenInquiry({ calc: 'LM Guide 선정', model: model, spec: spec, inputs: inputs, emailOnly: !!emailOnly });
 }
 </script>
 

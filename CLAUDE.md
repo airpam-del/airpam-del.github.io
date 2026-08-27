@@ -165,6 +165,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. index.html에 **정적 요소 3곳 수동 추가**(SEO): 히어로 칩(`.chip`), CTA 버튼(`.cta-group-btns`),
    툴카드(`.tool-card`) — 누락 시 index 콘솔에 `[PartsOn] … 개수 불일치` 경고 표시됨
 4. sitemap.xml에 URL 추가
+5. **견적 문의 버튼 + inputs 표준(필수)**: 결과 화면에 문의 버튼(`poInquiryHero`/`poInquiryAuto`
+   또는 전용 함수)을 넣고, **공통 `poOpenInquiry({calc, model, spec, inputs, emailOnly})`** 를 호출한다.
+   - `inputs`(사용자 입력값)와 `spec`(결과 요약)을 **반드시 채워** 보낸다 → 문의 시트/PDF에 함께 기록됨.
+   - 표준 방식: 전역 `function poGetInputs(){ return poInputsStr([['라벨', poVal('필드id'), '단위'], ...]); }`
+     를 정의하면 `poOpenInquiry` 가 자동으로 `inputs` 를 채운다(명시 전달도 가능, 탭형 계산기 등).
+   - `poVal(id)`(select는 표시 텍스트)·`poInputsStr(rows)` 헬퍼는 `js/common.js` 제공. 계산 로직과 무관.
 
 ### ⚠️ CSS는 왜 공통 추출 안 했나 (2026-07-04 조사)
 15개 페이지 CSS가 시간차 수작업으로 드리프트(바이트 동일 교집합 8개뿐, `.btn` 6변형 등).
