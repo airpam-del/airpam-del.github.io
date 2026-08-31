@@ -366,8 +366,8 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
     <div class="question-desc">배관을 통해 흘러야 할 유량과 사용 조건을 입력하세요.</div>
 
     <div class="input-group">
-      <label><i class="ti ti-wind" aria-hidden="true"></i>필요 유량 Q
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">솔레노이드 밸브 계산기에서 확인한 <b>필요 유량</b>을 그대로 입력하세요.<br><br>모른다면 실린더 보어와 속도로 추정하세요.<br>예: Ø32 실린더, 200 mm/s → 약 9.7 L/min</div></span>
+      <label><i class="ti ti-wind" aria-hidden="true"></i>필요 유량 Q <span style="font-size:11px;color:var(--text3);font-weight:400">(ANR 표준상태)</span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>ANR(표준상태) 기준</b> 유량입니다. 솔레노이드 밸브 계산기 결과값을 <b>그대로</b> 입력하세요.<br><br>아래 "사용 압력"에서 실제 체적유량으로 변환해 튜브 지름을 산정합니다.<br><br>모른다면 실린더 보어와 속도로 추정하세요.<br>예: Ø32 실린더, 200 mm/s → 약 9.7 L/min</div></span>
       </label>
       <div class="input-wrap">
         <input type="number" id="flow" min="0.1" step="0.5" placeholder="예: 9.7" oninput="calcTube()">
@@ -442,7 +442,7 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
     <div class="input-group">
       <label><i class="ti ti-gauge" aria-hidden="true"></i>사용 압력</label>
       <div class="input-wrap">
-        <select id="pressure">
+        <select id="pressure" onchange="calcTube()">
           <option value="0.4">0.4 MPa — 저압 라인</option>
           <option value="0.5" selected>0.5 MPa — 표준 (권장)</option>
           <option value="0.6">0.6 MPa</option>
@@ -627,7 +627,8 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
 
     <div class="disclaimer">
       이 계산기는 튜브 사이즈 초기 선정 참고용입니다. 최종 선정은 메이커 카탈로그를 확인하세요.<br>
-      계산식: d_required [mm] = √(4Q / π×8×60,000) × 1000 (권장 유속 8 m/s 적용)<br>
+      계산식: Q_actual = Q_ANR × 0.1013 / (P + 0.1013) &nbsp;→&nbsp; d_required [mm] = √(4·Q_actual / π×8×60,000) × 1000<br>
+      &nbsp;&nbsp;(입력 유량은 ANR 표준상태 기준, P=사용압력[MPa], 권장 유속 8 m/s 적용)<br>
       <b>정밀 압력 손실 계산이 필요한 장거리·복잡 배관은 별도 검토가 필요합니다.</b><br>
       데이터 최종 검증: 2026.07 — SMC 튜빙 품번·내경 카탈로그 대조 완료, CKD 튜빙 시리즈는 검증 진행 중
     </div>
@@ -646,8 +647,9 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
 ──────────────────────────────────────────────── */
 /* 내경(id)은 3사 중 최소인 SMC TU 튜빙 실측 기준 (TU0425/0604/0805/1065/1208/1610) —
    추천이 어느 메이커를 선택해도 보수적이 되도록 최소 내경 사용. 2026-07 카탈로그 검증.
-   qMax는 calcTube()와 동일 기준(유속 8 m/s): qMax = π/4 × id² × 8 × 60000 [L/min] —
-   기존 값이 공식 대비 2.5배 커서 표-공식 모순이었던 것을 재계산으로 일치시킴 */
+   qMax = π/4 × id² × 8 × 60000 [L/min] = 유속 8 m/s 기준 튜브 최대 '실제유량'.
+   ※ 입력 유량은 ANR 기준 → calcTube()에서 Q_actual = Q_ANR×0.1013/(P+0.1013) 로 변환 후
+     내경(id) 비교하므로, OD_TABLE(id·qMax=실제유량 기준)과 일관됨. (qMax는 표시 데이터, 로직 미사용) */
 const OD_TABLE = [
   {od:4,  id:2.5, qMax:2.3},
   {od:6,  id:4.0, qMax:6.0},
@@ -783,6 +785,8 @@ function applyFlowHelper() {
 function calcTube() {
   const q = parseFloat(document.getElementById('flow').value) || 0;
   S.flow = q;
+  const P = parseFloat(document.getElementById('pressure').value) || 0.5;
+  S.pressure = P;
   const preview = document.getElementById('calc-preview');
 
   if (q <= 0) {
@@ -792,8 +796,11 @@ function calcTube() {
     return;
   }
 
-  // d_required [mm] = sqrt(4Q / (π × 8 × 60000)) × 1000
-  const d = Math.sqrt((4 * q) / (Math.PI * 8 * 60000)) * 1000;
+  // 입력 유량 q 는 ANR(표준상태) → 사용압력 P 의 실제 체적유량으로 변환
+  // Q_actual = Q_ANR × 0.1013 / (P + 0.1013)  (0.1013 = 대기압 MPa)
+  const qActual = q * 0.1013 / (P + 0.1013);
+  // d_required [mm] = sqrt(4·Q_actual / (π × 8 × 60000)) × 1000  (권장 유속 8 m/s)
+  const d = Math.sqrt((4 * qActual) / (Math.PI * 8 * 60000)) * 1000;
   S.dRequired = d;
 
   // 권장 OD 찾기: 내경이 d_required 이상인 가장 작은 OD

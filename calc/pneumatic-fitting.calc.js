@@ -15,12 +15,16 @@ const OD_TABLE = [
 
 /**
  * 필요 내경 계산 [mm]
- * 공식: d = sqrt(4Q / (π × 8 × 60000)) × 1000
- * (배관 내 권장 유속 8 m/s = 8000 mm/s 기준)
- * @param {number} q  유량 [L/min]
+ * 입력 유량 q 는 ANR(표준상태) 기준 → 사용압력 P 의 실제 체적유량으로 변환 후 계산.
+ *   Q_actual = Q_ANR × 0.1013 / (P + 0.1013)   (P: 게이지압 [MPa], 0.1013 = 대기압)
+ *   d = sqrt(4·Q_actual / (π × 8 × 60000)) × 1000   (권장 유속 8 m/s 기준)
+ * @param {number} q  유량 [L/min ANR]
+ * @param {number} P  사용압력 [MPa 게이지] (기본 0.5)
  */
-function calcRequiredID(q) {
-  return Math.sqrt((4 * q) / (Math.PI * 8 * 60000)) * 1000;
+function calcRequiredID(q, P) {
+  if (P == null) P = 0.5;
+  var qActual = q * 0.1013 / (P + 0.1013);
+  return Math.sqrt((4 * qActual) / (Math.PI * 8 * 60000)) * 1000;
 }
 
 /**
@@ -89,11 +93,11 @@ const FITTING_DATA = {
    pneumatic-fitting.html은 이 모듈을 로드하지 않는 병렬 사본이므로,
    html 로직을 고치면 여기도 동일 유지할 것.
    ⚠️ calcTube: 유량 범위 초과 시 최대 OD로 폴백(find || 마지막). recommendOD(null 반환)와 다름.
-   입력 계약 input = { flow, material:'pu'|'pa', makers:{smc,festo,ckd} }
+   입력 계약 input = { flow(ANR), pressure[MPa], material:'pu'|'pa', makers:{smc,festo,ckd} }
    ══════════════════════════════════════════════════════════════ */
 function computeFitting(input) {
-  const { flow, material, makers } = input;
-  const dRequired = calcRequiredID(flow);
+  const { flow, pressure, material, makers } = input;
+  const dRequired = calcRequiredID(flow, pressure);
   const rec = OD_TABLE.find(function (r) { return r.id >= dRequired; }) || OD_TABLE[OD_TABLE.length - 1];
   const recommendedOD = rec.od;
   const activeMakers = Object.keys(makers).filter(function (k) { return makers[k]; });

@@ -13,23 +13,26 @@ const near = (a, b, rel = 1e-9) => {
   assert.ok(d / s <= rel, `expected ${a} ≈ ${b}`);
 };
 
-/* ── A) 단위 ── */
-test('calcRequiredID: sqrt(4Q/(π×8×60000))×1000', () => {
-  near(calcRequiredID(100), Math.sqrt((4 * 100) / (Math.PI * 8 * 60000)) * 1000);
+/* ── A) 단위: ANR→실제유량 변환 포함 ── */
+test('calcRequiredID: ANR→실제유량 변환 후 sqrt(4·Qact/(π×8×60000))×1000', () => {
+  const qAct = 100 * 0.1013 / (0.5 + 0.1013);
+  near(calcRequiredID(100, 0.5), Math.sqrt((4 * qAct) / (Math.PI * 8 * 60000)) * 1000);
+  // 압력이 높을수록 실제유량↓ → 필요 내경↓
+  assert.ok(calcRequiredID(100, 0.7) < calcRequiredID(100, 0.4));
 });
 
-/* ── B) 골든 (computeFitting) ── */
+/* ── B) 골든 (computeFitting) — ANR 유량 + 사용압력 ── */
 const ALL = { smc: true, festo: true, ckd: true };
 const GOLDEN = [
-  { label: '유량5·PU → OD6 KQ2H06/TU0604',
-    input: { flow: 5, material: 'pu', makers: ALL },
-    expect: { dRequired: 3.641828101973597, od: 6, n: 3, tubing: 'TU0604', straight: 'KQ2H06', tubingSeries: 'TU 튜빙' } },
-  { label: '유량100·PU → OD16 폴백',
-    input: { flow: 100, material: 'pu', makers: ALL },
-    expect: { dRequired: 16.286750396763995, od: 16, n: 3, tubing: 'TU1610', straight: 'KQ2H16', tubingSeries: 'TU 튜빙' } },
-  { label: '유량800·PA(나일론) → OD16 TS1612',
-    input: { flow: 800, material: 'pa', makers: ALL },
-    expect: { dRequired: 46.06588659617807, od: 16, n: 3, tubing: 'TS1612', straight: 'KQ2H16', tubingSeries: 'TS 튜빙' } },
+  { label: '유량5(ANR)·0.5MPa·PU → OD4 KQ2H04/TU0425',
+    input: { flow: 5, pressure: 0.5, material: 'pu', makers: ALL },
+    expect: { dRequired: 1.494784423320089, od: 4, n: 3, tubing: 'TU0425', straight: 'KQ2H04', tubingSeries: 'TU 튜빙' } },
+  { label: '유량100(ANR)·0.5MPa·PU → OD12 KQ2H12/TU1208',
+    input: { flow: 100, pressure: 0.5, material: 'pu', makers: ALL },
+    expect: { dRequired: 6.684879164503083, od: 12, n: 3, tubing: 'TU1208', straight: 'KQ2H12', tubingSeries: 'TU 튜빙' } },
+  { label: '유량800(ANR)·0.5MPa·PA(나일론) → OD16 폴백 TS1612',
+    input: { flow: 800, pressure: 0.5, material: 'pa', makers: ALL },
+    expect: { dRequired: 18.907693554531168, od: 16, n: 3, tubing: 'TS1612', straight: 'KQ2H16', tubingSeries: 'TS 튜빙' } },
 ];
 for (const g of GOLDEN) {
   test(`골든: ${g.label}`, () => {
@@ -52,7 +55,7 @@ const ri = (lo, hi) => lo + rng() * (hi - lo);
 function randomInput() {
   const makers = { smc: rng() < 0.85, festo: rng() < 0.75, ckd: rng() < 0.75 };
   if (!makers.smc && !makers.festo && !makers.ckd) makers.smc = true;
-  return { flow: +ri(1, 5000).toFixed(2), material: pick(['pu', 'pa']), makers };
+  return { flow: +ri(1, 5000).toFixed(2), pressure: pick([0.4, 0.5, 0.6, 0.7]), material: pick(['pu', 'pa']), makers };
 }
 
 test('불변식: 무작위 입력 150개', () => {
@@ -62,8 +65,8 @@ test('불변식: 무작위 입력 150개', () => {
     const r = computeFitting(input);
     const ctx = `#${i} ${JSON.stringify(input)}`;
 
-    // (2) 단위
-    near(r.dRequired, calcRequiredID(input.flow));
+    // (2) 단위 (ANR→실제유량 변환 포함)
+    near(r.dRequired, calcRequiredID(input.flow, input.pressure));
 
     // (1) 추천 OD: 내경≥필요인 최소 OD, 없으면 최대 OD
     const found = OD_TABLE.find(x => x.id >= r.dRequired);
