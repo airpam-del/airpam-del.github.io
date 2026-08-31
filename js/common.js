@@ -348,3 +348,106 @@ function poInqDone(ok) {
       '<button class="po-inq-close2" onclick="poCloseInquiry()">닫기</button>';
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   오류 신고 (계산 결과 이상 신고) — 견적 문의와 같은 웹앱 재사용
+   ▶ 페이로드에 type:"error_report" 포함 → doPost가 분기해 "오류신고" 탭 기록 + 별도 메일
+   ▶ 각 계산기: 결과 하단 🚩 링크에서 poReport('계산기명') 호출 (결과·입력값 자동 첨부)
+   ▶ inputs 는 각 계산기 poGetInputs() 자동 사용(문의와 동일 표준)
+   ═══════════════════════════════════════════════════════════════ */
+var _poRepCtx = { calc: '', result: '', inputs: '' };
+
+/* 결과 요약(추천 모델·사양) best-effort 리더 — 문의 리더와 동일 선택자 */
+function _poReadModelSpec() {
+  var model = poText('#heroModel') || poText('#s-rec-model') || poText('#a-rec-model') || poText('#nav-model') || poText('.rh-model') || poText('#cmp-selected-name');
+  if (!model) { var mk = poText('.result-card .rc-maker'), md = poText('.result-card .rc-model'); model = (mk + ' ' + md).trim(); }
+  var spec = '';
+  var hd = poText('#heroDim'), hc = poText('#heroCap');
+  if (hd || hc) spec = [hd, hc].filter(Boolean).join(' · ');
+  else spec = poText('#result-desc') || poText('#result-summary-bar') || poText('.rh-specs');
+  return { model: model, spec: (spec || '').replace(/\s+/g, ' ').trim().slice(0, 300) };
+}
+
+function poInjectReportUI() {
+  if (document.getElementById('po-rep-overlay')) return;
+  poInjectInquiryUI(); // .po-inq-* 클래스(모달 내부) 재사용
+  var st = document.createElement('style');
+  st.textContent = [
+    '#po-rep-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:501;align-items:center;justify-content:center;padding:16px;font-family:inherit}',
+    '#po-rep-overlay.open{display:flex}',
+    '.po-rep-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#9E9B96;cursor:pointer;text-decoration:none;padding:6px 4px;background:none;border:none;font-family:inherit}',
+    '.po-rep-link:hover{color:#B45309;text-decoration:underline}',
+    '.po-rep-row{text-align:center;margin:12px 0 2px}',
+    '@media print{.po-rep-row{display:none!important}}'
+  ].join('');
+  document.head.appendChild(st);
+  var ov = document.createElement('div');
+  ov.id = 'po-rep-overlay';
+  ov.innerHTML =
+    '<div class="po-inq-box" role="dialog" aria-modal="true">' +
+      '<div class="po-inq-head" style="background:#8B4A1A"><h3>🚩 계산 결과 오류 신고</h3><button class="po-inq-x" onclick="poCloseReport()" aria-label="닫기">✕</button></div>' +
+      '<div class="po-inq-body" id="po-rep-form">' +
+        '<div class="po-inq-ctx" id="po-rep-ctx"></div>' +
+        '<div class="po-inq-f"><label>어떤 점이 이상한가요? <span class="po-inq-req">*</span></label><textarea id="po-rep-msg" placeholder="예: 추천 모델의 수명값이 실제보다 너무 커 보입니다" style="min-height:80px"></textarea></div>' +
+        '<div class="po-inq-f"><label>이메일 (선택 · 답변 받을 주소)</label><input id="po-rep-email" type="email" autocomplete="email" placeholder="name@company.com"></div>' +
+        '<button class="po-inq-submit" id="po-rep-submit" style="background:#8B4A1A" onclick="poSubmitReport()">신고 보내기</button>' +
+        '<div class="po-inq-err" id="po-rep-err"></div>' +
+        '<div class="po-inq-priv">계산기·입력조건·결과가 함께 전송되어 오류 확인에만 사용됩니다.</div>' +
+      '</div>' +
+      '<div class="po-inq-done" id="po-rep-done"></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function (e) { if (e.target === ov) poCloseReport(); });
+}
+
+function poOpenReport(ctx) {
+  poInjectReportUI();
+  ctx = ctx || {};
+  var rd = _poReadModelSpec();
+  var model = ctx.model != null ? ctx.model : rd.model;
+  var spec = ctx.spec != null ? ctx.spec : rd.spec;
+  var result = [model, spec].filter(Boolean).join(' · ');
+  var inputs = (ctx.inputs != null && String(ctx.inputs).trim() !== '') ? String(ctx.inputs)
+    : (typeof window.poGetInputs === 'function' ? (window.poGetInputs() || '') : '');
+  _poRepCtx = { calc: ctx.calc || '부품 선정', result: result, inputs: inputs };
+  document.getElementById('po-rep-form').style.display = 'block';
+  document.getElementById('po-rep-done').style.display = 'none';
+  document.getElementById('po-rep-ctx').innerHTML = '<b>' + poEsc(_poRepCtx.calc) + '</b>' +
+    (result ? '<br>결과: ' + poEsc(result) : '') +
+    (inputs ? '<br><span style="color:#8A8680;font-weight:600">［입력값］</span><br>' + poEsc(inputs).replace(/\n/g, '<br>') : '');
+  var sb = document.getElementById('po-rep-submit'); sb.disabled = false; sb.textContent = '신고 보내기';
+  document.getElementById('po-rep-err').style.display = 'none';
+  document.getElementById('po-rep-msg').value = '';
+  document.getElementById('po-rep-email').value = '';
+  document.getElementById('po-rep-overlay').classList.add('open');
+  setTimeout(function () { var f = document.getElementById('po-rep-msg'); if (f) f.focus(); }, 40);
+}
+function poCloseReport() { var o = document.getElementById('po-rep-overlay'); if (o) o.classList.remove('open'); }
+function poRepErr(msg) { var e = document.getElementById('po-rep-err'); e.textContent = msg; e.style.display = 'block'; }
+
+function poSubmitReport() {
+  var message = document.getElementById('po-rep-msg').value.trim();
+  var email = document.getElementById('po-rep-email').value.trim();
+  document.getElementById('po-rep-err').style.display = 'none';
+  if (!message) { poRepErr('이상한 점을 입력해 주세요.'); document.getElementById('po-rep-msg').focus(); return; }
+  if (email && !poValidEmail(email)) { poRepErr('이메일 형식을 확인해 주세요.'); return; }
+  var payload = { type: 'error_report', calc: _poRepCtx.calc, inputs: _poRepCtx.inputs, result: _poRepCtx.result, message: message, email: email, ts: new Date().toISOString(), page: (location.pathname.split('/').pop() || 'index.html') };
+  var btn = document.getElementById('po-rep-submit');
+  btn.disabled = true; btn.textContent = '전송 중…';
+  fetch(INQUIRY_ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
+    .then(function () { poRepDone(true); })
+    .catch(function () { poRepDone(false); });
+}
+function poRepDone(ok) {
+  document.getElementById('po-rep-form').style.display = 'none';
+  var d = document.getElementById('po-rep-done'); d.style.display = 'block';
+  if (ok) {
+    d.innerHTML = '<div class="po-ic">✅</div><h4>신고가 접수되었습니다</h4><p>확인 후 개선하겠습니다. 감사합니다.</p><button class="po-inq-close2" onclick="poCloseReport()">닫기</button>';
+  } else {
+    d.innerHTML = '<div class="po-ic">⚠️</div><h4>전송에 실패했습니다</h4><p>네트워크 확인 후 다시 시도하시거나,<br><a href="mailto:' + INQUIRY_FALLBACK_EMAIL + '">' + INQUIRY_FALLBACK_EMAIL + '</a>로 알려 주세요.</p><button class="po-inq-close2" onclick="poCloseReport()">닫기</button>';
+  }
+}
+
+/* 결과 하단 🚩 링크에서 호출: 결과(추천모델·사양)·입력값 자동 첨부.
+   탭형 계산기는 poOpenReport({calc, model, spec, inputs}) 로 직접 전달 가능. */
+function poReport(calcName) { poOpenReport({ calc: calcName }); }

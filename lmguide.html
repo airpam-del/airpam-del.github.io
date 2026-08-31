@@ -495,6 +495,7 @@
         <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
         <button class='email-btn' onclick="lmInquiry('s',true)">📧 결과를 이메일로 받기</button>
       </div>
+      <div class="po-rep-row"><button class="po-rep-link" onclick="lmReport('s')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
     </div>
   </div>
 
@@ -682,6 +683,7 @@
         <button class='print-pdf-btn' onclick='lmDoPrint()'>📄 PDF 저장 (인쇄)</button>
         <button class='email-btn' onclick="lmInquiry('a',true)">📧 결과를 이메일로 받기</button>
       </div>
+      <div class="po-rep-row"><button class="po-rep-link" onclick="lmReport('a')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
     </div>
   </div>
 </main>
@@ -1262,12 +1264,12 @@ function lmDoPrint(){
 }
 
 /* 견적 문의 — 해당 탭(s/a)의 추천 모델·사양을 읽어 공통 모달 호출 */
-function lmInquiry(tab, emailOnly){
+// 탭별 결과(추천모델·사양) + 사용자 입력값 — 문의/오류신고 공용 (계산 로직 미변경, 필드만 읽음)
+function lmTabResult(tab){
   var modelEl = document.getElementById(tab + '-rec-model');
   var specEl  = document.getElementById(tab + '-rec-specs');
   var model = modelEl ? modelEl.textContent.trim() : '';
   var spec  = specEl ? specEl.innerHTML.replace(/<br\s*\/?>/gi, ' · ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim() : '';
-  // 사용자 입력값 (탭별) — 계산 로직 미변경, 입력 필드만 읽음
   var inputs = (tab === 'a')
     ? poInputsStr([
         ['하중', poVal('a-load'), 'kgf'], ['이송 속도', poVal('a-speed'), 'mm/s'],
@@ -1282,8 +1284,17 @@ function lmInquiry(tab, emailOnly){
         ['가동 시간', poVal('s-hours'), 'h/일'], ['블록 수', poVal('s-blocks')],
         ['레일 세트', poVal('s-sets')], ['설치 방향', poVal('s-direction')]
       ]);
+  return { model: model, spec: spec, inputs: inputs };
+}
+function lmInquiry(tab, emailOnly){
+  var r = lmTabResult(tab);
   if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('LM Guide 견적 문의'); return; }
-  poOpenInquiry({ calc: 'LM Guide 선정', model: model, spec: spec, inputs: inputs, emailOnly: !!emailOnly });
+  poOpenInquiry({ calc: 'LM Guide 선정', model: r.model, spec: r.spec, inputs: r.inputs, emailOnly: !!emailOnly });
+}
+function lmReport(tab){
+  var r = lmTabResult(tab);
+  if (typeof poOpenReport !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('LM Guide 오류 신고'); return; }
+  poOpenReport({ calc: 'LM Guide 선정', model: r.model, spec: r.spec, inputs: r.inputs });
 }
 </script>
 
