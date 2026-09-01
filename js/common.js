@@ -145,7 +145,7 @@ function renderMobileNav() {
   });
 }
 
-function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poGradeInit(); }
+function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poGradeInit(); poRelatedInit(); }
 
 /* 결과 영역 문의 버튼 스타일 (로드 시 주입) */
 function poInjectResultBtnCSS() {
@@ -521,5 +521,66 @@ function poGradeIndex() {
         nameEl.appendChild(b);
       }
     }
+  } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   이송축 설계 연계 — 결과 화면 "다음 단계 →" (인기 계산기 트래픽 순환)
+   ▶ 각 계산기 결과 하단에 <div class="po-related"></div> 만 넣으면 자동 채워짐.
+   ▶ 연계 대상은 아래 RELATED_CALCS 한 곳에서 관리.
+   ═══════════════════════════════════════════════════════════════ */
+var RELATED_CALCS = {
+  'lmguide.html':            [['ballscrew.html','볼스크류 선정','이 이송축의 볼스크류도 선정해보세요'], ['servo_motor.html','서보모터 선정','이 축에 맞는 서보모터도 선정해보세요']],
+  'ballscrew.html':          [['lmguide.html','LM 가이드 선정','같은 이송축의 LM 가이드도 선정해보세요'], ['servo_motor.html','서보모터 선정','이 축을 구동할 서보모터도 선정해보세요']],
+  'servo_motor.html':        [['planetary-gearbox.html','유성 감속기 선정','감속이 필요하면 유성 감속기도 선정해보세요'], ['coupling.html','커플링 선정','축 연결용 커플링도 선정해보세요']],
+  'bearing.html':            [['ballscrew.html','볼스크류 선정','이 축의 볼스크류도 선정해보세요'], ['lmguide.html','LM 가이드 선정','직선 이송축 LM 가이드도 선정해보세요']],
+  'screwjack.html':          [['servo_motor.html','서보모터 선정','이 잭을 구동할 서보모터도 선정해보세요'], ['coupling.html','커플링 선정','모터-잭 연결 커플링도 선정해보세요']],
+  'planetary-gearbox.html':  [['servo_motor.html','서보모터 선정','이 감속기에 맞는 서보모터도 선정해보세요'], ['coupling.html','커플링 선정','출력축 커플링도 선정해보세요']],
+  'cycloidal-gearbox.html':  [['servo_motor.html','서보모터 선정','이 감속기에 맞는 서보모터도 선정해보세요'], ['coupling.html','커플링 선정','출력축 커플링도 선정해보세요']],
+  'harmonic-drive.html':     [['servo_motor.html','서보모터 선정','이 감속기에 맞는 서보모터도 선정해보세요'], ['coupling.html','커플링 선정','축 연결 커플링도 선정해보세요']],
+  'coupling.html':           [['servo_motor.html','서보모터 선정','연결할 서보모터도 선정해보세요'], ['ballscrew.html','볼스크류 선정','이송축 볼스크류도 선정해보세요']],
+  'timing-belt.html':        [['servo_motor.html','서보모터 선정','벨트 구동용 서보모터도 선정해보세요'], ['bearing.html','베어링 선정','풀리 지지 베어링도 선정해보세요']],
+  'linear-motor.html':       [['lmguide.html','LM 가이드 선정','안내용 LM 가이드도 선정해보세요'], ['servo_motor.html','서보모터 선정','비교용 서보+볼스크류도 검토해보세요']],
+  'electric-actuator.html':  [['servo_motor.html','서보모터 선정','내장 서보모터 사양도 비교해보세요'], ['lmguide.html','LM 가이드 선정','외부 안내축 LM 가이드도 선정해보세요']],
+  'electric-gripper.html':   [['servo_motor.html','서보모터 선정','로봇 축 서보모터도 선정해보세요'], ['pneumatic-gripper.html','공압 그리퍼 선정','공압 그리퍼와 비교해보세요']],
+  'pneumatic-cylinder.html': [['solenoid-valve.html','솔레노이드 밸브 선정','이 실린더를 제어할 밸브를 선정해보세요'], ['speed-controller.html','스피드 컨트롤러 선정','속도 조절용 스피드 컨트롤러도 선정해보세요'], ['pneumatic-fitting.html','피팅·튜빙 선정','배관 피팅·튜브 사이즈도 선정해보세요']],
+  'solenoid-valve.html':     [['pneumatic-cylinder.html','공압 실린더 선정','구동할 실린더를 선정해보세요'], ['speed-controller.html','스피드 컨트롤러 선정','속도 조절용 스피드 컨트롤러도 선정해보세요']],
+  'speed-controller.html':   [['pneumatic-cylinder.html','공압 실린더 선정','대상 실린더를 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','제어 밸브도 선정해보세요']],
+  'pneumatic-fitting.html':  [['pneumatic-cylinder.html','공압 실린더 선정','연결할 실린더를 선정해보세요'], ['pneumatic-fr-unit.html','공기압 조절 유닛 선정','공급 라인 FR 유닛도 선정해보세요']],
+  'pneumatic-fr-unit.html':  [['pneumatic-cylinder.html','공압 실린더 선정','구동 실린더를 선정해보세요'], ['pneumatic-fitting.html','피팅·튜빙 선정','배관 피팅·튜브도 선정해보세요']],
+  'pneumatic-gripper.html':  [['pneumatic-cylinder.html','공압 실린더 선정','이송 실린더도 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','그리퍼 제어 밸브도 선정해보세요']],
+  'vacuum-pad.html':         [['pneumatic-gripper.html','공압 그리퍼 선정','파지 방식 그리퍼와 비교해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','진공 회로 제어 밸브도 선정해보세요']]
+};
+function poInjectRelatedCSS() {
+  if (document.getElementById('po-rel-css')) return;
+  var st = document.createElement('style'); st.id = 'po-rel-css';
+  st.textContent = [
+    '.po-related{margin-top:16px}',
+    '.po-rel-title{font-size:12px;font-weight:700;color:var(--text3,#9E9B96);letter-spacing:.5px;margin-bottom:8px}',
+    '.po-rel-cards{display:flex;gap:8px;flex-wrap:wrap}',
+    '.po-rel-card{flex:1;min-width:200px;display:flex;flex-direction:column;gap:3px;padding:11px 14px;border:1.5px solid var(--border,#D8D4CC);border-radius:10px;background:#fff;text-decoration:none;transition:all .15s}',
+    '.po-rel-card:hover{border-color:var(--accent,#1A3A2A);background:var(--accent-light,#E8F0EC)}',
+    '.po-rel-blurb{font-size:12px;color:var(--text2,#6B6760);line-height:1.4}',
+    '.po-rel-go{font-size:14px;font-weight:700;color:var(--accent,#1A3A2A)}',
+    '@media print{.po-related{display:none!important}}'
+  ].join('');
+  (document.head || document.documentElement).appendChild(st);
+}
+function poRelatedInit() {
+  try {
+    var hosts = document.querySelectorAll('.po-related');
+    if (!hosts.length) return;
+    var page = location.pathname.split('/').pop() || 'index.html';
+    var rel = RELATED_CALCS[page];
+    if (!rel || !rel.length) return;
+    poInjectRelatedCSS();
+    var html = '<div class="po-rel-title">다음 단계 — 설계를 이어서 완성하세요</div><div class="po-rel-cards">';
+    for (var i = 0; i < rel.length; i++) {
+      html += '<a class="po-rel-card" href="' + rel[i][0] + '">' +
+              '<span class="po-rel-blurb">' + poEsc(rel[i][2]) + '</span>' +
+              '<span class="po-rel-go">' + poEsc(rel[i][1]) + ' →</span></a>';
+    }
+    html += '</div>';
+    for (var j = 0; j < hosts.length; j++) { hosts[j].innerHTML = html; }
   } catch (e) {}
 }
