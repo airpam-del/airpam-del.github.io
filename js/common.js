@@ -158,7 +158,10 @@ function poInjectResultBtnCSS() {
     '.po-inq-primary:hover{filter:brightness(1.12)}',
     '.po-inq-email{background:#0071B8;color:#fff}',
     '.po-inq-email:hover{background:#0088CC}',
-    '@media print{.po-inq-row{display:none!important}}'
+    '.po-rep-row{text-align:center;margin:12px 0 2px}',
+    '.po-rep-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#9E9B96;cursor:pointer;text-decoration:none;padding:6px 4px;background:none;border:none;font-family:inherit}',
+    '.po-rep-link:hover{color:#B45309;text-decoration:underline}',
+    '@media print{.po-inq-row,.po-rep-row{display:none!important}}'
   ].join('');
   (document.head || document.documentElement).appendChild(st);
 }
@@ -566,21 +569,42 @@ function poInjectRelatedCSS() {
   ].join('');
   (document.head || document.documentElement).appendChild(st);
 }
+function poRelatedHTML() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var rel = RELATED_CALCS[page];
+  if (!rel || !rel.length) return '';
+  var html = '<div class="po-rel-title">다음 단계 — 설계를 이어서 완성하세요</div><div class="po-rel-cards">';
+  for (var i = 0; i < rel.length; i++) {
+    html += '<a class="po-rel-card" href="' + rel[i][0] + '">' +
+            '<span class="po-rel-blurb">' + poEsc(rel[i][2]) + '</span>' +
+            '<span class="po-rel-go">' + poEsc(rel[i][1]) + ' →</span></a>';
+  }
+  return html + '</div>';
+}
+function poFillRelated(host) {
+  if (!host || host._poRelDone || host.innerHTML.trim()) return;
+  var html = poRelatedHTML(); if (!html) return;
+  host.innerHTML = html; host._poRelDone = true;
+}
 function poRelatedInit() {
   try {
-    var hosts = document.querySelectorAll('.po-related');
-    if (!hosts.length) return;
-    var page = location.pathname.split('/').pop() || 'index.html';
-    var rel = RELATED_CALCS[page];
-    if (!rel || !rel.length) return;
+    if (!RELATED_CALCS[location.pathname.split('/').pop() || 'index.html']) return;
     poInjectRelatedCSS();
-    var html = '<div class="po-rel-title">다음 단계 — 설계를 이어서 완성하세요</div><div class="po-rel-cards">';
-    for (var i = 0; i < rel.length; i++) {
-      html += '<a class="po-rel-card" href="' + rel[i][0] + '">' +
-              '<span class="po-rel-blurb">' + poEsc(rel[i][2]) + '</span>' +
-              '<span class="po-rel-go">' + poEsc(rel[i][1]) + ' →</span></a>';
+    var list = document.querySelectorAll('.po-related');
+    for (var i = 0; i < list.length; i++) poFillRelated(list[i]);
+    // 결과가 JS로 나중에 주입되는 계산기(servo_motor·ballscrew 등) 대비: 동적 .po-related 자동 채움
+    if (!window._poRelObs && window.MutationObserver && document.body) {
+      window._poRelObs = new MutationObserver(function (muts) {
+        for (var a = 0; a < muts.length; a++) {
+          for (var b = 0; b < muts[a].addedNodes.length; b++) {
+            var n = muts[a].addedNodes[b];
+            if (!n || n.nodeType !== 1) continue;
+            if (n.classList && n.classList.contains('po-related')) poFillRelated(n);
+            if (n.querySelectorAll) { var q = n.querySelectorAll('.po-related'); for (var c = 0; c < q.length; c++) poFillRelated(q[c]); }
+          }
+        }
+      });
+      window._poRelObs.observe(document.body, { childList: true, subtree: true });
     }
-    html += '</div>';
-    for (var j = 0; j < hosts.length; j++) { hosts[j].innerHTML = html; }
   } catch (e) {}
 }
