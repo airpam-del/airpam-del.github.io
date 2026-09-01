@@ -1062,6 +1062,7 @@ function bsRender(){
       <button class="po-inq-primary" onclick="bsInquiry('wiz',false)">📩 이 사양으로 견적 문의</button>
       <button class="po-inq-email" onclick="bsInquiry('wiz',true)">📧 결과 이메일로 받기</button>
     </div>
+    <div class="po-rep-row"><button class="po-rep-link" onclick="bsReport('wiz')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
       <div class="check-card ${lifeClass}">
         <div class="check-label">수명 L₁₀</div>
@@ -1594,6 +1595,14 @@ function bsInquiry(tab, emailOnly){
   if (spec === '—') spec = '';
   if (typeof poOpenInquiry !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('볼스크류 견적 문의'); return; }
   poOpenInquiry({ calc: '볼스크류 선정', model: model, spec: spec.slice(0,300), emailOnly: !!emailOnly });
+}
+function bsReport(tab){
+  var mW = document.querySelector('#bs-result-body .result-hero-main');
+  var sW = document.querySelector('#bs-result-body .result-hero-sub');
+  var model = mW ? (mW.textContent||'').replace(/\s+/g,' ').trim() : '';
+  var spec  = sW ? (sW.textContent||'').replace(/\s+/g,' ').trim() : '';
+  if (typeof poOpenReport !== 'function') { location.href = 'mailto:airpam@naver.com?subject=' + encodeURIComponent('볼스크류 오류 신고'); return; }
+  poOpenReport({ calc: '볼스크류 선정', model: model, spec: spec.slice(0,300) });
 }
 </script>
 

@@ -171,6 +171,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - 표준 방식: 전역 `function poGetInputs(){ return poInputsStr([['라벨', poVal('필드id'), '단위'], ...]); }`
      를 정의하면 `poOpenInquiry` 가 자동으로 `inputs` 를 채운다(명시 전달도 가능, 탭형 계산기 등).
    - `poVal(id)`(select는 표시 텍스트)·`poInputsStr(rows)` 헬퍼는 `js/common.js` 제공. 계산 로직과 무관.
+6. **오류 신고 링크 표준(필수)**: 결과 하단(눈에 안 거슬리는 위치)에 작은 회색 링크를 넣는다:
+   `<div class="po-rep-row"><button class="po-rep-link" onclick="poReport('계산기명')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>`
+   - 공통 `poReport(calcName)` 이 결과(추천모델·사양)·`poGetInputs()` 입력값을 자동 첨부해 `poOpenReport` 호출.
+     페이로드 `{ type:"error_report", calc, result, inputs, message, email }` → 같은 웹앱, "오류신고" 탭 기록.
+   - 결과 리더가 특수한 계산기(탭형·위저드 `.result-hero-main` 등)는 전용 함수로 `poOpenReport({calc, model, spec})` 직접 호출.
+   - Apps Script(`apps-script-doPost.gs`)가 `type` 으로 분기(문의=첫 시트, 신고="오류신고" 탭). 계산 로직과 무관.
 
 ### ⚠️ CSS는 왜 공통 추출 안 했나 (2026-07-04 조사)
 15개 페이지 CSS가 시간차 수작업으로 드리프트(바이트 동일 교집합 8개뿐, `.btn` 6변형 등).
