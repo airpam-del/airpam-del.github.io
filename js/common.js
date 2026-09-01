@@ -145,7 +145,7 @@ function renderMobileNav() {
   });
 }
 
-function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); }
+function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poGradeInit(); }
 
 /* 결과 영역 문의 버튼 스타일 (로드 시 주입) */
 function poInjectResultBtnCSS() {
@@ -451,3 +451,75 @@ function poRepDone(ok) {
 /* 결과 하단 🚩 링크에서 호출: 결과(추천모델·사양)·입력값 자동 첨부.
    탭형 계산기는 poOpenReport({calc, model, spec, inputs}) 로 직접 전달 가능. */
 function poReport(calcName) { poOpenReport({ calc: calcName }); }
+
+/* ═══════════════════════════════════════════════════════════════
+   계산기 신뢰도 등급 (한 곳에서 관리 → 제목 뱃지·면책 배너·index 카드 자동 반영)
+   ▶ 등급을 바꾸려면 아래 CALC_GRADES 만 수정하면 전 페이지에 반영됨.
+   ▶ verified=검증완료(초록) / beta=베타(노랑) / reference=참고용(회색). 미지정=기본 beta.
+   ═══════════════════════════════════════════════════════════════ */
+var CALC_GRADES = {
+  'lmguide.html': 'verified',
+  'ballscrew.html': 'verified',
+  'bearing.html': 'verified',
+  'servo_motor.html': 'verified',
+  // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
+  'cycloidal-gearbox.html': 'reference',
+  'speed-controller.html': 'reference'
+  // 그 외 미지정 계산기는 기본 'beta'
+};
+var GRADE_META = {
+  verified:  { label: '검증완료', color: '#166534', bg: '#EBF5EE', border: '#A7D9B8',
+    notice: 'ISO 기준으로 검증된 계산입니다. 최종 선정은 제조사 카탈로그로 확인하시기 바랍니다.' },
+  beta:      { label: '베타',    color: '#8B5A00', bg: '#FEF6E7', border: '#F5D48A',
+    notice: '이 계산기는 베타입니다. 결과는 참고용이며, 반드시 제조사 카탈로그로 재확인하세요.' },
+  reference: { label: '참고용',  color: '#57534E', bg: '#EFECE6', border: '#D8D4CC',
+    notice: '이 계산기는 참고용(생소 분야·추정값 포함)입니다. 반드시 제조사 카탈로그로 재확인하세요.' }
+};
+function poCalcGrade(page) {
+  page = page || (location.pathname.split('/').pop() || 'index.html');
+  return CALC_GRADES[page] || 'beta';
+}
+function poGradeInit() {
+  try {
+    var page = location.pathname.split('/').pop() || 'index.html';
+    if (page === '' || page === 'index.html') { poGradeIndex(); return; }
+    var m = GRADE_META[poCalcGrade(page)]; if (!m) return;
+    // 1) 제목 옆 등급 뱃지
+    var h1 = document.querySelector('header h1') || document.querySelector('.hdr h1') || document.querySelector('h1');
+    if (h1 && !document.getElementById('po-grade-badge')) {
+      var b = document.createElement('span');
+      b.id = 'po-grade-badge';
+      b.textContent = m.label;
+      b.style.cssText = 'display:inline-block;margin-left:8px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;vertical-align:middle;color:' + m.color + ';background:' + m.bg + ';border:1px solid ' + m.border;
+      h1.appendChild(b);
+    }
+    // 2) 헤더 아래(main 최상단) 등급별 면책 배너
+    var host = document.querySelector('main');
+    if (host && !document.getElementById('po-grade-notice')) {
+      var n = document.createElement('div');
+      n.id = 'po-grade-notice';
+      n.innerHTML = '<b>' + poEsc(m.label) + '</b> · ' + poEsc(m.notice);
+      n.style.cssText = 'font-size:12px;line-height:1.6;color:' + m.color + ';background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:9px;padding:9px 13px;margin-bottom:1rem';
+      host.insertBefore(n, host.firstChild);
+    }
+  } catch (e) {}
+}
+/* index.html 계산기 카드에 작은 등급 뱃지 */
+function poGradeIndex() {
+  try {
+    var cards = document.querySelectorAll('a.tool-card');
+    for (var i = 0; i < cards.length; i++) {
+      var href = (cards[i].getAttribute('href') || '').split('/').pop();
+      if (!href) continue;
+      var m = GRADE_META[poCalcGrade(href)]; if (!m) continue;
+      var nameEl = cards[i].querySelector('.tool-name');
+      if (nameEl && !nameEl.querySelector('.po-grade-mini')) {
+        var b = document.createElement('span');
+        b.className = 'po-grade-mini';
+        b.textContent = m.label;
+        b.style.cssText = 'display:inline-block;margin-left:6px;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;vertical-align:middle;color:' + m.color + ';background:' + m.bg + ';border:1px solid ' + m.border;
+        nameEl.appendChild(b);
+      }
+    }
+  } catch (e) {}
+}
