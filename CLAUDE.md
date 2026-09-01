@@ -177,6 +177,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
      페이로드 `{ type:"error_report", calc, result, inputs, message, email }` → 같은 웹앱, "오류신고" 탭 기록.
    - 결과 리더가 특수한 계산기(탭형·위저드 `.result-hero-main` 등)는 전용 함수로 `poOpenReport({calc, model, spec})` 직접 호출.
    - Apps Script(`apps-script-doPost.gs`)가 `type` 으로 분기(문의=첫 시트, 신고="오류신고" 탭). 계산 로직과 무관.
+7. **신뢰도 등급 등록(필수)**: `js/common.js`의 `CALC_GRADES` 객체에 `'새계산기.html': '등급'` 한 줄 추가한다.
+   - 등급: `verified`(검증완료·초록) / `beta`(베타·노랑) / `reference`(참고용·회색). **미등록 시 자동으로 beta** 표시.
+   - 등록만 하면 제목 뱃지·헤더 아래 면책 배너·index 카드 뱃지가 `poGradeInit()`으로 **자동 주입**(계산기 파일 수정 불필요).
+   - 등급 상향(예: 사장님 검증 후 verified)도 이 객체 한 줄만 바꾸면 전 페이지 반영. 계산 로직과 무관.
 
 ### ⚠️ CSS는 왜 공통 추출 안 했나 (2026-07-04 조사)
 15개 페이지 CSS가 시간차 수작업으로 드리프트(바이트 동일 교집합 8개뿐, `.btn` 6변형 등).
