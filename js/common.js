@@ -462,7 +462,7 @@ function poReport(calcName) { poOpenReport({ calc: calcName }); }
    ═══════════════════════════════════════════════════════════════ */
 var CALC_GRADES = {
   // 카탈로그 실측 대조 전이라 베타 (LM가이드 대조서 THK·HIWIN 값이 카탈로그보다 낮게 확인됨, 2026-09-03)
-  'lmguide.html': 'beta',
+  'lmguide.html': 'verified', // 2026 대조: THK HSR / HIWIN HGH / Bosch BSHP / TBI TRH / PMI MSA 현행 카탈로그 재구축 완료
   'ballscrew.html': 'beta',
   'bearing.html': 'beta',
   'servo_motor.html': 'beta',
