@@ -461,10 +461,11 @@ function poReport(calcName) { poOpenReport({ calc: calcName }); }
    ▶ verified=검증완료(초록) / beta=베타(노랑) / reference=참고용(회색). 미지정=기본 beta.
    ═══════════════════════════════════════════════════════════════ */
 var CALC_GRADES = {
-  'lmguide.html': 'verified',
-  'ballscrew.html': 'verified',
-  'bearing.html': 'verified',
-  'servo_motor.html': 'verified',
+  // 카탈로그 실측 대조 전이라 베타 (LM가이드 대조서 THK·HIWIN 값이 카탈로그보다 낮게 확인됨, 2026-09-03)
+  'lmguide.html': 'beta',
+  'ballscrew.html': 'beta',
+  'bearing.html': 'beta',
+  'servo_motor.html': 'beta',
   'coupling.html': 'verified', // 2026 성일기공 카탈로그(RD/Sh63D) 실측 대조 완료
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
