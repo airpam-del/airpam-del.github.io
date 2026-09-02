@@ -465,6 +465,7 @@ var CALC_GRADES = {
   'ballscrew.html': 'verified',
   'bearing.html': 'verified',
   'servo_motor.html': 'verified',
+  'coupling.html': 'verified', // 2026 성일기공 카탈로그(RD/Sh63D) 실측 대조 완료
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'reference'
