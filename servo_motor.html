@@ -915,56 +915,52 @@ function goBack(step) { goStep(step - 1); }
 /* ───────────────────────────────────────────
    모터 DB  (inertia: kg·cm²  torques: N·m)
 ─────────────────────────────────────────── */
-// TODO: J(관성) 값 카탈로그 대조 미완 — 관성비 판정 결과는 참고용
+// 출처: 미쓰비시 MR-J4 / 파나소닉 MINAS A6 / LS Xmotion APM 카탈로그 관성 대조, 2026 (단위 ×10⁻⁴ kg·m² = kg·cm², 브레이크 없음)
 const MOTORS = [
-  // 미쯔비시 HG-KR (저관성 — J-series 후속, 국내 주력)
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR13',  power:100,  Tr:0.318, Tmax:0.955, J:0.028, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR23',  power:200,  Tr:0.637, Tmax:1.91,  J:0.072, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.230, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.610, nr:3000, nmax:6000 },
+  // 미쯔비시 HG-KR (저관성 — J-series 후속, 국내 주력) · J: MR-J4 실측, Tmax=정격×3.5
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.56, J:0.045,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR13',  power:100,  Tr:0.318, Tmax:1.1,  J:0.0777, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR23',  power:200,  Tr:0.637, Tmax:2.2,  J:0.221,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:4.5,  J:0.371,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:8.4,  J:1.26,   nr:3000, nmax:6000 },
   // 미쯔비시 HG-SR (중관성 — J-series 후속, 국내 주력)
   // 2026-07 검증: 정격토크를 2000rpm 정격 기준으로 수정 (Tr=9.55×P/2000, Tmax=Tr×300%, 미쓰비시 공식 사양 확인)
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:2.39,  Tmax:7.16,  J:1.04,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:4.77,  Tmax:14.3,  J:2.30,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR152', power:1500, Tr:7.16,  Tmax:21.5,  J:4.40,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR202', power:2000, Tr:9.55,  Tmax:28.6,  J:6.00,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR352', power:3500, Tr:16.7,  Tmax:50.1,  J:14.0,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR502', power:5000, Tr:23.9,  Tmax:71.6,  J:22.0,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR702', power:7000, Tr:33.4,  Tmax:100.2, J:40.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:2.39,  Tmax:7.16,  J:7.26,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:4.77,  Tmax:14.3,  J:11.6,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR152', power:1500, Tr:7.16,  Tmax:21.5,  J:16.0,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR202', power:2000, Tr:9.55,  Tmax:28.6,  J:46.8,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR352', power:3500, Tr:16.7,  Tmax:50.1,  J:78.6,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR502', power:5000, Tr:23.9,  Tmax:71.6,  J:99.7,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR702', power:7000, Tr:33.4,  Tmax:100.2, J:151,   nr:2000, nmax:3000 },
   // 파나소닉 MSMF (중관성)
-  { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.026, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.048, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.14,  nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.27,  nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.96,  nr:3000, nmax:5000 },
   // 2026-07 검증: 1kW 이상 5개 모델 nr 2000→3000 수정 (Tr은 3000rpm 기준으로 정확)
-  { maker:'파나소닉', series:'MSMF', model:'MSMF102L1',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
-  { maker:'파나소닉', series:'MSMF', model:'MSMF152L1',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
-  { maker:'파나소닉', series:'MSMF', model:'MSMF202L1',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
-  { maker:'파나소닉', series:'MSMF', model:'MSMF302L1',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
-  { maker:'파나소닉', series:'MSMF', model:'MSMF502L1',  power:5000, Tr:15.9,  Tmax:47.7,  J:25.0,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF102L1',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.15,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF152L1',  power:1500, Tr:4.78,  Tmax:14.3,  J:3.10,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF202L1',  power:2000, Tr:6.37,  Tmax:19.1,  J:4.06,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF302L1',  power:3000, Tr:9.55,  Tmax:28.6,  J:7.04,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
+  { maker:'파나소닉', series:'MSMF', model:'MSMF502L1',  power:5000, Tr:15.9,  Tmax:47.7,  J:19.0,  nr:3000, nmax:3000 }, // TODO: nmax 카탈로그 확인 필요
   // 파나소닉 MQMF (초저관성)
   { maker:'파나소닉', series:'MQMF', model:'MQMF012L1',  power:100,  Tr:0.318, Tmax:1.59,  J:0.015, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MQMF', model:'MQMF022L1',  power:200,  Tr:0.637, Tmax:2.07,  J:0.036, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MQMF', model:'MQMF042L1',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.115, nr:3000, nmax:5000 },
   { maker:'파나소닉', series:'MQMF', model:'MQMF082L1',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.420, nr:3000, nmax:5000 },
-  // LS산전 APMC (콤팩트 저관성 — 국내 주력)
-  { maker:'LS산전',  series:'APMC', model:'APMC-S0S',   power:50,   Tr:0.159, Tmax:0.477, J:0.012, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S1S',   power:100,  Tr:0.318, Tmax:0.955, J:0.025, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S2S',   power:200,  Tr:0.637, Tmax:1.91,  J:0.065, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S4S',   power:400,  Tr:1.27,  Tmax:3.82,  J:0.180, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S7S',   power:750,  Tr:2.39,  Tmax:7.16,  J:0.580, nr:3000, nmax:5000 },
-  // LS산전 APM (표준 중관성 — 국내 주력)
-  { maker:'LS산전',  series:'APM',  model:'APM-SC01A',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC02A',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC04A',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.205, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC07A',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.700, nr:3000, nmax:5000 },
-  // TODO: 아래 4개 모델 Tr–nr 물리 불일치 (Tr은 3000rpm 기준값, nr은 2000으로 기재 — MSMF와 동일 패턴 의심). 카탈로그 확인 필요, 임의 수정 보류 (2026-07 검증에서 발견)
-  { maker:'LS산전',  series:'APM',  model:'APM-SC10A',  power:1000, Tr:3.18,  Tmax:9.55,  J:2.50,  nr:2000, nmax:3000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC15A',  power:1500, Tr:4.78,  Tmax:14.3,  J:4.85,  nr:2000, nmax:3000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC20A',  power:2000, Tr:6.37,  Tmax:19.1,  J:6.73,  nr:2000, nmax:3000 },
-  { maker:'LS산전',  series:'APM',  model:'APM-SC30A',  power:3000, Tr:9.55,  Tmax:28.6,  J:15.4,  nr:2000, nmax:3000 },
+  // LS산전 APMC (콤팩트 저관성) — Xmotion 카탈로그 모델명·관성 현행화 (2026). 토크·회전수 유지
+  { maker:'LS산전',  series:'APMC', model:'APMC-FALR5A', power:50,   Tr:0.159, Tmax:0.477, J:0.023, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FAL01A', power:100,  Tr:0.318, Tmax:0.955, J:0.043, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FBL02A', power:200,  Tr:0.637, Tmax:1.91,  J:0.147, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FBL04A', power:400,  Tr:1.27,  Tmax:3.82,  J:0.248, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FCL08A', power:750,  Tr:2.39,  Tmax:7.16,  J:1.264, nr:3000, nmax:5000 },
+  // LS산전 APM (표준 중관성) — 1kW↑ 만 APM-FE 라인으로 유지. 100~750W(구 APM-SC01A/02A/04A/07A)는 APMC 계열과 출력 중복으로 삭제, 저출력은 APMC로 통일 (2026)
+  // Tr–nr 물리 불일치(Tr은 3000rpm 기준, nr 2000 기재)는 기존값 그대로 — 이번 변경은 모델명·J 한정 (2026-07 검증에서 발견)
+  { maker:'LS산전',  series:'APM',  model:'APM-FE09A',  power:1000, Tr:3.18,  Tmax:9.55,  J:5.66,  nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-FE15A',  power:1500, Tr:4.78,  Tmax:14.3,  J:10.18, nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-FE22A',  power:2000, Tr:6.37,  Tmax:19.1,  J:14.62, nr:2000, nmax:3000 },
+  { maker:'LS산전',  series:'APM',  model:'APM-FE30A',  power:3000, Tr:9.55,  Tmax:28.6,  J:19.04, nr:2000, nmax:3000 },
 ];
 
 /* ───────────────────────────────────────────

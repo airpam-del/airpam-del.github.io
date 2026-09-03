@@ -5,19 +5,20 @@
    ══════════════════════════════════════════════════════════════ */
 
 const MOTORS = [
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR13',  power:100,  Tr:0.318, Tmax:0.955, J:0.028, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR23',  power:200,  Tr:0.637, Tmax:1.91,  J:0.072, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:3.82,  J:0.230, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:7.16,  J:0.610, nr:3000, nmax:6000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:2.39,  Tmax:7.16,  J:1.04,  nr:2000, nmax:3000 },
-  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:4.77,  Tmax:14.3,  J:2.30,  nr:2000, nmax:3000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.013, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.030, nr:3000, nmax:5000 },
-  { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.078, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S0S',   power:50,   Tr:0.159, Tmax:0.477, J:0.012, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S1S',   power:100,  Tr:0.318, Tmax:0.955, J:0.025, nr:3000, nmax:5000 },
-  { maker:'LS산전',  series:'APMC', model:'APMC-S2S',   power:200,  Tr:0.637, Tmax:1.91,  J:0.065, nr:3000, nmax:5000 },
+  // J: 현행 카탈로그 실측(2026 대조). servo_motor.html과 동기화 (축약 서브셋)
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR053', power:50,   Tr:0.159, Tmax:0.56, J:0.045,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR13',  power:100,  Tr:0.318, Tmax:1.1,  J:0.0777, nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR23',  power:200,  Tr:0.637, Tmax:2.2,  J:0.221,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR43',  power:400,  Tr:1.27,  Tmax:4.5,  J:0.371,  nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-KR', model:'HG-KR73',  power:750,  Tr:2.39,  Tmax:8.4,  J:1.26,   nr:3000, nmax:6000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR52',  power:500,  Tr:2.39,  Tmax:7.16,  J:7.26,  nr:2000, nmax:3000 },
+  { maker:'미쯔비시', series:'HG-SR', model:'HG-SR102', power:1000, Tr:4.77,  Tmax:14.3,  J:11.6,  nr:2000, nmax:3000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF5AZL1',  power:50,   Tr:0.159, Tmax:0.477, J:0.026, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF012L1',  power:100,  Tr:0.318, Tmax:0.955, J:0.048, nr:3000, nmax:5000 },
+  { maker:'파나소닉', series:'MSMF', model:'MSMF022L1',  power:200,  Tr:0.637, Tmax:1.91,  J:0.14,  nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FALR5A', power:50,   Tr:0.159, Tmax:0.477, J:0.023, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FAL01A', power:100,  Tr:0.318, Tmax:0.955, J:0.043, nr:3000, nmax:5000 },
+  { maker:'LS산전',  series:'APMC', model:'APMC-FBL02A', power:200,  Tr:0.637, Tmax:1.91,  J:0.147, nr:3000, nmax:5000 },
 ];
 
 /**

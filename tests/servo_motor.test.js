@@ -38,16 +38,16 @@ test('evalMotor: n_motor>nmax이면 ok_rpm=false + reason에 RPM', () => {
 
 /* ── B) 골든 (computeServo) ── */
 const GOLDEN = [
-  { label: '볼스크류 직결 → HG-KR43 통과',
+  { label: '볼스크류 직결 → HG-KR23 통과',
     input: { lt: 'ballscrew', dt: 'direct', opSpeed: 300, opTacc: 0.1, opTdec: 0.1, opTcycle: 1.0,
       bsLead: 10, bsDiam: 20, bsLen: 500, bsEta: 0.9, bsMass: 50, bsMu: 0.01, bsOri: 'h', bsCb: false, bsExtload: 0 },
-    expect: { noFit: false, nPass: 4, n_motor: 1800, model: 'HG-KR43', power: 400,
-      ir: 5.50926666559778, T_rms: 0.09230984082910337, T_peak: 0.2908765522477133 } },
+    expect: { noFit: false, nPass: 7, n_motor: 1800, model: 'HG-KR23', power: 200,
+      ir: 5.73362594157235, T_rms: 0.09177528219775352, T_peak: 0.28918009221477475 } },
   { label: '컨베이어+기어10:1 → HG-SR52 통과',
     input: { lt: 'conveyor', dt: 'gear', grRatio: 10, grEta: 0.9, grJ: 1.0, opSpeed: 500, opTacc: 0.2, opTdec: 0.2, opTcycle: 3.0,
       cvRoller: 100, cvMass: 30, cvBeltMass: 5, cvEta: 0.9, cvMu: 0.1, cvAngle: 0 },
-    expect: { noFit: false, nPass: 2, n_motor: 954.929658551372, model: 'HG-SR52', power: 500,
-      ir: 8.413461538461538, T_rms: 0.27672303493898665, T_peak: 0.7514444444444446 } },
+    expect: { noFit: false, nPass: 3, n_motor: 954.929658551372, model: 'HG-SR52', power: 500,
+      ir: 1.2052341597796146, T_rms: 0.33791064059719483, T_peak: 1.0624444444444445 } },
   { label: '볼스크류+기어5:1 고RPM → 적합 없음',
     input: { lt: 'ballscrew', dt: 'gear', grRatio: 5, grEta: 0.95, grJ: 0.5, opSpeed: 200, opTacc: 0.1, opTdec: 0.1, opTcycle: 2.0,
       bsLead: 5, bsDiam: 16, bsLen: 400, bsEta: 0.9, bsMass: 80, bsMu: 0.01, bsOri: 'v', bsCb: false, bsExtload: 0 },
