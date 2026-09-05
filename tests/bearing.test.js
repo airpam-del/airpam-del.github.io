@@ -27,14 +27,14 @@ const GOLDEN = [
     label: 'DGBB 내경20 · 중하중 · 1800rpm · 8000h → 수명 미달(bad)',
     input: { type: 'DGBB', searchBy: 'bore', dimVal: 20, fr: 300, fa: 50, fw: 1.2, ft: 1.0, lh: 8000, n: 1800 },
     expect: { name: '6304', judge: 'bad', nAllow: 14000, nCands: 3,
-      l10h: 844.992964595987, P: 2.9429999999999996, s0: 2.6503567787971463, cReq: 33.63639333078535,
+      l10h: 844.992964595987, P: 2.9429999999999996, s0: 2.684335711858648, cReq: 33.63639333078535,
       warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: true, rpmExceed: false } },
   },
   {
     label: 'DGBB 내경30 · 경하중 · 1000rpm · 20000h → 적합(ok)',
     input: { type: 'DGBB', searchBy: 'bore', dimVal: 30, fr: 150, fa: 0, fw: 1.0, ft: 1.0, lh: 20000, n: 1000 },
     expect: { name: '6206', judge: 'ok', nAllow: 11000, nCands: 3,
-      l10h: 38785.713436080456, P: 1.4714999999999998, s0: 7.611281005776419, cReq: 15.637020845522118,
+      l10h: 38785.713436080456, P: 1.4714999999999998, s0: 7.679238871899424, cReq: 15.637020845522118,
       warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: false, rpmExceed: false } },
   },
   {
