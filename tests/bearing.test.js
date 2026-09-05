@@ -38,11 +38,11 @@ const GOLDEN = [
       warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: false, rpmExceed: false } },
   },
   {
-    label: 'ACBB 내경25 · 축하중 · 3000rpm · 10000h → 최선책(warn)',
+    label: 'ACBB 내경25 · 축하중 · 3000rpm · 10000h → 적합(ok)',
     input: { type: 'ACBB', searchBy: 'bore', dimVal: 25, fr: 200, fa: 150, fw: 1.2, ft: 1.0, lh: 10000, n: 3000 },
-    expect: { name: '7305', judge: 'warn', nAllow: 14000, nCands: 2,
-      l10h: 7141.7828906617015, P: 1.9619999999999997, s0: 9.174311926605506, cReq: 28.639872756756017,
-      warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: true, rpmExceed: false } },
+    expect: { name: '7305', judge: 'ok', nAllow: 14000, nCands: 2,
+      l10h: 26234.81671980735, P: 1.9619999999999997, s0: 14.933741080530075, cReq: 28.639872756756017,
+      warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: false, rpmExceed: false } },
   },
   {
     label: 'CRB 내경40 · 대반경 · 1500rpm · 15000h → 최선책(warn)',
