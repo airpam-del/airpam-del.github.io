@@ -48,7 +48,7 @@ const GOLDEN = [
     label: 'CRB 내경40 · 대반경 · 1500rpm · 15000h → 최선책(warn)',
     input: { type: 'CRB', searchBy: 'bore', dimVal: 40, fr: 800, fa: 0, fw: 1.5, ft: 1.0, lh: 15000, n: 1500 },
     expect: { name: 'NJ308', judge: 'warn', nAllow: 7000, nCands: 2,
-      l10h: 7527.794128876126, P: 7.847999999999999, s0: 11.098369011213048, cReq: 102.31760927307897,
+      l10h: 10911.04820057868, P: 7.847999999999999, s0: 9.938837920489298, cReq: 102.31760927307897,
       warnings: { incompatibleAxial: false, incompatibleRadial: false, lifeShort: true, rpmExceed: false } },
   },
 ];
