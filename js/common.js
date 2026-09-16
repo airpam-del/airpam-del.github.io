@@ -464,7 +464,7 @@ var CALC_GRADES = {
   // 카탈로그 실측 대조 전이라 베타 (LM가이드 대조서 THK·HIWIN 값이 카탈로그보다 낮게 확인됨, 2026-09-03)
   'lmguide.html': 'verified', // 2026 대조: THK HSR / HIWIN HGH / Bosch BSHP / TBI TRH / PMI MSA 현행 카탈로그 재구축 완료
   'ballscrew.html': 'beta',
-  'bearing.html': 'beta',
+  'bearing.html': 'verified', // 2026 대조: 8종 정격하중 NSK/SKF 카탈로그 정합화 완료
   'servo_motor.html': 'verified', // 2026 대조: 미쓰비시 MR-J4 / 파나소닉 MINAS A6 / LS Xmotion 로터관성 정합화 완료
   'coupling.html': 'verified', // 2026 성일기공 카탈로그(RD/Sh63D) 실측 대조 완료
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
