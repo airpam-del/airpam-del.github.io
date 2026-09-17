@@ -36,33 +36,31 @@ test('bsFindBest: 결과 키는 모두 BS_DATA에 존재', () => {
 
 /* ── B) 골든 (위저드 computeBS) ── */
 const GOLDEN = [
-  { label: '수평 100kg 500mm/s → φ16×L10 전조건 충족',
+  { label: '수평 100kg 500mm/s → φ16×10 전조건 충족',
     input: { W: 100, dir: 'horizontal', angle: 0, vmax: 500, tacc: 0.2, S: 600, extra: 100, life: '20000', support: '1.4286' },
-    expect: { Fa: 252.943, noOk: false, nCombos: 6, nAlts: 4, d0: 16, lead: 10,
-      L10h: 229002.6806969144, buckSF: 54.58514707917679, Dn: 48000, statSF: 52.18567028935372,
+    expect: { Fa: 252.943, noOk: false, nCombos: 1, nAlts: 0, d0: 16, lead: 10,
+      L10h: 507045.8358526622, buckSF: 54.58514707917679, Dn: 48000, statSF: 93.0802591888291,
       T_total: 0.88114649288437, P_kW: 0.2768203348781948, allOk: true, score: 2.7896825396825395,
       classes: { life: 'ok', buck: 'ok', dns: 'ok', stat: 'ok' } } },
-  { label: '수직 50kg 300mm/s → φ16×L5 전조건 충족',
+  { label: '수직 50kg 300mm/s → φ16×5 전조건 충족',
     input: { W: 50, dir: 'vertical', angle: 0, vmax: 300, tacc: 0.15, S: 400, extra: 100, life: '10000', support: '1.0' },
-    expect: { Fa: 590.5, noOk: false, nCombos: 13, nAlts: 4, d0: 16, lead: 5,
-      L10h: 22829.78205203815, buckSF: 22.454946663067407, Dn: 57600, statSF: 27.095681625740898,
+    expect: { Fa: 590.5, noOk: false, nCombos: 8, nAlts: 4, d0: 16, lead: 5,
+      L10h: 61996.73353211848, buckSF: 22.454946663067407, Dn: 57600, statSF: 50.690939881456394,
       T_total: 0.6464414697401238, P_kW: 0.2437026926773634, allOk: true, score: 2.6646825396825395,
       classes: { life: 'ok', buck: 'ok', dns: 'ok', stat: 'ok' } } },
-  { label: '과부하 500kg 800mm/s → φ20×L20 근접(조건 미충족)',
+  { label: '과부하 500kg 800mm/s → 적합 조합 없음(비표준 20×20 제거)',
     input: { W: 500, dir: 'horizontal', angle: 0, vmax: 800, tacc: 0.1, S: 1000, extra: 100, life: '30000', support: '0.5' },
-    expect: { Fa: 4014.715, noOk: true, nCombos: 2, nAlts: 1, d0: 20, lead: 20,
-      L10h: 146.00521492387975, buckSF: 0.4189706500750015, Dn: 48000, statSF: 3.935522197715155,
-      T_total: 27.13563648303766, P_kW: 6.819929298047543, allOk: false, score: 3003.6746031746034,
-      classes: { life: 'bad', buck: 'bad', dns: 'ok', stat: 'ok' } } },
+    expect: { Fa: 4014.715, noOk: true, nCombos: 0, nAlts: 0, d0: null } },
 ];
 for (const g of GOLDEN) {
   test(`골든: ${g.label}`, () => {
     const r = computeBS(g.input);
-    const c = r.recommended;
     near(r.Fa, g.expect.Fa);
     assert.equal(r.noOk, g.expect.noOk);
     assert.equal(r.combos.length, g.expect.nCombos, '후보 수');
     assert.equal(r.alts.length, g.expect.nAlts, 'alts 수');
+    if (g.expect.d0 === null) { assert.equal(r.recommended, null); return; }
+    const c = r.recommended;
     assert.equal(c.d0, g.expect.d0); assert.equal(c.lead, g.expect.lead);
     near(c.L10h, g.expect.L10h); near(c.buckSF, g.expect.buckSF);
     assert.equal(c.Dn, g.expect.Dn); near(c.statSF, g.expect.statSF);
@@ -137,5 +135,6 @@ test('불변식: 무작위 입력 100개', () => {
     assert.equal(r.classes.dns, c.dnsOk ? 'ok' : c.Dn <= DN_LIMIT * 1.1 ? 'warn' : 'bad', `classes.dns — ${ctx}`);
     assert.equal(r.classes.stat, c.statOk ? 'ok' : 'warn', `classes.stat — ${ctx}`);
   }
-  assert.ok(withCombos >= 80, `유효 후보 케이스 너무 적음: ${withCombos}`);
+  // SFU 표준 11종(비표준 고리드 5종 제거)으로 후보 풀이 줄어 유효 케이스 하한 하향 (시드 고정, 현재 72)
+  assert.ok(withCombos >= 70, `유효 후보 케이스 너무 적음: ${withCombos}`);
 });
