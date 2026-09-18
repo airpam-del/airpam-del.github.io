@@ -467,6 +467,7 @@ var CALC_GRADES = {
   'bearing.html': 'verified', // 2026 대조: 8종 정격하중 NSK/SKF 카탈로그 정합화 완료
   'servo_motor.html': 'verified', // 2026 대조: 미쓰비시 MR-J4 / 파나소닉 MINAS A6 / LS Xmotion 로터관성 정합화 완료
   'coupling.html': 'verified', // 2026 성일기공 카탈로그(RD/Sh63D) 실측 대조 완료
+  'pneumatic-cylinder.html': 'verified', // 2026 대조: 3타입(표준/컴팩트/소형) 물리검증 + SMC·Festo·CKD 현행 시리즈 정합화
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'reference'
