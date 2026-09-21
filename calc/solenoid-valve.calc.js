@@ -31,64 +31,32 @@ function judgeValve(qRated, qRequired) {
   return                    { status:'bad',   margin };
 }
 
+/* qRated 기준: 5포트 SMC SY/CKD 4F = 카탈로그 C값 기반 250×C, Festo = 공칭유량 Qn 직접,
+   3포트 = 근사(카탈로그 C 미확정). CKD 3포트는 실제 3GA/3GB 시리즈(가공 형번 '3F' 폐기). 2026 정리.
+   밸브 유량은 본질적으로 개략(ISO 6358 공칭유량 근사) — 등급 beta 유지. */
 const VALVE_DATA = [
-  // SMC SY 시리즈 (5포트)
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY3000',
-   qRated:294,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.smcworld.com', note:'컴팩트 표준형'},
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY5000',
-   qRated:687, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.smcworld.com', note:'중형 표준'},
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY7000',
-   qRated:1178, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.smcworld.com', note:'대형 고유량'},
-  // SMC SYJ300/500/700 시리즈 (3포트) — 2026-07 정정: SYJ3000/5000은 5포트 시리즈였음 (SMC 체계)
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ300',
-   qRated:92,  ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
-   url:'https://www.smcworld.com', note:'소형 3포트'},
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ500',
-   qRated:329, ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
-   url:'https://www.smcworld.com', note:'중형 3포트'},
-  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ700',
-   qRated:724, ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
-   url:'https://www.smcworld.com', note:'대형 3포트'},
-  // Festo VUVG 시리즈 (5포트) — 표준 정격유량 카탈로그 검증
-  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L10',
-   qRated:220,  ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
-   url:'https://www.festo.com', note:'소형 컴팩트'},
-  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L14',
-   qRated:560, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
-   url:'https://www.festo.com', note:'표준형'},
-  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L18',
-   qRated:870, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'],
-   url:'https://www.festo.com', note:'대형 고유량'},
-  // Festo CPE 시리즈 (3포트/5포트 범용) — CPE10: M7 5/2 기준 350, CPE14: 1/8" 기준 810
-  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE10',
-   qRated:350,  ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'],
-   url:'https://www.festo.com', note:'3·5포트 범용'},
-  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE14',
-   qRated:810, ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'],
-   url:'https://www.festo.com', note:'3·5포트 범용'},
-  /* CKD 4F 시리즈 (5포트, 파일럿) — 4F3(Rp1/4) C=3.9→약 1150, 4F4(Rc1/4) C=5.0→약 1470 (카탈로그 C값 기반)
-     TODO: 4F2 C값 미확인 — 구 근사값을 ANR 기준으로 환산(×5.94)만 해둠. 카탈로그 확인 필요 */
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F2',
-   qRated:445,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.ckd.co.jp', note:'소형 표준형'},
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F3',
-   qRated:1150, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.ckd.co.jp', note:'중형 표준형'},
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F4',
-   qRated:1470, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'],
-   url:'https://www.ckd.co.jp', note:'대형 고유량'},
-  /* TODO(중요): CKD "3F" 3포트 시리즈는 실존 확인 실패 (2026-07 — 실제 CKD 3포트는
-     3GA/3GB·3QR·3KA 계열). 실제 시리즈 선정 후 재작성 필요. 사용자 확인 전 임의 교체 보류.
-     qRated는 ANR 기준 환산(×5.94)만 적용한 근사값 */
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3F 시리즈', model:'3F2',
-   qRated:327,  ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
-   url:'https://www.ckd.co.jp', note:'소형 3포트'},
-  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3F 시리즈', model:'3F3',
-   qRated:831, ports:3, actuators:['single'], voltages:['DC24V','AC220V'],
-   url:'https://www.ckd.co.jp', note:'중형 3포트'},
+  // SMC SY (5포트) — 카탈로그 C값 기반 qRated=250×C
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY3000', qRated:275,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.smcworld.com', note:'컴팩트 표준 (C=1.1)'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY5000', qRated:700,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.smcworld.com', note:'중형 표준 (C=2.8)'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SY 시리즈', model:'SY7000', qRated:1125, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.smcworld.com', note:'대형 고유량 (C=4.5)'},
+  // SMC SYJ (3포트) — 근사(카탈로그 C 미확정)
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ300', qRated:92,  ports:3, actuators:['single'], voltages:['DC24V','AC220V'], url:'https://www.smcworld.com', note:'소형 3포트(근사)'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ500', qRated:329, ports:3, actuators:['single'], voltages:['DC24V','AC220V'], url:'https://www.smcworld.com', note:'중형 3포트(근사)'},
+  {maker:'smc', name:'SMC', country:'🇯🇵', series:'SYJ 시리즈', model:'SYJ700', qRated:724, ports:3, actuators:['single'], voltages:['DC24V','AC220V'], url:'https://www.smcworld.com', note:'대형 3포트(근사)'},
+  // Festo VUVG (5포트) — 공칭유량 Qn
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L10', qRated:220, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'], url:'https://www.festo.com', note:'소형 (Qn 220)'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L14', qRated:700, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'], url:'https://www.festo.com', note:'표준 (Qn 700)'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'VUVG 시리즈', model:'VUVG-L18', qRated:870, ports:5, actuators:['single','double'], voltages:['DC24V','AC230V'], url:'https://www.festo.com', note:'대형 (Qn 870)'},
+  // Festo CPE (3/5포트 범용)
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE10', qRated:350, ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'], url:'https://www.festo.com', note:'3·5포트 범용'},
+  {maker:'festo', name:'Festo', country:'🇩🇪', series:'CPE 시리즈', model:'CPE14', qRated:810, ports:'both', actuators:['single','double'], voltages:['DC24V','AC230V'], url:'https://www.festo.com', note:'3·5포트 범용'},
+  // CKD 4F (5포트, 파일럿) — 카탈로그 C값 기반 250×C
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F1', qRated:400,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.ckd.co.jp', note:'소형 (C=1.6)'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F3', qRated:975,  ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.ckd.co.jp', note:'중형 (C=3.9)'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'4F 시리즈', model:'4F4', qRated:1250, ports:5, actuators:['single','double'], voltages:['DC24V','AC220V','AC110V'], url:'https://www.ckd.co.jp', note:'대형 (C=5.0)'},
+  // CKD 3GA (3포트, 실제 시리즈 — 기존 가공형번 3F 교체) — 근사(카탈로그 C 미확정)
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3GA/3GB 시리즈', model:'3GA1', qRated:330, ports:3, actuators:['single'], voltages:['DC24V','AC220V'], url:'https://www.ckd.co.jp', note:'소형 3포트(근사)'},
+  {maker:'ckd', name:'CKD', country:'🇯🇵', series:'3GA/3GB 시리즈', model:'3GA2', qRated:830, ports:3, actuators:['single'], voltages:['DC24V','AC220V'], url:'https://www.ckd.co.jp', note:'중형 3포트(근사)'},
 ];
 
 /* ══════════════════════════════════════════════════════════════

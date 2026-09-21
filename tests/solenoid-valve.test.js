@@ -21,25 +21,36 @@ test('calcQRequired: area×speed×60/1e6×(P/0.1013+1)', () => {
 /* ── B) 골든 (computeSV) ── */
 const ALL = { smc: true, festo: true, ckd: true };
 const GOLDEN = [
-  { label: 'Ø32·300mm/s·5포트·복동·DC24 → Festo VUVG-L10 (ok)',
-    input: { bore: 32, speed: 300, supplyP: 0.5, ports: '5', actuator: 'double', voltage: 'DC24V', makers: ALL },
-    expect: { qRequired: 85.90339190523198, n: 11, maker: 'festo', model: 'VUVG-L10', qRated: 220, margin: 2.5610164525598993, status: 'ok' } },
-  { label: 'Ø63·500mm/s·AC220 → SMC SY5000 (ok)',
-    input: { bore: 63, speed: 500, supplyP: 0.5, ports: '5', actuator: 'double', voltage: 'AC220V', makers: ALL },
-    expect: { qRequired: 555.0598519249753, n: 11, maker: 'smc', model: 'SY5000', qRated: 687, margin: 1.2377043621826542, status: 'ok' } },
-  { label: 'Ø100·1000mm/s → 유량 부족(bad)',
-    input: { bore: 100, speed: 1000, supplyP: 0.5, ports: '5', actuator: 'double', voltage: 'DC24V', makers: ALL },
-    expect: { qRequired: 2797.2024876604146, n: 11, maker: 'festo', model: 'VUVG-L10', qRated: 220, margin: 0.07865000870352021, status: 'bad' } },
+  { label: 'Ø50·300mm/s·5포트·복동·DC24 → SMC SY3000 (ok)',
+    input: { bore: 50, speed: 300, supplyP: 0.5, ports: '5', actuator: 'double', voltage: 'DC24V', makers: ALL },
+    expect: { qRequired: 209.73676406712735, n: 11, maker: 'smc', series: 'SY 시리즈', model: 'SY3000', qRated: 275, margin: 1.3111673636386647, status: 'ok' } },
+  { label: 'Ø32·200mm/s·3포트·단동·DC24 → SMC SYJ300 (ok)',
+    input: { bore: 32, speed: 200, supplyP: 0.5, ports: '3', actuator: 'single', voltage: 'DC24V', makers: ALL },
+    expect: { qRequired: 57.26892793682132, n: 7, maker: 'smc', series: 'SYJ 시리즈', model: 'SYJ300', qRated: 92, margin: 1.6064557747875734, status: 'ok' } },
+  { label: 'Ø100·500mm/s·5포트·AC220 → 유량 부족(bad)',
+    input: { bore: 100, speed: 500, supplyP: 0.5, ports: '5', actuator: 'double', voltage: 'AC220V', makers: ALL },
+    expect: { qRequired: 1398.6012438302073, n: 11, maker: 'festo', series: 'VUVG 시리즈', model: 'VUVG-L10', qRated: 220, margin: 0.15730001740704042, status: 'bad' } },
 ];
 for (const g of GOLDEN) {
   test(`골든: ${g.label}`, () => {
     const r = computeSV(g.input); const c = r.recommended; const e = g.expect;
     near(r.qRequired, e.qRequired);
     assert.equal(r.results.length, e.n, '결과 수');
-    assert.equal(c.maker, e.maker); assert.equal(c.model, e.model); assert.equal(c.qRated, e.qRated);
+    assert.equal(c.maker, e.maker); assert.equal(c.series, e.series); assert.equal(c.model, e.model); assert.equal(c.qRated, e.qRated);
     near(c.margin, e.margin); assert.equal(c.status, e.status);
   });
 }
+
+/* CKD 3포트가 실형번 3GA/3GB로 나오는지(가공 '3F' 제거 확인) */
+test('CKD 3포트 = 3GA/3GB 실형번 (3F 없음)', () => {
+  const r = computeSV({ bore: 25, speed: 200, supplyP: 0.5, ports: '3', actuator: 'single', voltage: 'DC24V', makers: { ckd: true } });
+  assert.ok(r.results.length > 0, 'CKD 3포트 결과 있음');
+  for (const x of r.results) {
+    assert.equal(x.maker, 'ckd');
+    assert.ok(/^3GA/.test(x.model), `실형번 3GA 기대, 실제 ${x.model}`);
+    assert.ok(!/3F/.test(x.model) && !/3F/.test(x.series), `가공형번 3F 잔존: ${x.model}/${x.series}`);
+  }
+});
 
 /* ── C) 고유 불변식 — 시드 랜덤 150개 ── */
 function makeRng(seed) { let s = seed >>> 0; return () => { s = (1664525 * s + 1013904223) >>> 0; return s / 4294967296; }; }
