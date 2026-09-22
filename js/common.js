@@ -471,7 +471,7 @@ var CALC_GRADES = {
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
-  'speed-controller.html': 'reference'
+  'speed-controller.html': 'beta' // 2026 대조: 3사 elbow 나사×OD 매트릭스 카탈로그 확정 + 유량공식 검증 (인라인 근사 → beta)
   // 그 외 미지정 계산기는 기본 'beta'
 };
 var GRADE_META = {

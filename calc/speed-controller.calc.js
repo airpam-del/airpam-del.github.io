@@ -47,52 +47,44 @@ function calcForceHorizontal(m, mu) {
 /**
  * 수직 부하 추력 계산 [N]
  * @param {number} m  질량 [kg]
- * @param {number} a  가속도 [m/s²]
+ * @param {number} a  가속 보정 계수 (1.0=없음 / 1.3=고속·충격) — 가속도(m/s²) 아님
+ * F = 부하 무게 × 9.81 × 안전계수(1.5) × 가속 보정. UI 힌트와 일치 (검토 완료 2026).
  */
 function calcForceVertical(m, a) {
   return m * 9.81 * 1.5 * a;
 }
 
+/* 나사×튜브OD 호환 매트릭스 — 3사 카탈로그 elbow 확정.
+   출처: SMC AS 데이터시트(AS-F)·CKD SC3W 사양·Festo GRLA 카탈로그 2026 대조 (elbow 확정).
+   인라인 항목은 근사(제조사 카탈로그로 확인). speed-controller.html 과 동일 유지. */
 const SC_DATA = {
-  smc: {
-    name:'SMC', country:'🇯🇵', series:'AS 시리즈',
-    url:'https://www.smcworld.com',
+  smc: { name:'SMC', country:'🇯🇵', series:'AS 시리즈', url:'https://www.smcworld.com',
     models:[
-      {model:'AS1201F', mount:'elbow',  thread:'M5',   ods:[4,6]},
-      {model:'AS2201F', mount:'elbow',  thread:'R1/8', ods:[4,6,8]},
-      {model:'AS2211F', mount:'elbow',  thread:'R1/4', ods:[6,8,10]},  // TODO: 카탈로그 확인 필요 [추정 — 나사×OD 조합]
-      {model:'AS3201F', mount:'elbow',  thread:'R3/8', ods:[8,10,12]},
-      {model:'AS4201F', mount:'elbow',  thread:'R1/2', ods:[10,12]},
-      {model:'AS1002F', mount:'inline', thread:null,   ods:[4,6]},
-      {model:'AS2052F', mount:'inline', thread:null,   ods:[6,8,10]},  // TODO: 카탈로그 확인 필요 [추정 — 인라인 OD 조합]
-    ]
-  },
-  festo: {
-    name:'Festo', country:'🇩🇪', series:'GRLA 시리즈',
-    url:'https://www.festo.com',
+      {model:'AS1201F',    mount:'elbow', thread:'M5',   ods:[4,6]},
+      {model:'AS2201F-01', mount:'elbow', thread:'R1/8', ods:[4,6,8,10]},
+      {model:'AS3201F-02', mount:'elbow', thread:'R1/4', ods:[6,8,10,12]},
+      {model:'AS3201F-03', mount:'elbow', thread:'R3/8', ods:[6,8,10,12]},
+      {model:'AS4201F-04', mount:'elbow', thread:'R1/2', ods:[10,12,16]},
+      {model:'AS2052F(인라인)', mount:'inline', thread:null, ods:[6,8,10]}, // 인라인 근사
+    ]},
+  festo: { name:'Festo', country:'🇩🇪', series:'GRLA 시리즈', url:'https://www.festo.com',
     models:[
-      // TODO: 카탈로그 확인 필요 [추정 — GRLA 나사별 QS 커넥터 OD 조합 전체]
       {model:'GRLA-M5',  mount:'elbow', thread:'M5',   ods:[4,6]},
       {model:'GRLA-1/8', mount:'elbow', thread:'R1/8', ods:[4,6,8]},
       {model:'GRLA-1/4', mount:'elbow', thread:'R1/4', ods:[6,8,10]},
       {model:'GRLA-3/8', mount:'elbow', thread:'R3/8', ods:[8,10,12]},
       {model:'GRLA-1/2', mount:'elbow', thread:'R1/2', ods:[10,12]},
-      {model:'GRO 계열', mount:'inline', thread:null,  ods:[4,6,8,10,12]}, // TODO: 카탈로그 확인 필요 [추정 — 인라인 시리즈명(GRO/GRE)·OD 조합]
-    ]
-  },
-  ckd: {
-    name:'CKD', country:'🇯🇵', series:'SC3W 시리즈',
-    url:'https://www.ckd.co.jp',
+      {model:'GRLA 인라인(QS-QS)', mount:'inline', thread:null, ods:[4,6,8,10,12]}, // 인라인 근사
+    ]},
+  ckd: { name:'CKD', country:'🇯🇵', series:'SC3W 시리즈', url:'https://www.ckd.co.jp',
     models:[
-      // TODO: 카탈로그 확인 필요 [추정 — SC3W 나사-호칭 매핑(6=R1/8, 8=R1/4...) 및 대응 OD 전체]
       {model:'SC3W-M5', mount:'elbow', thread:'M5',   ods:[4,6]},
       {model:'SC3W-6',  mount:'elbow', thread:'R1/8', ods:[4,6,8]},
       {model:'SC3W-8',  mount:'elbow', thread:'R1/4', ods:[6,8,10]},
-      {model:'SC3W-10', mount:'elbow', thread:'R3/8', ods:[8,10,12]},
+      {model:'SC3W-10', mount:'elbow', thread:'R3/8', ods:[6,8,10,12]},
       {model:'SC3W-15', mount:'elbow', thread:'R1/2', ods:[10,12]},
-      {model:'SC1 계열', mount:'inline', thread:null, ods:[4,6,8,10,12]}, // TODO: 카탈로그 확인 필요 [추정 — 인라인 시리즈명·OD 조합]
-    ]
-  }
+      {model:'SC1 인라인', mount:'inline', thread:null, ods:[4,6,8,10,12]}, // 인라인 근사
+    ]},
 };
 
 /* ══════════════════════════════════════════════════════════════

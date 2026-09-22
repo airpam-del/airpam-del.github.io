@@ -38,10 +38,13 @@ const ALL = { smc: true, festo: true, ckd: true };
 const GOLDEN = [
   { label: '엘보·OD6·R1/8 → 3사 매칭',
     input: { mount: 'elbow', od: 6, thread: 'R1/8', makers: ALL },
-    expect: { n: 3, excl: 0, rec: 'AS2201F', models: ['AS2201F', 'GRLA-1/8', 'SC3W-6'] } },
+    expect: { n: 3, excl: 0, rec: 'AS2201F-01', models: ['AS2201F-01', 'GRLA-1/8', 'SC3W-6'] } },
+  { label: '엘보·OD8·R1/4 → SMC AS3201F-02 (구 AS2211F 오류수정)',
+    input: { mount: 'elbow', od: 8, thread: 'R1/4', makers: ALL },
+    expect: { n: 3, excl: 0, rec: 'AS3201F-02', models: ['AS3201F-02', 'GRLA-1/4', 'SC3W-8'] } },
   { label: '인라인·OD8 → 3사 매칭',
     input: { mount: 'inline', od: 8, thread: null, makers: ALL },
-    expect: { n: 3, excl: 0, rec: 'AS2052F', models: ['AS2052F', 'GRO 계열', 'SC1 계열'] } },
+    expect: { n: 3, excl: 0, rec: 'AS2052F(인라인)', models: ['AS2052F(인라인)', 'GRLA 인라인(QS-QS)', 'SC1 인라인'] } },
   { label: '엘보·OD4·R1/2 → 조합 없음',
     input: { mount: 'elbow', od: 4, thread: 'R1/2', makers: ALL },
     expect: { n: 0, excl: 3, rec: null, models: [] } },
@@ -55,6 +58,14 @@ for (const g of GOLDEN) {
     assert.equal(r.recommended ? r.recommended.model : null, e.rec);
   });
 }
+
+/* R1/4 엘보에서 구 오류 형번 AS2211F(실제 R1/8)가 사라졌는지 확인 */
+test('AS2211F 오류형번 제거 (SMC R1/4 = AS3201F-02)', () => {
+  const allModels = JSON.stringify(SC_DATA);
+  assert.ok(!allModels.includes('AS2211F'), 'AS2211F 잔존');
+  const r = computeSC({ mount: 'elbow', od: 8, thread: 'R1/4', makers: { smc: true } });
+  assert.equal(r.recommended.model, 'AS3201F-02');
+});
 
 /* ── C) 고유 불변식 — 시드 랜덤 150개 ── */
 function makeRng(seed) { let s = seed >>> 0; return () => { s = (1664525 * s + 1013904223) >>> 0; return s / 4294967296; }; }
