@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="canonical" href="https://partson.co.kr/">
-  <meta name="robots" content="index,follow">
   <meta name="keywords" content="자동화 부품 선정, FA 계산기, LM가이드, 서보모터, 공압 실린더">
   <title>자동화 부품 선정 계산기 | PartsOn</title>
   <meta name="description" content="FA 자동화 부품을 무료로 선정하세요. LM가이드·볼스크류·베어링·서보모터·감속기·공압 실린더 등 전동·공압 20종 엔지니어링 계산기. ISO 표준 기반 정밀 선정.">
@@ -21,1374 +20,128 @@
   <meta name="naver-site-verification" content="e9ab08b3fe6ce8b6d8180c74d31e62db094bb6ab" />
   <meta name="naver-site-verification" content="775344d35978df85cd4970dcbebe5350960e1f97" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Pretendard:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    :root {
-      --bg: #F8F7F5;
-      --surface: #FFFFFF;
-      --border: #E8E5DF;
-      --border-light: #F0EEEB;
-      --text-primary: #0F0E0C;
-      --text-secondary: #5A5752;
-      --text-muted: #8E8B86;
-      --accent-primary: #1A3A2A;
-      --accent-secondary: #2D6B4A;
-      --accent-light: #E8F0EC;
-      --accent-bright: #00C853;
-      --font-display: 'Space Grotesk', sans-serif;
-      --font-body: 'Pretendard', sans-serif;
-      --font-mono: 'IBM Plex Mono', monospace;
-      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-      --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-      --electric-primary:#1A3A2A;--electric-primary-hover:#2D6B4A;--electric-bg-tint:#E8F0EC;--electric-badge-bg:rgba(0,200,83,.10);--electric-icon:#00C853;
-      --pneumatic-primary:#1A3A5C;--pneumatic-primary-hover:#2D5A8B;--pneumatic-bg-tint:#E8EEF5;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
-      --brand-base:#0F2818;
-    }
-
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--text-primary);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── 네비게이션 ── */
-    nav {
-      background: var(--accent-primary);
-      padding: 0 2rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(26, 58, 42, 0.08);
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      height: 140px;
-    }
-
-    .nav-brand {
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      transition: transform 0.3s var(--ease-out);
-    }
-
-    .nav-brand:hover {
-      transform: scale(1.05);
-    }
-
-    .nav-logo {
-      height: 110px;
-      width: auto;
-      display: block;
-      margin-left: -68px;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 4px;
-      margin-left: auto;
-    }
-
-    .nav-link {
-      font-size: 16px;
-      font-family: var(--font-display);
-      color: rgba(255, 255, 255, 0.65);
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      transition: all 0.2s var(--ease-out);
-      position: relative;
-    }
-
-    .nav-link:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.12);
-      transform: translateY(-2px);
-    }
-
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      width: 0;
-      height: 2px;
-      background: var(--accent-bright);
-      transform: translateX(-50%);
-      transition: width 0.3s var(--ease-out);
-    }
-
-    .nav-link:hover::after {
-      width: 60%;
-    }
-
-    /* ── 네비게이션 드롭다운 ── */
-    .nav-dropdown { position: relative; }
-
-    .nav-dropdown-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      font-family: var(--font-display);
-      color: rgba(255, 255, 255, 0.65);
-      padding: 8px 14px;
-      border-radius: 8px;
-      transition: all 0.2s var(--ease-out);
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      line-height: 1;
-    }
-
-    .nav-dropdown-toggle:hover,
-    .nav-dropdown-toggle.open {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .nav-dropdown-menu {
-      display: none;
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      background: #0F2818;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      min-width: 192px;
-      padding: 6px 0;
-      z-index: 300;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
-    }
-
-    .nav-dropdown-menu.open {
-      display: block;
-    }
-
-    .nav-dropdown-menu a {
-      display: block;
-      padding: 10px 18px;
-      font-size: 14px;
-      font-family: var(--font-display);
-      color: rgba(255, 255, 255, 0.7);
-      text-decoration: none;
-      transition: all 0.12s;
-      white-space: nowrap;
-    }
-
-    .nav-dropdown-menu a:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .nav-soon {
-      display: block;
-      padding: 10px 18px;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.3);
-      font-style: italic;
-    }
-
-    .hero-cta-label {
-      width: 100%;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: rgba(255, 255, 255, 0.4);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-    /* hero CTA 버튼 영역 */
-    .hero-chips {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
-    }
-    .hero-chip-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .chip-cat {
-      font-size: 14px;
-      font-family: var(--font-display);
-      font-weight: 500;
-      color: rgba(255,255,255,.5);
-      flex-shrink: 0;
-      width: 68px;
-      padding-top: 13px;
-    }
-    .chip-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-family: var(--font-display);
-      font-weight: 500;
-      text-decoration: none;
-      background: rgba(255,255,255,.1);
-      color: rgba(255,255,255,.85);
-      border: 2px solid rgba(255,255,255,.2);
-      transition: all 0.2s var(--ease-out);
-      white-space: nowrap;
-      backdrop-filter: blur(10px);
-    }
-    .chip:hover {
-      background: rgba(255,255,255,.16);
-      color: #fff;
-      border-color: rgba(255,255,255,.4);
-      transform: translateY(-2px);
-    }
-    .chip-pneu {
-      border-color: rgba(56,189,248,.35);
-      color: rgba(186,230,253,.9);
-    }
-    .chip-pneu:hover {
-      background: rgba(56,189,248,.15);
-      border-color: rgba(56,189,248,.55);
-      color: #BAE6FD;
-    }
-    .electric-nav .nav-dropdown-toggle:hover,.electric-nav .nav-dropdown-toggle.open{color:var(--electric-icon) !important}
-    .pneumatic-nav .nav-dropdown-toggle:hover,.pneumatic-nav .nav-dropdown-toggle.open{color:var(--pneumatic-icon) !important}
-
-    /* ── 히어로 ── */
-    .hero {
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #0F2818 100%);
-      padding: 6rem 2rem 8rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: 'PartsOn';
-      position: absolute;
-      right: -40px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--font-display);
-      font-size: 200px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.05);
-      line-height: 1;
-      pointer-events: none;
-      white-space: nowrap;
-      letter-spacing: -4px;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0, 200, 83, 0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .hero-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-family: var(--font-display);
-      font-weight: 500;
-      background: rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.85);
-      padding: 10px 20px;
-      border-radius: 24px;
-      margin-bottom: 2.5rem;
-      letter-spacing: 0.3px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      animation: fadeInDown 0.8s var(--ease-out);
-    }
-
-    .hero-badge-dot {
-      width: 8px;
-      height: 8px;
-      background: var(--accent-bright);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .hero-title {
-      font-size: clamp(42px, 6vw, 68px);
-      font-family: var(--font-display);
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.08;
-      letter-spacing: -1px;
-      margin-bottom: 1.5rem;
-      animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
-    }
-
-    .hero-title .dim {
-      color: rgba(255, 255, 255, 0.5);
-      font-weight: 400;
-    }
-
-    .hero-subtitle {
-      font-size: 17px;
-      color: rgba(255, 255, 255, 0.55);
-      font-weight: 400;
-      line-height: 1.8;
-      max-width: 520px;
-      margin-bottom: 3rem;
-      animation: fadeInUp 0.8s var(--ease-out) 0.2s both;
-    }
-
-    .hero-cta {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.8s var(--ease-out) 0.3s both;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #fff;
-      color: var(--accent-primary);
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 14px 32px;
-      border-radius: 10px;
-      text-decoration: none;
-      transition: all 0.3s var(--ease-out);
-      border: 2px solid #fff;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    }
-
-    .btn-primary:hover {
-      background: rgba(255, 255, 255, 0.95);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
-    }
-
-    .btn-primary:active {
-      transform: translateY(-1px);
-    }
-
-    .btn-ghost {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.85);
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 500;
-      padding: 14px 32px;
-      border-radius: 10px;
-      text-decoration: none;
-      transition: all 0.3s var(--ease-out);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-    }
-
-    .btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.16);
-      border-color: rgba(255, 255, 255, 0.4);
-      transform: translateY(-3px);
-    }
-
-    /* ── 통계 바 ── */
-    .stats-bar {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border-light);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stats-bar::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent-bright), transparent);
-    }
-
-    .stats-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      padding: 2rem;
-    }
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 6px;
-      flex: 1;
-      animation: fadeInUp 0.6s var(--ease-out);
-    }
-
-    .stat-value {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
-
-    /* ── 섹션 공통 ── */
-    section {
-      padding: 6rem 2rem;
-    }
-
-    .section-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .section-label {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-
-    .section-title {
-      font-size: clamp(28px, 3.5vw, 40px);
-      font-family: var(--font-display);
-      font-weight: 700;
-      color: var(--text-primary);
-      letter-spacing: -0.5px;
-      margin-bottom: 1rem;
-      line-height: 1.1;
-    }
-
-    .section-desc {
-      font-size: 16px;
-      color: var(--text-secondary);
-      line-height: 1.8;
-      max-width: 580px;
-    }
-
-    /* ── 계산기 카드 ── */
-    .tools-header {
-      margin-bottom: 3.5rem;
-      animation: fadeInUp 0.6s var(--ease-out);
-    }
-
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 2rem;
-    }
-
-    .tool-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 2.25rem;
-      transition: all 0.4s var(--ease-out);
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-      animation: fadeInUp 0.6s var(--ease-out);
-    }
-
-    .tool-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent-primary), var(--accent-bright));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s var(--ease-out);
-    }
-
-    .tool-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .tool-card-pneumatic::before {
-      background: linear-gradient(90deg, #1A3A5C, #0088CC);
-    }
-    .tool-card-pneumatic:hover {
-      border-color: #0088CC;
-    }
-    .tool-card-pneumatic:hover .tool-icon {
-      background: linear-gradient(135deg, #1A3A5C, #0088CC);
-    }
-
-    .tool-card:hover {
-      border-color: var(--accent-secondary);
-      transform: translateY(-8px);
-      box-shadow: 0 16px 48px rgba(26, 58, 42, 0.12);
-    }
-
-    .tool-icon {
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--accent-light), rgba(0, 200, 83, 0.1));
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .tool-card:hover .tool-icon {
-      transform: scale(1.1) rotate(5deg);
-      background: linear-gradient(135deg, var(--accent-bright), var(--accent-primary));
-    }
-
-    .tool-card:hover .tool-icon svg {
-      color: #fff;
-    }
-
-    .tool-icon svg {
-      transition: color 0.3s var(--ease-out);
-      color: var(--accent-primary);
-    }
-
-    .tool-tag {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--accent-secondary);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-
-    .tool-name {
-      font-size: 20px;
-      font-family: var(--font-display);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.75rem;
-      letter-spacing: -0.3px;
-    }
-
-    .tool-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 1.5rem;
-      flex-grow: 1;
-    }
-
-    .tool-features {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border-light);
-    }
-
-    .tool-features li {
-      font-size: 13px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .tool-card:hover .tool-features li {
-      color: var(--text-secondary);
-      transform: translateX(4px);
-    }
-
-    .tool-features li::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      background: var(--accent-bright);
-      border-radius: 50%;
-      flex-shrink: 0;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .tool-card:hover .tool-features li::before {
-      width: 6px;
-      height: 6px;
-      background: var(--accent-primary);
-    }
-
-    .tool-arrow {
-      position: absolute;
-      bottom: 2rem;
-      right: 2rem;
-      font-size: 20px;
-      color: var(--accent-primary);
-      opacity: 0;
-      transform: translateX(-8px);
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .tool-card:hover .tool-arrow {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* ── Why 섹션 ── */
-    .why-section {
-      background: linear-gradient(180deg, var(--surface) 0%, rgba(0, 200, 83, 0.02) 100%);
-      border-top: 1px solid var(--border-light);
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .why-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 5rem;
-      align-items: center;
-    }
-
-    .why-features {
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
-      margin-top: 3rem;
-    }
-
-    .why-item {
-      display: flex;
-      gap: 1.5rem;
-      animation: fadeInUp 0.6s var(--ease-out);
-    }
-
-    .why-item-icon {
-      width: 48px;
-      height: 48px;
-      background: linear-gradient(135deg, var(--accent-light), rgba(0, 200, 83, 0.1));
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .why-item:hover .why-item-icon {
-      background: linear-gradient(135deg, var(--accent-bright), var(--accent-primary));
-      transform: scale(1.1);
-    }
-
-    .why-item:hover .why-item-icon svg {
-      color: #fff;
-    }
-
-    .why-item-icon svg {
-      transition: color 0.3s var(--ease-out);
-      color: var(--accent-primary);
-    }
-
-    .why-item-title {
-      font-size: 16px;
-      font-family: var(--font-display);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-
-    .why-item-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-    }
-
-    /* 계산 미리보기 */
-    .calc-preview-box {
-      background: linear-gradient(135deg, var(--bg), var(--surface));
-      border-radius: 16px;
-      padding: 2.5rem;
-      border: 1px solid var(--border-light);
-      box-shadow: 0 8px 24px rgba(26, 58, 42, 0.06);
-      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
-    }
-
-    .calc-preview-label {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-      font-weight: 600;
-    }
-
-    .calc-rows {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .calc-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .calc-row:hover {
-      border-color: var(--accent-bright);
-      background: rgba(0, 200, 83, 0.02);
-    }
-
-    .calc-row-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .calc-row-val {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      color: var(--accent-primary);
-      font-weight: 600;
-    }
-
-    .calc-result-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 16px;
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-      border-radius: 10px;
-      margin-top: 8px;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .calc-result-row:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(26, 58, 42, 0.2);
-    }
-
-    .calc-result-label {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-      font-weight: 500;
-    }
-
-    .calc-result-val {
-      font-family: var(--font-mono);
-      font-size: 16px;
-      color: #fff;
-      font-weight: 700;
-    }
-
-    /* ── 공급사 섹션 ── */
-    .supplier-layout {
-      display: flex;
-      gap: 4rem;
-      align-items: flex-start;
-    }
-
-    .supplier-content {
-      flex: 1.1;
-    }
-
-    .supplier-brand-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 2rem;
-    }
-
-    .brand-chip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      background: var(--surface);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-secondary);
-      font-weight: 600;
-      transition: all 0.3s var(--ease-out);
-      cursor: pointer;
-    }
-
-    .brand-chip:hover {
-      border-color: var(--accent-bright);
-      color: var(--accent-primary);
-      background: rgba(0, 200, 83, 0.05);
-      transform: translateY(-4px);
-      box-shadow: 0 8px 16px rgba(26, 58, 42, 0.08);
-    }
-
-    .supplier-contact {
-      flex: 1;
-      background: linear-gradient(135deg, var(--surface), rgba(0, 200, 83, 0.02));
-      border: 1px solid var(--border-light);
-      border-radius: 16px;
-      padding: 2.5rem;
-      box-shadow: 0 8px 24px rgba(26, 58, 42, 0.06);
-      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
-    }
-
-    .contact-title {
-      font-size: 16px;
-      font-family: var(--font-display);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 1rem;
-    }
-
-    .contact-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.7;
-      margin-bottom: 1.75rem;
-    }
-
-    .contact-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 14px;
-      background: var(--bg);
-      border-radius: 10px;
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 10px;
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .contact-row:hover {
-      background: rgba(0, 200, 83, 0.05);
-      color: var(--text-primary);
-      transform: translateX(4px);
-    }
-
-    .contact-row svg {
-      flex-shrink: 0;
-      color: var(--accent-primary);
-      transition: all 0.3s var(--ease-out);
-    }
-
-    .contact-row:hover svg {
-      transform: scale(1.2);
-    }
-
-    .register-btn {
-      display: block;
-      margin-top: 1.75rem;
-      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-      color: #fff;
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 12px 24px;
-      border-radius: 10px;
-      text-decoration: none;
-      text-align: center;
-      transition: all 0.3s var(--ease-out);
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 8px 16px rgba(26, 58, 42, 0.15);
-    }
-
-    .register-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px rgba(26, 58, 42, 0.2);
-    }
-
-    /* ── CTA 섹션 ── */
-    .cta-section {
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #0F2818 100%);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: -100px;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(0, 200, 83, 0.15) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-    }
-
-    .cta-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    .cta-title {
-      font-size: clamp(32px, 4vw, 44px);
-      font-family: var(--font-display);
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 1.5rem;
-      letter-spacing: -0.5px;
-      animation: fadeInUp 0.6s var(--ease-out);
-    }
-
-    .cta-desc {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.55);
-      margin-bottom: 2.5rem;
-      line-height: 1.8;
-      animation: fadeInUp 0.6s var(--ease-out) 0.1s both;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
-    }
-
-    .cta-groups {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      animation: fadeInUp 0.6s var(--ease-out) 0.2s both;
-    }
-
-    .cta-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: .65rem;
-    }
-
-    .cta-group-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.35);
-      display: flex;
-      align-items: center;
-      gap: .35rem;
-    }
-
-    .cta-group-label::before,
-    .cta-group-label::after {
-      content: '';
-      width: 28px;
-      height: 1px;
-      background: rgba(255,255,255,.2);
-    }
-
-    .cta-group-btns {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    /* 공압 버튼 = .btn-ghost 크기 공유 + 색상만 오버라이드
-       (마크업에서 class="btn-ghost btn-ghost-blue"로 사용 — 크기·패딩·모바일 풀폭 규칙 상속) */
-    .btn-ghost-blue {
-      border-color: rgba(56,189,248,.35);
-      color: rgba(56,189,248,.9);
-      background: rgba(56,189,248,.08);
-    }
-
-    .btn-ghost-blue:hover {
-      border-color: rgba(56,189,248,.75);
-      background: rgba(56,189,248,.18);
-      color: #fff;
-      transform: translateY(-3px);
-    }
-
-    /* ── 선정 가이드 섹션 ── */
-    .guide-section {
-      background: linear-gradient(180deg, var(--surface) 0%, rgba(0, 200, 83, 0.02) 100%);
-      border-top: 1px solid var(--border-light);
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .guide-groups {
-      display: flex;
-      flex-direction: column;
-      gap: 2.5rem;
-      margin-top: 2.5rem;
-    }
-
-    .guide-group-label {
-      font-size: 12px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      letter-spacing: 1px;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .guide-group-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border-light);
-    }
-
-    .guide-links {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: .75rem;
-    }
-
-    .guide-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: .5rem;
-      padding: 1rem 1.25rem;
-      background: var(--surface);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text-primary);
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s var(--ease-out);
-    }
-
-    .guide-link:hover {
-      border-color: var(--accent-bright);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    }
-
-    .guide-link .g-arrow {
-      color: var(--text-muted);
-      font-size: 16px;
-      transition: color 0.2s var(--ease-out), transform 0.2s var(--ease-out);
-      flex-shrink: 0;
-    }
-
-    .guide-link:hover .g-arrow {
-      color: var(--accent-bright);
-      transform: translateX(3px);
-    }
-
-    /* ── 푸터 ── */
-    footer {
-      background: #0A0F0B;
-      padding: 3rem 2rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .footer-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 2rem;
-    }
-
-    .footer-brand {
-      font-family: var(--font-display);
-      font-size: 15px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.5);
-      letter-spacing: 0.5px;
-      flex-shrink: 0;
-    }
-
-    /* 링크 그룹(계산기 / 가이드) — 세로로 쌓고 각 그룹은 여러 줄 wrap */
-    .footer-groups {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      align-items: flex-end;
-    }
-
-    .footer-group {
-      display: flex;
-      align-items: baseline;
-      gap: .9rem 1.25rem;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .footer-group-label {
-      font-size: 11px;
-      font-family: var(--font-mono);
-      letter-spacing: .5px;
-      color: rgba(255, 255, 255, 0.25);
-      flex-shrink: 0;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: .9rem 2rem;
-    }
-
-    .footer-link {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.35);
-      text-decoration: none;
-      transition: all 0.3s var(--ease-out);
-      position: relative;
-      white-space: nowrap;
-    }
-
-    .footer-link:hover {
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .footer-link::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--accent-bright);
-      transition: width 0.3s var(--ease-out);
-    }
-
-    .footer-link:hover::after {
-      width: 100%;
-    }
-
-    /* ── 애니메이션 ── */
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.5;
-      }
-    }
-
-    /* ── 반응형 ── */
-    @media (max-width: 1024px) {
-      .tools-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .why-grid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-      }
-
-      .supplier-layout {
-        flex-direction: column;
-        gap: 2.5rem;
-      }
-
-      .stats-inner {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 768px) {
-      .nav-inner {
-        height: 180px;
-        gap: 1rem;
-      }
-
-      .nav-logo {
-        height: 80px;
-        margin-left: -50px;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .hero {
-        padding: 4rem 1.5rem 5.5rem;
-      }
-
-      .hero::before {
-        font-size: 120px;
-        right: -20px;
-      }
-
-      section {
-        padding: 4rem 1.5rem;
-      }
-
-      .tools-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stats-inner {
-        grid-template-columns: 1fr;
-        padding: 1.5rem;
-        gap: 1.5rem;
-      }
-
-      .supplier-brand-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .footer-inner {
-        flex-direction: column;
-        text-align: center;
-        gap: 1.5rem;
-      }
-
-      .footer-links {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .footer-groups {
-        align-items: center;
-        width: 100%;
-      }
-
-      .footer-group {
-        flex-direction: column;
-        align-items: center;
-        gap: .8rem;
-        justify-content: center;
-      }
-
-      .hero-cta {
-        flex-direction: column;
-      }
-
-      .btn-primary,
-      .btn-ghost {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .cta-buttons {
-        flex-direction: column;
-      }
-
-      .cta-buttons .btn-primary,
-      .cta-buttons .btn-ghost {
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero-title {
-        font-size: 36px;
-      }
-
-      .section-title {
-        font-size: 24px;
-      }
-
-      .tool-card {
-        padding: 1.75rem;
-      }
-
-      .calc-preview-box {
-        padding: 1.75rem;
-      }
-
-      .supplier-brand-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .stat-value {
-        font-size: 24px;
-      }
-    }
-
-    /* ── 접근성 ── */
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+<style>
+  :root{
+    --ink:#0E1C14; --dark:#16321F; --dark2:#1A3A2A; --mid:#2D6B4A; --accent:#00B24E; --accent2:#00A344;
+    --lg:#A8D5B5; --paper:#F7FAF8; --card:#fff; --line:#E6ECE8;
+    --t1:#132019; --t2:#556158; --t3:#94A29A;
+    --font:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;
+    --mono:'SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--paper);color:var(--t1);line-height:1.5;-webkit-font-smoothing:antialiased}
+  a{text-decoration:none;color:inherit}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+  section{padding:46px 0}
+  .sh{text-align:center;margin-bottom:24px}
+  .sh .k{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent2);letter-spacing:.5px;text-transform:uppercase}
+  .sh h2{font-size:25px;font-weight:800;letter-spacing:-.6px;margin-top:7px}
+  .sh p{color:var(--t2);font-size:14.5px;margin-top:8px}
+
+  header{background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+  .hdr{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:19px;letter-spacing:-.5px;color:var(--dark)}
+  .logo .mk{width:30px;height:30px;background:var(--dark);color:var(--lg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+  .nav{display:flex;align-items:center;gap:22px;font-size:14.5px;font-weight:600;color:#33473C}
+  .nav a:hover{color:var(--accent2)}
+  .nav .sup{background:var(--dark);color:#fff;padding:8px 15px;border-radius:9px}
+  .nav .sup:hover{background:var(--mid);color:#fff}
+  @media(max-width:820px){.nav a:not(.sup){display:none}}
+
+  .hero{border-bottom:1px solid var(--line);background:
+      radial-gradient(1100px 380px at 88% -12%, rgba(0,178,78,.08), transparent 60%),
+      linear-gradient(180deg,#fff,#F1F7F3)}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center;padding:54px 22px}
+  @media(max-width:860px){.hero .wrap{grid-template-columns:1fr;gap:26px;padding:34px 22px}}
+  .eyebrow{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--accent2);letter-spacing:.5px;margin-bottom:14px}
+  .hero h1{font-size:44px;line-height:1.12;font-weight:800;letter-spacing:-1.5px;color:var(--ink)}
+  .hero h1 em{font-style:normal;color:var(--accent2)}
+  .hero .lead{color:var(--t2);font-size:15.5px;margin:15px 0 22px;max-width:450px}
+  @media(max-width:860px){.hero h1{font-size:33px}}
+  .search{position:relative;max-width:470px}
+  .search input{width:100%;height:54px;border:2px solid var(--line);border-radius:13px;padding:0 54px 0 18px;font-size:15.5px;font-family:inherit;background:#fff}
+  .search input:focus{outline:none;border-color:var(--accent)}
+  .search .sbtn{position:absolute;right:7px;top:7px;width:40px;height:40px;background:var(--dark);border:none;border-radius:9px;color:#fff;font-size:17px;cursor:pointer}
+  .quick{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .quick .lb{font-size:12.5px;color:var(--t3)}
+  .quick a{font-size:12.5px;color:var(--mid);background:#fff;border:1px solid var(--line);padding:5px 11px;border-radius:20px}
+  .quick a:hover{border-color:var(--accent);color:var(--accent2)}
+  .tchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .tchips span{background:#fff;border:1px solid var(--line);padding:7px 13px;border-radius:20px;font-size:13px;color:var(--t2)}
+  .tchips b{color:var(--accent2)}
+  .demo-cap{font-size:13px;color:var(--t2);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+  .demo-cap b{color:var(--accent2);font-weight:700}
+  .demo-cap .ex{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--mid);background:#EAF3ED;border:1px solid #CFE6D8;padding:2px 8px;border-radius:20px}
+  .demo{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 60px rgba(20,50,33,.10);overflow:hidden}
+  .demo-top{background:var(--dark);color:#fff;padding:13px 18px;display:flex;align-items:center;gap:9px;font-size:13.5px}
+  .demo-top .dt{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+  .demo-top .tag{margin-left:auto;font-family:var(--mono);font-size:11px;background:rgba(255,255,255,.14);padding:3px 9px;border-radius:20px}
+  .demo-body{padding:17px}
+  .drow{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .drow:last-child{border:none}
+  .drow .k{color:var(--t2)} .drow .v{font-weight:700;font-family:var(--mono)} .drow .v.ok{color:var(--accent2)}
+  .dres{margin-top:12px;background:#EDF9F1;border:1px solid #BFE7CD;border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:11px}
+  .dres .ic{width:34px;height:34px;background:var(--accent);color:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .dres b{font-size:14.5px} .dres span{font-size:12px;color:var(--t2);display:block}
+
+  .domains{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:820px){.domains{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .panel-h{padding:17px 20px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--line)}
+  .panel-h .pi{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .panel.elec .panel-h{background:linear-gradient(90deg,#EFF6F1,#fff)} .panel.elec .pi{background:#0E3A24;color:#7FE0A6}
+  .panel.pneu .panel-h{background:linear-gradient(90deg,#EEF4FA,#fff)} .panel.pneu .pi{background:#123A55;color:#8ECBF0}
+  .panel-h h3{font-size:17.5px;font-weight:800}
+  .grp{padding:13px 20px;border-bottom:1px solid var(--line)} .grp:last-child{border:none}
+  .grp .gl{font-size:11.5px;font-weight:700;color:var(--t3);letter-spacing:.4px;text-transform:uppercase;margin-bottom:9px;font-family:var(--mono)}
+  .items{display:flex;flex-wrap:wrap;gap:7px}
+  .item{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;color:var(--t1);background:#F4F7F5;border:1px solid var(--line);padding:7px 12px;border-radius:9px;transition:.12s}
+  .item:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
+  .item .v{color:var(--accent2);font-weight:800;font-size:11px} .item:hover .v{color:var(--lg)}
+
+  .feats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:860px){.feats{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.feats{grid-template-columns:1fr}}
+  .feat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;transition:.15s;display:block}
+  .feat.star{border-color:#BFE7CD;background:linear-gradient(180deg,#F4FBF6,#fff)}
+  .feat:hover{border-color:var(--accent);box-shadow:0 8px 20px rgba(20,50,33,.08)}
+  .vbadge{position:absolute;top:13px;right:13px;font-size:10px;font-weight:700;color:#fff;background:var(--accent);padding:3px 8px;border-radius:20px}
+  .rank{position:absolute;top:13px;left:13px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--t3)}
+  .feat .fi{font-size:23px;margin-top:6px} .feat h4{font-size:15px;font-weight:700;margin:9px 0 5px} .feat p{font-size:12.5px;color:var(--t2);line-height:1.45}
+  .feat .go{margin-top:11px;color:var(--accent2);font-weight:700;font-size:12.5px}
+
+  .band{background:var(--dark);color:#DCEBE2}
+  .band .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:30px 22px}
+  @media(max-width:720px){.band .wrap{grid-template-columns:repeat(2,1fr)}}
+  .band .n{font-size:26px;font-weight:800;color:#fff;font-family:var(--mono)} .band .l{font-size:12.5px;color:#9EBBAA;margin-top:3px}
+
+  .guide-wrap{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .gcards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+  @media(max-width:860px){.gcards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.gcards{grid-template-columns:1fr}}
+  .gcard{border:1px solid var(--line);border-radius:12px;padding:15px 16px;transition:.12s}
+  .gcard:hover{border-color:var(--accent);background:#F6FBF8}
+  .gcard .gt{font-size:11px;font-family:var(--mono);color:var(--accent2);font-weight:600}
+  .gcard h4{font-size:14px;font-weight:700;margin-top:6px;line-height:1.35}
+  .gcard p{font-size:12px;color:var(--t2);margin-top:5px}
+  .gmore{text-align:center;margin-top:20px}
+  .gmore a{font-size:13.5px;font-weight:700;color:var(--accent2);border:1px solid var(--line);padding:10px 20px;border-radius:10px;background:#fff}
+
+  .sup-band{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:center;background:linear-gradient(120deg,#1A3A2A,#2D6B4A);border-radius:20px;padding:32px 30px;color:#fff}
+  @media(max-width:720px){.sup-band{grid-template-columns:1fr;text-align:center}}
+  .sup-band h3{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .sup-band p{color:rgba(244,242,237,.82);font-size:14px;margin-top:9px}
+  .sup-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+  @media(max-width:720px){.sup-btns{justify-content:center}}
+  .sup-btns a{padding:12px 20px;border-radius:11px;font-weight:700;font-size:14px}
+  .sup-btns .p{background:#fff;color:var(--dark)} .sup-btns .s{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.25)}
+
+  footer{background:var(--dark);color:#9DB4A6;padding:34px 0;font-size:13px}
+  .fcols{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between}
+  .fcols .fc h5{color:#fff;font-size:13px;margin-bottom:10px}
+  .fcols .fc a{display:block;color:#9DB4A6;font-size:13px;padding:3px 0} .fcols .fc a:hover{color:#fff}
+  .fbtm{border-top:1px solid rgba(255,255,255,.1);margin-top:24px;padding-top:16px;text-align:center;color:#7E9788;font-size:12.5px}
+</style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-RKDLCX7DP5"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-RKDLCX7DP5');</script>
@@ -1406,854 +159,162 @@
 </head>
 <body>
 
-<!-- ── 네비게이션 ── -->
-<nav>
-  <div class="nav-inner">
-    <a href="index.html" class="nav-brand">
-      <img src="logo-white.png" alt="PartsOn" class="nav-logo">
-    </a>
-    <div class="nav-links">
-      <div class="nav-dropdown electric-nav">
-        <button class="nav-dropdown-toggle" onclick="navToggle(this)">전동 부품 ▾</button>
-        <div class="nav-dropdown-menu" id="idx-electric-menu"></div>
-      </div>
-      <div class="nav-dropdown pneumatic-nav">
-        <button class="nav-dropdown-toggle" onclick="navToggle(this)">공압 부품 ▾</button>
-        <div class="nav-dropdown-menu" id="idx-pneumatic-menu"></div>
-      </div>
-    </div>
+<header>
+  <div class="wrap hdr">
+    <a class="logo" href="index.html"><span class="mk">⚙</span> PartsOn</a>
+    <nav class="nav">
+      <a href="#dom">전동 ▾</a><a href="#dom">공압 ▾</a><a href="#guide">선정 가이드</a><a href="admin.html">공급사 관리</a>
+      <a class="sup" href="mailto:partson@naver.com">공급사 등록</a>
+    </nav>
   </div>
-</nav>
+</header>
 
-<!-- ── 히어로 ── -->
+<!-- HERO -->
 <div class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">
-      <span class="hero-badge-dot"></span>
-      자동화 부품 선정 플랫폼
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">// ISO 표준 기반 선정 엔진</div>
+      <h1>조건만 넣으면,<br><em>검증된 답.</em></h1>
+      <p class="lead">하중·속도·수명만 입력하면 ISO 표준 계산으로 적합 부품과 제조사를 30초 만에 선정합니다. 20종 계산기, 전부 무료.</p>
+      <div class="search">
+        <input id="q" type="text" placeholder="부품명 검색  (예: 서보모터, 베어링, 실린더)" oninput="filt()">
+        <button class="sbtn" type="button" onclick="document.getElementById('dom').scrollIntoView({behavior:'smooth'})">🔍</button>
+      </div>
+      <div class="quick"><span class="lb">인기:</span>
+        <a href="servo_motor.html">서보모터</a><a href="bearing.html">베어링</a><a href="ballscrew.html">볼스크류</a><a href="lmguide.html">LM가이드</a><a href="pneumatic-cylinder.html">공압 실린더</a></div>
+      <div class="tchips">
+        <span>✓ <b>검증완료 6종</b></span><span><b>ISO</b> 표준 계산</span><span><b>20종</b> 계산기</span><span><b>무료</b>·가입 없음</span>
+      </div>
     </div>
-    <h1 class="hero-title">
-      빠른 선정,<br>
-      <span class="dim">정확한 부품.</span>
-    </h1>
-    <p class="hero-subtitle">
-      데이터 기반 계산으로 정밀 부품을 빠르게 선정하세요.<br>ISO 표준 기반의 정확한 계산으로 카탈로그 검토 시간을 줄여드립니다.
-    </p>
-    <div class="hero-chips">
-      <div class="hero-chip-row">
-        <span class="chip-cat">⚡ 전동</span>
-        <div class="chip-buttons">
-          <a href="lmguide.html" class="chip">LM Guide 선정하기</a>
-          <a href="ballscrew.html" class="chip">볼스크류 선정하기</a>
-          <a href="bearing.html" class="chip">베어링 선정하기</a>
-          <a href="servo_motor.html" class="chip">서보모터 선정하기</a>
-          <a href="screwjack.html" class="chip">스크류잭 선정하기</a>
-          <a href="planetary-gearbox.html" class="chip">유성 감속기 선정하기</a>
-          <a href="cycloidal-gearbox.html" class="chip">사이클로이드 선정하기</a>
-          <a href="harmonic-drive.html" class="chip">하모닉 드라이브 선정하기</a>
-          <a href="electric-gripper.html" class="chip">전동 그리퍼 선정하기</a>
-          <a href="coupling.html" class="chip">커플링 선정하기</a>
-          <a href="timing-belt.html" class="chip">타이밍벨트 선정하기</a>
-          <a href="linear-motor.html" class="chip">리니어모터 선정하기</a>
-          <a href="electric-actuator.html" class="chip">전동 액추에이터 선정하기</a>
-        </div>
+    <!-- 서보모터 결과 미리보기 (예시) -->
+    <div>
+    <div class="demo-cap">👇 서보모터 선정, <b>이렇게 30초 만에</b> 나와요 <span class="ex">예시</span></div>
+    <div class="demo">
+      <div class="demo-top"><span class="dt"></span> 서보모터 선정 결과 <span class="tag">예시</span></div>
+      <div class="demo-body">
+        <div class="drow"><span class="k">입력 · 부하토크 / 속도</span><span class="v">1.2 N·m / 3,000 rpm</span></div>
+        <div class="drow"><span class="k">추천 용량</span><span class="v ok">400 W</span></div>
+        <div class="drow"><span class="k">정격토크 / 실효토크</span><span class="v">1.27 / 0.9 N·m</span></div>
+        <div class="drow"><span class="k">관성비</span><span class="v ok">8.5 : 1</span></div>
+        <div class="dres"><div class="ic">✓</div><div><b>실효토크·관성비 충족</b><span>미쓰비시 MR-J4 · 검증완료</span></div></div>
       </div>
-      <div class="hero-chip-row">
-        <span class="chip-cat">💨 공압</span>
-        <div class="chip-buttons">
-          <a href="pneumatic-cylinder.html" class="chip chip-pneu">실린더 선정하기</a>
-          <a href="solenoid-valve.html" class="chip chip-pneu">솔레노이드 밸브 선정하기</a>
-          <a href="pneumatic-fitting.html" class="chip chip-pneu">피팅/튜빙 선정하기</a>
-          <a href="pneumatic-fr-unit.html" class="chip chip-pneu">공기압 조절 유닛 선정하기</a>
-          <a href="pneumatic-gripper.html" class="chip chip-pneu">공압 그리퍼 선정하기</a>
-          <a href="speed-controller.html" class="chip chip-pneu">스피드 컨트롤러 선정하기</a>
-          <a href="vacuum-pad.html" class="chip chip-pneu">진공 흡착패드 선정하기</a>
-        </div>
-      </div>
+    </div>
     </div>
   </div>
 </div>
 
-<!-- ── 통계 바 ── -->
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat-item">
-      <span class="stat-value" id="idx-calc-count">20종</span>
-      <span class="stat-label">선정 계산기</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">ISO</span>
-      <span class="stat-label">규격 기반 계산</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">무료</span>
-      <span class="stat-label">모든 계산기</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-value">즉시</span>
-      <span class="stat-label">결과 확인</span>
-    </div>
-  </div>
-</div>
-
-<!-- ── 계산기 소개 ── -->
+<!-- DOMAINS -->
 <section>
-  <div class="section-inner">
-    <div class="tools-header">
-      <div class="section-label">선정 계산기</div>
-      <h2 class="section-title">필요한 부품을 바로 계산하세요</h2>
-      <p class="section-desc">복잡한 카탈로그 없이 조건만 입력하면 적합한 부품을 즉시 추천합니다.</p>
+  <div class="wrap">
+    <div class="sh"><div class="k">Find your part</div><h2>부품 찾기</h2><p>전동·공압 두 계열로 정리했습니다. ✓ 는 카탈로그 대조 검증완료 계산기입니다.</p></div>
+    <div class="domains" id="dom">
+      <div class="panel elec" data-k="전동 electric">
+        <div class="panel-h"><span class="pi">⚡</span><h3>전동 부품</h3><span style="margin-left:auto;font-size:12px;color:var(--t3);font-weight:600">13종</span></div>
+        <div class="grp" data-k="직선 lm가이드 볼스크류 리니어모터 액추에이터 스크류잭">
+          <div class="gl">직선 이송축</div>
+          <div class="items"><a class="item" href="lmguide.html">LM 가이드 <span class="v">✓</span></a><a class="item" href="ballscrew.html">볼스크류 <span class="v">✓</span></a><a class="item" href="linear-motor.html">리니어 모터</a><a class="item" href="electric-actuator.html">전동 액추에이터</a><a class="item" href="screwjack.html">스크류잭</a></div>
+        </div>
+        <div class="grp" data-k="회전 서보모터 커플링 타이밍벨트 베어링">
+          <div class="gl">회전·동력전달</div>
+          <div class="items"><a class="item" href="servo_motor.html">서보모터 <span class="v">✓</span></a><a class="item" href="coupling.html">커플링 <span class="v">✓</span></a><a class="item" href="timing-belt.html">타이밍벨트</a><a class="item" href="bearing.html">베어링 <span class="v">✓</span></a></div>
+        </div>
+        <div class="grp" data-k="감속기 유성 사이클로이드 하모닉">
+          <div class="gl">감속기</div>
+          <div class="items"><a class="item" href="planetary-gearbox.html">유성 감속기</a><a class="item" href="cycloidal-gearbox.html">사이클로이드</a><a class="item" href="harmonic-drive.html">하모닉 드라이브</a></div>
+        </div>
+        <div class="grp" data-k="그리퍼 전동그리퍼"><div class="gl">파지</div><div class="items"><a class="item" href="electric-gripper.html">전동 그리퍼</a></div></div>
+      </div>
+      <div class="panel pneu" data-k="공압 pneumatic">
+        <div class="panel-h"><span class="pi">💨</span><h3>공압 부품</h3><span style="margin-left:auto;font-size:12px;color:var(--t3);font-weight:600">7종</span></div>
+        <div class="grp" data-k="구동 공압실린더"><div class="gl">구동</div><div class="items"><a class="item" href="pneumatic-cylinder.html">공압 실린더 <span class="v">✓</span></a></div></div>
+        <div class="grp" data-k="파지 공압그리퍼"><div class="gl">파지</div><div class="items"><a class="item" href="pneumatic-gripper.html">공압 그리퍼</a></div></div>
+        <div class="grp" data-k="제어 배관 솔레노이드 밸브 스피드컨트롤러 fr유닛 피팅 튜빙">
+          <div class="gl">제어·배관</div>
+          <div class="items"><a class="item" href="solenoid-valve.html">솔레노이드 밸브</a><a class="item" href="speed-controller.html">스피드 컨트롤러</a><a class="item" href="pneumatic-fr-unit.html">FR 유닛</a><a class="item" href="pneumatic-fitting.html">피팅·튜빙</a></div>
+        </div>
+        <div class="grp" data-k="진공 흡착패드"><div class="gl">진공</div><div class="items"><a class="item" href="vacuum-pad.html">진공 흡착패드</a></div></div>
+      </div>
     </div>
-    <div class="tools-grid">
-
-      <!-- LM Guide -->
-      <a href="lmguide.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="9" width="20" height="6" rx="2"/>
-            <line x1="6" y1="9" x2="6" y2="15"/>
-            <line x1="18" y1="9" x2="18" y2="15"/>
-            <rect x="9" y="7" width="6" height="10" rx="1.5"/>
-          </svg>
-        </div>
-        <div class="tool-tag">LM Guide</div>
-        <div class="tool-name">LM Guide 선정</div>
-        <div class="tool-desc">하중·속도·설치 방향 조건을 입력하면 LM Guide 모델·사이즈를 선정하고 수명을 계산합니다.</div>
-        <ul class="tool-features">
-          <li>ISO 기준 모델 선정</li>
-          <li>하중 계수·방향 자동 보정</li>
-          <li>추천 공급사 연결</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Ball Screw -->
-      <a href="ballscrew.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <circle cx="7" cy="12" r="2.5"/>
-            <circle cx="12" cy="12" r="2.5"/>
-            <circle cx="17" cy="12" r="2.5"/>
-            <line x1="3" y1="8" x2="3" y2="16"/>
-            <line x1="21" y1="8" x2="21" y2="16"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Ball Screw</div>
-        <div class="tool-name">볼스크류 선정</div>
-        <div class="tool-desc">이송 조건과 하중을 입력하면 볼스크류 + LM Guide 최적 조합을 추천합니다.</div>
-        <ul class="tool-features">
-          <li>리드·직경 자동 선정</li>
-          <li>좌굴 하중 및 임계 회전수 검증</li>
-          <li>LM Guide 동시 선정</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Bearing -->
-      <a href="bearing.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <circle cx="12" cy="12" r="9"/>
-            <circle cx="12" cy="12" r="4"/>
-            <line x1="12" y1="3" x2="12" y2="8"/>
-            <line x1="12" y1="16" x2="12" y2="21"/>
-            <line x1="3" y1="12" x2="8" y2="12"/>
-            <line x1="16" y1="12" x2="21" y2="12"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Bearing</div>
-        <div class="tool-name">베어링 선정</div>
-        <div class="tool-desc">하중·회전수·사용 조건으로 적합한 베어링 타입과 사이즈를 선정합니다.</div>
-        <ul class="tool-features">
-          <li>5단계 입력 가이드</li>
-          <li>L10 수명 계산</li>
-          <li>타입별 비교 추천</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Servo Motor -->
-      <a href="servo_motor.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="8" width="10" height="8" rx="2"/>
-            <line x1="13" y1="12" x2="21" y2="12"/>
-            <circle cx="19" cy="12" r="2"/>
-            <line x1="6" y1="8" x2="6" y2="5"/>
-            <line x1="9" y1="8" x2="9" y2="5"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Servo Motor</div>
-        <div class="tool-name">서보모터 선정</div>
-        <div class="tool-desc">부하 조건·전달 방식 입력으로 필요 토크·관성을 계산하고 최적 서보모터를 추천합니다.</div>
-        <ul class="tool-features">
-          <li>5가지 부하 형태 지원</li>
-          <li>관성비·부하율 자동 검증</li>
-          <li>미쯔비시·파나소닉·LS산전 DB</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Screw Jack -->
-      <a href="screwjack.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="2" width="6" height="4" rx="1"/>
-            <line x1="12" y1="6" x2="12" y2="18"/>
-            <path d="M8 10 Q12 8 16 10"/>
-            <path d="M8 14 Q12 12 16 14"/>
-            <rect x="7" y="18" width="10" height="4" rx="1"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Screw Jack</div>
-        <div class="tool-name">스크류잭 선정</div>
-        <div class="tool-desc">ZIMM ZE 시리즈 기반으로 좌굴 안전성·구동 토크·필요 모터 출력을 자동 계산합니다.</div>
-        <ul class="tool-features">
-          <li>Euler 좌굴 자동 검토</li>
-          <li>초보/숙련 모드 지원</li>
-          <li>ZIMM ZE-5 ~ ZE-200 DB</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Cycloidal Gearbox -->
-      <a href="cycloidal-gearbox.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"/>
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M12 3 Q15 7 12 9 Q9 7 12 3"/>
-            <path d="M12 21 Q9 17 12 15 Q15 17 12 21"/>
-            <path d="M3 12 Q7 9 9 12 Q7 15 3 12"/>
-            <path d="M21 12 Q17 15 15 12 Q17 9 21 12"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Cycloidal Gearbox</div>
-        <div class="tool-name">사이클로이드 감속기 선정</div>
-        <div class="tool-desc">충격 내하중과 고정밀 위치결정이 필요한 환경에 최적. Sumitomo·Nabtesco 2사 동시 비교.</div>
-        <ul class="tool-features">
-          <li>순간 최대 토크 정격의 5배</li>
-          <li>제로 백래시 · 위치 정밀도 &lt;1 arcmin</li>
-          <li>Sumitomo · Nabtesco DB</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Harmonic Drive -->
-      <a href="harmonic-drive.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"/>
-            <ellipse cx="12" cy="12" rx="4" ry="9"/>
-            <circle cx="12" cy="12" r="2"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Harmonic Drive</div>
-        <div class="tool-name">하모닉 드라이브 선정</div>
-        <div class="tool-desc">래칫팅 경고·플렉스플라인 수명·효율 자동 계산. HDS·Leadshine 2사 비교.</div>
-        <ul class="tool-features">
-          <li>래칫팅 위험 자동 경고</li>
-          <li>정밀도 ≤1 arcmin (HDS)</li>
-          <li>중공 샤프트 SHF 지원</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Electric Gripper -->
-      <a href="electric-gripper.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="10" width="5" height="9" rx="1.5"/>
-            <rect x="16" y="10" width="5" height="9" rx="1.5"/>
-            <path d="M8 14 Q12 10 16 14"/>
-            <circle cx="12" cy="7" r="2"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Electric Gripper</div>
-        <div class="tool-name">전동 그리퍼 선정</div>
-        <div class="tool-desc">파지력·스트로크·협동로봇 호환성 기반으로 Schunk EGP·Co-act, OnRobot RG 시리즈를 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>파지력 범위 필터링 (안전계수 2)</li>
-          <li>UR·Doosan·KUKA·FANUC 호환성 체크</li>
-          <li>IO-Link / 디지털 I/O 통신 선택</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Coupling -->
-      <a href="coupling.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="8" width="7" height="8" rx="1"/>
-            <rect x="15" y="8" width="7" height="8" rx="1"/>
-            <line x1="9" y1="12" x2="15" y2="12"/>
-            <line x1="11" y1="9" x2="11" y2="15"/>
-            <line x1="13" y1="9" x2="13" y2="15"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Coupling</div>
-        <div class="tool-name">커플링 선정</div>
-        <div class="tool-desc">서보용 강성 커플링(디스크·오브·죠·빔)을 서비스팩터·전달토크·축경 기준으로 선정합니다. 성일기공 카탈로그 기준.</div>
-        <ul class="tool-features">
-          <li>필요토크 = 부하토크 × 서비스팩터</li>
-          <li>보어 범위·허용 회전수 판정</li>
-          <li>디스크·오브·죠·빔 4타입 비교</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Timing Belt -->
-      <a href="timing-belt.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="7" cy="12" r="4"/>
-            <circle cx="18" cy="12" r="2.5"/>
-            <path d="M7 8h11M7 16h11"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Timing Belt</div>
-        <div class="tool-name">타이밍벨트 선정</div>
-        <div class="tool-desc">서보·동력전달용 타이밍벨트(GT2·HTD 5M·8M·14M)와 풀리를 설계동력·축간거리 기준으로 선정합니다. 게이츠 카탈로그 기준.</div>
-        <ul class="tool-features">
-          <li>설계동력 = 전달동력 × 서비스팩터</li>
-          <li>PCD·벨트길이·속도·걸림치수 판정</li>
-          <li>피치별(5M·8M·14M) 벨트폭 비교</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Linear Motor -->
-      <a href="linear-motor.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="6" width="18" height="5" rx="1"/>
-            <path d="M3 15h3v3H3zM10 15h3v3h-3zM17 15h3v3h-3z"/>
-            <path d="M6 11v2M18 11v2"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Linear Motor</div>
-        <div class="tool-name">리니어모터 선정</div>
-        <div class="tool-desc">고속·고정밀 직선구동 리니어모터(코어드·코어리스)를 필요추력·RMS·피크 2조건으로 선정합니다. Hiwin 기준·볼스크류 대체 검토.</div>
-        <ul class="tool-features">
-          <li>연속추력 ≥ RMS · 피크추력 ≥ 필요</li>
-          <li>운동프로파일·듀티·수직축 발열 안내</li>
-          <li>볼스크류 대비 장단점 비교</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Electric Actuator -->
-      <a href="electric-actuator.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="9" width="9" height="6" rx="1"/>
-            <path d="M11 12h7"/>
-            <rect x="18" y="10" width="4" height="4" rx="1"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Electric Actuator</div>
-        <div class="tool-name">전동 액추에이터 선정</div>
-        <div class="tool-desc">전동실린더(로드형)를 워크로드·속도·스트로크·좌굴 기준으로 선정합니다. SMC LEY 기준·공압실린더 대체 검토.</div>
-        <ul class="tool-features">
-          <li>워크로드(수평/수직)·리드별 속도 판정</li>
-          <li>푸싱력·좌굴·스트로크 확인</li>
-          <li>공압실린더 대비 장단점 비교</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Planetary Gearbox -->
-      <a href="planetary-gearbox.html" class="tool-card">
-        <div class="tool-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"/>
-            <circle cx="12" cy="4" r="2"/>
-            <circle cx="12" cy="20" r="2"/>
-            <circle cx="4" cy="12" r="2"/>
-            <circle cx="20" cy="12" r="2"/>
-            <line x1="12" y1="6" x2="12" y2="9"/>
-            <line x1="12" y1="15" x2="12" y2="18"/>
-            <line x1="6" y1="12" x2="9" y2="12"/>
-            <line x1="15" y1="12" x2="18" y2="12"/>
-          </svg>
-        </div>
-        <div class="tool-tag">Planetary Gearbox</div>
-        <div class="tool-name">유성 감속기 선정</div>
-        <div class="tool-desc">토크·백래시·수명 조건 입력으로 Neugart·Apex Dynamics·Shimpo 3사를 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>백래시 1 / 3 / 5 arcmin 필터</li>
-          <li>수명·효율·관성비 자동 계산</li>
-          <li>3사 동시 비교 테이블</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Pneumatic Cylinder -->
-      <a href="pneumatic-cylinder.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="8" width="20" height="8" rx="2"/>
-            <line x1="12" y1="8" x2="12" y2="16"/>
-            <line x1="12" y1="4" x2="12" y2="8"/>
-            <circle cx="12" cy="3" r="1" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 공압 실린더</div>
-        <div class="tool-name">공압 실린더 선정</div>
-        <div class="tool-desc">필요 추력과 공기압 조건 입력으로 SMC·Festo·CKD 3사 실린더를 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>ISO 6431 기준 보어 선정</li>
-          <li>추력·부하율 자동 계산</li>
-          <li>단동·복동 지원</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- FR Unit -->
-      <a href="pneumatic-fr-unit.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="7" width="9" height="10" rx="2"/>
-            <rect x="13" y="7" width="9" height="10" rx="2"/>
-            <line x1="11" y1="12" x2="13" y2="12"/>
-            <circle cx="6.5" cy="12" r="2"/>
-            <line x1="17" y1="9" x2="17" y2="15"/>
-            <line x1="15" y1="11" x2="19" y2="11"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 공기압 조절 유닛</div>
-        <div class="tool-name">공기압 조절 유닛 선정</div>
-        <div class="tool-desc">포트 사이즈·유량·압력 조건 기반으로 SMC AW·Festo LFR·CKD W3000 공기압 조절 유닛을 3사 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>포트 사이즈 1/8"~1/2" 지원</li>
-          <li>표준(5μm) / 정밀(0.3μm) 필터 선택</li>
-          <li>압력 조정 범위 시각화</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Pneumatic Fitting -->
-      <a href="pneumatic-fitting.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="2" y1="12" x2="10" y2="12"/>
-            <line x1="14" y1="12" x2="22" y2="12"/>
-            <rect x="10" y="9" width="4" height="6" rx="1"/>
-            <line x1="12" y1="9" x2="12" y2="4"/>
-            <line x1="9" y1="4" x2="15" y2="4"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 공압 피팅/튜빙</div>
-        <div class="tool-name">공압 피팅/튜빙 선정</div>
-        <div class="tool-desc">유량 기반 튜브 OD 자동 계산. 직선·엘보·티 형태별 원터치 피팅 모델을 SMC·Festo·CKD 3사 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>유속 8 m/s 기준 OD 자동 계산</li>
-          <li>PU / PA 재질 선택</li>
-          <li>SMC KQ2 · Festo QS · CKD GW DB</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Solenoid Valve -->
-      <a href="solenoid-valve.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="9" width="18" height="6" rx="2"/>
-            <line x1="8" y1="6" x2="8" y2="9"/>
-            <line x1="16" y1="6" x2="16" y2="9"/>
-            <line x1="8" y1="15" x2="8" y2="18"/>
-            <line x1="16" y1="15" x2="16" y2="18"/>
-            <circle cx="8" cy="5" r="1.5" fill="currentColor"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 솔레노이드 밸브</div>
-        <div class="tool-name">솔레노이드 밸브 선정</div>
-        <div class="tool-desc">실린더 보어와 목표 속도 입력으로 필요 유량을 계산하고 SMC·Festo·CKD 3사 밸브를 비교합니다.</div>
-        <ul class="tool-features">
-          <li>유량(Q) 자동 계산</li>
-          <li>3포트·5포트, 편솔·양솔 지원</li>
-          <li>전원 사양 필터링</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Pneumatic Gripper -->
-      <a href="pneumatic-gripper.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12 Q4 8 8 8 L16 8 Q20 8 20 12"/>
-            <rect x="6" y="12" width="4" height="7" rx="1.5"/>
-            <rect x="14" y="12" width="4" height="7" rx="1.5"/>
-            <line x1="10" y1="8" x2="14" y2="8"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 공압 그리퍼</div>
-        <div class="tool-name">공압 그리퍼 선정</div>
-        <div class="tool-desc">파지력·스트로크 기반으로 SMC MHZ2·Festo HGPT·CKD HGW 2조 평행형 공압 그리퍼를 3사 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>무게 → 권장 파지력 자동 계산 (안전계수 15배)</li>
-          <li>외부/내부 파지 구분 선정</li>
-          <li>스트로크 적합 여부 자동 판정</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <a href="speed-controller.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="14" r="5"/>
-            <line x1="12" y1="9" x2="12" y2="4"/>
-            <path d="M9 4 L15 4"/>
-            <line x1="3" y1="14" x2="7" y2="14"/>
-            <line x1="17" y1="14" x2="21" y2="14"/>
-            <path d="M19 11 L21 14 L19 17" fill="none"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 스피드 컨트롤러</div>
-        <div class="tool-name">스피드 컨트롤러 선정</div>
-        <div class="tool-desc">실린더 포트 나사×튜브 OD 치수 매칭으로 SMC AS·Festo GRLA·CKD SC3W 스피드 컨트롤러를 3사 동시 비교합니다.</div>
-        <ul class="tool-features">
-          <li>미터아웃/미터인 제어 방식 안내</li>
-          <li>엘보형/인라인형 취부 선택</li>
-          <li>나사×튜브OD 조합 자동 필터</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-      <!-- Vacuum Pad -->
-      <a href="vacuum-pad.html" class="tool-card tool-card-pneumatic">
-        <div class="tool-icon" style="background:rgba(0,136,204,.1);color:#0088CC">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="10" y="3" width="4" height="4" rx="1"/>
-            <path d="M6 11 q6 -3 12 0 l-2 6 q-4 2 -8 0 Z"/>
-            <line x1="4" y1="20" x2="20" y2="20"/>
-          </svg>
-        </div>
-        <div class="tool-tag" style="color:#0088CC">💨 진공 흡착패드</div>
-        <div class="tool-name">진공 흡착패드 선정</div>
-        <div class="tool-desc">진공 흡착패드(평형·벨로우즈·스폰지·타원)를 워크 질량·자세·안전계수로 선정하고 필요 흡착력·패드 수를 계산합니다.</div>
-        <ul class="tool-features">
-          <li>흡착력 = 유효면적 × 진공압</li>
-          <li>자세별 안전계수(4·8·2) 자동 적용</li>
-          <li>필요 패드 수·형상-표면 적합 판정</li>
-        </ul>
-        <span class="tool-arrow">→</span>
-      </a>
-
-    </div>
+    <p id="nores" style="display:none;text-align:center;color:var(--t3);margin-top:22px">검색 결과가 없어요. 다른 이름으로 검색해보세요.</p>
   </div>
 </section>
 
-<!-- ── 선정 가이드 ── -->
-<section class="guide-section">
-  <div class="section-inner">
-    <div class="tools-header">
-      <div class="section-label">선정 가이드</div>
-      <h2 class="section-title">부품 선정이 처음이세요?</h2>
-      <p class="section-desc">계산 공식과 선정 절차를 단계별로 정리했습니다. 처음이라도 순서대로 따라오면 됩니다.</p>
-    </div>
-    <div class="guide-groups">
-      <div class="guide-group">
-        <div class="guide-group-label">⚡ 전동 부품</div>
-        <div class="guide-links">
-          <a href="guide-lmguide.html" class="guide-link"><span>LM가이드 선정 방법</span><span class="g-arrow">→</span></a>
-          <a href="guide-ballscrew.html" class="guide-link"><span>볼스크류 선정 방법</span><span class="g-arrow">→</span></a>
-          <a href="guide-bearing.html" class="guide-link"><span>베어링 선정 방법</span><span class="g-arrow">→</span></a>
-          <a href="guide-servo-motor.html" class="guide-link"><span>서보모터 용량 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-screwjack.html" class="guide-link"><span>스크류잭 선정 방법</span><span class="g-arrow">→</span></a>
-          <a href="guide-planetary-gearbox.html" class="guide-link"><span>유성 감속기 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-cycloidal-gearbox.html" class="guide-link"><span>사이클로이드 감속기 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-harmonic-drive.html" class="guide-link"><span>하모닉 드라이브 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-electric-gripper.html" class="guide-link"><span>전동 그리퍼 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-coupling.html" class="guide-link"><span>커플링 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-timing-belt.html" class="guide-link"><span>타이밍벨트 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-linear-motor.html" class="guide-link"><span>리니어모터 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-electric-actuator.html" class="guide-link"><span>전동 액추에이터 선정</span><span class="g-arrow">→</span></a>
-        </div>
-      </div>
-      <div class="guide-group">
-        <div class="guide-group-label">💨 공압 부품</div>
-        <div class="guide-links">
-          <a href="guide-pneumatic-cylinder.html" class="guide-link"><span>공압 실린더 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-solenoid-valve.html" class="guide-link"><span>솔레노이드 밸브 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-pneumatic-fitting.html" class="guide-link"><span>피팅/튜빙 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-pneumatic-fr-unit.html" class="guide-link"><span>공기압 조절 유닛 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-pneumatic-gripper.html" class="guide-link"><span>공압 그리퍼 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-speed-controller.html" class="guide-link"><span>스피드 컨트롤러 선정</span><span class="g-arrow">→</span></a>
-          <a href="guide-vacuum-pad.html" class="guide-link"><span>진공 흡착패드 선정</span><span class="g-arrow">→</span></a>
-        </div>
-      </div>
+<!-- FEATURED (서보모터 1순위) -->
+<div class="guide-wrap">
+<section>
+  <div class="wrap">
+    <div class="sh"><div class="k">Popular</div><h2>가장 많이 쓰는 계산기</h2></div>
+    <div class="feats">
+      <a class="feat star" href="servo_motor.html"><span class="rank">01</span><span class="vbadge">검증완료</span><div class="fi">🛞</div><h4>서보모터 선정</h4><p>부하 조건으로 토크·관성비·실효토크 자동 검증. 미쓰비시·파나소닉·LS산전 비교.</p><div class="go">선정하기 →</div></a>
+      <a class="feat" href="bearing.html"><span class="rank">02</span><span class="vbadge">검증완료</span><div class="fi">🔩</div><h4>베어링 선정</h4><p>하중·회전수·수명으로 타입·사이즈 선정. L10 자동 계산.</p><div class="go">선정하기 →</div></a>
+      <a class="feat" href="ballscrew.html"><span class="rank">03</span><span class="vbadge">검증완료</span><div class="fi">🌀</div><h4>볼스크류 선정</h4><p>리드·축경부터 좌굴·위험속도까지. LM가이드 동시 선정.</p><div class="go">선정하기 →</div></a>
+      <a class="feat" href="pneumatic-cylinder.html"><span class="rank">04</span><span class="vbadge">검증완료</span><div class="fi">🔧</div><h4>공압 실린더 선정</h4><p>추력·부하율 계산. 표준·컴팩트·소형 3종.</p><div class="go">선정하기 →</div></a>
     </div>
   </div>
 </section>
+</div>
 
-<!-- ── Why PartsOn ── -->
-<section class="why-section">
-  <div class="section-inner">
-    <div class="why-grid">
+<!-- BAND -->
+<div class="band"><div class="wrap">
+  <div><div class="n">20종</div><div class="l">선정 계산기</div></div>
+  <div><div class="n">6종</div><div class="l">카탈로그 대조 검증완료</div></div>
+  <div><div class="n">ISO</div><div class="l">국제 표준 계산식</div></div>
+  <div><div class="n">0원</div><div class="l">무료 · 회원가입 없음</div></div>
+</div></div>
+
+<!-- GUIDE -->
+<div class="guide-wrap" id="guide">
+<section>
+  <div class="wrap">
+    <div class="sh"><div class="k">Guide</div><h2>부품 선정이 처음이세요?</h2><p>계산 공식과 선정 절차를 단계별로 정리한 가이드 20편.</p></div>
+    <div class="gcards">
+      <a class="gcard" href="guide-servo-motor.html"><div class="gt">SERVO</div><h4>서보모터 용량 선정법</h4><p>토크·관성비·실효토크 검증</p></a>
+      <a class="gcard" href="guide-bearing.html"><div class="gt">BEARING</div><h4>베어링 L10 수명 계산법</h4><p>하중·회전수로 수명 역산</p></a>
+      <a class="gcard" href="guide-ballscrew.html"><div class="gt">BALL SCREW</div><h4>볼스크류 좌굴·위험속도 검토</h4><p>리드·축경 정하는 법</p></a>
+      <a class="gcard" href="guide-lmguide.html"><div class="gt">LM GUIDE</div><h4>LM가이드 선정 방법 총정리</h4><p>수명 계산과 사이즈 선정 절차</p></a>
+    </div>
+    <div class="gmore"><a href="guide-servo-motor.html">선정 가이드 전체보기 (20편) →</a></div>
+  </div>
+</section>
+</div>
+
+<!-- SUPPLIER -->
+<section id="supplier">
+  <div class="wrap">
+    <div class="sup-band">
       <div>
-        <div class="section-label">왜 PartsOn인가</div>
-        <h2 class="section-title">엔지니어를 위한<br>부품 선정 도구</h2>
-        <div class="why-features">
-          <div class="why-item">
-            <div class="why-item-icon">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                <polyline points="3,10 7,14 17,5"/>
-              </svg>
-            </div>
-            <div>
-              <div class="why-item-title">ISO 기반 정확한 계산</div>
-              <div class="why-item-desc">국제 표준 규격의 계산식을 적용해 카탈로그와 동일한 신뢰할 수 있는 결과를 제공합니다.</div>
-            </div>
-          </div>
-          <div class="why-item">
-            <div class="why-item-icon">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                <circle cx="10" cy="10" r="7"/>
-                <polyline points="10,6 10,10 13,12"/>
-              </svg>
-            </div>
-            <div>
-              <div class="why-item-title">설계 시간 단축</div>
-              <div class="why-item-desc">복잡한 카탈로그 계산 없이 조건 입력만으로 최적 부품을 즉시 선정할 수 있습니다.</div>
-            </div>
-          </div>
-          <div class="why-item">
-            <div class="why-item-icon">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-                <path d="M3 7l7-4 7 4v8l-7 4-7-4z"/>
-                <polyline points="3,7 10,11 17,7"/>
-                <line x1="10" y1="11" x2="10" y2="19"/>
-              </svg>
-            </div>
-            <div>
-              <div class="why-item-title">공급사 직접 연결</div>
-              <div class="why-item-desc">선정 결과에서 검증된 공급사에게 즉시 문의하거나 견적을 요청할 수 있습니다.</div>
-            </div>
-          </div>
-        </div>
+        <h3>자동화 부품 공급사이신가요?</h3>
+        <p>무료로 등록하고, 계산기를 통해 유입되는 고객에게 노출되세요. 선정 결과 화면에서 바로 견적 문의를 받을 수 있습니다.</p>
       </div>
-
-      <div class="calc-preview-box">
-        <div class="calc-preview-label">LM Guide 선정 예시</div>
-        <div class="calc-rows">
-          <div class="calc-row">
-            <span class="calc-row-label">정격 동하중 C</span>
-            <span class="calc-row-val">12,800 N</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-row-label">적용 하중 F</span>
-            <span class="calc-row-val">3,200 N</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-row-label">스트로크</span>
-            <span class="calc-row-val">400 mm</span>
-          </div>
-          <div class="calc-row">
-            <span class="calc-row-label">분당 사이클</span>
-            <span class="calc-row-val">30 cpm</span>
-          </div>
-          <div class="calc-result-row">
-            <span class="calc-result-label">예상 수명</span>
-            <span class="calc-result-val">≈ 32,768 km</span>
-          </div>
-        </div>
+      <div class="sup-btns">
+        <a class="p" href="mailto:partson@naver.com">공급사 등록 문의</a>
+        <a class="s" href="admin.html">공급사 관리 페이지</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── 공급사 섹션 ── -->
-<section>
-  <div class="section-inner">
-    <div class="supplier-layout">
-      <div class="supplier-content">
-        <div class="section-label">공급사 네트워크</div>
-        <h2 class="section-title">부품 선정 후<br>바로 구매까지</h2>
-        <p class="section-desc" style="margin-top: 0.75rem;">
-          계산기로 선정한 부품을 검증된 공급사와 직접 연결합니다. Bosch, NSK, SKF, FAG 등 주요 브랜드를 취급합니다.
-        </p>
-        <div class="supplier-brand-grid">
-          <div class="brand-chip">Bosch</div>
-          <div class="brand-chip">NSK</div>
-          <div class="brand-chip">SKF</div>
-          <div class="brand-chip">FAG</div>
-          <div class="brand-chip">TBI</div>
-          <div class="brand-chip" style="color: var(--text-muted); font-family: var(--font-body); font-size: 11px;">+ 더보기</div>
-        </div>
-      </div>
-
-      <div class="supplier-contact">
-        <div class="contact-title">공급사 등록 문의</div>
-        <p class="contact-desc">
-          자동화 부품을 공급하는 업체라면 무료로 등록하고 계산기를 통해 유입되는 고객에게 노출되세요.
-        </p>
-        <div class="contact-row">
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <path d="M1 3.5l6.5 4.5 6.5-4.5"/>
-            <rect x="0.5" y="2.5" width="14" height="10" rx="2"/>
-          </svg>
-          partson@naver.com
-        </div>
-        <div class="contact-row">
-          <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <circle cx="7.5" cy="7.5" r="5.5"/>
-            <polyline points="7.5,4 7.5,7.5 9.5,9"/>
-          </svg>
-          현재 무료 등록 가능
-        </div>
-        <a href="admin.html" class="register-btn">공급사 관리 페이지 →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── CTA ── -->
-<section class="cta-section">
-  <div class="section-inner">
-    <div class="cta-inner">
-      <h2 class="cta-title">지금 바로 시작하세요</h2>
-      <p class="cta-desc">20가지 계산기로 자동화 설비에 필요한 모든 부품을 선정할 수 있습니다. 무료로 이용 가능합니다.</p>
-      <div class="cta-groups">
-        <div class="cta-group">
-          <div class="cta-group-label">⚡ 전동 부품</div>
-          <div class="cta-group-btns">
-            <a href="lmguide.html" class="btn-primary">LM Guide 선정</a>
-            <a href="ballscrew.html" class="btn-ghost">볼스크류 선정</a>
-            <a href="bearing.html" class="btn-ghost">베어링 선정</a>
-            <a href="servo_motor.html" class="btn-ghost">서보모터 선정</a>
-            <a href="screwjack.html" class="btn-ghost">스크류잭 선정</a>
-            <a href="planetary-gearbox.html" class="btn-ghost">유성 감속기 선정</a>
-            <a href="cycloidal-gearbox.html" class="btn-ghost">사이클로이드 선정</a>
-            <a href="harmonic-drive.html" class="btn-ghost">하모닉 드라이브 선정</a>
-            <a href="electric-gripper.html" class="btn-ghost">전동 그리퍼 선정</a>
-            <a href="coupling.html" class="btn-ghost">커플링 선정</a>
-            <a href="timing-belt.html" class="btn-ghost">타이밍벨트 선정</a>
-            <a href="linear-motor.html" class="btn-ghost">리니어모터 선정</a>
-            <a href="electric-actuator.html" class="btn-ghost">전동 액추에이터 선정</a>
-          </div>
-        </div>
-        <div class="cta-group">
-          <div class="cta-group-label">💨 공압 부품</div>
-          <div class="cta-group-btns">
-            <a href="pneumatic-cylinder.html" class="btn-ghost btn-ghost-blue">실린더 선정</a>
-            <a href="solenoid-valve.html" class="btn-ghost btn-ghost-blue">솔레노이드 밸브 선정</a>
-            <a href="pneumatic-fitting.html" class="btn-ghost btn-ghost-blue">피팅/튜빙 선정</a>
-            <a href="pneumatic-fr-unit.html" class="btn-ghost btn-ghost-blue">공기압 조절 유닛 선정</a>
-            <a href="pneumatic-gripper.html" class="btn-ghost btn-ghost-blue">공압 그리퍼 선정</a>
-            <a href="speed-controller.html" class="btn-ghost btn-ghost-blue">스피드 컨트롤러 선정</a>
-            <a href="vacuum-pad.html" class="btn-ghost btn-ghost-blue">진공 흡착패드 선정</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── 푸터 ── -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">PartsOn</div>
-    <div class="footer-groups">
-      <div class="footer-group">
-        <span class="footer-group-label">계산기</span>
-        <a href="lmguide.html" class="footer-link">LM Guide</a>
-        <a href="ballscrew.html" class="footer-link">볼스크류</a>
-        <a href="bearing.html" class="footer-link">베어링</a>
-        <a href="servo_motor.html" class="footer-link">서보모터</a>
-        <a href="screwjack.html" class="footer-link">스크류잭</a>
-        <a href="planetary-gearbox.html" class="footer-link">유성 감속기</a>
-        <a href="cycloidal-gearbox.html" class="footer-link">사이클로이드</a>
-        <a href="harmonic-drive.html" class="footer-link">하모닉 드라이브</a>
-        <a href="electric-gripper.html" class="footer-link">전동 그리퍼</a>
-        <a href="coupling.html" class="footer-link">커플링</a>
-        <a href="timing-belt.html" class="footer-link">타이밍벨트</a>
-        <a href="linear-motor.html" class="footer-link">리니어모터</a>
-        <a href="electric-actuator.html" class="footer-link">전동 액추에이터</a>
-        <a href="pneumatic-cylinder.html" class="footer-link">공압 실린더</a>
-        <a href="solenoid-valve.html" class="footer-link">솔레노이드 밸브</a>
-        <a href="pneumatic-fitting.html" class="footer-link">피팅/튜빙</a>
-        <a href="pneumatic-fr-unit.html" class="footer-link">공기압 조절 유닛</a>
-        <a href="pneumatic-gripper.html" class="footer-link">공압 그리퍼</a>
-        <a href="speed-controller.html" class="footer-link">스피드 컨트롤러</a>
-        <a href="vacuum-pad.html" class="footer-link">진공 흡착패드</a>
-      </div>
-      <div class="footer-group">
-        <span class="footer-group-label">전동 가이드</span>
-        <a href="guide-lmguide.html" class="footer-link">LM가이드</a>
-        <a href="guide-ballscrew.html" class="footer-link">볼스크류</a>
-        <a href="guide-bearing.html" class="footer-link">베어링</a>
-        <a href="guide-servo-motor.html" class="footer-link">서보모터</a>
-        <a href="guide-screwjack.html" class="footer-link">스크류잭</a>
-        <a href="guide-planetary-gearbox.html" class="footer-link">유성 감속기</a>
-        <a href="guide-cycloidal-gearbox.html" class="footer-link">사이클로이드</a>
-        <a href="guide-harmonic-drive.html" class="footer-link">하모닉 드라이브</a>
-        <a href="guide-electric-gripper.html" class="footer-link">전동 그리퍼</a>
-        <a href="guide-coupling.html" class="footer-link">커플링</a>
-        <a href="guide-timing-belt.html" class="footer-link">타이밍벨트</a>
-        <a href="guide-linear-motor.html" class="footer-link">리니어모터</a>
-        <a href="guide-electric-actuator.html" class="footer-link">전동 액추에이터</a>
-      </div>
-      <div class="footer-group">
-        <span class="footer-group-label">공압 가이드</span>
-        <a href="guide-pneumatic-cylinder.html" class="footer-link">실린더</a>
-        <a href="guide-solenoid-valve.html" class="footer-link">솔레노이드 밸브</a>
-        <a href="guide-pneumatic-fitting.html" class="footer-link">피팅/튜빙</a>
-        <a href="guide-pneumatic-fr-unit.html" class="footer-link">공기압 조절 유닛</a>
-        <a href="guide-pneumatic-gripper.html" class="footer-link">공압 그리퍼</a>
-        <a href="guide-speed-controller.html" class="footer-link">스피드 컨트롤러</a>
-        <a href="guide-vacuum-pad.html" class="footer-link">진공 흡착패드</a>
-      </div>
-      <div class="footer-group">
-        <span class="footer-group-label">기타</span>
-        <a href="admin.html" class="footer-link">공급사 관리</a>
-      </div>
+  <div class="wrap">
+    <div class="fcols">
+      <div class="fc"><h5>⚙ PartsOn</h5><a href="index.html">자동화 부품 선정 플랫폼</a><a href="index.html">ISO 표준 기반 · 무료</a></div>
+      <div class="fc"><h5>전동 계산기</h5><a href="servo_motor.html">서보모터</a><a href="lmguide.html">LM가이드</a><a href="ballscrew.html">볼스크류</a><a href="bearing.html">베어링</a></div>
+      <div class="fc"><h5>공압 계산기</h5><a href="pneumatic-cylinder.html">공압 실린더</a><a href="solenoid-valve.html">솔레노이드 밸브</a><a href="speed-controller.html">스피드 컨트롤러</a></div>
+      <div class="fc"><h5>더보기</h5><a href="#guide">선정 가이드</a><a href="admin.html">공급사 관리</a><a href="mailto:partson@naver.com">공급사 등록</a></div>
     </div>
-  </div>
-  <div style="max-width:1200px;margin:1.5rem auto 0;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06);text-align:center;font-size:12px;color:rgba(255,255,255,.3)">
-    © 2026 PartsOn. All rights reserved.
+    <div class="fbtm">© 2026 PartsOn · 자동화 부품 선정 플랫폼 · ISO 표준 기반 · 무료</div>
   </div>
 </footer>
 
 <script>
-function navToggle(btn){
-  var menu=btn.nextElementSibling;
-  var isOpen=!menu.classList.contains('open');
-  document.querySelectorAll('.nav-dropdown-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});
-  if(isOpen){menu.classList.add('open');btn.classList.add('open')}
+function filt(){
+  var q=document.getElementById('q').value.trim().toLowerCase();
+  var grps=document.querySelectorAll('#dom .grp');var panels=document.querySelectorAll('#dom .panel');var shown=0;
+  grps.forEach(function(g){var hay=(g.getAttribute('data-k')+' '+g.innerText).toLowerCase();var ok=q===''||hay.indexOf(q)>-1;g.style.display=ok?'':'none';if(ok)shown++;});
+  panels.forEach(function(p){var any=[].some.call(p.querySelectorAll('.grp'),function(g){return g.style.display!=='none'});var pk=p.getAttribute('data-k').toLowerCase().indexOf(q)>-1;p.style.display=(q===''||any||pk)?'':'none';});
+  document.getElementById('nores').style.display=(shown===0&&q!=='')?'block':'none';
 }
-document.addEventListener('click',function(e){
-  if(!e.target.closest('.nav-dropdown')){
-    document.querySelectorAll('.nav-dropdown-menu').forEach(function(m){m.classList.remove('open');m.previousElementSibling.classList.remove('open')});
-  }
-});
 </script>
-
 <script src="js/common.js"></script>
-<script>
-/* index 계산기 목록 단일 출처(CALCULATORS) 반영 — 네비 드롭다운·통계 자동 생성.
-   히어로 칩·CTA·툴카드는 SEO·무JS 복원력 위해 정적 유지, 개수 불일치는 콘솔 가드로 감시. */
-(function(){
-  if(typeof CALCULATORS==="undefined")return;
-  function fill(id,cat){var el=document.getElementById(id);if(!el)return;
-    el.innerHTML=CALCULATORS.filter(function(c){return c.cat===cat;}).map(function(c){return "<a href=\""+c.file+"\">"+c.desk+"</a>";}).join("");}
-  fill("idx-electric-menu","electric");
-  fill("idx-pneumatic-menu","pneumatic");
-  var stat=document.getElementById("idx-calc-count");if(stat)stat.textContent=CALCULATORS.length+"종";
-  /* 정적 요소 개수 가드: 향후 계산기 추가 시 칩·CTA·툴카드 누락을 콘솔 경고로 감지 */
-  var n=CALCULATORS.length;
-  [[".chip","히어로 칩"],[".cta-group-btns a","CTA 버튼"],[".tool-card","툴카드"]].forEach(function(p){
-    var cnt=document.querySelectorAll(p[0]).length;
-    if(cnt!==n)console.warn("[PartsOn] "+p[1]+" 개수 "+cnt+" ≠ 계산기 "+n+" — index 정적 목록 갱신 필요");
-  });
-})();
-</script>
 </body>
 </html>
-
-
-
-
-
