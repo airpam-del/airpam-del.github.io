@@ -655,15 +655,15 @@ footer{text-align:center;font-size:11px;color:var(--text3);padding:2rem;font-fam
 //   정격하중[kN]·사다리꼴나사(Tr) = ZIMM ZE R-Trapezoidal 표와 전수 일치 확인(ZE-5~ZE-200).
 //   기어비(i_N/i_L)·효율(ETA_GEAR)은 ZIMM ZE 웜기어 규격 기반값(라인별 카탈로그 대조는 미완).
 const ZE_MODELS = [
-  // model, rated[kN], screwTr, pitch[mm], coreTr[mm], coreBall[mm], i_N, i_L, feed_N[mm/rev], feed_L[mm/rev]
-  { model:'ZE-5',   rated:5,   screw:'Tr18×4',  pitch:4,  coreTr:12.9, coreBall:12.9, i_N:4,  i_L:16, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-10',  rated:10,  screw:'Tr20×4',  pitch:4,  coreTr:14.9, coreBall:12.9, i_N:4,  i_L:16, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-25',  rated:25,  screw:'Tr30×6',  pitch:6,  coreTr:22.1, coreBall:21.5, i_N:6,  i_L:24, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-35',  rated:35,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:27.3, i_N:7,  i_L:28, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-50',  rated:50,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:34.1, i_N:7,  i_L:28, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-100', rated:100, screw:'Tr55×9',  pitch:9,  coreTr:43.6, coreBall:43.6, i_N:9,  i_L:36, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-150', rated:150, screw:'Tr60×9',  pitch:9,  coreTr:48.6, coreBall:51.8, i_N:9,  i_L:36, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-200', rated:200, screw:'Tr70×12', pitch:12, coreTr:55.2, coreBall:67.0, i_N:8,  i_L:24, feed_N:1.50, feed_L:0.50 },
+  // ZIMM ZE 카탈로그(2021) 정합. model, rated[kN], screwTr, pitch[mm], coreTr[mm], coreBall[mm], i_N, i_L (feed 필드 폐기 — 리드/i로 계산)
+  { model:'ZE-5',   rated:5,   screw:'Tr18×4',  pitch:4,  coreTr:12.9, coreBall:12.9, i_N:4, i_L:16 },
+  { model:'ZE-10',  rated:10,  screw:'Tr20×4',  pitch:4,  coreTr:14.9, coreBall:21.5, i_N:4, i_L:16 },
+  { model:'ZE-25',  rated:25,  screw:'Tr30×6',  pitch:6,  coreTr:22.1, coreBall:27.3, i_N:6, i_L:24 },
+  { model:'ZE-35',  rated:35,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:34.1, i_N:7, i_L:28 },
+  { model:'ZE-50',  rated:50,  screw:'Tr50×8',  pitch:8,  coreTr:39.8, coreBall:34.1, i_N:8, i_L:32 }, // ZIMM: 볼(KGT) 옵션 "-" — 볼 선택 시 주의
+  { model:'ZE-100', rated:100, screw:'Tr55×9',  pitch:9,  coreTr:43.6, coreBall:43.6, i_N:9, i_L:36 },
+  { model:'ZE-150', rated:150, screw:'Tr60×9',  pitch:9,  coreTr:48.6, coreBall:51.8, i_N:9, i_L:36 },
+  { model:'ZE-200', rated:200, screw:'Tr70×12', pitch:12, coreTr:55.2, coreBall:67.0, i_N:8, i_L:24 },
 ];
 
 // η_gear: [1500N, 1500L, 1000N, 1000L, 750N, 750L, 500N, 500L]
@@ -679,9 +679,15 @@ const ETA_GEAR = {
 };
 
 // η_screw 단선 효율
+// ZIMM η_나사 (μ=0.11) — 단일피치
 const ETA_SCREW_SINGLE = {
-  'Tr18×4':0.42,'Tr20×4':0.39,'Tr30×6':0.39,'Tr40×7':0.35,
+  'Tr18×4':0.42,'Tr20×4':0.39,'Tr30×6':0.39,'Tr40×7':0.35,'Tr50×8':0.33,
   'Tr55×9':0.34,'Tr60×9':0.32,'Tr70×12':0.35
+};
+// ZIMM η_나사 — 복선(이중피치)
+const ETA_SCREW_DOUBLE = {
+  'Tr18×4':0.59,'Tr20×4':0.56,'Tr30×6':0.56,'Tr40×7':0.53,'Tr50×8':0.50,
+  'Tr55×9':0.51,'Tr60×9':0.48,'Tr70×12':0.52
 };
 
 // 시스템 레이아웃 토크 배율
@@ -983,8 +989,8 @@ function calcBuckling(model) {
 
 function getEtaScrew(model) {
   if (S.screw === 'ball') return 0.90;
-  const base = ETA_SCREW_SINGLE[model.screw] || 0.35;
-  return S.screw === 'tr2' ? base * 1.5 : base;
+  if (S.screw === 'tr2') return ETA_SCREW_DOUBLE[model.screw] || 0.50; // 복선 = ZIMM 이중피치 η
+  return ETA_SCREW_SINGLE[model.screw] || 0.35;                        // 단일피치 η
 }
 
 function getEtaGear(model) {
@@ -1000,25 +1006,22 @@ function getEtaGear(model) {
 
 function calcTorqueMotor(model) {
   const i = S.gr === 'L' ? model.i_L : model.i_N;
-  const feedPerRev = S.gr === 'L' ? model.feed_L * model.pitch : model.feed_N * model.pitch;
-  // 실제 이송량/rev = feedPerRev [mm/rev]
-  // RPM: v[mm/s] * 60 / feedPerRev[mm/rev]
-  const n_rpm = S.v * 60 / feedPerRev;
+  const lead = (S.screw === 'tr2') ? model.pitch * 2 : model.pitch; // 복선 = 리드 2배 ★FIX
+  const feedPerRev = lead / i;                     // 입력 1회전당 이송[mm] ★FIX(리드/i)
+  const n_rpm = S.v * 60 / feedPerRev;             // 입력축 rpm
   const eta_gear = getEtaGear(model);
   const eta_screw = getEtaScrew(model);
-  // 잭 1개당 하중
+  // 잭 1개당 하중 + ZIMM 최소부하 규칙(정격 15% floor — 무부하 손실 반영)
   const F_jack = S.F / S.qty; // kN
-  // 구동 토크 MG [Nm] = F[kN]*1000 * pitch[m] / (2π * η_gear * η_screw * i)
-  const pitchM = model.pitch / 1000;
-  const MG = (F_jack * 1000 * pitchM) / (2 * Math.PI * eta_gear * eta_screw * i);
-  // 모터 출력 PM [kW]
-  const PM = MG * n_rpm / 9550;
-  const PM_rec = PM * S.msf;
-  // 시스템 토크 배율
+  const F_drive = Math.max(F_jack, 0.15 * model.rated);
+  // 단일잭 입력토크 MG [Nm] = F[kN]*1000 * lead[m] / (2π · η_gear · η_screw · i)
+  const MG = (F_drive * 1000 * (lead / 1000)) / (2 * Math.PI * eta_gear * eta_screw * i);
   const layoutMult = LAYOUTS[S.qty][S.layout].mult;
-  const MR = MG * layoutMult;
-  const MA = MR * 1.5; // 기동 토크
-  return { n_rpm, MG, PM, PM_rec, MR, MA, eta_gear, eta_screw, i, feedPerRev };
+  const MR = MG * layoutMult;                      // 시스템 입력토크[Nm]
+  const PM = MR * n_rpm / 9550;                    // 시스템 모터출력[kW] ★FIX(MR 사용)
+  const PM_rec = PM * S.msf;
+  const MA = MR * 1.5;                             // 기동 토크
+  return { n_rpm, MG, MR, PM, PM_rec, MA, eta_gear, eta_screw, i, lead, feedPerRev };
 }
 
 // ═══════════════════════════════════════════
@@ -1191,8 +1194,9 @@ function buildStep5() {
     // 임계 RPM 근사: n_kr ≈ 4.73e6 * coreD / L² (경험식, mm 기준)
     const coreD = S.screw==='ball'?model.coreBall:model.coreTr;
     const n_kr = 4.73e6 * coreD / (S.L ** 2);
-    if (r.n_rpm > 0.8 * n_kr) {
-      alerts.push({cls:'ab-warn', icon:'🟡', msg:`임계 회전속도 근접: ${r.n_rpm.toFixed(0)} rpm > 임계의 80% (${(0.8*n_kr).toFixed(0)} rpm). R형 진동 위험.`});
+    const screw_rpm = r.n_rpm / r.i;   // ★FIX: 임계속도는 스크류rpm(=입력rpm/i) 기준
+    if (screw_rpm > 0.8 * n_kr) {
+      alerts.push({cls:'ab-warn', icon:'🟡', msg:`임계 회전속도 근접: 스크류 ${screw_rpm.toFixed(0)} rpm > 임계의 80% (${(0.8*n_kr).toFixed(0)} rpm). R형 진동 위험.`});
     }
   }
 
@@ -1272,6 +1276,10 @@ function buildStep5() {
         <tr><td>판정</td><td class="val ${buck.pass?'val-ok':'val-bad'}">${buck.pass?'✓ 안전':'✗ 위험'}</td></tr>
       </tbody>
     </table>
+
+    <div class="note" style="margin-top:1rem;font-size:12px;color:var(--text3,#94A29A);line-height:1.6">
+      ※ ZIMM ZE 시리즈 카탈로그(2021) 기준. 모터출력은 ZIMM 공식(M<sub>G</sub>·P<sub>M</sub>) + 최소부하 규칙(정격 15% floor) 반영.${S.screw==='tr2'?' 복선(이중피치) 선택 시 리드=피치×2가 적용됩니다.':''}
+    </div>
   `;
 
   // 인쇄 날짜

@@ -4,20 +4,27 @@
    출처: screwjack.html 인라인 <script> 무손실 추출 (계산식 불변)
    ══════════════════════════════════════════════════════════════ */
 
+// ZIMM ZE 카탈로그(2021) 정합. coreTr/coreBall=나사코어경[mm], i=기어비(N=표준/L=저속). feed 필드 폐기(리드/i로 계산)
 const ZE_MODELS = [
-  { model:'ZE-5',   rated:5,   screw:'Tr18×4',  pitch:4,  coreTr:12.9, coreBall:12.9, i_N:4,  i_L:16, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-10',  rated:10,  screw:'Tr20×4',  pitch:4,  coreTr:14.9, coreBall:12.9, i_N:4,  i_L:16, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-25',  rated:25,  screw:'Tr30×6',  pitch:6,  coreTr:22.1, coreBall:21.5, i_N:6,  i_L:24, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-35',  rated:35,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:27.3, i_N:7,  i_L:28, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-50',  rated:50,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:34.1, i_N:7,  i_L:28, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-100', rated:100, screw:'Tr55×9',  pitch:9,  coreTr:43.6, coreBall:43.6, i_N:9,  i_L:36, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-150', rated:150, screw:'Tr60×9',  pitch:9,  coreTr:48.6, coreBall:51.8, i_N:9,  i_L:36, feed_N:1.00, feed_L:0.25 },
-  { model:'ZE-200', rated:200, screw:'Tr70×12', pitch:12, coreTr:55.2, coreBall:67.0, i_N:8,  i_L:24, feed_N:1.50, feed_L:0.50 },
+  { model:'ZE-5',   rated:5,   screw:'Tr18×4',  pitch:4,  coreTr:12.9, coreBall:12.9, i_N:4, i_L:16 },
+  { model:'ZE-10',  rated:10,  screw:'Tr20×4',  pitch:4,  coreTr:14.9, coreBall:21.5, i_N:4, i_L:16 },
+  { model:'ZE-25',  rated:25,  screw:'Tr30×6',  pitch:6,  coreTr:22.1, coreBall:27.3, i_N:6, i_L:24 },
+  { model:'ZE-35',  rated:35,  screw:'Tr40×7',  pitch:7,  coreTr:31.0, coreBall:34.1, i_N:7, i_L:28 },
+  { model:'ZE-50',  rated:50,  screw:'Tr50×8',  pitch:8,  coreTr:39.8, coreBall:34.1, i_N:8, i_L:32 }, // ZIMM: 볼(KGT) 옵션 "-" 표기 — 볼 선택 시 주의
+  { model:'ZE-100', rated:100, screw:'Tr55×9',  pitch:9,  coreTr:43.6, coreBall:43.6, i_N:9, i_L:36 },
+  { model:'ZE-150', rated:150, screw:'Tr60×9',  pitch:9,  coreTr:48.6, coreBall:51.8, i_N:9, i_L:36 },
+  { model:'ZE-200', rated:200, screw:'Tr70×12', pitch:12, coreTr:55.2, coreBall:67.0, i_N:8, i_L:24 },
 ];
 
+// ZIMM η_나사 (μ=0.11). 단일피치
 const ETA_SCREW_SINGLE = {
-  'Tr18×4':0.42,'Tr20×4':0.39,'Tr30×6':0.39,'Tr40×7':0.35,
+  'Tr18×4':0.42,'Tr20×4':0.39,'Tr30×6':0.39,'Tr40×7':0.35,'Tr50×8':0.33,
   'Tr55×9':0.34,'Tr60×9':0.32,'Tr70×12':0.35
+};
+// ZIMM η_나사 — 복선(이중피치)
+const ETA_SCREW_DOUBLE = {
+  'Tr18×4':0.59,'Tr20×4':0.56,'Tr30×6':0.56,'Tr40×7':0.53,'Tr50×8':0.50,
+  'Tr55×9':0.51,'Tr60×9':0.48,'Tr70×12':0.52
 };
 
 // η_gear: [1500N, 1500L, 1000N, 1000L, 750N, 750L, 500N, 500L] — screwjack.html ETA_GEAR
@@ -47,8 +54,8 @@ function getEtaGear(model, gr) {
 }
 function getEtaScrew(model, screwType) {
   if (screwType === 'ball') return 0.90;
-  const base = ETA_SCREW_SINGLE[model.screw] || 0.35;
-  return screwType === 'tr2' ? base * 1.5 : base;
+  if (screwType === 'tr2') return ETA_SCREW_DOUBLE[model.screw] || 0.50; // 복선 = ZIMM 이중피치 η
+  return ETA_SCREW_SINGLE[model.screw] || 0.35;                          // 단일피치 η
 }
 
 /**
@@ -82,21 +89,19 @@ function calcBuckling(model, F_kN, L, eulerN, vsf, screwType) {
  */
 function calcTorqueMotor(model, F_kN, v, gr, screwType, msf, layoutMult) {
   const i = gr === 'L' ? model.i_L : model.i_N;
-  const feedPerRev = gr === 'L'
-    ? model.feed_L * model.pitch
-    : model.feed_N * model.pitch;
-  const n_rpm = v * 60 / feedPerRev;
+  const lead = (screwType === 'tr2') ? model.pitch * 2 : model.pitch;  // 복선 = 리드 2배 ★FIX
+  const feedPerRev = lead / i;                     // 입력 1회전당 이송[mm] ★FIX(리드/i)
+  const n_rpm = v * 60 / feedPerRev;               // 입력축 rpm
 
   const eta_screw = getEtaScrew(model, screwType);
   const eta_gear  = getEtaGear(model, gr); // screwjack.html: ETA_GEAR[model][N=0/L=1]
 
-  const pitchM = model.pitch / 1000;
-  const MG = (F_kN * 1000 * pitchM) / (2 * Math.PI * eta_gear * eta_screw * i);
-  const PM  = MG * n_rpm / 9550;
+  const MG = (F_kN * 1000 * (lead / 1000)) / (2 * Math.PI * eta_gear * eta_screw * i); // 단일잭 입력토크[Nm]
+  const MR = MG * (layoutMult || 1.0);             // 시스템 입력토크[Nm]
+  const PM = MR * n_rpm / 9550;                    // 시스템 모터출력[kW] ★FIX(MR 사용)
   const PM_rec = PM * msf;
-  const MR = MG * (layoutMult || 1.0);
   const MA = MR * 1.5;
-  return { n_rpm, MG, PM, PM_rec, MR, MA, eta_gear, eta_screw, i, feedPerRev };
+  return { n_rpm, MG, MR, PM, PM_rec, MA, eta_gear, eta_screw, i, lead, feedPerRev };
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -130,7 +135,9 @@ function computeSJ(input) {
   }
 
   const layoutMult = (LAYOUTS[qty] && LAYOUTS[qty][input.layout]) ? LAYOUTS[qty][input.layout].mult : 1.0;
-  const torque = calcTorqueMotor(selected, F_jack, v, gr, screw, msf, layoutMult);
+  // ZIMM 최소부하 규칙: 무부하 손실 반영 — 구동계산용 잭당 하중을 정격의 15%로 floor
+  const F_drive = Math.max(F_jack, 0.15 * selected.rated);
+  const torque = calcTorqueMotor(selected, F_drive, v, gr, screw, msf, layoutMult);
   const buck = calcBuckling(selected, F_total, L, euler, vsf, screw);
   const isSelfLocking = screw === 'tr1' && getEtaScrew(selected, screw) < 0.5;
   const needBrake = !isSelfLocking;
@@ -142,7 +149,8 @@ function computeSJ(input) {
   if (actMode === 'R') {
     const coreD = screw === 'ball' ? selected.coreBall : selected.coreTr;
     const n_kr = 4.73e6 * coreD / (L ** 2);
-    if (torque.n_rpm > 0.8 * n_kr) alerts.push({ type: 'critRpm', cls: 'ab-warn', n_kr });
+    const screw_rpm = torque.n_rpm / torque.i;   // ★FIX: 임계속도는 스크류rpm(=입력rpm/i) 기준
+    if (screw_rpm > 0.8 * n_kr) alerts.push({ type: 'critRpm', cls: 'ab-warn', n_kr, screw_rpm });
   }
   if (needBrake) alerts.push({ type: 'selfLock', cls: 'ab-info' });
 
@@ -151,5 +159,5 @@ function computeSJ(input) {
 
 module.exports = {
   calcBuckling, calcTorqueMotor, computeSJ, getEtaGear, getEtaScrew,
-  ZE_MODELS, ETA_SCREW_SINGLE, ETA_GEAR, LAYOUTS,
+  ZE_MODELS, ETA_SCREW_SINGLE, ETA_SCREW_DOUBLE, ETA_GEAR, LAYOUTS,
 };

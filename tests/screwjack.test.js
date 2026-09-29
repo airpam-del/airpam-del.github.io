@@ -35,19 +35,24 @@ test('calcTorqueMotor: η_gear는 ETA_GEAR 테이블 값 (0.85 하드코딩 아�
 const GOLDEN = [
   { label: '1000kg 단독 tr1 → ZE-10',
     input: { F_kg: 1000, qty: 1, layout: 0, L: 300, euler: 2, vsf: 3, msf: 1.3, screw: 'tr1', gr: 'N', v: 10, actMode: 'C' },
-    expect: { F_total: 9.81, F_jack: 9.81, nPass: 7, rec: 'ZE-10', n_rpm: 150, eta_gear: 0.84, eta_screw: 0.39,
-      MG: 4.765903515663899, PM: 0.07485712328267904, PM_rec: 0.09731426026748276, MR: 4.765903515663899,
+    expect: { F_total: 9.81, F_jack: 9.81, nPass: 7, rec: 'ZE-10', n_rpm: 600, eta_gear: 0.84, eta_screw: 0.39,
+      MG: 4.765903515663899, PM: 0.2994284931307162, PM_rec: 0.38925704106993103, MR: 4.765903515663899,
       alerts: ['buckOk'], needBrake: false } },
   { label: '5000kg 2잭 tr1 → ZE-35 (배치 2.1배)',
     input: { F_kg: 5000, qty: 2, layout: 0, L: 500, euler: 2, vsf: 3, msf: 1.3, screw: 'tr1', gr: 'N', v: 15, actMode: 'R' },
-    expect: { F_total: 49.05, F_jack: 24.525, nPass: 5, rec: 'ZE-35', n_rpm: 128.57142857142858, eta_gear: 0.87, eta_screw: 0.35,
-      MG: 12.818637042130488, PM: 0.17257701328223546, PM_rec: 0.2243501172669061, MR: 26.919137788474025,
+    expect: { F_total: 49.05, F_jack: 24.525, nPass: 5, rec: 'ZE-35', n_rpm: 900, eta_gear: 0.87, eta_screw: 0.35,
+      MG: 12.818637042130488, PM: 2.536882095248861, PM_rec: 3.2979467238235194, MR: 26.919137788474025,
       alerts: ['buckOk'], needBrake: false } },
   { label: '20000kg ball → ZE-200 (브레이크 필요)',
     input: { F_kg: 20000, qty: 1, layout: 0, L: 800, euler: 3, vsf: 3, msf: 1.3, screw: 'ball', gr: 'N', v: 20, actMode: 'R' },
-    expect: { F_total: 196.2, F_jack: 196.2, nPass: 1, rec: 'ZE-200', n_rpm: 66.66666666666667, eta_gear: 0.9, eta_screw: 0.9,
-      MG: 57.82629599005531, PM: 0.4036739685169655, PM_rec: 0.5247761590720552, MR: 57.82629599005531,
+    expect: { F_total: 196.2, F_jack: 196.2, nPass: 1, rec: 'ZE-200', n_rpm: 800, eta_gear: 0.9, eta_screw: 0.9,
+      MG: 57.82629599005531, PM: 4.844087622203586, PM_rec: 6.297313908864662, MR: 57.82629599005531,
       alerts: ['buckOk', 'selfLock'], needBrake: true } },
+  { label: '문의검산 500kg 4잭T형 Tr30복선 저속L → ZE-25 (PM_rec≈0.42kW)',
+    input: { F_kg: 500, qty: 4, layout: 2, L: 600, euler: 1, vsf: 3, msf: 1.3, screw: 'tr2', gr: 'L', v: 10, actMode: 'R' },
+    expect: { F_total: 4.905, F_jack: 1.22625, nPass: 6, rec: 'ZE-25', n_rpm: 1200, eta_gear: 0.72, eta_screw: 0.56,
+      MG: 0.7401178529199002, PM: 0.3254968567815268, PM_rec: 0.4231459138159848, MR: 2.590412485219651,
+      alerts: ['buckOk', 'minLoad', 'selfLock'], needBrake: true } },
 ];
 for (const g of GOLDEN) {
   test(`골든: ${g.label}`, () => {
@@ -101,10 +106,12 @@ test('불변식: 무작위 입력 120개', () => {
     withSel++;
     const t = r.torque, sel = r.selected;
 
-    // (4) 단위 일관성
-    const feedPerRev = input.gr === 'L' ? sel.feed_L * sel.pitch : sel.feed_N * sel.pitch;
+    // (4) 단위 일관성 — 리드/i 기반 이송, PM은 시스템토크 MR 기준
+    const iSel = input.gr === 'L' ? sel.i_L : sel.i_N;
+    const leadSel = (input.screw === 'tr2') ? sel.pitch * 2 : sel.pitch;
+    const feedPerRev = leadSel / iSel;
     near(t.n_rpm, input.v * 60 / feedPerRev);
-    near(t.PM, t.MG * t.n_rpm / 9550);
+    near(t.PM, t.MR * t.n_rpm / 9550);
     near(t.PM_rec, t.PM * input.msf);
     const layoutMult = LAYOUTS[input.qty][input.layout].mult;
     near(t.MR, t.MG * layoutMult); near(t.MA, t.MR * 1.5);
@@ -117,7 +124,8 @@ test('불변식: 무작위 입력 120개', () => {
     assert.equal(types.includes('minLoad'), r.F_jack < sel.rated * 0.15, `minLoad — ${ctx}`);
     assert.equal(types.includes('selfLock'), r.needBrake, `selfLock — ${ctx}`);
     const coreD = input.screw === 'ball' ? sel.coreBall : sel.coreTr;
-    const critExpected = input.actMode === 'R' && t.n_rpm > 0.8 * (4.73e6 * coreD / (input.L ** 2));
+    const screw_rpm = t.n_rpm / t.i;   // 임계속도는 스크류rpm 기준
+    const critExpected = input.actMode === 'R' && screw_rpm > 0.8 * (4.73e6 * coreD / (input.L ** 2));
     assert.equal(types.includes('critRpm'), critExpected, `critRpm — ${ctx}`);
     if (types.includes('buckDanger')) buckDangerSeen++;
     if (types.includes('minLoad')) minLoadSeen++;
