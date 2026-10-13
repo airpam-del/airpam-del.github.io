@@ -30,9 +30,9 @@ const GOLDEN = [
   { label: '유량100(ANR)·0.5MPa·PU → OD12 KQ2H12/TU1208',
     input: { flow: 100, pressure: 0.5, material: 'pu', makers: ALL },
     expect: { dRequired: 6.684879164503083, od: 12, n: 3, tubing: 'TU1208', straight: 'KQ2H12', tubingSeries: 'TU 튜빙' } },
-  { label: '유량800(ANR)·0.5MPa·PA(나일론) → OD16 폴백 TS1612',
+  { label: '유량800(ANR)·0.5MPa·PA(나일론) → OD16 폴백 TS1612 (CKD는 Ø16 라인업 밖→제외, n:2)',
     input: { flow: 800, pressure: 0.5, material: 'pa', makers: ALL },
-    expect: { dRequired: 18.907693554531168, od: 16, n: 3, tubing: 'TS1612', straight: 'KQ2H16', tubingSeries: 'TS 튜빙' } },
+    expect: { dRequired: 18.907693554531168, od: 16, n: 2, tubing: 'TS1612', straight: 'KQ2H16', tubingSeries: 'TS 튜빙' } },
 ];
 for (const g of GOLDEN) {
   test(`골든: ${g.label}`, () => {

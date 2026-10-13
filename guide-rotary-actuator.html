@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>로타리 액추에이터 선정 방법 — 운동에너지·관성·토크 절차 | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 베인형 로타리 액추에이터 선정 방법을 단계별로 정리했습니다. 관성 모멘트, 각속도 ω=2θ/t, 운동에너지 E=½Iω², 허용 운동에너지·필요 토크, SMC CRB2 선정을 예제와 함께 설명합니다.">
+<meta name="keywords" content="파츠온, PartsOn, 로타리 액추에이터 선정, 베인형, 운동에너지, 관성 모멘트, 각속도, 필요 토크, SMC CRB2, 요동 액추에이터">
+<link rel="canonical" href="https://partson.co.kr/guide-rotary-actuator.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta property="og:title" content="로타리 액추에이터 선정 방법 — 운동에너지·관성·토크 절차">
+<meta property="og:description" content="관성·각속도·운동에너지(E=½Iω²)로 베인형 로타리 액추에이터를 선정하는 방법. SMC CRB2 예제 포함.">
+<meta property="og:url" content="https://partson.co.kr/guide-rotary-actuator.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "로타리 액추에이터 선정 방법 — 운동에너지·관성·토크 절차",
+  "description": "베인형 로타리 액추에이터 선정 절차, 관성 모멘트, 각속도 ω=2θ/t, 운동에너지 E=½Iω², SMC CRB2 선정을 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-10-13",
+  "dateModified": "2026-10-13",
+  "mainEntityOfPage": "https://partson.co.kr/guide-rotary-actuator.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "로타리 액추에이터는 토크만 보고 고르면 되나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "아닙니다. 베인형은 회전 끝에서 부하의 운동에너지를 내부에서 받아내는 허용량이 매우 작아, 토크가 충분해도 관성이 크면 내부 스토퍼가 손상됩니다. 토크와 함께 운동에너지 E=½Iω²가 허용 범위 이내인지 반드시 확인해야 합니다."}},
+    {"@type": "Question", "name": "각속도 ω는 어떻게 구하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "회전각 θ(rad)를 회전시간 t(s)로 나눈 평균 각속도의 2배가 종단 각속도입니다. ω = 2θ/t. 예로 90°(=π/2 rad)를 1초에 돌면 ω = 2×(π/2)/1 = π ≈ 3.14 rad/s입니다."}},
+    {"@type": "Question", "name": "운동에너지가 허용을 넘으면 어떻게 하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "외부 스토퍼와 쇼크 업소버(유압 완충기)를 병용해 에너지를 흡수하거나, 저속형(CRQ2/CRB1)·랙&피니언형(MSQ/CRA)처럼 허용 에너지가 큰 타입을 검토합니다. 회전 시간을 늘려 각속도를 낮추는 것도 방법입니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>로타리 액추에이터 선정 방법 — 운동에너지·관성·토크 절차</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.10 업데이트</div>
+
+<p>로타리(요동) 액추에이터는 압축공기로 일정 각도를 왕복 회전시키는 부품입니다. 반전·분류·클램프·인덱싱에 널리 쓰이는데, 베인형은 작고 저렴한 대신 <strong>회전 끝에서 받아낼 수 있는 운동에너지가 매우 작습니다</strong>. 그래서 토크만 보고 고르면 관성 때문에 내부 스토퍼가 깨집니다. 이 글은 SMC CRB2 베인형 기준으로 <strong>관성 → 각속도 → 운동에너지</strong> 순서의 선정 절차를 예제와 함께 정리합니다.</p>
+
+<h2>1. 선정에 필요한 조건</h2>
+<ul>
+<li><strong>부하 관성 모멘트 I</strong> — 회전축 기준 (kg·m²)</li>
+<li><strong>회전 각도 θ</strong> — 90°·180°·270° 등</li>
+<li><strong>회전 시간 t</strong> — 그 각도를 도는 시간 (s)</li>
+<li><strong>베인 타입</strong> — 싱글(90~270°) / 더블(90~100°, 고토크·고허용에너지)</li>
+<li><strong>부하 토크</strong> — 마찰·중력 등 회전 저항 (N·m)</li>
+<li><strong>축 하중</strong> — 래디얼·스러스트 (N)</li>
+</ul>
+
+<h2>2. 관성 모멘트 I</h2>
+<div class="formula">원판·원기둥(중심축): I = ½·m·r²<br>점질량/집중부하(반경 r): I = m·r²<br>봉·암(끝단 회전): I = ⅓·m·L²<br>사각판(중심 수직축): I = (1/12)·m·(a²+b²)</div>
+<p>회전시키는 대상의 형상과 질량으로 관성 모멘트를 구합니다. 여러 부품이면 각각 구해 합산합니다. 회전 중심에서 멀리 있는 질량일수록 관성이 급격히 커지므로(거리의 제곱), 암 끝의 무거운 부하는 특히 주의합니다.</p>
+
+<h2>3. 각속도와 운동에너지</h2>
+<div class="formula">각속도  ω = 2θ/t   (θ[rad], t[s] — 평균의 2배 = 종단)<br>운동에너지  E = ½·I·ω²</div>
+<p>가속–감속하는 왕복 운동이므로 종단(최대) 각속도는 평균의 약 2배로 봅니다. 이 운동에너지 E가 <strong>모델의 허용 운동에너지 이하</strong>여야 합니다. 이것이 베인형 선정의 1순위 관문입니다.</p>
+<div class="tip"><strong>왜 중요한가:</strong> CRB2의 허용 운동에너지는 사이즈 10에서 0.00015 J, 가장 큰 사이즈 40에서도 0.04 J로 매우 작습니다. 조금만 빠르거나 관성이 크면 바로 초과하므로, 회전 시간을 늘리거나 외부 완충이 필요합니다.</p>
+
+<h2>4. 필요 토크</h2>
+<div class="formula">필요 토크 = 부하 토크(마찰·중력) × 안전계수(저항부하 3~5)</div>
+<p>회전을 방해하는 마찰·중력 토크를 이기도록 안전계수를 곱합니다. 액추에이터의 작동(유효) 토크는 공급 압력에 비례하며, SMC는 이를 <strong>압력별 토크 선도(그래프)</strong>로 제공합니다. 선정한 모델의 토크 선도에서 사용 압력일 때 필요 토크를 충족하는지 확인하세요.</p>
+
+<h2>5. SMC CRB2 주요 사양 (베인형)</h2>
+<table>
+<tr><th>사이즈</th><th>허용 운동에너지 (싱글 / 더블)</th><th>허용 래디얼</th><th>허용 스러스트</th></tr>
+<tr><td>CRB2BW10</td><td>0.00015 / 0.0003 J</td><td>15 N</td><td>10 N</td></tr>
+<tr><td>CRB2BW15</td><td>0.001 / 0.0012 J</td><td>15 N</td><td>10 N</td></tr>
+<tr><td>CRB2BW20</td><td>0.003 / 0.0033 J</td><td>25 N</td><td>20 N</td></tr>
+<tr><td>CRB2BW30</td><td>0.02 J</td><td>30 N</td><td>25 N</td></tr>
+<tr><td>CRB2BW40</td><td>0.04 J</td><td>60 N</td><td>40 N</td></tr>
+</table>
+<p>값 출처: SMC Vane Type Rotary Actuator Series CRB2 카탈로그(CAT.ES20-159). 작동압 0.15~1.0 MPa. 작동 토크는 압력별 선도 참조.</p>
+
+<h2>6. 선정 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>부하</td><td>원판 0.1 kg, 반경 50 mm (싱글 베인)</td></tr>
+<tr><td>회전</td><td>90° / 1초</td></tr>
+</table>
+<p>관성 I = ½ × 0.1 × 0.05² = <strong>0.000125 kg·m²</strong>. 각속도 ω = 2×(π/2)/1 = π ≈ 3.14 rad/s. 운동에너지 E = ½ × 0.000125 × π² ≈ <strong>0.000617 J</strong>. 사이즈 10(허용 0.00015 J)은 초과, 사이즈 15(허용 0.001 J)는 충족 → <strong>CRB2BW15</strong> 선정. 필요 토크는 부하 토크에 안전계수를 곱해 구한 뒤 토크 선도로 확인합니다.</p>
+
+<a class="cta" href="https://partson.co.kr/rotary-actuator.html">→ 로타리 액추에이터 선정 계산기에서 직접 계산해보기 (무료, 회원가입 불필요)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 베인형과 랙&피니언형은 어떻게 다른가요?</h3>
+<p>베인형(CRB2 등)은 작고 저렴하며 공간 효율이 좋지만 허용 운동에너지·토크가 작습니다. 랙&피니언형(MSQ/CRA 등)은 각도 조절·높은 토크·큰 허용에너지가 강점이라, 관성이 크거나 정밀 정지가 필요할 때 유리합니다. 테이블 일체형(MSQ)은 부하 장착도 편리합니다.</p>
+<h3>Q. 회전 끝 충격이 큰데 내부 쿠션만으로 되나요?</h3>
+<p>내부 고무 쿠션은 허용 운동에너지가 작아 보조적입니다. 관성이 크면 외부 스토퍼와 쇼크 업소버(유압 완충기)를 병용해 에너지를 받아내는 것이 표준입니다. PartsOn 쇼크 업소버 계산기로 흡수에너지를 함께 검토하세요.</p>
+<h3>Q. 각도 조절이 가능한가요?</h3>
+<p>표준 베인형은 90·180·270° 등 고정 각도가 기본이며, 일부 모델은 앵글 어저스터로 범위 내 미세 조정이 됩니다. 임의 각도·정밀 인덱싱이 필요하면 각도 조절 유닛 내장형이나 랙&피니언형을 선택하세요.</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-shock-absorber.html">쇼크 업소버 선정</a> · <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-air-consumption.html">공기 소비량·전기료</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

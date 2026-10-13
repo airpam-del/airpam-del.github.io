@@ -571,8 +571,8 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
       <label class="check-item sel" id="mk-ckd">
         <input type="checkbox" value="ckd" checked onchange="toggleMaker(this)">
         <div>
-          <div class="ci-title">🇯🇵 CKD — GW 피팅 + TAS 튜빙</div>
-          <div class="ci-sub">가격 경쟁력. ISO 표준 호환. GW 시리즈 원터치 피팅.</div>
+          <div class="ci-title">🇯🇵 CKD — GW 피팅 + U-95/F-15 튜브</div>
+          <div class="ci-sub">가격 경쟁력. GW 원터치 피팅(Ø4~16), U-95 우레탄·F-15 나일론 튜브(Ø4~12).</div>
         </div>
       </label>
     </div>
@@ -701,20 +701,19 @@ const FITTING_DATA = {
   ckd: {
     name:'CKD', country:'🇯🇵',
     fittingSeries:'GW 시리즈',
-    tubingSeries:{pu:'TAS 튜빙', pa:'TAN 튜빙'},
+    tubingSeries:{pu:'U-95 튜브', pa:'F-15 튜브'},
     url:'https://www.ckd.co.jp',
-    /* CKD GW 시리즈 형상 코드 2026-07 검증: GWS=스트레이트, GWL=엘보, GWT=티.
-       (구 표기는 GWL을 스트레이트, 비실존 GWE를 엘보로 잘못 매핑했었음)
-       실제 품번은 나사경 포함 2단 표기(예: GWS8-6) — 아래는 튜브경 기준 축약 표기.
-       TODO: CKD 튜빙 "TAS/TAN" 시리즈는 실존 미확인 (실제 CKD 우레탄 튜브는 U-95/NU 계열,
-       나일론은 F-15 계열 추정) — 카탈로그 확인 후 교체 필요. 사용자 확인 전 임의 교체 보류. */
+    /* CKD 2026-10 검증(카탈로그 대조): GW 원터치 피팅 GWS(스트레이트)·GWL(엘보)·GWT(티).
+       GWT(티)는 Ø4~12만, GWS/GWL은 Ø4~16. 품번은 튜브경 기준(예: GWS6, GWT10).
+       튜브: 우레탄=U-95(Ø3.2~12), 소프트나일론=F-15. ← 구 표기 TAS/TAN은 비실존(수정 완료).
+       U-95는 Ø16 미지원 → Ø16은 CKD 라인업 밖(모델 미정의 → 결과에서 제외). */
     models:{
-      4:  {straight:'GWS-04', elbow:'GWL-04', tee:'GWT-04', tubing:{pu:'TAS0425', pa:'TAN0425'}, pMax:1.0},
-      6:  {straight:'GWS-06', elbow:'GWL-06', tee:'GWT-06', tubing:{pu:'TAS0604', pa:'TAN0604'}, pMax:1.0},
-      8:  {straight:'GWS-08', elbow:'GWL-08', tee:'GWT-08', tubing:{pu:'TAS0805', pa:'TAN0805'}, pMax:1.0},
-      10: {straight:'GWS-10', elbow:'GWL-10', tee:'GWT-10', tubing:{pu:'TAS1075', pa:'TAN1075'}, pMax:1.0},
-      12: {straight:'GWS-12', elbow:'GWL-12', tee:'GWT-12', tubing:{pu:'TAS1209', pa:'TAN1209'}, pMax:1.0},
-      16: {straight:'GWS-16', elbow:'GWL-16', tee:'GWT-16', tubing:{pu:'TAS1613', pa:'TAN1613'}, pMax:1.0},
+      4:  {straight:'GWS4',  elbow:'GWL4',  tee:'GWT4',  tubing:{pu:'U-95-4',  pa:'F-15-4'},  pMax:1.0},
+      6:  {straight:'GWS6',  elbow:'GWL6',  tee:'GWT6',  tubing:{pu:'U-95-6',  pa:'F-15-6'},  pMax:1.0},
+      8:  {straight:'GWS8',  elbow:'GWL8',  tee:'GWT8',  tubing:{pu:'U-95-8',  pa:'F-15-8'},  pMax:1.0},
+      10: {straight:'GWS10', elbow:'GWL10', tee:'GWT10', tubing:{pu:'U-95-10', pa:'F-15-10'}, pMax:1.0},
+      12: {straight:'GWS12', elbow:'GWL12', tee:'GWT12', tubing:{pu:'U-95-12', pa:'F-15-12'}, pMax:1.0},
+      // Ø16: CKD U-95(Ø~12)·GWT(Ø~12) 라인업 밖 → 정의하지 않음(결과 제외)
     }
   }
 };

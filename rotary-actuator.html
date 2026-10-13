@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>로타리 액추에이터(베인형) 선정 계산기 | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 부하 관성·회전각·회전시간으로 운동에너지(E=½Iω²)를 계산해 SMC CRB2 로타리 액추에이터를 선정합니다. 허용 운동에너지·필요 토크 기반 무료 로타리 액추에이터 선정 계산기.">
+<meta name="keywords" content="파츠온, PartsOn, 로타리 액추에이터 선정, 베인형, 운동에너지, 관성 모멘트, 필요 토크, SMC CRB2, 요동 액추에이터">
+<meta property="og:title" content="로타리 액추에이터(베인형) 선정 계산기 | PartsOn">
+<meta property="og:description" content="부하 관성·회전각·회전시간으로 운동에너지를 계산해 SMC CRB2 로타리 액추에이터를 선정하세요. 무료 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/rotary-actuator.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="부하 관성·회전각·회전시간으로 운동에너지를 계산해 SMC CRB2 로타리 액추에이터를 선정하세요. 무료 계산기.">
+<meta name="twitter:title" content="로타리 액추에이터(베인형) 선정 계산기 | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/rotary-actuator.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A5C;--accent-light:#E8EEF5;--accent-mid:#2D5A8B;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-icon:#00C853;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px;background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val{font-family:var(--mono)}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:.85rem .7rem;cursor:pointer;transition:all .2s;background:#fff;text-align:center}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:11px;color:var(--text2)}
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:250px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup{display:block}
+.tip-popup b{color:#38BDF8}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:220px}}
+.adv-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin:.2rem 0 .6rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;width:100%}
+.adv-toggle .a-arrow{transition:transform .2s}.adv-toggle.open .a-arrow{transform:rotate(180deg)}
+.adv-body{display:none;border:1.5px solid var(--accent-light);border-radius:10px;padding:1rem;background:#fff;margin-bottom:1rem}
+.adv-body.open{display:block}
+.h-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin:.6rem 0;font-family:var(--mono);font-weight:600}
+.h-apply{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--font)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1E3A5F;margin-bottom:1rem;line-height:1.6}
+.warn-box{background:var(--warn-bg);border:1px solid #F0C5A0;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-bottom:1rem;line-height:1.6}
+.hero-card{background:linear-gradient(135deg,#1A3A5C,#2D5A8B);color:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.hero-card.none{background:#6B6760}
+.hero-top{font-size:12px;letter-spacing:.5px;opacity:.8;margin-bottom:.35rem}
+.hero-model{font-size:24px;font-weight:700;letter-spacing:.5px}
+.hero-dim{font-size:13px;opacity:.9;margin-top:.35rem}
+.hero-kpis{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.2)}
+.hero-kpi{font-size:12px;opacity:.85}.hero-kpi b{display:block;font-size:17px;font-weight:700;opacity:1;font-family:var(--mono);margin-top:2px}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.25rem}
+.result-card{border:1.5px solid var(--border);border-radius:12px;padding:1.1rem;background:#fff}
+.result-card.ok-card{border-color:#6DBF8A}.result-card.warn-card{border-color:#F0B060}.result-card.bad-card{border-color:#D98080}
+.rc-model{font-size:17px;font-weight:700;color:var(--text)}
+.rc-series{font-size:12px;color:var(--text2);margin-bottom:.6rem}
+.rc-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:11px;font-weight:700;padding:.25rem .6rem;border-radius:20px;margin-bottom:.6rem}
+.rc-badge.ok{background:var(--ok-bg);color:var(--ok)}.rc-badge.warn{background:var(--warn-bg);color:var(--warn)}.rc-badge.bad{background:var(--bad-bg);color:var(--bad)}
+.rc-rows{display:flex;flex-direction:column;gap:.35rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2)}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rc-row-val.good{color:var(--ok)}.rc-row-val.bad{color:var(--bad)}
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .6rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.5rem .6rem;border-bottom:1px solid var(--border-light);white-space:nowrap}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table tr.rec td{background:#EBF5EE}
+.cmp-table .tag-ok{background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-warn{background:var(--warn-bg);color:var(--warn);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-bad{background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.no-result{text-align:center;padding:2.5rem 1rem;color:var(--text2)}
+.no-result-icon{font-size:40px;margin-bottom:.75rem}
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.print-header{display:none}
+@media print{.partson-nav,.btn-nav,button{display:none!important}.step-wrap{display:block!important}.print-header{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}}
+@media(max-width:600px){.choice-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.result-grid{grid-template-columns:1fr}}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"로타리 액추에이터(베인형) 선정 계산기",
+  "description":"부하 관성·회전각·회전시간으로 운동에너지(E=½Iω²)를 계산해 SMC CRB2 로타리 액추에이터를 선정하는 무료 계산기.",
+  "url":"https://partson.co.kr/rotary-actuator.html",
+  "applicationCategory":"EngineeringApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},
+  "publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}
+}
+</script>
+</head>
+<body class="category-pneumatic">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔄</div>
+    <div>
+      <h1>로타리 액추에이터 선정 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>SMC CRB2 베인형 기준 — 운동에너지(E=½Iω²)·허용하중 판정 + 필요 토크 계산</p>
+    </div>
+  </div>
+</header>
+
+<a href="guide-rotary-actuator.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF2FA;border:1px solid #BBD9F2;border-radius:10px;text-decoration:none;color:#1A3A5C;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">로타리 액추에이터 선정법이 궁금하세요? — <b>가이드 보기</b></span><span style="color:#0071B8;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="print-header"><span style="font-weight:700">PartsOn — 로타리 액추에이터 선정 계산기</span><span id="print-date"></span></div>
+
+  <!-- Step 1 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1 · 조건 입력</div>
+    <div class="question">회전 부하 조건을 입력하세요</div>
+    <div class="question-desc">베인형 로타리 액추에이터는 <b>부하의 운동에너지</b>를 내부에서 받아내는 데 한계가 있습니다. 관성·회전각·회전시간으로 운동에너지를 구해 선정합니다.</div>
+
+    <div class="input-group">
+      <label><i class="ti ti-rotate-clockwise-2" aria-hidden="true"></i>베인 타입
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>싱글 베인</b>: 90~270° 회전.<br><b>더블 베인</b>: 90~100°, 같은 크기로 토크·허용에너지가 더 큼(작은 사이즈에서 유리).</div></span>
+      </label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="vn-single" onclick="selVane('single')"><div class="choice-title">싱글 베인</div><div class="choice-sub">90·180·270°</div></div>
+        <div class="choice-card" id="vn-double" onclick="selVane('double')"><div class="choice-title">더블 베인</div><div class="choice-sub">90·100° · 고토크</div></div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label><i class="ti ti-weight" aria-hidden="true"></i>부하 관성 모멘트 I
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">회전축 기준 부하의 관성 모멘트입니다(kg·m²). 모르면 아래 "관성 도우미"로 형상·질량에서 계산하세요.</div></span>
+      </label>
+      <div class="input-wrap"><input type="number" id="in-inertia" min="0" step="0.0001" placeholder="예: 0.0002"><span class="input-unit">kg·m²</span></div>
+    </div>
+    <button class="adv-toggle" id="iner-toggle" onclick="inerToggle()" type="button"><span>📐 관성 모멘트를 모르시면? 형상으로 계산</span><span class="a-arrow">▾</span></button>
+    <div class="adv-body" id="iner-body">
+      <div class="input-group" style="margin-bottom:.8rem">
+        <label>형상</label>
+        <div class="input-wrap"><select id="i-shape" onchange="inerShape()">
+          <option value="disc">원판·원기둥 (중심축) I=½mr²</option>
+          <option value="point">점질량/집중부하 (반경 r) I=mr²</option>
+          <option value="rodEnd">봉·암 (끝단 회전) I=⅓mL²</option>
+          <option value="plate">사각판 (중심 수직축) I=1/12·m(a²+b²)</option>
+        </select></div>
+      </div>
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.6rem"><label>질량 m</label><div class="input-wrap"><input type="number" id="i-mass" min="0" step="0.01" placeholder="예: 0.1" oninput="inerCalc()"><span class="input-unit">kg</span></div></div>
+        <div class="input-group" id="i-f-radius" style="margin-bottom:.6rem"><label>반경 r</label><div class="input-wrap"><input type="number" id="i-radius" min="0" step="1" placeholder="예: 50" oninput="inerCalc()"><span class="input-unit">mm</span></div></div>
+        <div class="input-group" id="i-f-length" style="margin-bottom:.6rem;display:none"><label>길이 L</label><div class="input-wrap"><input type="number" id="i-length" min="0" step="1" placeholder="예: 200" oninput="inerCalc()"><span class="input-unit">mm</span></div></div>
+        <div class="input-group" id="i-f-a" style="margin-bottom:.6rem;display:none"><label>가로 a</label><div class="input-wrap"><input type="number" id="i-a" min="0" step="1" placeholder="예: 100" oninput="inerCalc()"><span class="input-unit">mm</span></div></div>
+        <div class="input-group" id="i-f-b" style="margin-bottom:.6rem;display:none"><label>세로 b</label><div class="input-wrap"><input type="number" id="i-b" min="0" step="1" placeholder="예: 60" oninput="inerCalc()"><span class="input-unit">mm</span></div></div>
+      </div>
+      <div class="h-preview" id="iner-preview">I = — kg·m²</div>
+      <button class="h-apply" onclick="inerApply()" type="button">✓ 이 관성값 적용</button>
+    </div>
+
+    <div class="two-col">
+      <div class="input-group">
+        <label><i class="ti ti-angle" aria-hidden="true"></i>회전 각도 θ</label>
+        <div class="input-wrap"><input type="number" id="in-angle" min="1" max="270" step="10" value="90" placeholder="예: 90"><span class="input-unit">°</span></div>
+      </div>
+      <div class="input-group">
+        <label><i class="ti ti-clock" aria-hidden="true"></i>회전 시간 t
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">위 각도를 도는 데 걸리는 시간(초)입니다. 종단 각속도 ω = 2θ/t로 환산합니다.</div></span>
+        </label>
+        <div class="input-wrap"><input type="number" id="in-time" min="0.1" step="0.1" value="1.0" placeholder="예: 1.0"><span class="input-unit">초</span></div>
+      </div>
+    </div>
+
+    <button class="adv-toggle" id="adv-toggle" onclick="advToggle()" type="button"><span>⚙️ 부하 토크·축 하중 입력 (선택)</span><span class="a-arrow">▾</span></button>
+    <div class="adv-body" id="adv-body">
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>부하 토크 (마찰·중력)
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">회전을 방해하는 토크(마찰·중력)입니다. 필요 토크 = 부하 토크 × 안전계수로 산출합니다.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-torque" min="0" step="0.1" placeholder="예: 1.0"><span class="input-unit">N·m</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>안전계수 (저항부하 3~5)</label>
+          <div class="input-wrap"><input type="number" id="in-sf" min="1" step="0.5" value="5"><span class="input-unit">배</span></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:0"><label>축 래디얼 하중</label><div class="input-wrap"><input type="number" id="in-radial" min="0" step="1" placeholder="예: 10"><span class="input-unit">N</span></div></div>
+        <div class="input-group" style="margin-bottom:0"><label>축 스러스트 하중</label><div class="input-wrap"><input type="number" id="in-thrust" min="0" step="1" placeholder="예: 10"><span class="input-unit">N</span></div></div>
+      </div>
+    </div>
+
+    <div class="info-box">⚙️ 각속도 <b>ω = 2θ/t</b>, 운동에너지 <b>E = ½·I·ω²</b>. E가 모델의 <b>허용 운동에너지</b> 이하이고 축 하중이 허용 이내인 가장 작은 모델을 추천합니다. (작동 토크는 카탈로그 선도로 확인)</div>
+
+    <div class="btn-nav"><div></div><button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-wrap" id="step-2">
+    <div class="card">
+      <div class="section-label">Step 2 · 선정 결과</div>
+      <div id="hero-wrap"></div>
+      <div id="result-summary-bar"></div>
+    </div>
+
+    <div class="result-grid" id="result-grid"></div>
+
+    <div class="po-inq-row">
+      <button class="po-inq-primary" onclick="poInquiryAuto('로타리 액추에이터 선정',false)">📩 이 사양으로 견적 문의</button>
+      <button class="po-inq-email" onclick="poInquiryAuto('로타리 액추에이터 선정',true)">📧 결과 이메일로 받기</button>
+    </div>
+    <div class="po-related"></div>
+    <div class="po-rep-row"><button class="po-rep-link" onclick="poReport('로타리 액추에이터 선정')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
+
+    <div class="card">
+      <div class="section-label">상세 비교 (SMC CRB2 전 사이즈)</div>
+      <div class="cmp-table-wrap"><table class="cmp-table"><thead><tr id="cmp-head"></tr></thead><tbody id="cmp-body"></tbody></table></div>
+      <div class="disclaimer" id="disclaimer-text"></div>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 조건 재입력</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   로타리 액추에이터 선정 — calc/rotary-actuator.calc.js 와 동일 유지 (병렬 사본).
+   이 인라인 로직을 고치면 calc.js 도 동일하게 고칠 것. 등급: 베타.
+   허용 운동에너지·허용하중은 SMC CRB2 카탈로그 실측. 작동 토크는 압력별 선도라 수치 비교 제외.
+────────────────────────────────────────────────────────────────── */
+const DEG2RAD = Math.PI / 180;
+const RA_MODELS = [
+  { size:'CRB2BW10', mm:10, keS:0.00015, keD:0.0003,  radial:15, thrust:10, pMin:0.15, pMax:1.0 },
+  { size:'CRB2BW15', mm:15, keS:0.001,   keD:0.0012,  radial:15, thrust:10, pMin:0.15, pMax:1.0 },
+  { size:'CRB2BW20', mm:20, keS:0.003,   keD:0.0033,  radial:25, thrust:20, pMin:0.15, pMax:1.0 },
+  { size:'CRB2BW30', mm:30, keS:0.02,    keD:0.02,    radial:30, thrust:25, pMin:0.15, pMax:1.0 },
+  { size:'CRB2BW40', mm:40, keS:0.04,    keD:0.04,    radial:60, thrust:40, pMin:0.15, pMax:1.0 },
+];
+function raInertia(shape, p){
+  const m=Math.max(0,+p.mass||0), r=Math.max(0,(+p.radiusMm||0))/1000, L=Math.max(0,(+p.lengthMm||0))/1000;
+  const a=Math.max(0,(+p.aMm||0))/1000, b=Math.max(0,(+p.bMm||0))/1000;
+  switch(shape){
+    case 'disc': return 0.5*m*r*r;
+    case 'point': return m*r*r;
+    case 'rodEnd': return (1/3)*m*L*L;
+    case 'plate': return (1/12)*m*(a*a+b*b);
+    default: return 0;
+  }
+}
+function computeRA(input){
+  const I=Math.max(0,+input.inertia||0), angleDeg=Math.max(0,+input.angleDeg||0), t=Math.max(0,+input.timeSec||0);
+  const vane=input.vane==='double'?'double':'single';
+  const loadTorque=Math.max(0,+input.loadTorque||0);
+  const SF=(input.safety!=null&&+input.safety>0)?+input.safety:5;
+  const radial=Math.max(0,+input.radialLoad||0), thrust=Math.max(0,+input.thrustLoad||0);
+  const theta=angleDeg*DEG2RAD;
+  const omega=t>0?(2*theta/t):0;
+  const E=0.5*I*omega*omega;
+  const requiredTorque=loadTorque>0?loadTorque*SF:0;
+  const results=RA_MODELS.map(m=>{
+    const keAllow=vane==='double'?m.keD:m.keS;
+    const okKE=E<=keAllow;
+    const okRadial=radial<=0?true:radial<=m.radial;
+    const okThrust=thrust<=0?true:thrust<=m.thrust;
+    const ok=okKE&&okRadial&&okThrust;
+    const coreOk=okKE;
+    const status=ok?'ok':(coreOk?'warn':'bad');
+    return {...m,keAllow,vane,okKE,okRadial,okThrust,status,keMargin:keAllow>0?E/keAllow:Infinity};
+  });
+  const recommended=results.find(r=>r.status==='ok')||null;
+  const notes=[];
+  if(I<=0) notes.push('부하 관성 모멘트를 입력하세요(관성 도우미 이용 가능).');
+  if(t<=0||angleDeg<=0) notes.push('회전 각도와 회전 시간을 입력하세요.');
+  notes.push('작동(유효) 토크는 SMC 카탈로그에 압력별 "토크 선도(그래프)"로 제공됩니다. 위 필요 토크를 충족하는지 선정 모델의 토크 선도로 반드시 확인하세요(본 계산기는 토크를 수치 비교하지 않습니다).');
+  if(E>0.04) notes.push('운동에너지가 CRB2 최대 허용(0.04J)을 초과합니다. 외부 스토퍼·쇼크 업소버 병용 또는 랙&피니언형(MSQ/CRA)·저속형(CRQ2/CRB1)을 검토하세요.');
+  return {omega,theta,E,requiredTorque,SF,vane,results,recommended,notes};
+}
+
+/* ── 상태·UI ── */
+const S = { vane:'single', out:null, in:null };
+function selVane(v){ S.vane=v; document.getElementById('vn-single').classList.toggle('sel',v==='single'); document.getElementById('vn-double').classList.toggle('sel',v==='double'); }
+function inerToggle(){ document.getElementById('iner-toggle').classList.toggle('open'); document.getElementById('iner-body').classList.toggle('open'); inerShape(); }
+function advToggle(){ document.getElementById('adv-toggle').classList.toggle('open'); document.getElementById('adv-body').classList.toggle('open'); }
+function inerShape(){
+  const sh=document.getElementById('i-shape').value;
+  document.getElementById('i-f-radius').style.display=(sh==='disc'||sh==='point')?'block':'none';
+  document.getElementById('i-f-length').style.display=(sh==='rodEnd')?'block':'none';
+  document.getElementById('i-f-a').style.display=(sh==='plate')?'block':'none';
+  document.getElementById('i-f-b').style.display=(sh==='plate')?'block':'none';
+  inerCalc();
+}
+let _inerI=null;
+function inerCalc(){
+  const sh=document.getElementById('i-shape').value;
+  const I=raInertia(sh,{mass:document.getElementById('i-mass').value,radiusMm:document.getElementById('i-radius').value,lengthMm:document.getElementById('i-length').value,aMm:document.getElementById('i-a').value,bMm:document.getElementById('i-b').value});
+  _inerI=I>0?Number(I.toPrecision(4)):null;
+  document.getElementById('iner-preview').innerHTML='I = <b>'+(_inerI!=null?_inerI:'—')+' kg·m²</b>';
+}
+function inerApply(){ if(_inerI==null){inerCalc();} if(_inerI!=null){ document.getElementById('in-inertia').value=_inerI; document.getElementById('iner-toggle').classList.remove('open'); document.getElementById('iner-body').classList.remove('open'); } }
+function goStep(n){ document.querySelector('.step-wrap.active').classList.remove('active'); document.getElementById('step-'+n).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+const fmt=(n,d=0)=>{ if(!isFinite(n))return '—'; return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0}); };
+const sci=(n)=>{ if(!isFinite(n)||n===0)return '0'; return Number(n).toPrecision(3); };
+
+function runCalc(){
+  const I=parseFloat(document.getElementById('in-inertia').value);
+  const ang=parseFloat(document.getElementById('in-angle').value);
+  const t=parseFloat(document.getElementById('in-time').value);
+  if(!I||I<=0){ alert('부하 관성 모멘트를 입력하세요(관성 도우미 이용 가능).'); return; }
+  if(!ang||ang<=0||!t||t<=0){ alert('회전 각도와 시간을 입력하세요.'); return; }
+  const input={
+    inertia:I, angleDeg:ang, timeSec:t, vane:S.vane,
+    loadTorque:parseFloat(document.getElementById('in-torque').value)||0,
+    safety:parseFloat(document.getElementById('in-sf').value)||5,
+    radialLoad:parseFloat(document.getElementById('in-radial').value)||0,
+    thrustLoad:parseFloat(document.getElementById('in-thrust').value)||0,
+  };
+  S.in=input; S.out=computeRA(input);
+  renderResults();
+  goStep(2);
+}
+
+function renderResults(){
+  const out=S.out, i=S.in, rec=out.recommended;
+  const hw=document.getElementById('hero-wrap');
+  if(rec){
+    hw.innerHTML=`<div class="hero-card">
+      <div class="hero-top">✅ 추천 모델 (운동에너지 충족 최소 사이즈)</div>
+      <div class="hero-model" id="heroModel">SMC ${rec.size}-${i.vane==='double'?'D':'S'}</div>
+      <div class="hero-dim" id="heroDim">${i.vane==='double'?'더블':'싱글'} 베인 · 허용 운동E ${sci(rec.keAllow)} J · 허용 래디얼 ${rec.radial}N</div>
+      <div class="hero-kpis">
+        <div class="hero-kpi">운동에너지 E<b>${sci(out.E)} J</b></div>
+        <div class="hero-kpi">사용률<b>${fmt(rec.keMargin*100,0)}%</b></div>
+        <div class="hero-kpi">각속도 ω<b>${fmt(out.omega,2)} rad/s</b></div>
+        ${out.requiredTorque>0?`<div class="hero-kpi">필요 토크<b>${fmt(out.requiredTorque,2)} N·m</b></div>`:''}
+      </div></div>`;
+  } else {
+    hw.innerHTML=`<div class="hero-card none"><div class="hero-top">선정 결과</div><div class="hero-model" id="heroModel" style="font-size:20px">적합 모델 없음</div><div class="hero-dim" id="heroDim">운동에너지가 CRB2 허용을 초과합니다. 외부 완충·랙형·저속형을 검토하세요.</div></div>`;
+  }
+  let noteHtml=out.notes.map(n=>`<div class="warn-box" style="margin-bottom:.5rem">⚠️ ${n}</div>`).join('');
+  document.getElementById('result-summary-bar').innerHTML=
+    `<div class="info-box" style="margin-bottom:.5rem">입력: ${i.vane==='double'?'더블':'싱글'} 베인 · 관성 <b>${sci(i.inertia)} kg·m²</b> · ${fmt(i.angleDeg,0)}°/${fmt(i.timeSec,2)}s → ω <b>${fmt(out.omega,2)} rad/s</b> · 운동E <b>${sci(out.E)} J</b>${out.requiredTorque>0?` · 필요토크 <b>${fmt(out.requiredTorque,2)} N·m</b>`:''}</div>${noteHtml}`;
+
+  const show=out.results.filter(r=>r.status!=='bad');
+  const grid=document.getElementById('result-grid');
+  if(!show.length){
+    grid.innerHTML=`<div class="no-result"><div class="no-result-icon">🔍</div><div>운동에너지가 CRB2 허용을 초과합니다.<br>외부 스토퍼·쇼크 업소버 병용 또는 랙형(MSQ)·저속형(CRQ2)을 검토하세요.</div></div>`;
+  } else {
+    grid.innerHTML=show.map(r=>{
+      const badge=r.status==='ok'?'<span class="rc-badge ok">✅ 적합</span>':'<span class="rc-badge warn">⚠️ 하중 검토</span>';
+      const chk=(ok)=>ok?'<span class="rc-row-val good">✓</span>':'<span class="rc-row-val bad">✕</span>';
+      return `<div class="result-card ${r.status}-card">
+        <div class="rc-model">${r.size}</div>
+        <div class="rc-series">SMC CRB2 · ${i.vane==='double'?'더블':'싱글'} 베인</div>
+        ${badge}
+        <div class="rc-rows">
+          <div class="rc-row"><span class="rc-row-label">운동E / 허용</span><span class="rc-row-val ${r.okKE?'good':'bad'}">${sci(out.E)} / ${sci(r.keAllow)} J</span></div>
+          <div class="rc-row"><span class="rc-row-label">사용률</span><span class="rc-row-val">${fmt(r.keMargin*100,0)}%</span></div>
+          <div class="rc-row"><span class="rc-row-label">허용 래디얼</span>${i.radialLoad>0?chk(r.okRadial):'<span class="rc-row-val">'+r.radial+' N</span>'}</div>
+          <div class="rc-row"><span class="rc-row-label">허용 스러스트</span>${i.thrustLoad>0?chk(r.okThrust):'<span class="rc-row-val">'+r.thrust+' N</span>'}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('cmp-head').innerHTML=['사이즈','허용 운동E','사용률','허용 래디얼','허용 스러스트','판정'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('cmp-body').innerHTML=out.results.map(r=>{
+    const tag=r.status==='ok'?'<span class="tag-ok">✅ 적합</span>':r.status==='warn'?'<span class="tag-warn">⚠️ 검토</span>':'<span class="tag-bad">❌ 부적합</span>';
+    const isRec=rec&&r.size===rec.size;
+    return `<tr class="${isRec?'rec':''}"><td><b>${r.size}</b></td><td class="mono">${sci(r.keAllow)} J</td><td class="mono">${fmt(r.keMargin*100,0)}%</td><td class="mono">${r.radial} N</td><td class="mono">${r.thrust} N</td><td>${tag}</td></tr>`;
+  }).join('');
+
+  document.getElementById('disclaimer-text').innerHTML=
+    `ω = 2θ/t, E = ½·I·ω². 허용 운동에너지·허용 하중은 SMC CRB2 카탈로그(CAT.ES20-159) 실측(싱글/더블 베인).<br>
+     <b>베타 계산기</b> — 운동에너지·허용하중 판정은 카탈로그 실측 기준이나, 작동(유효) 토크는 압력별 토크 선도(그래프)로만 제공되어 수치 비교에서 제외했습니다. 위 "필요 토크"를 선정 모델의 토크 선도로 반드시 확인하세요.<br>
+     운동에너지가 허용을 넘으면 외부 완충(쇼크 업소버)·랙&피니언형(MSQ/CRA)·저속형(CRQ2/CRB1)을 검토하세요. · 데이터: 2026.10 (SMC CRB2)`;
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const pd=document.getElementById('print-date'); if(pd) pd.textContent=new Date().toLocaleDateString('ko-KR');
+  inerShape();
+});
+</script>
+
+<script>
+function poGetInputs(){try{
+  return poInputsStr([['베인타입',S.vane==='double'?'더블':'싱글'],['관성',S.in?S.in.inertia:null,'kg·m²'],['회전각',S.in?S.in.angleDeg:null,'°'],['회전시간',S.in?S.in.timeSec:null,'s'],['운동에너지',S.out?Number(S.out.E.toPrecision(3)):null,'J'],['필요토크',S.out&&S.out.requiredTorque>0?Number(S.out.requiredTorque.toFixed(2)):null,'N·m'],['추천',S.out&&S.out.recommended?S.out.recommended.size:null]]);
+}catch(e){return '';}}
+</script>
+<script src="js/common.js"></script>
+</body>
+</html>
