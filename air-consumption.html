@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>공기 소비량·전기료 계산기 (에어 소비량) | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 공압 실린더 보어·스트로크·압력·사이클만 입력하면 공기 소비량(L/min ANR)과 월 전기료(원)를 계산합니다. SMC 표준식 기반 무료 에어 소비량·비용 계산기.">
+<meta name="keywords" content="파츠온, PartsOn, 공기 소비량, 에어 소비량, 압축공기 비용, 전기료 계산, L/min ANR, 압축비, 공압 실린더 소비량">
+<meta property="og:title" content="공기 소비량·전기료 계산기 (에어 소비량) | PartsOn">
+<meta property="og:description" content="공압 실린더 조건으로 공기 소비량(L/min ANR)과 월 전기료를 계산하세요. SMC 표준식 기반 무료 에어 소비량·비용 계산기.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/air-consumption.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="공압 실린더 조건으로 공기 소비량(L/min ANR)과 월 전기료를 계산하세요. SMC 표준식 기반 무료 계산기.">
+<meta name="twitter:title" content="공기 소비량·전기료 계산기 (에어 소비량) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/air-consumption.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#1A3A5C;--accent-light:#E8EEF5;--accent-mid:#2D5A8B;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-icon:#00C853;--pneumatic-badge-bg:rgba(0,136,204,.10);--pneumatic-icon:#0088CC;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px;background:var(--pneumatic-badge-bg);color:var(--pneumatic-icon)}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val{font-family:var(--mono)}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.65)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:.85rem .7rem;cursor:pointer;transition:all .2s;background:#fff;text-align:center}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:11px;color:var(--text2)}
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:250px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup{display:block}
+.tip-popup b{color:#38BDF8}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:220px}}
+.adv-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin:.2rem 0 .6rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;width:100%}
+.adv-toggle .a-arrow{transition:transform .2s}.adv-toggle.open .a-arrow{transform:rotate(180deg)}
+.adv-body{display:none;border:1.5px solid var(--accent-light);border-radius:10px;padding:1rem;background:#fff;margin-bottom:1rem}
+.adv-body.open{display:block}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+.info-box{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#1E3A5F;margin-bottom:1rem;line-height:1.6}
+.warn-box{background:var(--warn-bg);border:1px solid #F0C5A0;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-bottom:1rem;line-height:1.6}
+.hero-card{background:linear-gradient(135deg,#1A3A5C,#2D5A8B);color:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.hero-top{font-size:12px;letter-spacing:.5px;opacity:.8;margin-bottom:.35rem}
+.hero-kpis{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hero-kpi{font-size:12px;opacity:.85}.hero-kpi b{display:block;font-size:24px;font-weight:700;opacity:1;font-family:var(--mono);margin-top:3px}
+.hero-kpi.cost b{color:#FFD27A}
+.rc-rows{display:flex;flex-direction:column;gap:.4rem}
+.rc-row{display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.rc-row-label{color:var(--text2)}
+.rc-row-val{font-family:var(--mono);font-weight:600;color:var(--text)}
+.rc-divider{height:1px;background:var(--border-light);margin:.4rem 0}
+.rc-big{font-size:15px}.rc-big .rc-row-val{font-size:16px;color:var(--accent)}
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.print-header{display:none}
+@media print{.partson-nav,.btn-nav,button{display:none!important}.step-wrap{display:block!important}.print-header{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}}
+@media(max-width:600px){.choice-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"공기 소비량·전기료 계산기",
+  "description":"공압 실린더 보어·스트로크·압력·사이클로 공기 소비량(L/min ANR)과 월 전기료를 계산하는 무료 계산기. SMC 표준 압축비식 기반.",
+  "url":"https://partson.co.kr/air-consumption.html",
+  "applicationCategory":"EngineeringApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},
+  "publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}
+}
+</script>
+</head>
+<body class="category-pneumatic">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">💨</div>
+    <div>
+      <h1>공기 소비량·전기료 계산기<span class="cat-badge">💨 공압</span></h1>
+      <p>공압 실린더 조건 → 공기 소비량(L/min ANR) + 월 전기료 · SMC 표준 압축비식</p>
+    </div>
+  </div>
+</header>
+
+<a href="guide-air-consumption.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#EAF2FA;border:1px solid #BBD9F2;border-radius:10px;text-decoration:none;color:#1A3A5C;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">공기 소비량·비용 계산법이 궁금하세요? — <b>가이드 보기</b></span><span style="color:#0071B8;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="print-header"><span style="font-weight:700">PartsOn — 공기 소비량·전기료 계산기</span><span id="print-date"></span></div>
+
+  <!-- Step 1 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1 · 조건 입력</div>
+    <div class="question">공압 실린더 조건을 입력하세요</div>
+    <div class="question-desc">보어·스트로크·압력·작동빈도로 <b>압축공기 소비량(L/min ANR)</b>을 구하고, 가동시간·전기료로 <b>월 비용</b>까지 환산합니다.</div>
+
+    <div class="input-group">
+      <label><i class="ti ti-settings-2" aria-hidden="true"></i>작동 방식
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>복동</b>: 전진·후진 모두 공압 → 양방향 소비<br><b>단동</b>: 전진만 공압, 복귀는 스프링 → 전진분만 소비</div></span>
+      </label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="act-double" onclick="selAct('double')"><div class="choice-title">복동</div><div class="choice-sub">전진+후진 공압</div></div>
+        <div class="choice-card" id="act-single" onclick="selAct('single')"><div class="choice-title">단동</div><div class="choice-sub">전진만 공압(스프링 복귀)</div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="input-group">
+        <label><i class="ti ti-circle" aria-hidden="true"></i>보어 D
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">실린더 내경입니다. 표준 보어를 고르면 ISO 표준 로드경이 자동 적용되어 후진 소비가 정확히 계산됩니다.</div></span>
+        </label>
+        <div class="input-wrap"><select id="in-bore"></select></div>
+      </div>
+      <div class="input-group">
+        <label><i class="ti ti-ruler-measure" aria-hidden="true"></i>스트로크 L</label>
+        <div class="input-wrap"><input type="number" id="in-stroke" min="1" step="10" placeholder="예: 300"><span class="input-unit">mm</span></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="input-group">
+        <label><i class="ti ti-gauge" aria-hidden="true"></i>공급 압력 P</label>
+        <div class="input-wrap"><select id="in-pressure">
+          <option value="0.4">0.4 MPa</option>
+          <option value="0.5" selected>0.5 MPa — 표준</option>
+          <option value="0.6">0.6 MPa</option>
+          <option value="0.7">0.7 MPa</option>
+        </select></div>
+      </div>
+      <div class="input-group">
+        <label><i class="ti ti-repeat" aria-hidden="true"></i>작동 빈도
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">분당 왕복 횟수(1사이클=전진+후진)입니다.</div></span>
+        </label>
+        <div class="input-wrap"><input type="number" id="in-cyc" min="1" step="1" value="20" placeholder="예: 20"><span class="input-unit">회/분</span></div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label><i class="ti ti-stack-2" aria-hidden="true"></i>실린더 수
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">같은 조건의 실린더가 여러 대면 그 수를 입력하세요. 소비량이 비례해 증가합니다.</div></span>
+      </label>
+      <div class="input-wrap"><input type="number" id="in-ncyl" min="1" step="1" value="1"><span class="input-unit">대</span></div>
+    </div>
+
+    <button class="adv-toggle" id="adv-toggle" onclick="advToggle()" type="button"><span>⚙️ 전기료·가동시간·배관 설정 (기본값 적용됨)</span><span class="a-arrow">▾</span></button>
+    <div class="adv-body" id="adv-body">
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.8rem">
+          <label>가동 시간 / 일</label>
+          <div class="input-wrap"><input type="number" id="in-hpd" min="1" step="1" value="8"><span class="input-unit">시간</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:.8rem">
+          <label>가동 일수 / 월</label>
+          <div class="input-wrap"><input type="number" id="in-dpm" min="1" step="1" value="22"><span class="input-unit">일</span></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.8rem">
+          <label>비에너지 (압축공기)
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">압축공기 1m³(ANR)를 만드는 데 드는 전력입니다. 7bar 스크류 컴프레서 일반범위 <b>0.10~0.13 kWh/m³</b>. 설비에 맞게 조정하세요.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-se" min="0.01" step="0.01" value="0.11"><span class="input-unit">kWh/m³</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:.8rem">
+          <label>전기 단가
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">kWh당 전기요금입니다. 국내 산업용 평균 예시 약 170원/kWh(2025 기준). 계약 요금으로 바꿔 입력하세요.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-rate" min="1" step="1" value="170"><span class="input-unit">원/kWh</span></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:0">
+          <label>배관 튜브 내경 (선택)
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">실린더까지 배관 튜브의 내경·길이를 넣으면 튜브 충전 공기도 가산됩니다. 비우면 실린더만 계산합니다.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-tubeid" min="0" step="1" placeholder="예: 4"><span class="input-unit">mm</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:0">
+          <label>배관 길이 (선택)</label>
+          <div class="input-wrap"><input type="number" id="in-tubelen" min="0" step="0.5" placeholder="예: 2"><span class="input-unit">m</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box">⚙️ 압축비 <b>CR = (P + 0.1013) / 0.1013</b>, 1사이클 소비 = 실린더 체적 × CR(복동은 전진+후진). 월 전기료 = 소비량 × 가동시간 × 비에너지 × 단가.</div>
+
+    <div class="btn-nav"><div></div><button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-wrap" id="step-2">
+    <div class="card">
+      <div class="section-label">Step 2 · 계산 결과</div>
+      <div class="hero-card">
+        <div class="hero-top">💨 압축공기 소비량 · 월 전기료</div>
+        <div class="hero-kpis">
+          <div class="hero-kpi">공기 소비량<b id="heroModel">—</b><span style="font-size:11px;opacity:.75">L/min (ANR)</span></div>
+          <div class="hero-kpi cost">월 전기료<b id="heroDim">—</b><span style="font-size:11px;opacity:.75">원 / 월</span></div>
+        </div>
+      </div>
+      <div id="result-detail"></div>
+    </div>
+
+    <div class="po-inq-row">
+      <button class="po-inq-primary" onclick="poInquiryAuto('공기 소비량·비용',false)">📩 설비 상담·견적 문의</button>
+      <button class="po-inq-email" onclick="poInquiryAuto('공기 소비량·비용',true)">📧 결과 이메일로 받기</button>
+    </div>
+    <div class="po-related"></div>
+    <div class="po-rep-row"><button class="po-rep-link" onclick="poReport('공기 소비량·비용')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 조건 재입력</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   공기 소비량·비용 — calc/air-consumption.calc.js 와 동일 유지 (병렬 사본).
+   이 인라인 로직을 고치면 calc.js 도 동일하게 고칠 것.
+   공식 검증: SMC 예제 보어50·600·0.5MPa·복동 → 1사이클 ≈12.87 L(표기 13).
+────────────────────────────────────────────────────────────────── */
+const P_ATM = 0.1013;
+const STD_ROD = { 12:6, 16:6, 20:8, 25:10, 32:12, 40:16, 50:20, 63:20, 80:25, 100:25, 125:32, 160:40, 200:40 };
+const STD_BORES = [12,16,20,25,32,40,50,63,80,100,125,160,200];
+const DEFAULTS = { specificEnergy:0.11, rate:170, hoursPerDay:8, daysPerMonth:22 };
+function compRatio(P){ return (P + P_ATM) / P_ATM; }
+function areaMM2(D){ return Math.PI/4*D*D; }
+
+function computeAC(input){
+  const D=Math.max(0,+input.bore||0), L=Math.max(0,+input.stroke||0), P=Math.max(0,+input.pressure||0);
+  const acting=input.acting==='single'?'single':'double';
+  const n=Math.max(0,+input.cyclesPerMin||0), nc=Math.max(1,Math.round(+input.numCylinders||1));
+  const rod=(input.rod!=null&&+input.rod>0)?+input.rod:(STD_ROD[D]!=null?STD_ROD[D]:Math.round(0.4*D));
+  const rodKnown=(input.rod!=null&&+input.rod>0)||STD_ROD[D]!=null;
+  const CR=compRatio(P), A_head=areaMM2(D), A_rod=areaMM2(D)-areaMM2(rod);
+  const extendL=(A_head*L)*CR/1e6;
+  const retractL=acting==='double'?(A_rod*L)*CR/1e6:0;
+  const tubeId=Math.max(0,+input.tubeId||0), tubeLen=Math.max(0,+input.tubeLength||0);
+  const pipingL=(tubeId>0&&tubeLen>0)?(areaMM2(tubeId)*(tubeLen*1000))*CR/1e6:0;
+  const perCycleL=extendL+retractL+pipingL;
+  const flowLpm=perCycleL*n*nc, flowM3min=flowLpm/1000;
+  const hpd=(input.hoursPerDay!=null)?+input.hoursPerDay:DEFAULTS.hoursPerDay;
+  const dpm=(input.daysPerMonth!=null)?+input.daysPerMonth:DEFAULTS.daysPerMonth;
+  const se=(input.specificEnergy!=null)?+input.specificEnergy:DEFAULTS.specificEnergy;
+  const rate=(input.rate!=null)?+input.rate:DEFAULTS.rate;
+  const minPerMonth=hpd*60*dpm, airM3Month=flowM3min*minPerMonth;
+  const energyKwhMonth=airM3Month*se, costMonth=energyKwhMonth*rate, costYear=costMonth*12;
+  return { CR,A_head,A_rod,rod,rodKnown,
+    perCycle:{extendL,retractL,pipingL,totalL:perCycleL,acting},
+    flowLpm,flowM3min,
+    cost:{hoursPerDay:hpd,daysPerMonth:dpm,specificEnergy:se,rate,minPerMonth,airM3Month,energyKwhMonth,costMonth,costYear},
+    numCylinders:nc };
+}
+
+/* ── 상태·UI ── */
+const S = { acting:'double', out:null, in:null };
+function selAct(a){ S.acting=a; document.getElementById('act-double').classList.toggle('sel',a==='double'); document.getElementById('act-single').classList.toggle('sel',a==='single'); }
+function advToggle(){ document.getElementById('adv-toggle').classList.toggle('open'); document.getElementById('adv-body').classList.toggle('open'); }
+function goStep(n){ document.querySelector('.step-wrap.active').classList.remove('active'); document.getElementById('step-'+n).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+const fmt=(n,d=0)=>{ if(!isFinite(n))return '—'; return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0}); };
+
+function runCalc(){
+  const bore=parseFloat(document.getElementById('in-bore').value);
+  const stroke=parseFloat(document.getElementById('in-stroke').value);
+  if(!stroke||stroke<=0){ alert('스트로크를 입력하세요.'); return; }
+  const input={
+    bore, stroke, pressure:parseFloat(document.getElementById('in-pressure').value),
+    acting:S.acting, cyclesPerMin:parseFloat(document.getElementById('in-cyc').value)||0,
+    numCylinders:parseInt(document.getElementById('in-ncyl').value)||1,
+    tubeId:parseFloat(document.getElementById('in-tubeid').value)||0,
+    tubeLength:parseFloat(document.getElementById('in-tubelen').value)||0,
+    hoursPerDay:parseFloat(document.getElementById('in-hpd').value)||DEFAULTS.hoursPerDay,
+    daysPerMonth:parseFloat(document.getElementById('in-dpm').value)||DEFAULTS.daysPerMonth,
+    specificEnergy:parseFloat(document.getElementById('in-se').value)||DEFAULTS.specificEnergy,
+    rate:parseFloat(document.getElementById('in-rate').value)||DEFAULTS.rate,
+  };
+  S.in=input; S.out=computeAC(input);
+  renderResults();
+  goStep(2);
+}
+
+function renderResults(){
+  const r=S.out, i=S.in, c=r.cost;
+  document.getElementById('heroModel').textContent=fmt(r.flowLpm,0);
+  document.getElementById('heroDim').textContent=fmt(c.costMonth,0);
+  const pipeRow = r.perCycle.pipingL>0 ? `<div class="rc-row"><span class="rc-row-label">· 배관 충전분</span><span class="rc-row-val">${fmt(r.perCycle.pipingL,3)} L</span></div>` : '';
+  const retractRow = i.acting==='double' ? `<div class="rc-row"><span class="rc-row-label">· 후진(보어−로드 Ø${r.rod})</span><span class="rc-row-val">${fmt(r.perCycle.retractL,3)} L</span></div>` : `<div class="rc-row"><span class="rc-row-label">· 후진(스프링 복귀)</span><span class="rc-row-val">0 L</span></div>`;
+  document.getElementById('result-detail').innerHTML=`
+    <div class="section-label" style="margin-top:1.25rem">공기 소비량</div>
+    <div class="rc-rows">
+      <div class="rc-row"><span class="rc-row-label">압축비 CR = (${i.pressure}+0.1013)/0.1013</span><span class="rc-row-val">${fmt(r.CR,2)} 배</span></div>
+      <div class="rc-divider"></div>
+      <div class="rc-row"><span class="rc-row-label">· 전진(풀보어 Ø${i.bore})</span><span class="rc-row-val">${fmt(r.perCycle.extendL,3)} L</span></div>
+      ${retractRow}
+      ${pipeRow}
+      <div class="rc-row rc-big"><span class="rc-row-label">1사이클 소비 (ANR)</span><span class="rc-row-val">${fmt(r.perCycle.totalL,3)} L</span></div>
+      <div class="rc-divider"></div>
+      <div class="rc-row rc-big"><span class="rc-row-label">공기 소비량 (${fmt(i.cyclesPerMin,0)}회/분 × ${r.numCylinders}대)</span><span class="rc-row-val">${fmt(r.flowLpm,1)} L/min</span></div>
+      <div class="rc-row"><span class="rc-row-label">= 분당 체적</span><span class="rc-row-val">${fmt(r.flowM3min,4)} m³/min</span></div>
+    </div>
+
+    <div class="section-label" style="margin-top:1.5rem">전기료 환산</div>
+    <div class="rc-rows">
+      <div class="rc-row"><span class="rc-row-label">가동 ${fmt(c.hoursPerDay,0)}시간/일 × ${fmt(c.daysPerMonth,0)}일/월</span><span class="rc-row-val">${fmt(c.minPerMonth,0)} 분/월</span></div>
+      <div class="rc-row"><span class="rc-row-label">월 압축공기량</span><span class="rc-row-val">${fmt(c.airM3Month,0)} m³/월</span></div>
+      <div class="rc-row"><span class="rc-row-label">월 소비 전력 (×${c.specificEnergy} kWh/m³)</span><span class="rc-row-val">${fmt(c.energyKwhMonth,0)} kWh/월</span></div>
+      <div class="rc-row rc-big"><span class="rc-row-label">월 전기료 (×${fmt(c.rate,0)}원/kWh)</span><span class="rc-row-val">${fmt(c.costMonth,0)} 원/월</span></div>
+      <div class="rc-row"><span class="rc-row-label">연간 환산</span><span class="rc-row-val">${fmt(c.costYear,0)} 원/년</span></div>
+    </div>
+
+    <div class="warn-box" style="margin-top:1rem">💡 <b>누설(leak)이 비용의 20~40%</b>를 차지하는 경우가 많습니다. 이 값은 실린더 작동 소비 기준이며, 상시 누설·블로잉·대기손실은 별도입니다. 누설만 잡아도 위 금액의 상당분을 절감할 수 있어요.</div>
+
+    <div class="disclaimer">
+      소비량: 압축비 CR=(P+0.1013)/0.1013, 1사이클=체적×CR(복동 전진+후진, 후진은 보어−로드). SMC 표준식 기준 · SMC 카탈로그 예제(보어50·600·0.5MPa→13L) 재현 검증.<br>
+      비용 계수(비에너지·단가·가동시간)는 설비·계약마다 달라 조정값입니다. 기본값: 비에너지 0.11 kWh/m³(7bar 스크류 일반 0.10~0.13), 산업용 단가 170원/kWh(2025 예시). · 데이터 검증: 2026.10
+    </div>`;
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const sel=document.getElementById('in-bore');
+  sel.innerHTML=STD_BORES.map(b=>`<option value="${b}"${b===50?' selected':''}>Ø${b} mm (로드 Ø${STD_ROD[b]})</option>`).join('');
+  const pd=document.getElementById('print-date'); if(pd) pd.textContent=new Date().toLocaleDateString('ko-KR');
+});
+</script>
+
+<script>
+function poGetInputs(){try{
+  return poInputsStr([['작동방식',S.acting==='single'?'단동':'복동'],['보어',S.in?S.in.bore:null,'mm'],['스트로크',S.in?S.in.stroke:null,'mm'],['압력',S.in?S.in.pressure:null,'MPa'],['작동빈도',S.in?S.in.cyclesPerMin:null,'회/분'],['실린더수',S.in?S.in.numCylinders:null,'대'],['공기소비량',S.out?Math.round(S.out.flowLpm):null,'L/min'],['월전기료',S.out?Math.round(S.out.cost.costMonth):null,'원']]);
+}catch(e){return '';}}
+</script>
+<script src="js/common.js"></script>
+</body>
+</html>

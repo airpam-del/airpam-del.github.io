@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공기 소비량·전기료 계산법 — 압축비·ANR·압축공기 비용 절차 | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 공압 실린더의 공기 소비량(L/min ANR)과 압축공기 전기료 계산법을 단계별로 정리했습니다. 압축비 CR=(P+0.1013)/0.1013, 1사이클 소비, 월 전기료 환산, 누설 비용까지 예제와 함께 설명합니다.">
+<meta name="keywords" content="파츠온, PartsOn, 공기 소비량, 에어 소비량, 압축공기 비용, 전기료 계산, 압축비, ANR, L/min, 공압 누설 절감">
+<link rel="canonical" href="https://partson.co.kr/guide-air-consumption.html">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta property="og:title" content="공기 소비량·전기료 계산법 — 압축비·ANR·압축공기 비용 절차">
+<meta property="og:description" content="압축비 CR=(P+0.1013)/0.1013, 1사이클 소비, 월 전기료 환산까지. 예제와 함께 보는 공기 소비량·비용 가이드.">
+<meta property="og:url" content="https://partson.co.kr/guide-air-consumption.html">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "공기 소비량·전기료 계산법 — 압축비·ANR·압축공기 비용 절차",
+  "description": "공압 실린더 공기 소비량(L/min ANR)과 압축공기 전기료 계산법을, 압축비·1사이클 소비·월 비용 환산 예제와 함께 설명합니다.",
+  "author": {"@type": "Organization", "name": "PartsOn"},
+  "publisher": {"@type": "Organization", "name": "PartsOn", "url": "https://partson.co.kr"},
+  "datePublished": "2026-10-13",
+  "dateModified": "2026-10-13",
+  "mainEntityOfPage": "https://partson.co.kr/guide-air-consumption.html"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "공기 소비량은 어떻게 계산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "압축비 CR=(게이지압+0.1013)/0.1013을 구한 뒤, 실린더 체적에 곱합니다. 복동은 전진(풀보어)과 후진(보어−로드) 체적을 더해 1사이클 소비를 구하고, 작동빈도(회/분)와 실린더 수를 곱하면 L/min(ANR)이 됩니다."}},
+    {"@type": "Question", "name": "ANR이 무엇인가요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "ANR은 대기 기준 상태(0.1013 MPa, 20℃, 상대습도 65%)로 환산한 공기량입니다. 압축공기 소비량은 실제 압축 상태 체적이 아니라 이 자유공기(free air) 기준으로 표기합니다."}},
+    {"@type": "Question", "name": "압축공기 전기료는 어떻게 환산하나요?",
+     "acceptedAnswer": {"@type": "Answer", "text": "월 공기량(m³)에 비에너지(압축공기 1m³ 생산 전력, 7bar 스크류 컴프레서 기준 약 0.10~0.13 kWh/m³)를 곱해 월 전력을 구하고, 전기 단가(원/kWh)를 곱하면 월 전기료가 됩니다."}}
+  ]
+}
+</script>
+<style>
+:root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;color:#1c2b3a;background:#fff;line-height:1.75}
+header{background:var(--navy);padding:14px 24px}
+header a{color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem}
+.wrap{max-width:820px;margin:0 auto;padding:40px 20px 80px}
+h1{font-size:1.9rem;line-height:1.35;margin-bottom:12px;color:var(--navy)}
+.meta{color:var(--gray);font-size:.9rem;margin-bottom:32px}
+h2{font-size:1.35rem;color:var(--navy);margin:40px 0 12px;padding-top:8px;border-top:2px solid #e8edf3}
+h3{font-size:1.1rem;margin:24px 0 8px}
+p{margin-bottom:14px}
+ul,ol{margin:0 0 14px 22px}
+li{margin-bottom:6px}
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}
+th,td{border:1px solid #d8e0ea;padding:8px 12px;text-align:left}
+th{background:var(--bg)}
+.formula{background:var(--bg);border-left:4px solid var(--accent);padding:14px 18px;margin:16px 0;font-family:Consolas,monospace;font-size:.95rem;overflow-x:auto}
+.tip{background:#eef6ff;border-radius:8px;padding:14px 18px;margin:16px 0}
+.cta{display:block;background:var(--accent);color:#fff;text-align:center;padding:16px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1.05rem;margin:32px 0}
+.cta:hover{opacity:.9}
+footer{background:var(--bg);text-align:center;padding:24px;color:var(--gray);font-size:.85rem}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header><a href="https://partson.co.kr/">PartsOn</a></header>
+<div class="wrap">
+
+<h1>공기 소비량·전기료 계산법 — 압축비·ANR·압축공기 비용 절차</h1>
+<div class="meta">PartsOn 엔지니어링 가이드 · 2026.10 업데이트</div>
+
+<p>압축공기는 공장에서 가장 비싼 유틸리티 중 하나입니다. 전기의 상당 부분이 컴프레서로 들어가고, 그중 많은 양이 공압 실린더 작동과 누설로 소비됩니다. 이 글에서는 공압 실린더의 <strong>공기 소비량(L/min ANR)</strong>을 SMC 표준식으로 계산하고, 이를 <strong>월 전기료</strong>로 환산하는 절차를 예제와 함께 정리합니다.</p>
+
+<h2>1. 압축비(CR) — 모든 계산의 출발점</h2>
+<div class="formula">CR = (P + 0.1013) / 0.1013<br><br>P = 게이지 공급압[MPa], 0.1013 MPa = 대기압(ANR 기준)</div>
+<p>압축공기를 대기로 내보내면 압력이 풀리며 부피가 늘어납니다. 소비량은 이 <strong>자유공기(ANR)</strong> 기준으로 표기하므로, 압축 상태 체적에 압축비를 곱해 환산합니다. 예로 0.5 MPa면 CR = (0.5+0.1013)/0.1013 ≈ <strong>5.94배</strong>입니다.</p>
+
+<h2>2. 1사이클 공기 소비량</h2>
+<div class="formula">복동: V = (A_head·L + A_rod·L) × CR<br>단동: V = A_head·L × CR  (후진은 스프링 복귀 → 공압 없음)<br><br>A_head = π/4·D²  (전진, 풀보어)<br>A_rod  = π/4·(D²−d²)  (후진, 보어−로드)<br>D=보어, d=로드경, L=스트로크</div>
+<p>복동 실린더는 전진과 후진 모두 공압으로 움직이므로 양방향 체적을 더합니다. 후진은 로드가 차지하는 만큼 유효 면적이 작아 소비도 조금 적습니다. 체적을 리터로 바꿀 때는 mm³를 1,000,000으로 나눕니다(1 L = 10⁶ mm³).</p>
+
+<h2>3. 분당 소비량 (L/min ANR)</h2>
+<div class="formula">Q = 1사이클 소비(L) × 작동빈도(회/분) × 실린더 수</div>
+<p>SMC 카탈로그는 여기에 배관(튜브) 충전 공기까지 더해 총 소비량을 산출합니다. 배관이 길거나 가늘면 그 영향은 작지만, 여러 대·고빈도 설비에서는 누적됩니다.</p>
+
+<h2>4. 전기료 환산</h2>
+<div class="formula">월 공기량[m³] = Q[L/min] × 가동(분/일) × 가동일/월 ÷ 1000<br>월 전력[kWh]  = 월 공기량 × 비에너지[kWh/m³]<br>월 전기료[원] = 월 전력 × 단가[원/kWh]</div>
+<table>
+<tr><th>계수</th><th>일반 기준값</th><th>비고</th></tr>
+<tr><td>비에너지</td><td>0.10 ~ 0.13 kWh/m³</td><td>7bar 스크류 컴프레서. 효율·압력에 따라 변동</td></tr>
+<tr><td>전기 단가</td><td>약 170 원/kWh</td><td>국내 산업용 평균 예시(2025). 계약 요금으로 교체</td></tr>
+</table>
+<div class="tip"><strong>왜 중요한가:</strong> 비에너지와 단가는 설비·계약마다 다릅니다. PartsOn 계산기는 기본값을 제공하되 직접 조정할 수 있게 해, 우리 공장 조건으로 비용을 추정할 수 있습니다.</div>
+
+<h2>5. 계산 예제</h2>
+<table>
+<tr><th>조건</th><th>값</th></tr>
+<tr><td>보어 / 스트로크</td><td>Ø50 / 600 mm (복동, 로드 Ø20)</td></tr>
+<tr><td>공급압 / 작동빈도</td><td>0.5 MPa / 10회·분 (5대)</td></tr>
+</table>
+<p>CR ≈ 5.94. 전진 체적 π/4×50²×600 ≈ 1.178 L × 5.94 ≈ 7.0 L, 후진(보어−로드) ≈ 0.99 L × 5.94 ≈ 5.87 L → 1사이클 ≈ <strong>12.87 L</strong>(SMC 카탈로그 표기 13 L). ×10회·분 ×5대 ≈ <strong>643 L/min(ANR)</strong>. 가동 8시간×22일, 비에너지 0.11, 단가 170원이면 월 공기량 ≈ 6,793 m³ → 약 747 kWh → 월 <strong>약 127,000원</strong> 수준입니다.</p>
+
+<h2>6. 누설(leak)이 진짜 비용</h2>
+<p>많은 공장에서 압축공기 비용의 <strong>20~40%는 상시 누설</strong>입니다. 위 계산은 실린더 작동 소비 기준이며, 피팅·호스·밸브의 미세 누설과 블로잉(에어 불기)·대기 손실은 별도입니다. Ø1mm 누설 하나가 7bar에서 연간 수십만 원대 전기료로 이어질 수 있으므로, 소비량을 파악한 뒤 <strong>누설 점검</strong>을 병행하면 절감 효과가 큽니다.</p>
+
+<a class="cta" href="https://partson.co.kr/air-consumption.html">→ 공기 소비량·전기료 계산기에서 직접 계산해보기 (무료, 회원가입 불필요)</a>
+
+<h2>자주 묻는 질문</h2>
+<h3>Q. 단동 실린더는 소비가 절반인가요?</h3>
+<p>단동은 전진만 공압이고 복귀는 스프링이라 1사이클 소비가 전진분만 발생합니다. 복동의 전진분과 같고 후진분이 없으므로, 로드경에 따라 복동의 약 50~55% 수준입니다. 다만 단동은 추력이 작아 용도가 제한됩니다.</p>
+<h3>Q. 압력을 낮추면 비용이 줄어드나요?</h3>
+<p>네. 압축비가 낮아져 소비 공기량이 줄고, 컴프레서 생산 전력도 감소합니다. 필요 추력을 만족하는 선에서 공급압을 0.1 MPa만 낮춰도 유의미한 절감이 됩니다. 추력은 PartsOn 공압 실린더 계산기로 먼저 확인하세요.</p>
+<h3>Q. 소비량 단위 L/min(ANR)과 Nm³/h는 어떻게 바꾸나요?</h3>
+<p>1 Nm³ = 1,000 L(ANR)이므로, L/min에 60을 곱하고 1,000으로 나누면 Nm³/h가 됩니다. 예: 643 L/min ≈ 38.6 Nm³/h. (ANR과 Normal 상태는 기준 온습도가 조금 달라 엄밀히는 소폭 차이가 있습니다.)</p>
+
+<p style="margin-top:32px">관련 가이드: <a href="guide-pneumatic-cylinder.html">공압 실린더 선정</a> · <a href="guide-solenoid-valve.html">솔레노이드 밸브 선정</a> · <a href="guide-pneumatic-fitting.html">피팅·튜빙 선정</a></p>
+</div>
+<footer>© 2026 PartsOn · <a href="https://partson.co.kr/">자동화 부품 선정 플랫폼</a> — 본 가이드는 참고용이며 최종 선정은 제조사 카탈로그로 검증하세요.</footer>
+</body>
+</html>

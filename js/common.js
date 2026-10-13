@@ -29,7 +29,8 @@ var CALCULATORS = [
   { file: 'pneumatic-gripper.html', cat: 'pneumatic', desk: '공압 그리퍼 선정',     mob: '공압 그리퍼 선정' },
   { file: 'speed-controller.html',  cat: 'pneumatic', desk: '스피드 컨트롤러 선정',  mob: '스피드 컨트롤러 선정' },
   { file: 'vacuum-pad.html',        cat: 'pneumatic', desk: '진공 흡착패드 선정',    mob: '진공 흡착패드 선정' },
-  { file: 'shock-absorber.html',    cat: 'pneumatic', desk: '쇼크 업소버 선정',      mob: '쇼크 업소버 선정' }
+  { file: 'shock-absorber.html',    cat: 'pneumatic', desk: '쇼크 업소버 선정',      mob: '쇼크 업소버 선정' },
+  { file: 'air-consumption.html',   cat: 'pneumatic', desk: '공기 소비량·전기료',    mob: '공기 소비량·전기료 계산' }
 ];
 
 /* 현재 페이지 파일명 */
@@ -474,7 +475,8 @@ var CALC_GRADES = {
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'beta', // 2026 대조: 3사 elbow 나사×OD 매트릭스 카탈로그 확정 + 유량공식 검증 (인라인 근사 → beta)
-  'shock-absorber.html': 'verified' // 2026 대조: SMC RB 카탈로그(EMC-RB-01A-UK) 실측 + 선정식 카탈로그 예제(RB0604·RB2015) 검증
+  'shock-absorber.html': 'verified', // 2026 대조: SMC RB 카탈로그(EMC-RB-01A-UK) 실측 + 선정식 카탈로그 예제(RB0604·RB2015) 검증
+  'air-consumption.html': 'verified' // 2026: SMC 표준 압축비식(CR=(P+0.1013)/0.1013) + 카탈로그 예제(보어50·600·0.5MPa→13L) 재현. 비용계수는 조정값
   // 그 외 미지정 계산기는 기본 'beta'
 };
 var GRADE_META = {
@@ -560,7 +562,8 @@ var RELATED_CALCS = {
   'pneumatic-fr-unit.html':  [['pneumatic-cylinder.html','공압 실린더 선정','구동 실린더를 선정해보세요'], ['pneumatic-fitting.html','피팅·튜빙 선정','배관 피팅·튜브도 선정해보세요']],
   'pneumatic-gripper.html':  [['pneumatic-cylinder.html','공압 실린더 선정','이송 실린더도 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','그리퍼 제어 밸브도 선정해보세요']],
   'vacuum-pad.html':         [['pneumatic-gripper.html','공압 그리퍼 선정','파지 방식 그리퍼와 비교해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','진공 회로 제어 밸브도 선정해보세요']],
-  'shock-absorber.html':     [['pneumatic-cylinder.html','공압 실린더 선정','감속 대상 실린더도 선정해보세요'], ['electric-actuator.html','전동 액추에이터 선정','전동 축의 감속도 검토해보세요']]
+  'shock-absorber.html':     [['pneumatic-cylinder.html','공압 실린더 선정','감속 대상 실린더도 선정해보세요'], ['electric-actuator.html','전동 액추에이터 선정','전동 축의 감속도 검토해보세요']],
+  'air-consumption.html':    [['pneumatic-cylinder.html','공압 실린더 선정','소비량 대상 실린더를 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','이 실린더를 제어할 밸브도 선정해보세요']]
 };
 function poInjectRelatedCSS() {
   if (document.getElementById('po-rel-css')) return;
