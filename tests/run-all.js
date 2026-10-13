@@ -25,6 +25,8 @@ const TEST_FILES = [
   'tests/speed-controller.test.js',
   'tests/shock-absorber.test.js',
   'tests/air-consumption.test.js',
+  'tests/vacuum-ejector.test.js',
+  'tests/rotary-actuator.test.js',
 ];
 
 // node --test 출력에서 pass/fail 카운트 (ℹ pass N / # pass N 두 형식 모두 지원)

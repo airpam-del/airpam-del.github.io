@@ -30,7 +30,9 @@ var CALCULATORS = [
   { file: 'speed-controller.html',  cat: 'pneumatic', desk: '스피드 컨트롤러 선정',  mob: '스피드 컨트롤러 선정' },
   { file: 'vacuum-pad.html',        cat: 'pneumatic', desk: '진공 흡착패드 선정',    mob: '진공 흡착패드 선정' },
   { file: 'shock-absorber.html',    cat: 'pneumatic', desk: '쇼크 업소버 선정',      mob: '쇼크 업소버 선정' },
-  { file: 'air-consumption.html',   cat: 'pneumatic', desk: '공기 소비량·전기료',    mob: '공기 소비량·전기료 계산' }
+  { file: 'air-consumption.html',   cat: 'pneumatic', desk: '공기 소비량·전기료',    mob: '공기 소비량·전기료 계산' },
+  { file: 'vacuum-ejector.html',    cat: 'pneumatic', desk: '진공 이젝터 선정',      mob: '진공 이젝터 선정' },
+  { file: 'rotary-actuator.html',   cat: 'pneumatic', desk: '로타리 액추에이터 선정', mob: '로타리 액추에이터 선정' }
 ];
 
 /* 현재 페이지 파일명 */
@@ -472,11 +474,14 @@ var CALC_GRADES = {
   'pneumatic-cylinder.html': 'verified', // 2026 대조: 3타입(표준/컴팩트/소형) 물리검증 + SMC·Festo·CKD 현행 시리즈 정합화
   'screwjack.html': 'verified', // 2026 대조: ZIMM ZE 카탈로그(2021) 공식·데이터 정합화 (출력식·볼코어·ZE-50·복선리드·최소부하)
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
+  'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'beta', // 2026 대조: 3사 elbow 나사×OD 매트릭스 카탈로그 확정 + 유량공식 검증 (인라인 근사 → beta)
   'shock-absorber.html': 'verified', // 2026 대조: SMC RB 카탈로그(EMC-RB-01A-UK) 실측 + 선정식 카탈로그 예제(RB0604·RB2015) 검증
-  'air-consumption.html': 'verified' // 2026: SMC 표준 압축비식(CR=(P+0.1013)/0.1013) + 카탈로그 예제(보어50·600·0.5MPa→13L) 재현. 비용계수는 조정값
+  'air-consumption.html': 'verified', // 2026: SMC 표준 압축비식(CR=(P+0.1013)/0.1013) + 카탈로그 예제(보어50·600·0.5MPa→13L) 재현. 비용계수는 조정값
+  'vacuum-ejector.html': 'beta', // 2026: SMC ZH 사양(진공·흡입·소비) 실측이나, 배기시간·통기 매칭은 유량-진공 특성곡선 근사 → beta
+  'rotary-actuator.html': 'beta' // 2026: SMC CRB2 허용 운동에너지·허용하중 실측(E=½Iω² 비교)이나, 작동토크는 압력별 선도라 수치비교 제외 → beta
   // 그 외 미지정 계산기는 기본 'beta'
 };
 var GRADE_META = {
@@ -561,9 +566,11 @@ var RELATED_CALCS = {
   'pneumatic-fitting.html':  [['pneumatic-cylinder.html','공압 실린더 선정','연결할 실린더를 선정해보세요'], ['pneumatic-fr-unit.html','공기압 조절 유닛 선정','공급 라인 FR 유닛도 선정해보세요']],
   'pneumatic-fr-unit.html':  [['pneumatic-cylinder.html','공압 실린더 선정','구동 실린더를 선정해보세요'], ['pneumatic-fitting.html','피팅·튜빙 선정','배관 피팅·튜브도 선정해보세요']],
   'pneumatic-gripper.html':  [['pneumatic-cylinder.html','공압 실린더 선정','이송 실린더도 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','그리퍼 제어 밸브도 선정해보세요']],
-  'vacuum-pad.html':         [['pneumatic-gripper.html','공압 그리퍼 선정','파지 방식 그리퍼와 비교해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','진공 회로 제어 밸브도 선정해보세요']],
+  'vacuum-pad.html':         [['vacuum-ejector.html','진공 이젝터 선정','이 패드를 구동할 진공 발생기를 선정해보세요'], ['pneumatic-gripper.html','공압 그리퍼 선정','파지 방식 그리퍼와 비교해보세요']],
   'shock-absorber.html':     [['pneumatic-cylinder.html','공압 실린더 선정','감속 대상 실린더도 선정해보세요'], ['electric-actuator.html','전동 액추에이터 선정','전동 축의 감속도 검토해보세요']],
-  'air-consumption.html':    [['pneumatic-cylinder.html','공압 실린더 선정','소비량 대상 실린더를 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','이 실린더를 제어할 밸브도 선정해보세요']]
+  'air-consumption.html':    [['pneumatic-cylinder.html','공압 실린더 선정','소비량 대상 실린더를 선정해보세요'], ['solenoid-valve.html','솔레노이드 밸브 선정','이 실린더를 제어할 밸브도 선정해보세요']],
+  'vacuum-ejector.html':     [['vacuum-pad.html','진공 흡착패드 선정','먼저 흡착패드·필요 진공도를 정하세요'], ['air-consumption.html','공기 소비량·전기료','이젝터 공기소비의 가동비를 환산해보세요']],
+  'rotary-actuator.html':    [['shock-absorber.html','쇼크 업소버 선정','운동에너지 초과 시 외부 완충을 선정하세요'], ['pneumatic-cylinder.html','공압 실린더 선정','직선 구동이 필요하면 실린더도 검토하세요']]
 };
 function poInjectRelatedCSS() {
   if (document.getElementById('po-rel-css')) return;
