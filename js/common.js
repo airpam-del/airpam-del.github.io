@@ -475,6 +475,7 @@ var CALC_GRADES = {
   'screwjack.html': 'verified', // 2026 대조: ZIMM ZE 카탈로그(2021) 공식·데이터 정합화 (출력식·볼코어·ZE-50·복선리드·최소부하)
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
   'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
+  'harmonic-drive.html': 'verified', // 2026-10 대조: HDS CSF/SHF 감속비별 정격·반복피크·순간토크 카탈로그 스팟검증(CSF-11 9/9 일치) + HDS 공표 수명식 L=7000(Tr/Tc)³(2000/n)
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'beta', // 2026 대조: 3사 elbow 나사×OD 매트릭스 카탈로그 확정 + 유량공식 검증 (인라인 근사 → beta)
