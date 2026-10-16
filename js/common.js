@@ -149,7 +149,52 @@ function renderMobileNav() {
   });
 }
 
-function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poGradeInit(); poRelatedInit(); }
+function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poRenderInquiryRows(); poGradeInit(); poRelatedInit(); }
+
+/* ═══════════════════════════════════════════════════════════════
+   문의 CTA 공통 렌더 — 문구를 여기 한 곳에서 관리(전 계산기 자동 반영).
+   ▶ 각 페이지의 <div class="po-inq-row"></div> 안을 표준 버튼으로 채운다.
+   ▶ 계산기명은 header h1(또는 data-inq)에서 추출 → poInquiryAuto 에 전달.
+   ▶ 결과가 JS로 나중에 주입되는 페이지도 로드시 정적 .po-inq-row 가 있으면 채워짐.
+   ═══════════════════════════════════════════════════════════════ */
+var PO_CTA_PRIMARY = '📩 이 사양으로 무료 견적받기';
+var PO_CTA_EMAIL   = '📧 결과 이메일로 받기';
+var PO_CTA_NOTE    = '무료 · 회원가입 없이 · 영업일 기준 빠른 회신';
+function poInquiryTitle() {
+  var h1 = document.querySelector('header h1') || document.querySelector('.hdr h1') || document.querySelector('h1');
+  if (h1 && h1.firstChild && h1.firstChild.textContent) {
+    var t = h1.firstChild.textContent.replace(/계산기\s*$/, '').trim();
+    if (t) return t;
+  }
+  var cur = poCurrentFile();
+  var c = (typeof CALCULATORS !== 'undefined') ? CALCULATORS.find(function (x) { return x.file === cur; }) : null;
+  return c ? c.mob.replace(/\s*계산$/, '') : '부품 선정';
+}
+function poRenderInquiryRows() {
+  try {
+  var rows = document.querySelectorAll('.po-inq-row');
+  if (!rows.length) return;
+  var title = poInquiryTitle();
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+    if (row.getAttribute('data-po-cta') === '1') continue;
+    var t = row.getAttribute('data-inq') || title;
+    // onclick 속성은 큰따옴표로 감싸므로 내부 문자열은 작은따옴표로(속성 조기종료 방지)
+    var tj = "'" + String(t).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+    row.innerHTML =
+      '<button class="po-inq-primary" onclick="poInquiryAuto(' + tj + ',false)">' + PO_CTA_PRIMARY + '</button>' +
+      '<button class="po-inq-email" onclick="poInquiryAuto(' + tj + ',true)">' + PO_CTA_EMAIL + '</button>';
+    row.setAttribute('data-po-cta', '1');
+    // 신뢰 한 줄(버튼 바로 아래, 1회만)
+    if (!row.nextElementSibling || !row.nextElementSibling.classList || !row.nextElementSibling.classList.contains('po-inq-note')) {
+      var note = document.createElement('div');
+      note.className = 'po-inq-note';
+      note.textContent = PO_CTA_NOTE;
+      row.parentNode.insertBefore(note, row.nextSibling);
+    }
+  }
+  } catch (e) {}
+}
 
 /* 결과 영역 문의 버튼 스타일 (로드 시 주입) */
 function poInjectResultBtnCSS() {
@@ -162,6 +207,8 @@ function poInjectResultBtnCSS() {
     '.po-inq-primary:hover{filter:brightness(1.12)}',
     '.po-inq-email{background:#0071B8;color:#fff}',
     '.po-inq-email:hover{background:#0088CC}',
+    '.po-inq-note{text-align:center;font-size:12px;color:#8A8680;margin:-8px 0 16px;letter-spacing:.2px}',
+    '.po-inq-note::before{content:"✓ ";color:#2D6B4A;font-weight:700}',
     '.po-rep-row{text-align:center;margin:12px 0 2px}',
     '.po-rep-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#9E9B96;cursor:pointer;text-decoration:none;padding:6px 4px;background:none;border:none;font-family:inherit}',
     '.po-rep-link:hover{color:#B45309;text-decoration:underline}',
@@ -476,6 +523,7 @@ var CALC_GRADES = {
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
   'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
   'harmonic-drive.html': 'verified', // 2026-10 대조: HDS CSF/SHF 감속비별 정격·반복피크·순간토크 카탈로그 스팟검증(CSF-11 9/9 일치) + HDS 공표 수명식 L=7000(Tr/Tc)³(2000/n)
+  'electric-actuator.html': 'verified', // 2026-10 대조: SMC LEY 사양표(푸싱력 452/707·최대워크로드 60H/53V·리드셋·스트로크) 정확 일치 + calc.js/테스트 신설(부하속도 그래프는 캐비앗)
   // 데이터 출처 점검상 불확실(생소 분야·추정값) → 참고용 기본값
   'cycloidal-gearbox.html': 'reference',
   'speed-controller.html': 'beta', // 2026 대조: 3사 elbow 나사×OD 매트릭스 카탈로그 확정 + 유량공식 검증 (인라인 근사 → beta)
