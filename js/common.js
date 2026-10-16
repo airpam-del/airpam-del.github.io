@@ -521,6 +521,7 @@ var CALC_GRADES = {
   'pneumatic-cylinder.html': 'verified', // 2026 대조: 3타입(표준/컴팩트/소형) 물리검증 + SMC·Festo·CKD 현행 시리즈 정합화
   'screwjack.html': 'verified', // 2026 대조: ZIMM ZE 카탈로그(2021) 공식·데이터 정합화 (출력식·볼코어·ZE-50·복선리드·최소부하)
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
+  'timing-belt.html': 'beta', // 2026-10 리뷰: 기하·설계동력식·폭/치형/길이보정은 표준 정확, 시리즈·표준폭(Gates GT2/HTD 5M·8M·14M) 실존. 단 파워레이팅이 GT2 격자 보간 + HTD=0.5×GT2 환산(근사)이라 beta. verified엔 Gates 파워레이팅 전표 필요.
   'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
   'harmonic-drive.html': 'verified', // 2026-10 대조: HDS CSF/SHF 감속비별 정격·반복피크·순간토크 카탈로그 스팟검증(CSF-11 9/9 일치) + HDS 공표 수명식 L=7000(Tr/Tc)³(2000/n)
   'electric-actuator.html': 'verified', // 2026-10 대조: SMC LEY 사양표(푸싱력 452/707·최대워크로드 60H/53V·리드셋·스트로크) 정확 일치 + calc.js/테스트 신설(부하속도 그래프는 캐비앗)
