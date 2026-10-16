@@ -149,7 +149,138 @@ function renderMobileNav() {
   });
 }
 
-function poInitNav() { renderNav(); renderMobileNav(); poInjectResultBtnCSS(); poRenderInquiryRows(); poGradeInit(); poRelatedInit(); }
+function poInitNav() {
+  var page = poCurrentFile();
+  var isIndex = (page === '' || page === 'index.html');
+  // 계산기 페이지 전용(홈은 자체 네비·레이아웃이 있으므로 제외)
+  if (!isIndex) { renderNav(); renderMobileNav(); poRenderInquiryRows(); poRelatedInit(); }
+  poInjectResultBtnCSS(); poGradeInit(); poHistInit();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   선정 이력 저장 (재방문 유도) — localStorage, 로그인·서버 불필요.
+   ▶ 계산기 페이지: 결과가 나오면(모델 판독되면) 자동 저장.
+   ▶ 계산기·홈: "📋 최근 선정 내역" 패널 표시 → 클릭 시 해당 계산기로.
+   ▶ 기존 결과 리더(_poReadModelSpec)·입력 리더(poGetInputs) 재사용.
+   ═══════════════════════════════════════════════════════════════ */
+var PO_HIST_KEY = 'po_hist_v1';
+var PO_HIST_MAX = 15;
+function poHistGet() { try { return JSON.parse(localStorage.getItem(PO_HIST_KEY) || '[]') || []; } catch (e) { return []; } }
+function poHistWrite(h) { try { localStorage.setItem(PO_HIST_KEY, JSON.stringify(h.slice(0, PO_HIST_MAX))); } catch (e) {} }
+function poHistSave(entry) {
+  try {
+    if (!entry || !entry.model) return;
+    var h = poHistGet();
+    // 직전 항목과 같은 페이지·모델이면 갱신(스팸 방지), 아니면 추가
+    if (h.length && h[0].page === entry.page && h[0].model === entry.model) h[0] = entry;
+    else h.unshift(entry);
+    poHistWrite(h);
+  } catch (e) {}
+}
+function poHistClear(ev) { if (ev) ev.preventDefault(); try { localStorage.removeItem(PO_HIST_KEY); } catch (e) {} poRenderHistPanels(); }
+function poHistWhen(ts) {
+  var s = Math.max(0, (Date.now() - ts) / 1000);
+  if (s < 60) return '방금';
+  if (s < 3600) return Math.floor(s / 60) + '분 전';
+  if (s < 86400) return Math.floor(s / 3600) + '시간 전';
+  if (s < 172800) return '어제';
+  if (s < 604800) return Math.floor(s / 86400) + '일 전';
+  var d = new Date(ts); return (d.getMonth() + 1) + '/' + d.getDate();
+}
+function poInjectHistCSS() {
+  if (document.getElementById('po-hist-css')) return;
+  var st = document.createElement('style'); st.id = 'po-hist-css';
+  st.textContent = [
+    '#po-hist-mount{max-width:760px;margin:1rem auto 0;padding:0 1rem}',
+    'body.category-pneumatic #po-hist-mount,body.category-electric #po-hist-mount{padding:0 1rem}',
+    '.po-hist-box{background:#fff;border:1px solid var(--border,#D8D4CC);border-radius:12px;padding:.6rem .9rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}',
+    '.po-hist-head{display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px;font-weight:700;color:var(--text,#1A1814)}',
+    '.po-hist-head .po-hist-arrow{color:#9E9B96;font-size:12px;transition:transform .2s}',
+    '.po-hist-box.open .po-hist-arrow{transform:rotate(180deg)}',
+    '.po-hist-clear{font-size:11px;color:#9E9B96;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 6px;margin-left:auto;margin-right:6px}',
+    '.po-hist-clear:hover{color:#B45309;text-decoration:underline}',
+    '.po-hist-list{display:none;margin-top:.5rem;flex-direction:column;gap:4px}',
+    '.po-hist-box.open .po-hist-list{display:flex}',
+    '.po-hist-item{display:flex;align-items:baseline;gap:8px;padding:7px 9px;border-radius:8px;text-decoration:none;border:1px solid var(--border-light,#E8E5DF);transition:all .12s}',
+    '.po-hist-item:hover{border-color:var(--accent,#1A3A2A);background:var(--accent-light,#E8F0EC)}',
+    '.po-hist-cal{font-size:12px;color:var(--text2,#6B6760);flex-shrink:0;min-width:120px;font-weight:600}',
+    '.po-hist-model{font-size:13px;color:var(--text,#1A1814);font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
+    '.po-hist-when{font-size:11px;color:#9E9B96;flex-shrink:0}',
+    '@media print{#po-hist-mount{display:none!important}}',
+    '@media(max-width:560px){.po-hist-cal{min-width:0;max-width:40%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}'
+  ].join('');
+  (document.head || document.documentElement).appendChild(st);
+}
+function poHistPanelHTML() {
+  var h = poHistGet();
+  if (!h.length) return '';
+  var items = h.slice(0, 8).map(function (e) {
+    var spec = e.spec ? ' · ' + poEsc(String(e.spec).slice(0, 44)) : '';
+    return '<a class="po-hist-item" href="' + poEsc(e.page) + '">' +
+      '<span class="po-hist-cal">' + poEsc(e.title || '선정') + '</span>' +
+      '<span class="po-hist-model">' + poEsc(e.model || '—') + spec + '</span>' +
+      '<span class="po-hist-when">' + poHistWhen(e.ts) + '</span></a>';
+  }).join('');
+  return '<div class="po-hist-box" id="po-hist-box">' +
+    '<div class="po-hist-head" onclick="var b=document.getElementById(\'po-hist-box\');b&&b.classList.toggle(\'open\')">' +
+    '<span>📋 최근 선정 내역 <span style="color:#9E9B96;font-weight:600">' + h.length + '</span></span>' +
+    '<button class="po-hist-clear" onclick="event.stopPropagation();poHistClear(event)">지우기</button>' +
+    '<span class="po-hist-arrow">▾</span></div>' +
+    '<div class="po-hist-list">' + items + '</div></div>';
+}
+function poRenderHistPanels() {
+  try {
+    var html = poHistPanelHTML();
+    var mount = document.getElementById('po-hist-mount');
+    if (!mount) {
+      if (!html) return;
+      mount = document.createElement('div'); mount.id = 'po-hist-mount';
+      var page = poCurrentFile();
+      if (page === '' || page === 'index.html') {
+        var sec = document.querySelector('section');
+        if (sec && sec.parentNode) sec.parentNode.insertBefore(mount, sec);
+        else document.body.appendChild(mount);
+      } else {
+        var main = document.querySelector('main');
+        if (main) main.insertBefore(mount, main.firstChild); else return;
+      }
+    }
+    mount.innerHTML = html;
+    mount.style.display = html ? 'block' : 'none';
+  } catch (e) {}
+}
+function poHistCaptureInit() {
+  try {
+    if (!document.body || !window.MutationObserver) return;
+    var page = poCurrentFile();
+    var obs;
+    var doSave = function () {
+      try {
+        var rd = (typeof _poReadModelSpec === 'function') ? _poReadModelSpec() : { model: '', spec: '' };
+        if (!rd.model) return;
+        var title = (typeof poInquiryTitle === 'function') ? poInquiryTitle() : '선정';
+        var entry = { page: page, title: title, model: rd.model, spec: rd.spec || '', ts: Date.now() };
+        var h = poHistGet();
+        if (h.length && h[0].page === entry.page && h[0].model === entry.model) return; // 동일 최신 → 스킵
+        poHistSave(entry);
+        if (obs) obs.disconnect();
+        poRenderHistPanels();
+        if (obs) obs.observe(document.body, { childList: true, subtree: true });
+      } catch (e) {}
+    };
+    var deb;
+    obs = new MutationObserver(function () { clearTimeout(deb); deb = setTimeout(doSave, 700); });
+    obs.observe(document.body, { childList: true, subtree: true });
+  } catch (e) {}
+}
+function poHistInit() {
+  try {
+    poInjectHistCSS();
+    poRenderHistPanels();
+    var page = poCurrentFile();
+    if (page !== '' && page !== 'index.html') poHistCaptureInit();
+  } catch (e) {}
+}
 
 /* ═══════════════════════════════════════════════════════════════
    문의 CTA 공통 렌더 — 문구를 여기 한 곳에서 관리(전 계산기 자동 반영).
