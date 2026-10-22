@@ -32,7 +32,8 @@ var CALCULATORS = [
   { file: 'shock-absorber.html',    cat: 'pneumatic', desk: '쇼크 업소버 선정',      mob: '쇼크 업소버 선정' },
   { file: 'air-consumption.html',   cat: 'pneumatic', desk: '공기 소비량·전기료',    mob: '공기 소비량·전기료 계산' },
   { file: 'vacuum-ejector.html',    cat: 'pneumatic', desk: '진공 이젝터 선정',      mob: '진공 이젝터 선정' },
-  { file: 'rotary-actuator.html',   cat: 'pneumatic', desk: '로타리 액추에이터 선정', mob: '로타리 액추에이터 선정' }
+  { file: 'rotary-actuator.html',   cat: 'pneumatic', desk: '로타리 액추에이터 선정', mob: '로타리 액추에이터 선정' },
+  { file: 'cable-coax.html',        cat: 'cable',     desk: '동축케이블 선정',       mob: '동축케이블(금강) 선정' }
 ];
 
 /* 현재 페이지 파일명 */
@@ -60,6 +61,13 @@ function renderNav() {
   }
   var electric = CALCULATORS.filter(function (c) { return c.cat === 'electric'; });
   var pneumatic = CALCULATORS.filter(function (c) { return c.cat === 'pneumatic'; });
+  var cable = CALCULATORS.filter(function (c) { return c.cat === 'cable'; });
+  var cableDrop = cable.length
+    ? '  <div class="pnav-drop cable-drop">\n' +
+      '    <button class="pnav-toggle" onclick="pnavToggle(this)">케이블 ▾</button>\n' +
+      '    <div class="pnav-menu">\n      ' + menu(cable) + '\n    </div>\n' +
+      '  </div>\n'
+    : '';
   host.outerHTML =
     '<nav class="partson-nav">\n' +
     '  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>\n' +
@@ -71,6 +79,7 @@ function renderNav() {
     '    <button class="pnav-toggle" onclick="pnavToggle(this)">공압 부품 ▾</button>\n' +
     '    <div class="pnav-menu">\n      ' + menu(pneumatic) + '\n    </div>\n' +
     '  </div>\n' +
+    cableDrop +
     '</nav>';
   // 데스크톱 드롭다운 바깥 클릭 시 닫기 (기존 인라인과 동일)
   document.addEventListener('click', function (e) {
@@ -120,6 +129,7 @@ function renderMobileNav() {
   }
   var electric = CALCULATORS.filter(function (c) { return c.cat === 'electric'; });
   var pneumatic = CALCULATORS.filter(function (c) { return c.cat === 'pneumatic'; });
+  var cable = CALCULATORS.filter(function (c) { return c.cat === 'cable'; });
 
   var btn = document.createElement('button');
   btn.className = 'pmnav-toggle';
@@ -132,6 +142,7 @@ function renderMobileNav() {
   panel.id = 'pmnav-panel';
   panel.innerHTML = sec('⚡ 전동 부품', electric)
     + sec('💨 공압 부품', pneumatic)
+    + (cable.length ? sec('🧵 케이블', cable) : '')
     + '<div class="pmnav-sec"><a href="index.html" class="pmnav-home' + (cur === 'index.html' ? ' pmnav-active' : '') + '">🏠 PartsOn 홈</a></div>';
 
   host.appendChild(btn);
@@ -653,6 +664,7 @@ var CALC_GRADES = {
   'screwjack.html': 'verified', // 2026 대조: ZIMM ZE 카탈로그(2021) 공식·데이터 정합화 (출력식·볼코어·ZE-50·복선리드·최소부하)
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
   'timing-belt.html': 'beta', // 2026-10 리뷰: 기하·설계동력식·폭/치형/길이보정은 표준 정확, 시리즈·표준폭(Gates GT2/HTD 5M·8M·14M) 실존. 단 파워레이팅이 GT2 격자 보간 + HTD=0.5×GT2 환산(근사)이라 beta. verified엔 Gates 파워레이팅 전표 필요.
+  'cable-coax.html': 'verified', // 2026-10: 금강케이블 카탈로그 동축 감쇠량(dB/km) 실측표 기반. 손실=감쇠×거리(결정론적). 허용손실 budget은 시스템 입력
   'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
   'harmonic-drive.html': 'verified', // 2026-10 대조: HDS CSF/SHF 감속비별 정격·반복피크·순간토크 카탈로그 스팟검증(CSF-11 9/9 일치) + HDS 공표 수명식 L=7000(Tr/Tc)³(2000/n)
   'electric-actuator.html': 'verified', // 2026-10 대조: SMC LEY 사양표(푸싱력 452/707·최대워크로드 60H/53V·리드셋·스트로크) 정확 일치 + calc.js/테스트 신설(부하속도 그래프는 캐비앗)
