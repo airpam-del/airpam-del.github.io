@@ -33,7 +33,8 @@ var CALCULATORS = [
   { file: 'air-consumption.html',   cat: 'pneumatic', desk: '공기 소비량·전기료',    mob: '공기 소비량·전기료 계산' },
   { file: 'vacuum-ejector.html',    cat: 'pneumatic', desk: '진공 이젝터 선정',      mob: '진공 이젝터 선정' },
   { file: 'rotary-actuator.html',   cat: 'pneumatic', desk: '로타리 액추에이터 선정', mob: '로타리 액추에이터 선정' },
-  { file: 'cable-coax.html',        cat: 'cable',     desk: '동축케이블 선정',       mob: '동축케이블(금강) 선정' }
+  { file: 'cable-coax.html',        cat: 'cable',     desk: '동축케이블 선정',       mob: '동축케이블(금강) 선정' },
+  { file: 'cable-power.html',       cat: 'cable',     desk: '전력케이블 선정',       mob: '전력케이블(금강) 선정' }
 ];
 
 /* 현재 페이지 파일명 */
@@ -665,6 +666,7 @@ var CALC_GRADES = {
   'solenoid-valve.html': 'beta', // 유량공식 검증O, 밸브 정격유량은 개략(근사) — beta 유지
   'timing-belt.html': 'beta', // 2026-10 리뷰: 기하·설계동력식·폭/치형/길이보정은 표준 정확, 시리즈·표준폭(Gates GT2/HTD 5M·8M·14M) 실존. 단 파워레이팅이 GT2 격자 보간 + HTD=0.5×GT2 환산(근사)이라 beta. verified엔 Gates 파워레이팅 전표 필요.
   'cable-coax.html': 'verified', // 2026-10: 금강케이블 카탈로그 동축 감쇠량(dB/km) 실측표 기반. 손실=감쇠×거리(결정론적). 허용손실 budget은 시스템 입력
+  'cable-power.html': 'beta', // 2026-10: 전압강하는 금강 카탈로그 도체저항으로 정확 계산. 허용전류는 IEC 60364-5-52 방법C·30℃ 표준 참고(설치·온도·집합 보정 필요) → beta
   'pneumatic-fitting.html': 'verified', // 2026-10 대조: 유속 8m/s 유량식(ANR→실제 변환) + SMC TU/TS·Festo PUN/PLN·CKD GW+U-95/F-15 카탈로그 정합화(CKD TAS/TAN 비실존 교체, Ø16 라인업 반영)
   'harmonic-drive.html': 'verified', // 2026-10 대조: HDS CSF/SHF 감속비별 정격·반복피크·순간토크 카탈로그 스팟검증(CSF-11 9/9 일치) + HDS 공표 수명식 L=7000(Tr/Tc)³(2000/n)
   'electric-actuator.html': 'verified', // 2026-10 대조: SMC LEY 사양표(푸싱력 452/707·최대워크로드 60H/53V·리드셋·스트로크) 정확 일치 + calc.js/테스트 신설(부하속도 그래프는 캐비앗)

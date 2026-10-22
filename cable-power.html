@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>전력케이블 선정 계산기 (금강케이블 VV·CV) | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 금강케이블 전력케이블(VV·CV)을 전류·긍장·전압강하 기준으로 선정하세요. 카탈로그 도체저항 기반 전압강하 계산 + 허용전류 체크 무료 계산기.">
+<meta name="keywords" content="파츠온, PartsOn, 금강케이블, 전력케이블 선정, VV, CV, 전압강하, 허용전류, 공칭단면적, SQ, 전선 굵기">
+<meta property="og:title" content="전력케이블 선정 계산기 (금강케이블 VV·CV) | PartsOn">
+<meta property="og:description" content="금강케이블 전력케이블을 전류·긍장·전압강하로 선정. 도체저항 기반 전압강하 + 허용전류 체크.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/cable-power.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="금강케이블 전력케이블을 전류·긍장·전압강하로 선정. 도체저항 기반 전압강하 + 허용전류 체크.">
+<meta name="twitter:title" content="전력케이블 선정 계산기 (금강케이블 VV·CV) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/cable-power.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#8A1E2D;--accent-light:#F7E9EB;--accent-mid:#A83543;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-icon:#00C853;--pneumatic-icon:#0088CC;--cable-badge-bg:rgba(138,30,45,.10);--cable-icon:#8A1E2D;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px;background:var(--cable-badge-bg);color:var(--cable-icon)}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.cable-drop .pnav-toggle:hover,.cable-drop .pnav-toggle.open{color:var(--cable-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val{font-family:var(--mono)}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.72)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:.85rem .7rem;cursor:pointer;transition:all .2s;background:#fff;text-align:center}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:11px;color:var(--text2)}
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:250px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup{display:block}
+.tip-popup b{color:#F0A0AC}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:220px}}
+.adv-toggle{display:flex;align-items:center;gap:.35rem;font-size:12px;color:var(--accent);cursor:pointer;margin:.2rem 0 .6rem;padding:.3rem 0;border:none;background:none;font-family:var(--font);font-weight:500;width:100%}
+.adv-toggle .a-arrow{transition:transform .2s}.adv-toggle.open .a-arrow{transform:rotate(180deg)}
+.adv-body{display:none;border:1.5px solid var(--accent-light);border-radius:10px;padding:1rem;background:#fff;margin-bottom:1rem}
+.adv-body.open{display:block}
+.h-row{display:flex;gap:.6rem;align-items:flex-end;flex-wrap:wrap}
+.h-row .h-field{flex:1;min-width:100px}
+.h-row .h-field label{display:block;font-size:11px;font-weight:500;color:var(--text2);margin-bottom:.25rem}
+.h-row .h-field input,.h-row .h-field select{width:100%;padding:.45rem .6rem;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:var(--mono);outline:none}
+.h-preview{background:var(--accent-light);border-radius:7px;padding:.55rem .75rem;font-size:13px;color:var(--accent);margin:.6rem 0;font-family:var(--mono);font-weight:600}
+.h-apply{display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1.1rem;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:var(--accent);color:#fff;font-family:var(--font)}
+.h-apply:disabled{background:var(--border);color:var(--text3);cursor:not-allowed}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+.info-box{background:#FBF0F2;border:1px solid #EBC9CF;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#6E2029;margin-bottom:1rem;line-height:1.6}
+.warn-box{background:var(--warn-bg);border:1px solid #F0C5A0;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-bottom:1rem;line-height:1.6}
+.hero-card{background:linear-gradient(135deg,#8A1E2D,#A83543);color:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.hero-card.none{background:#6B6760}
+.hero-top{font-size:12px;letter-spacing:.5px;opacity:.85;margin-bottom:.35rem}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:.5px}
+.hero-dim{font-size:13px;opacity:.92;margin-top:.35rem}
+.hero-kpis{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.2)}
+.hero-kpi{font-size:12px;opacity:.9}.hero-kpi b{display:block;font-size:17px;font-weight:700;opacity:1;font-family:var(--mono);margin-top:2px}
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .6rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.5rem .6rem;border-bottom:1px solid var(--border-light);white-space:nowrap}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table tr.rec td{background:#FBF0F2}
+.cmp-table .tag-ok{background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-bad{background:var(--bad-bg);color:var(--bad);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.rc-row-val.good{color:var(--ok)}.rc-row-val.bad{color:var(--bad)}
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.print-header{display:none}
+@media print{.partson-nav,.btn-nav,button{display:none!important}.step-wrap{display:block!important}.print-header{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}}
+@media(max-width:600px){.choice-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"전력케이블 선정 계산기 (금강케이블 VV·CV)",
+  "description":"금강케이블 전력케이블(VV·CV)을 전류·긍장·전압강하로 선정하고 허용전류를 체크하는 무료 계산기.",
+  "url":"https://partson.co.kr/cable-power.html",
+  "applicationCategory":"EngineeringApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},
+  "publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}
+}
+</script>
+</head>
+<body class="category-cable">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🔌</div>
+    <div>
+      <h1>전력케이블 선정 계산기<span class="cat-badge">🧵 케이블</span></h1>
+      <p>금강케이블 VV(PVC)·CV(XLPE) — 전류·긍장·전압강하로 공칭단면적(SQ) 선정</p>
+    </div>
+  </div>
+</header>
+
+<a href="guide-cable-power.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#FBF0F2;border:1px solid #EBC9CF;border-radius:10px;text-decoration:none;color:#8A1E2D;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">전력케이블 굵기 선정법이 궁금하세요? — <b>가이드 보기</b></span><span style="color:#A83543;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="print-header"><span style="font-weight:700">PartsOn — 전력케이블 선정 (금강케이블)</span><span id="print-date"></span></div>
+
+  <!-- Step 1 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1 · 조건 입력</div>
+    <div class="question">부하·배선 조건을 입력하세요</div>
+    <div class="question-desc">전선 굵기는 <b>전압강하</b>와 <b>허용전류</b> 둘 다 만족해야 합니다. 전류·긍장을 넣으면 카탈로그 도체저항으로 전압강하를 계산하고 표준 허용전류와 비교합니다.</div>
+
+    <div class="input-group">
+      <label><i class="ti ti-plug" aria-hidden="true"></i>케이블 종류
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>VV(PVC)</b>: 범용, 허용온도 70℃<br><b>CV(XLPE)</b>: 내열·허용전류↑, 90℃. 같은 굵기로 더 큰 전류 가능</div></span>
+      </label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="ct-VV" onclick="selType('VV')"><div class="choice-title">VV (PVC)</div><div class="choice-sub">범용 · 70℃</div></div>
+        <div class="choice-card" id="ct-CV" onclick="selType('CV')"><div class="choice-title">CV (XLPE)</div><div class="choice-sub">내열 · 90℃ · 고전류</div></div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label><i class="ti ti-current" aria-hidden="true"></i>전원 방식</label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="ph-1p" onclick="selPhase('1p')"><div class="choice-title">단상 2선</div><div class="choice-sub">220V</div></div>
+        <div class="choice-card" id="ph-3p" onclick="selPhase('3p')"><div class="choice-title">3상</div><div class="choice-sub">380V</div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="input-group">
+        <label><i class="ti ti-bolt" aria-hidden="true"></i>부하 전류
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">회로의 정격/설계 전류(A)입니다. 모르면 아래 "전력→전류" 도우미로 kW에서 환산하세요.</div></span>
+        </label>
+        <div class="input-wrap"><input type="number" id="in-cur" min="0.1" step="1" placeholder="예: 20"><span class="input-unit">A</span></div>
+      </div>
+      <div class="input-group">
+        <label><i class="ti ti-ruler-2" aria-hidden="true"></i>긍장 (전선 길이)</label>
+        <div class="input-wrap"><input type="number" id="in-len" min="1" step="1" placeholder="예: 50"><span class="input-unit">m</span></div>
+      </div>
+    </div>
+    <button class="adv-toggle" id="pw-toggle" onclick="pwToggle()" type="button"><span>⚡ 전류를 모르시면? 전력(kW)에서 환산</span><span class="a-arrow">▾</span></button>
+    <div class="adv-body" id="pw-body">
+      <div class="h-row">
+        <div class="h-field"><label>전력 (kW)</label><input type="number" id="pw-kw" min="0" step="0.1" placeholder="예: 3.7" oninput="pwCalc()"></div>
+        <div class="h-field"><label>역률</label><input type="number" id="pw-pf" min="0.1" max="1" step="0.05" value="0.9" oninput="pwCalc()"></div>
+        <button class="h-apply" id="pw-apply" onclick="pwApply()" disabled type="button">✓ 전류에 적용</button>
+      </div>
+      <div class="h-preview" id="pw-preview">전류 = — A</div>
+      <div class="input-hint">단상 I=W/(V·pf), 3상 I=W/(√3·V·pf). 전원방식·전압은 위 선택값 사용.</div>
+    </div>
+
+    <button class="adv-toggle" id="adv-toggle" onclick="advToggle()" type="button"><span>⚙️ 허용 전압강하·심수·전압 (선택)</span><span class="a-arrow">▾</span></button>
+    <div class="adv-body" id="adv-body">
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>허용 전압강하
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">배선 구간에서 허용하는 전압강하율입니다. 내선규정상 간선 2~3%, 분기 포함 합계 보통 5% 이내. 기본 3%.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-drop" min="0.5" step="0.5" value="3"><span class="input-unit">%</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>전압 (V)</label>
+          <div class="input-wrap"><input type="number" id="in-volt" min="1" step="1" placeholder="220"></div>
+        </div>
+      </div>
+      <div class="input-group" style="margin-bottom:0">
+        <label>심수 (코어)</label>
+        <div class="input-wrap"><select id="in-cores"><option value="2">2심</option><option value="3">3심</option><option value="4">4심</option></select></div>
+      </div>
+    </div>
+
+    <div class="info-box">⚡ 전압강하 <b>= k·I·R·L/1000</b> (k: 단상 2, 3상 √3 / R=도체저항). 전압강하율 ≤ 허용% <b>그리고</b> 허용전류 ≥ 부하전류인 가장 가는 SQ를 추천합니다.</div>
+
+    <div class="btn-nav"><div></div><button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-wrap" id="step-2">
+    <div class="card">
+      <div class="section-label">Step 2 · 선정 결과</div>
+      <div id="hero-wrap"></div>
+      <div id="result-summary-bar"></div>
+    </div>
+
+    <div class="po-inq-row"></div>
+    <div class="po-related"></div>
+    <div class="po-rep-row"><button class="po-rep-link" onclick="poReport('전력케이블 선정')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
+
+    <div class="card">
+      <div class="section-label">공칭단면적별 비교 (금강 VV/CV)</div>
+      <div class="cmp-table-wrap"><table class="cmp-table"><thead><tr id="cmp-head"></tr></thead><tbody id="cmp-body"></tbody></table></div>
+      <div class="disclaimer" id="disclaimer-text"></div>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 조건 재입력</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   금강케이블 전력(VV/CV) 선정 — calc/cable-power.calc.js 와 동일 유지 (병렬 사본).
+   이 인라인 로직을 고치면 calc.js 도 동일하게 고칠 것. 등급: beta.
+   도체저항·외경=금강 카탈로그. 허용전류=IEC 60364-5-52 방법C·30℃ 표준 참고(보정 필요).
+────────────────────────────────────────────────────────────────── */
+const SQ_LIST=[1.5,2.5,4,6,10];
+const R_OHM={1.5:12.1,2.5:7.41,4:4.61,6:3.08,10:1.83};
+const AMP={
+  VV:{2:{1.5:19.5,2.5:27,4:36,6:46,10:63},3:{1.5:17.5,2.5:24,4:32,6:41,10:57}},
+  CV:{2:{1.5:24,2.5:33,4:45,6:58,10:80},3:{1.5:22,2.5:30,4:40,6:52,10:71}},
+};
+const OD={
+  VV:{1:{1.5:6.5,2.5:7.0,4:8.0,6:8.5,10:9.5},2:{1.5:11.5,2.5:12.0,4:14.0,6:15.5,10:17.0},3:{1.5:12.0,2.5:13.0,4:15.0,6:16.0,10:18.0},4:{1.5:13.0,2.5:14.0,4:16.0,6:17.5,10:20.0}},
+  CV:{1:{1.5:6.3,2.5:6.7,4:7.2,6:7.8,10:9.4},2:{1.5:11.0,2.5:12.0,4:13.0,6:14.0,10:17.0},3:{1.5:11.5,2.5:12.5,4:13.5,6:14.5,10:18.0},4:{1.5:12.5,2.5:13.5,4:14.5,6:16.0,10:20.0}},
+};
+const CABLE_META={VV:{name:'VV',full:'0.6/1kV 비닐절연 비닐시즈 (PVC)',tmax:70},CV:{name:'CV',full:'0.6/1kV 가교폴리에틸렌절연 비닐시즈 (XLPE)',tmax:90}};
+function computePower(input){
+  const type=(input.cableType==='CV')?'CV':'VV', phase=(input.phase==='3p')?'3p':'1p';
+  const I=Math.max(0,+input.currentA||0), L=Math.max(0,+input.lengthM||0);
+  const V=(+input.voltage>0)?+input.voltage:(phase==='3p'?380:220);
+  const dropPct=(+input.dropPct>0)?+input.dropPct:3;
+  const cores=[1,2,3,4].indexOf(+input.cores)>=0?+input.cores:(phase==='3p'?4:2);
+  const loaded=(phase==='3p')?3:2, k=(phase==='3p')?Math.sqrt(3):2;
+  const results=SQ_LIST.map(sq=>{
+    const R=R_OHM[sq], vdV=k*I*R*(L/1000), vdPct=V>0?(vdV/V*100):0;
+    const amp=AMP[type][loaded][sq], od=(OD[type][cores]&&OD[type][cores][sq])||null;
+    const vdOk=vdPct<=dropPct, ampOk=amp>=I, ok=vdOk&&ampOk;
+    return {sq,R,vdV,vdPct,amp,od,loaded,vdOk,ampOk,ok};
+  });
+  const passing=results.filter(r=>r.ok);
+  const recommended=passing.length?passing[0]:null;
+  const notes=[];
+  if(I<=0) notes.push('부하 전류를 입력하세요(전력→전류 도우미 이용 가능).');
+  if(L<=0) notes.push('긍장(전선 길이)을 입력하세요.');
+  if(!recommended&&I>0&&L>0) notes.push('이 조건에서 10SQ(카탈로그 최대)로도 부족합니다(전압강하 또는 허용전류 초과). 긍장 단축·회로 분할·더 큰 규격(제작 문의)을 검토하세요.');
+  notes.push('허용전류는 IEC 60364-5-52 공사방법 C·주위 30℃ 표준 참고값입니다. 실제 설치방식(배관·직매·트레이)·주위온도·집합 회로수에 따라 보정(감소)이 필요합니다.');
+  return {cableType:type,meta:CABLE_META[type],phase,voltage:V,currentA:I,lengthM:L,dropPct,cores,loaded,results,recommended,notes};
+}
+function powerToCurrent(kW,V,pf,phase){kW=+kW||0;V=+V||0;pf=(+pf>0&&+pf<=1)?+pf:0.9;if(kW<=0||V<=0)return 0;const W=kW*1000;return (phase==='3p')?W/(Math.sqrt(3)*V*pf):W/(V*pf);}
+
+/* ── 상태·UI ── */
+const S = { type:'VV', phase:'1p', out:null, in:null };
+function selType(t){ S.type=t; ['VV','CV'].forEach(k=>document.getElementById('ct-'+k).classList.toggle('sel',k===t)); }
+function selPhase(p){ S.phase=p; ['1p','3p'].forEach(k=>document.getElementById('ph-'+k).classList.toggle('sel',k===p)); const v=document.getElementById('in-volt'); if(!v.value||v.value==='220'||v.value==='380') v.value=p==='3p'?380:220; document.getElementById('in-cores').value=p==='3p'?'4':'2'; }
+function pwToggle(){ document.getElementById('pw-toggle').classList.toggle('open'); document.getElementById('pw-body').classList.toggle('open'); }
+function advToggle(){ document.getElementById('adv-toggle').classList.toggle('open'); document.getElementById('adv-body').classList.toggle('open'); }
+let _pwI=null;
+function pwCalc(){
+  const V=parseFloat(document.getElementById('in-volt').value)||(S.phase==='3p'?380:220);
+  const I=powerToCurrent(document.getElementById('pw-kw').value,V,document.getElementById('pw-pf').value,S.phase);
+  _pwI=I>0?Math.round(I*10)/10:null;
+  document.getElementById('pw-preview').innerHTML='전류 = <b>'+(_pwI!=null?_pwI:'—')+' A</b>'+(_pwI!=null?' ('+(S.phase==='3p'?'3상':'단상')+' '+V+'V)':'');
+  document.getElementById('pw-apply').disabled=(_pwI==null);
+}
+function pwApply(){ if(_pwI!=null){ document.getElementById('in-cur').value=_pwI; document.getElementById('pw-toggle').classList.remove('open'); document.getElementById('pw-body').classList.remove('open'); } }
+function goStep(n){ document.querySelector('.step-wrap.active').classList.remove('active'); document.getElementById('step-'+n).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+const fmt=(n,d=2)=>{ if(!isFinite(n)||n==null)return '—'; return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0}); };
+
+function runCalc(){
+  const I=parseFloat(document.getElementById('in-cur').value);
+  const L=parseFloat(document.getElementById('in-len').value);
+  if(!I||I<=0){ alert('부하 전류를 입력하세요(전력→전류 도우미 이용 가능).'); return; }
+  if(!L||L<=0){ alert('긍장(전선 길이)을 입력하세요.'); return; }
+  const input={ cableType:S.type, phase:S.phase, voltage:parseFloat(document.getElementById('in-volt').value)||(S.phase==='3p'?380:220),
+    currentA:I, lengthM:L, dropPct:parseFloat(document.getElementById('in-drop').value)||3, cores:parseInt(document.getElementById('in-cores').value)||(S.phase==='3p'?4:2) };
+  S.in=input; S.out=computePower(input);
+  renderResults();
+  goStep(2);
+}
+
+function renderResults(){
+  const out=S.out, i=S.in, rec=out.recommended;
+  const hw=document.getElementById('hero-wrap');
+  if(rec){
+    hw.innerHTML=`<div class="hero-card">
+      <div class="hero-top">✅ 추천 규격 (전압강하·허용전류 충족 최소 SQ)</div>
+      <div class="hero-model" id="heroModel">금강 ${out.meta.name} ${rec.sq}SQ × ${i.cores}C</div>
+      <div class="hero-dim" id="heroDim">${out.meta.full} · 외경 ${rec.od?rec.od+'mm':'—'} · 도체저항 ${rec.R} Ω/km</div>
+      <div class="hero-kpis">
+        <div class="hero-kpi">전압강하<b>${fmt(rec.vdV,2)} V (${fmt(rec.vdPct,2)}%)</b></div>
+        <div class="hero-kpi">허용전류(참고)<b>${rec.amp} A</b></div>
+        <div class="hero-kpi">부하전류<b>${fmt(i.currentA,1)} A</b></div>
+      </div></div>`;
+  } else {
+    hw.innerHTML=`<div class="hero-card none"><div class="hero-top">선정 결과</div><div class="hero-model" id="heroModel" style="font-size:20px">10SQ로도 부족</div><div class="hero-dim" id="heroDim">긍장 단축·회로 분할·더 큰 규격(제작 문의)을 검토하세요.</div></div>`;
+  }
+  let noteHtml=out.notes.map(n=>`<div class="warn-box" style="margin-bottom:.5rem">⚠️ ${n}</div>`).join('');
+  document.getElementById('result-summary-bar').innerHTML=
+    `<div class="info-box" style="margin-bottom:.5rem">입력: ${out.meta.name}(${out.meta.tmax}℃) · ${i.phase==='3p'?'3상':'단상'} ${i.voltage}V · 전류 <b>${fmt(i.currentA,1)} A</b> · 긍장 <b>${fmt(i.lengthM,0)} m</b> · 허용강하 <b>${fmt(i.dropPct,1)}%</b> · ${i.cores}심</div>${noteHtml}`;
+
+  document.getElementById('cmp-head').innerHTML=['SQ','도체저항','전압강하','전압강하율','허용전류(참고)','판정'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('cmp-body').innerHTML=out.results.map(r=>{
+    const tag=r.ok?'<span class="tag-ok">✅ 적합</span>':(!r.ampOk?'<span class="tag-bad">❌ 전류초과</span>':'<span class="tag-bad">❌ 강하초과</span>');
+    const isRec=rec&&r.sq===rec.sq;
+    return `<tr class="${isRec?'rec':''}"><td><b>${r.sq} SQ</b></td><td class="mono">${r.R} Ω/km</td><td class="mono">${fmt(r.vdV,2)} V</td><td class="mono ${r.vdOk?'good':'bad'}">${fmt(r.vdPct,2)} %</td><td class="mono ${r.ampOk?'good':'bad'}">${r.amp} A</td><td>${tag}</td></tr>`;
+  }).join('');
+
+  document.getElementById('disclaimer-text').innerHTML=
+    `전압강하 = k·I·R·L/1000 (단상 k=2, 3상 k=√3). 도체저항·외경은 금강케이블 카탈로그(VV/CV) 실측값.<br>
+     <b>베타 계산기</b> — 전압강하는 카탈로그 저항으로 정확 계산하나, <b>허용전류는 IEC 60364-5-52 공사방법 C·주위 30℃ 표준 참고값</b>입니다. 실제 설치방식(배관·직매·트레이)·주위온도·집합 회로수에 따라 반드시 보정하세요. 과소선정은 안전·발열 위험.<br>
+     금강 카탈로그 수록 규격은 1.5~10SQ(1~4심)입니다. 그 이상은 제작 문의. · 데이터: 금강케이블 카탈로그 + IEC 60364-5-52`;
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('in-volt').value=220;
+  const pd=document.getElementById('print-date'); if(pd) pd.textContent=new Date().toLocaleDateString('ko-KR');
+});
+</script>
+
+<script>
+function poGetInputs(){try{
+  return poInputsStr([['케이블',S.type],['전원',S.phase==='3p'?'3상':'단상'],['전압',S.in?S.in.voltage:null,'V'],['전류',S.in?S.in.currentA:null,'A'],['긍장',S.in?S.in.lengthM:null,'m'],['허용강하',S.in?S.in.dropPct:null,'%'],['추천',S.out&&S.out.recommended?('금강 '+S.out.meta.name+' '+S.out.recommended.sq+'SQ×'+S.in.cores+'C'):null]]);
+}catch(e){return '';}}
+</script>
+<script src="js/common.js"></script>
+</body>
+</html>

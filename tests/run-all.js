@@ -29,6 +29,7 @@ const TEST_FILES = [
   'tests/rotary-actuator.test.js',
   'tests/electric-actuator.test.js',
   'tests/cable-coax.test.js',
+  'tests/cable-power.test.js',
 ];
 
 // node --test 출력에서 pass/fail 카운트 (ℹ pass N / # pass N 두 형식 모두 지원)
