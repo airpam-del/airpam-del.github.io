@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="index,follow">
+<title>제어케이블 선정 계산기 (금강케이블 CVV·CCV-S) | PartsOn(파츠온)</title>
+<meta name="description" content="파츠온(PartsOn) — 금강케이블 제어케이블(CVV·CCV-S)을 신호 수(심수)·공칭단면적·차폐 기준으로 선정하세요. 카탈로그 라인업·완성외경 기반 품번 추천 무료 계산기.">
+<meta name="keywords" content="파츠온, PartsOn, 금강케이블, 제어케이블 선정, CVV, CCV-S, 심수, 차폐, 공칭단면적, 완성외경">
+<meta property="og:title" content="제어케이블 선정 계산기 (금강케이블 CVV·CCV-S) | PartsOn">
+<meta property="og:description" content="금강 제어케이블을 심수·SQ·차폐로 선정. 카탈로그 라인업 기반 품번·외경 추천.">
+<meta property="og:image" content="https://partson.co.kr/og-image.png">
+<meta property="og:url" content="https://partson.co.kr/cable-control.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="파츠온 PartsOn">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://partson.co.kr/og-image.png">
+<meta name="twitter:description" content="금강 제어케이블을 심수·SQ·차폐로 선정. 카탈로그 라인업 기반 품번·외경 추천.">
+<meta name="twitter:title" content="제어케이블 선정 계산기 (금강케이블 CVV·CCV-S) | PartsOn">
+<link rel="canonical" href="https://partson.co.kr/cable-control.html">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F2ED;--card:#FFFFFF;--border:#D8D4CC;--border-light:#E8E5DF;
+  --accent:#8A1E2D;--accent-light:#F7E9EB;--accent-mid:#A83543;
+  --text:#1A1814;--text2:#6B6760;--text3:#9E9B96;
+  --ok:#1A5C2A;--ok-bg:#EBF5EE;--warn:#8B4A1A;--warn-bg:#FDF3EB;--bad:#8B1A1A;--bad-bg:#FDF0F0;
+  --radius:12px;--font:'IBM Plex Sans KR',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --electric-icon:#00C853;--pneumatic-icon:#0088CC;--cable-badge-bg:rgba(138,30,45,.10);--cable-icon:#8A1E2D;
+}
+.cat-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;vertical-align:middle;margin-left:8px;letter-spacing:.3px;background:var(--cable-badge-bg);color:var(--cable-icon)}
+.pneumatic-drop .pnav-toggle:hover,.pneumatic-drop .pnav-toggle.open{color:var(--pneumatic-icon) !important}
+.electric-drop .pnav-toggle:hover,.electric-drop .pnav-toggle.open{color:var(--electric-icon) !important}
+.cable-drop .pnav-toggle:hover,.cable-drop .pnav-toggle.open{color:var(--cable-icon) !important}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.5}
+.input-wrap input,.input-wrap select,.r-val{font-family:var(--mono)}
+.partson-nav{background:#0f2419;padding:0 1.5rem;display:flex;align-items:center;gap:0}
+.partson-nav .nav-brand{font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);padding:12px 16px 12px 0;border-right:1px solid rgba(255,255,255,0.1);margin-right:4px}
+.partson-nav a{display:inline-block;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.15s}
+.partson-nav a:hover{color:#fff}
+.partson-nav a.active{color:#fff;border-bottom:2px solid #38BDF8}
+.pnav-drop{position:relative}
+.pnav-toggle{background:none;border:none;cursor:pointer;padding:12px 16px;font-size:13px;color:rgba(255,255,255,0.6);font-family:inherit;transition:color .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+.pnav-toggle:hover,.pnav-toggle.open{color:#fff}
+.pnav-menu{display:none;position:absolute;top:100%;left:0;background:#0a1d12;border:1px solid rgba(255,255,255,0.1);border-radius:8px;min-width:185px;padding:4px 0;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pnav-menu.open{display:block}
+.pnav-menu a{display:block;padding:9px 16px;font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;transition:all .12s;white-space:nowrap}
+.pnav-menu a:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.pnav-menu a.active{color:#38BDF8;font-weight:600}
+header{background:var(--accent);color:#fff;padding:1.5rem 1.5rem 1.25rem}
+.hdr{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr-icon{width:44px;height:44px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;margin-bottom:2px}
+.hdr p{font-size:12px;color:rgba(255,255,255,.72)}
+main{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.section-label{font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:1rem}
+.question{font-size:17px;font-weight:600;color:var(--text);margin-bottom:4px}
+.question-desc{font-size:13px;color:var(--text2);margin-bottom:1.25rem;line-height:1.6}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+.choice-card{border:2px solid var(--border);border-radius:10px;padding:.85rem .7rem;cursor:pointer;transition:all .2s;background:#fff;text-align:center}
+.choice-card:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.choice-card.sel{border-color:var(--accent);background:var(--accent-light)}
+.choice-card .choice-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.choice-card .choice-sub{font-size:11px;color:var(--text2)}
+.input-group{margin-bottom:1.1rem}
+.input-group label{display:flex;align-items:center;gap:.4rem;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:.35rem}
+.input-wrap{position:relative}
+.input-wrap input,.input-wrap select{width:100%;padding:.6rem .75rem;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff;color:var(--text);outline:none;transition:border-color .15s}
+.input-wrap input:focus,.input-wrap select:focus{border-color:var(--accent)}
+.input-unit{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text3);pointer-events:none}
+.input-hint{font-size:11px;color:var(--text3);margin-top:.3rem;line-height:1.5}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.tip-btn{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--text3);font-size:10px;font-weight:700;cursor:pointer;border:none;flex-shrink:0;line-height:1;transition:background .15s;font-family:var(--font)}
+.tip-btn:hover{background:var(--accent);color:#fff}
+.tip-wrap{position:relative;display:inline-flex}
+.tip-popup{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(100% + 7px);background:#1A1814;color:#fff;font-size:12px;line-height:1.6;padding:.65rem .9rem;border-radius:8px;white-space:normal;width:250px;z-index:100;font-weight:400;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.tip-popup::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#1A1814}
+.tip-wrap:hover .tip-popup{display:block}
+.tip-popup b{color:#F0A0AC}
+@media(max-width:480px){.tip-popup{left:0;transform:none;width:220px}}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.5rem;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-mid)}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text2)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-nav{display:flex;justify-content:space-between;margin-top:1.25rem;gap:.75rem}
+.info-box{background:#FBF0F2;border:1px solid #EBC9CF;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:#6E2029;margin-bottom:1rem;line-height:1.6}
+.warn-box{background:var(--warn-bg);border:1px solid #F0C5A0;border-radius:8px;padding:.75rem 1rem;font-size:12px;color:var(--warn);margin-bottom:1rem;line-height:1.6}
+.hero-card{background:linear-gradient(135deg,#8A1E2D,#A83543);color:#fff;border-radius:14px;padding:1.5rem;margin-bottom:1rem}
+.hero-card.none{background:#6B6760}
+.hero-top{font-size:12px;letter-spacing:.5px;opacity:.85;margin-bottom:.35rem}
+.hero-model{font-size:26px;font-weight:700;letter-spacing:.5px}
+.hero-dim{font-size:13px;opacity:.92;margin-top:.35rem}
+.hero-kpis{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.2)}
+.hero-kpi{font-size:12px;opacity:.9}.hero-kpi b{display:block;font-size:17px;font-weight:700;opacity:1;font-family:var(--mono);margin-top:2px}
+.cmp-table-wrap{overflow-x:auto;margin-bottom:1rem}
+.cmp-table{width:100%;border-collapse:collapse;font-size:13px}
+.cmp-table th{background:var(--accent);color:#fff;padding:.6rem .6rem;text-align:left;font-weight:500;white-space:nowrap}
+.cmp-table td{padding:.5rem .6rem;border-bottom:1px solid var(--border-light);white-space:nowrap}
+.cmp-table td.mono{font-family:var(--mono)}
+.cmp-table tr.rec td{background:#FBF0F2}
+.cmp-table .tag-ok{background:var(--ok-bg);color:var(--ok);border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.cmp-table .tag-na{background:#EFECE6;color:#9E9B96;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+.disclaimer{font-size:11px;color:var(--text3);border-top:1px solid var(--border-light);padding-top:.75rem;margin-top:1rem;line-height:1.6}
+.step-wrap{display:none}.step-wrap.active{display:block}
+.print-header{display:none}
+@media print{.partson-nav,.btn-nav,button{display:none!important}.step-wrap{display:block!important}.print-header{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:2px solid #000;margin-bottom:1rem;font-size:12px}}
+@media(max-width:600px){.choice-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)}
+</style>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org","@type":"WebApplication",
+  "name":"제어케이블 선정 계산기 (금강케이블 CVV·CCV-S)",
+  "description":"금강케이블 제어케이블(CVV·CCV-S)을 신호 수(심수)·공칭단면적·차폐로 선정하는 무료 계산기.",
+  "url":"https://partson.co.kr/cable-control.html",
+  "applicationCategory":"EngineeringApplication","operatingSystem":"Web",
+  "offers":{"@type":"Offer","price":"0","priceCurrency":"KRW"},
+  "publisher":{"@type":"Organization","name":"PartsOn","url":"https://partson.co.kr/"}
+}
+</script>
+</head>
+<body class="category-cable">
+
+<div id="site-nav"></div>
+
+<header>
+  <div class="hdr">
+    <div class="hdr-icon">🎛️</div>
+    <div>
+      <h1>제어케이블 선정 계산기<span class="cat-badge">🧵 케이블</span></h1>
+      <p>금강케이블 CVV·CCV-S — 신호 수(심수)·SQ·차폐로 품번·완성외경 선정</p>
+    </div>
+  </div>
+</header>
+
+<a href="guide-cable-control.html" style="display:flex;align-items:center;gap:8px;max-width:760px;margin:1rem auto 0;padding:.7rem 1rem;background:#FBF0F2;border:1px solid #EBC9CF;border-radius:10px;text-decoration:none;color:#8A1E2D;font-size:13px;font-weight:500;line-height:1.4;font-family:inherit"><span style="font-size:16px">📖</span><span style="flex:1">제어케이블 선정법이 궁금하세요? — <b>가이드 보기</b></span><span style="color:#A83543;font-size:16px;flex-shrink:0">→</span></a>
+
+<main>
+  <div class="print-header"><span style="font-weight:700">PartsOn — 제어케이블 선정 (금강케이블)</span><span id="print-date"></span></div>
+
+  <!-- Step 1 -->
+  <div class="step-wrap card active" id="step-1">
+    <div class="section-label">Step 1 · 조건 입력</div>
+    <div class="question">제어 회로 조건을 입력하세요</div>
+    <div class="question-desc">제어케이블은 전류용량이 아니라 <b>필요한 신호(접점) 수 = 심수</b>로 고릅니다. 필요 심수와 굵기, 차폐 유무를 선택하면 금강 카탈로그에서 맞는 품번을 찾아줍니다.</div>
+
+    <div class="input-group">
+      <label><i class="ti ti-shield-half" aria-hidden="true"></i>차폐 유무
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup"><b>CVV(일반)</b>: 일반 제어회로<br><b>CCV-S(차폐)</b>: 동테이프 정전차폐. 인버터·동력선 근접 등 노이즈 환경에서 신호 보호</div></span>
+      </label>
+      <div class="choice-grid">
+        <div class="choice-card sel" id="sh-CVV" onclick="selShield('CVV')"><div class="choice-title">CVV (일반)</div><div class="choice-sub">일반 제어회로</div></div>
+        <div class="choice-card" id="sh-CCVS" onclick="selShield('CCVS')"><div class="choice-title">CCV-S (차폐)</div><div class="choice-sub">정전차폐 · 노이즈</div></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="input-group">
+        <label><i class="ti ti-circuit-switch-closed" aria-hidden="true"></i>필요 신호 수 (심수)
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">제어에 필요한 접점·신호선 개수입니다. 예비심을 1~2 더해 여유를 두는 것을 권장합니다. 사용 가능 심수에서 이상인 최소 규격을 추천합니다.</div></span>
+        </label>
+        <div class="input-wrap"><input type="number" id="in-cores" min="1" step="1" placeholder="예: 6"><span class="input-unit">심</span></div>
+      </div>
+      <div class="input-group">
+        <label><i class="ti ti-circle-dot" aria-hidden="true"></i>공칭단면적 (SQ)
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">제어·신호용은 보통 1.5 또는 2.5SQ를 씁니다. 심수가 많으면 큰 SQ는 제공되지 않을 수 있습니다.</div></span>
+        </label>
+        <div class="input-wrap"><select id="in-sq">
+          <option value="1.5">1.5 ㎟</option>
+          <option value="2.5" selected>2.5 ㎟</option>
+          <option value="4">4 ㎟</option>
+          <option value="6">6 ㎟</option>
+          <option value="10">10 ㎟</option>
+        </select></div>
+      </div>
+    </div>
+
+    <div class="info-box">🎛️ 제어케이블은 <b>심수(신호 수)</b>로 선정합니다. 금강 수록: CVV·CCV-S, 2~30심 × 1.5~10SQ(고심수는 작은 SQ만 제공). 예비심 1~2 여유 권장.</div>
+
+    <div class="btn-nav"><div></div><button class="btn btn-primary" onclick="runCalc()">계산 실행 →</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-wrap" id="step-2">
+    <div class="card">
+      <div class="section-label">Step 2 · 선정 결과</div>
+      <div id="hero-wrap"></div>
+      <div id="result-summary-bar"></div>
+    </div>
+
+    <div class="po-inq-row"></div>
+    <div class="po-related"></div>
+    <div class="po-rep-row"><button class="po-rep-link" onclick="poReport('제어케이블 선정')">🚩 계산 결과가 이상한가요? 오류 신고</button></div>
+
+    <div class="card">
+      <div class="section-label">심수별 라인업 (선택 SQ·타입)</div>
+      <div class="cmp-table-wrap"><table class="cmp-table"><thead><tr id="cmp-head"></tr></thead><tbody id="cmp-body"></tbody></table></div>
+      <div class="disclaimer" id="disclaimer-text"></div>
+    </div>
+
+    <div class="btn-nav">
+      <button class="btn btn-ghost" onclick="goStep(1)">← 조건 재입력</button>
+      <button class="btn btn-ghost" onclick="window.print()">📄 PDF 저장</button>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ──────────────────────────────────────────────────────────────
+   금강케이블 제어(CVV/CCV-S) 선정 — calc/cable-control.calc.js 와 동일 유지 (병렬 사본).
+   이 인라인 로직을 고치면 calc.js 도 동일하게 고칠 것. 등급: verified.
+   완성외경·도체저항=금강 카탈로그 CVV(p.17)/CCV-S(p.19) 실측.
+────────────────────────────────────────────────────────────────── */
+const R_CTRL={1.5:12.1,2.5:7.41,4:4.61,6:3.08,10:1.83};
+const OD_CTRL={
+  CVV:{2:{1.5:11.0,2.5:12.0,4:14.0,6:15.0,10:17.0},3:{1.5:11.5,2.5:12.5,4:14.5,6:16.0,10:18.0},4:{1.5:12.5,2.5:13.5,4:16.0,6:17.0,10:19.5},5:{1.5:13.5,2.5:14.5,4:17.0,6:18.5,10:21.0},6:{1.5:14.5,2.5:15.5,4:18.5,6:21.0,10:23.0},7:{1.5:14.5,2.5:15.5,4:18.5,6:21.0,10:23.0},8:{1.5:15.5,2.5:16.5,4:20.0,6:22.0,10:25.0},10:{1.5:18.0,2.5:19.5,4:23.0,6:26.0,10:29.0},12:{1.5:18.5,2.5:20.0,4:24.0,6:27.0,10:30.0},15:{1.5:19.5,2.5:22.0,4:26.0,6:29.0},20:{1.5:22.0,2.5:24.0,4:29.0,6:32.0},30:{1.5:26.0,2.5:28.0,4:35.0}},
+  CCVS:{2:{1.5:11.5,2.5:12.5,4:14.5,6:15.5,10:17.5},3:{1.5:12.0,2.5:13.0,4:15.5,6:16.5,10:18.5},4:{1.5:13.0,2.5:14.0,4:16.5,6:18.0,10:20.0},5:{1.5:14.0,2.5:15.5,4:18.0,6:19.5,10:22.0},6:{1.5:15.5,2.5:16.5,4:19.0,6:21.0,10:24.0},7:{1.5:15.0,2.5:16.5,4:19.0,6:21.0,10:24.0},8:{1.5:16.0,2.5:17.5,4:20.5,6:22.5,10:25.5},10:{1.5:18.5,2.5:20.0,4:24.0,6:26.5},12:{1.5:19.0,2.5:20.5,4:25.0,6:27.0},15:{1.5:20.5,2.5:22.0,4:26.5},20:{1.5:22.5,2.5:24.5},25:{1.5:24.5,2.5:27.5},30:{1.5:26.0,2.5:29.0}},
+};
+const CTRL_META={CVV:{name:'CVV',full:'0.6/1kV 제어용 비닐절연 비닐시즈 (PVC)',shield:false},CCVS:{name:'CCV-S',full:'0.6/1kV 정전차폐부 제어용 (XLPE절연·동테이프 차폐)',shield:true}};
+function coreList(type){ return Object.keys(OD_CTRL[type]).map(Number).sort((a,b)=>a-b); }
+function computeControl(input){
+  const type=(input.shieldType==='CCVS')?'CCVS':'CVV';
+  const need=Math.max(1,Math.round(+input.coresNeeded||1));
+  const sq=([1.5,2.5,4,6,10].indexOf(+input.sq)>=0)?+input.sq:2.5;
+  const cores=coreList(type);
+  const avail=cores.filter(c=>OD_CTRL[type][c][sq]!=null);
+  const results=avail.map(c=>{const od=OD_CTRL[type][c][sq];const ok=c>=need;const spare=c-need;return {cores:c,sq,od,R:R_CTRL[sq],ok,spare,pn:CTRL_META[type].name+' '+c+'C×'+sq+'SQ'};});
+  const passing=results.filter(r=>r.ok);
+  const recommended=passing.length?passing[0]:null;
+  const notes=[];
+  if(!recommended) notes.push('이 SQ('+sq+'㎟)에서는 '+need+'심 이상 제공 규격이 없습니다. SQ를 낮추거나(고심수는 작은 SQ 제공) 케이블을 분할하세요. 최대 제공 심수: '+(avail.length?avail[avail.length-1]:'-')+'심.');
+  notes.push('제어케이블은 신호·접점용이라 전류용량이 아닌 신호 수(심수)로 선정합니다. 노이즈 환경·인버터 주변은 차폐형(CCV-S)을 권장합니다.');
+  return {shieldType:type,meta:CTRL_META[type],coresNeeded:need,sq,results,recommended,notes,availCores:avail};
+}
+
+/* ── 상태·UI ── */
+const S = { shield:'CVV', out:null, in:null };
+function selShield(t){ S.shield=t; ['CVV','CCVS'].forEach(k=>document.getElementById('sh-'+k).classList.toggle('sel',k===t)); }
+function goStep(n){ document.querySelector('.step-wrap.active').classList.remove('active'); document.getElementById('step-'+n).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+const fmt=(n,d=1)=>{ if(!isFinite(n)||n==null)return '—'; return Number(n).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0}); };
+
+function runCalc(){
+  const c=parseInt(document.getElementById('in-cores').value);
+  if(!c||c<=0){ alert('필요 신호 수(심수)를 입력하세요.'); return; }
+  const input={ shieldType:S.shield, coresNeeded:c, sq:parseFloat(document.getElementById('in-sq').value) };
+  S.in=input; S.out=computeControl(input);
+  renderResults();
+  goStep(2);
+}
+
+function renderResults(){
+  const out=S.out, i=S.in, rec=out.recommended;
+  const hw=document.getElementById('hero-wrap');
+  if(rec){
+    hw.innerHTML=`<div class="hero-card">
+      <div class="hero-top">✅ 추천 품번 (필요 ${i.coresNeeded}심 이상 최소 규격)</div>
+      <div class="hero-model" id="heroModel">금강 ${rec.pn}</div>
+      <div class="hero-dim" id="heroDim">${out.meta.full} · 완성외경 ${rec.od}mm</div>
+      <div class="hero-kpis">
+        <div class="hero-kpi">심수<b>${rec.cores} C</b></div>
+        <div class="hero-kpi">예비심<b>${rec.spare} 심</b></div>
+        <div class="hero-kpi">완성외경<b>${rec.od} mm</b></div>
+        <div class="hero-kpi">도체저항<b>${rec.R} Ω/km</b></div>
+      </div></div>`;
+  } else {
+    hw.innerHTML=`<div class="hero-card none"><div class="hero-top">선정 결과</div><div class="hero-model" id="heroModel" style="font-size:20px">제공 규격 없음</div><div class="hero-dim" id="heroDim">SQ를 낮추거나 케이블을 분할하세요.</div></div>`;
+  }
+  let noteHtml=out.notes.map(n=>`<div class="warn-box" style="margin-bottom:.5rem">⚠️ ${n}</div>`).join('');
+  document.getElementById('result-summary-bar').innerHTML=
+    `<div class="info-box" style="margin-bottom:.5rem">입력: ${out.meta.name}(${out.meta.shield?'차폐':'일반'}) · 필요 <b>${i.coresNeeded}심</b> · <b>${i.sq}㎟</b> — 제공 심수: ${out.availCores.join('·')}</div>${noteHtml}`;
+
+  document.getElementById('cmp-head').innerHTML=['품번','심수','완성외경','도체저항','판정'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('cmp-body').innerHTML=out.results.map(r=>{
+    const tag=r.ok?(rec&&r.cores===rec.cores?'<span class="tag-ok">✅ 추천</span>':'<span class="tag-ok">적합</span>'):'<span class="tag-na">심수 부족</span>';
+    const isRec=rec&&r.cores===rec.cores;
+    return `<tr class="${isRec?'rec':''}"><td><b>${r.pn}</b></td><td class="mono">${r.cores} C</td><td class="mono">${r.od} mm</td><td class="mono">${r.R} Ω/km</td><td>${tag}</td></tr>`;
+  }).join('');
+
+  document.getElementById('disclaimer-text').innerHTML=
+    `완성외경·도체저항은 금강케이블 카탈로그(CVV p.17 / CCV-S p.19) 실측값. 제어케이블은 심수(신호 수)로 선정.<br>
+     <b>검증완료</b> — 카탈로그 라인업·완성외경 대조 기준. 전류가 큰 회로는 전력케이블(VV/CV)로, 노이즈 환경은 차폐형(CCV-S)으로.<br>
+     금강 수록: 2~30심 × 1.5~10SQ(고심수는 작은 SQ만 제공). 그 외 규격·길이는 금강케이블에 문의. · 데이터: 금강케이블 카탈로그`;
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const pd=document.getElementById('print-date'); if(pd) pd.textContent=new Date().toLocaleDateString('ko-KR');
+});
+</script>
+
+<script>
+function poGetInputs(){try{
+  return poInputsStr([['차폐',S.shield==='CCVS'?'CCV-S(차폐)':'CVV(일반)'],['필요심수',S.in?S.in.coresNeeded:null,'심'],['SQ',S.in?S.in.sq:null,'㎟'],['추천',S.out&&S.out.recommended?('금강 '+S.out.recommended.pn):null],['완성외경',S.out&&S.out.recommended?S.out.recommended.od:null,'mm']]);
+}catch(e){return '';}}
+</script>
+<script src="js/common.js"></script>
+</body>
+</html>
