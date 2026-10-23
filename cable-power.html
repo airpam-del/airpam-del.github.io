@@ -176,6 +176,19 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
       </div>
     </div>
 
+    <div class="input-group">
+      <label><i class="ti ti-building-factory-2" aria-hidden="true"></i>설치방식 (공사방법)
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">허용전류는 포설 방식에 따라 달라집니다(IEC 60364-5-52).<br><b>A1</b> 단열벽 전선관(최저)<br><b>B1</b> 전선관 배선<br><b>C</b> 노출·벽면 직결(기본)<br><b>D</b> 지중 매설</div></span>
+      </label>
+      <div class="input-wrap"><select id="in-method" onchange="selMethod()">
+        <option value="A1">A1 · 단열벽 내 전선관 (가장 보수적)</option>
+        <option value="B1">B1 · 전선관 배선</option>
+        <option value="C" selected>C · 노출·벽면 직결 (기본)</option>
+        <option value="D">D · 지중 매설</option>
+      </select></div>
+      <div class="input-hint" id="method-hint">케이블을 벽면·트레이에 직접 클립 고정(노출)</div>
+    </div>
+
     <div class="two-col">
       <div class="input-group">
         <label><i class="ti ti-bolt" aria-hidden="true"></i>부하 전류
@@ -211,6 +224,20 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
         <div class="input-group" style="margin-bottom:.6rem">
           <label>전압 (V)</label>
           <div class="input-wrap"><input type="number" id="in-volt" min="1" step="1" placeholder="220"></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>주위온도
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">포설 환경의 주위온도입니다. 기중 기준 30℃, 지중 기준 20℃. 더 높으면 허용전류가 감소합니다(B.52.14/15 보정).</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-temp" min="10" max="80" step="1" placeholder="30"><span class="input-unit">℃</span></div>
+        </div>
+        <div class="input-group" style="margin-bottom:.6rem">
+          <label>집합 회로수
+            <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">같은 관·트레이에 묶이는 회로(케이블) 수. 많을수록 허용전류가 감소합니다(B.52.17 집합 보정). 단독 포설이면 1.</div></span>
+          </label>
+          <div class="input-wrap"><input type="number" id="in-circuits" min="1" max="20" step="1" placeholder="1"></div>
         </div>
       </div>
       <div class="input-group" style="margin-bottom:0">
@@ -257,10 +284,53 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
 ────────────────────────────────────────────────────────────────── */
 const SQ_LIST=[1.5,2.5,4,6,10];
 const R_OHM={1.5:12.1,2.5:7.41,4:4.61,6:3.08,10:1.83};
-const AMP={
-  VV:{2:{1.5:19.5,2.5:27,4:36,6:46,10:63},3:{1.5:17.5,2.5:24,4:32,6:41,10:57}},
-  CV:{2:{1.5:24,2.5:33,4:45,6:58,10:80},3:{1.5:22,2.5:30,4:40,6:52,10:71}},
+const AMP_BASE={
+  VV:{
+    A1:{2:{1.5:14.5,2.5:19.5,4:26,6:34,10:46},3:{1.5:13.5,2.5:18,4:24,6:31,10:42}},
+    B1:{2:{1.5:17.5,2.5:24,4:32,6:41,10:57},3:{1.5:15.5,2.5:21,4:28,6:36,10:50}},
+    C:{2:{1.5:19.5,2.5:27,4:36,6:46,10:63},3:{1.5:17.5,2.5:24,4:32,6:41,10:57}},
+    D:{2:{1.5:22,2.5:29,4:38,6:47,10:63},3:{1.5:18,2.5:24,4:31,6:39,10:52}},
+  },
+  CV:{
+    A1:{2:{1.5:19,2.5:26,4:35,6:45,10:61},3:{1.5:17,2.5:23,4:31,6:40,10:54}},
+    B1:{2:{1.5:23,2.5:31,4:42,6:54,10:75},3:{1.5:20,2.5:28,4:37,6:48,10:66}},
+    C:{2:{1.5:24,2.5:33,4:45,6:58,10:80},3:{1.5:22,2.5:30,4:40,6:52,10:71}},
+    D:{2:{1.5:26,2.5:34,4:44,6:56,10:73},3:{1.5:22,2.5:29,4:37,6:46,10:61}},
+  },
 };
+const METHODS={
+  A1:{label:'A1 · 단열벽 내 전선관',env:'air',ref:30,desc:'절연전선을 단열벽 속 전선관에 포설(방열 최저, 가장 보수적)'},
+  B1:{label:'B1 · 전선관 배선',env:'air',ref:30,desc:'전선관(노출·매입) 안에 절연전선 포설 — 일반 배관'},
+  C:{label:'C · 노출·벽면 직결',env:'air',ref:30,desc:'케이블을 벽면·트레이에 직접 클립 고정(노출)'},
+  D:{label:'D · 지중 매설',env:'ground',ref:20,desc:'지중 전선관/직매(토양저항 2.5 K·m/W 기준)'},
+};
+const TEMP_AIR={
+  VV:{10:1.22,15:1.17,20:1.12,25:1.06,30:1.0,35:0.94,40:0.87,45:0.79,50:0.71,55:0.61,60:0.50},
+  CV:{10:1.15,15:1.12,20:1.08,25:1.04,30:1.0,35:0.96,40:0.91,45:0.87,50:0.82,55:0.76,60:0.71,65:0.65,70:0.58,75:0.50,80:0.41},
+};
+const TEMP_GND={
+  VV:{10:1.10,15:1.05,20:1.0,25:0.95,30:0.89,35:0.84,40:0.77,45:0.71,50:0.63,55:0.55,60:0.45},
+  CV:{10:1.07,15:1.04,20:1.0,25:0.96,30:0.93,35:0.89,40:0.85,45:0.80,50:0.76,55:0.71,60:0.65,65:0.60,70:0.53,75:0.46,80:0.38},
+};
+const GROUP={1:1.0,2:0.80,3:0.70,4:0.65,5:0.60,6:0.57,7:0.54,8:0.52,9:0.50,12:0.45,16:0.41,20:0.38};
+function tempFactor(type,env,ambientC){
+  const tbl=(env==='ground')?TEMP_GND[type]:TEMP_AIR[type];
+  const keys=Object.keys(tbl).map(Number).sort((a,b)=>a-b);
+  const t=(ambientC==null||!isFinite(ambientC))?keys[0]:+ambientC;
+  if(t<=keys[0]) return tbl[keys[0]];
+  if(t>=keys[keys.length-1]) return tbl[keys[keys.length-1]];
+  for(let i=0;i<keys.length-1;i++){const a=keys[i],b=keys[i+1];if(t>=a&&t<=b){const fa=tbl[a],fb=tbl[b];return fa+(fb-fa)*(t-a)/(b-a);}}
+  return 1;
+}
+function groupFactor(circuits){
+  const n=Math.max(1,Math.round(+circuits||1));
+  const keys=Object.keys(GROUP).map(Number).sort((a,b)=>a-b);
+  if(n<=keys[0]) return GROUP[keys[0]];
+  if(n>=keys[keys.length-1]) return GROUP[keys[keys.length-1]];
+  if(GROUP[n]!=null) return GROUP[n];
+  for(let i=0;i<keys.length;i++){if(keys[i]>=n) return GROUP[keys[i]];}
+  return GROUP[keys[keys.length-1]];
+}
 const OD={
   VV:{1:{1.5:6.5,2.5:7.0,4:8.0,6:8.5,10:9.5},2:{1.5:11.5,2.5:12.0,4:14.0,6:15.5,10:17.0},3:{1.5:12.0,2.5:13.0,4:15.0,6:16.0,10:18.0},4:{1.5:13.0,2.5:14.0,4:16.0,6:17.5,10:20.0}},
   CV:{1:{1.5:6.3,2.5:6.7,4:7.2,6:7.8,10:9.4},2:{1.5:11.0,2.5:12.0,4:13.0,6:14.0,10:17.0},3:{1.5:11.5,2.5:12.5,4:13.5,6:14.5,10:18.0},4:{1.5:12.5,2.5:13.5,4:14.5,6:16.0,10:20.0}},
@@ -273,20 +343,27 @@ function computePower(input){
   const dropPct=(+input.dropPct>0)?+input.dropPct:3;
   const cores=[1,2,3,4].indexOf(+input.cores)>=0?+input.cores:(phase==='3p'?4:2);
   const loaded=(phase==='3p')?3:2, k=(phase==='3p')?Math.sqrt(3):2;
+  const method=METHODS[input.method]?input.method:'C';
+  const env=METHODS[method].env, refTemp=METHODS[method].ref;
+  const ambientC=(input.ambientC!=null&&isFinite(+input.ambientC))?+input.ambientC:refTemp;
+  const circuits=Math.max(1,Math.round(+input.circuits||1));
+  const kTemp=tempFactor(type,env,ambientC), kGroup=groupFactor(circuits);
   const results=SQ_LIST.map(sq=>{
     const R=R_OHM[sq], vdV=k*I*R*(L/1000), vdPct=V>0?(vdV/V*100):0;
-    const amp=AMP[type][loaded][sq], od=(OD[type][cores]&&OD[type][cores][sq])||null;
+    const baseAmp=AMP_BASE[type][method][loaded][sq];
+    const amp=Math.round(baseAmp*kTemp*kGroup*10)/10;
+    const od=(OD[type][cores]&&OD[type][cores][sq])||null;
     const vdOk=vdPct<=dropPct, ampOk=amp>=I, ok=vdOk&&ampOk;
-    return {sq,R,vdV,vdPct,amp,od,loaded,vdOk,ampOk,ok};
+    return {sq,R,vdV,vdPct,baseAmp,amp,od,loaded,vdOk,ampOk,ok};
   });
   const passing=results.filter(r=>r.ok);
   const recommended=passing.length?passing[0]:null;
   const notes=[];
   if(I<=0) notes.push('부하 전류를 입력하세요(전력→전류 도우미 이용 가능).');
   if(L<=0) notes.push('긍장(전선 길이)을 입력하세요.');
-  if(!recommended&&I>0&&L>0) notes.push('이 조건에서 10SQ(카탈로그 최대)로도 부족합니다(전압강하 또는 허용전류 초과). 긍장 단축·회로 분할·더 큰 규격(제작 문의)을 검토하세요.');
-  notes.push('허용전류는 IEC 60364-5-52 공사방법 C·주위 30℃ 표준 참고값입니다. 실제 설치방식(배관·직매·트레이)·주위온도·집합 회로수에 따라 보정(감소)이 필요합니다.');
-  return {cableType:type,meta:CABLE_META[type],phase,voltage:V,currentA:I,lengthM:L,dropPct,cores,loaded,results,recommended,notes};
+  if(!recommended&&I>0&&L>0) notes.push('이 조건에서 10SQ(카탈로그 최대)로도 부족합니다(전압강하 또는 보정 허용전류 초과). 긍장 단축·회로 분할·설치방식 변경·더 큰 규격(제작 문의)을 검토하세요.');
+  notes.push('허용전류는 IEC 60364-5-52(KS C IEC 60364-5-52) 설치방식 '+method+'('+METHODS[method].label.replace(/^[A-D0-9]+ · /,'')+') 기준표에 주위온도·집합 보정을 적용한 값입니다. 실제 포설 형태·그룹핑·토양 조건은 설계·감리로 최종 확인하세요.');
+  return {cableType:type,meta:CABLE_META[type],phase,voltage:V,currentA:I,lengthM:L,dropPct,cores,loaded,method,methodLabel:METHODS[method].label,env,refTemp,ambientC,circuits,kTemp,kGroup,results,recommended,notes};
 }
 function powerToCurrent(kW,V,pf,phase){kW=+kW||0;V=+V||0;pf=(+pf>0&&+pf<=1)?+pf:0.9;if(kW<=0||V<=0)return 0;const W=kW*1000;return (phase==='3p')?W/(Math.sqrt(3)*V*pf):W/(V*pf);}
 
@@ -294,6 +371,7 @@ function powerToCurrent(kW,V,pf,phase){kW=+kW||0;V=+V||0;pf=(+pf>0&&+pf<=1)?+pf:
 const S = { type:'VV', phase:'1p', out:null, in:null };
 function selType(t){ S.type=t; ['VV','CV'].forEach(k=>document.getElementById('ct-'+k).classList.toggle('sel',k===t)); }
 function selPhase(p){ S.phase=p; ['1p','3p'].forEach(k=>document.getElementById('ph-'+k).classList.toggle('sel',k===p)); const v=document.getElementById('in-volt'); if(!v.value||v.value==='220'||v.value==='380') v.value=p==='3p'?380:220; document.getElementById('in-cores').value=p==='3p'?'4':'2'; }
+function selMethod(){ const m=document.getElementById('in-method').value; const meta=METHODS[m]; if(meta){ document.getElementById('method-hint').textContent=meta.desc+' · 기준 '+meta.ref+'℃('+(meta.env==='ground'?'지중':'기중')+')'; const tp=document.getElementById('in-temp'); if(tp) tp.placeholder=String(meta.ref); } }
 function pwToggle(){ document.getElementById('pw-toggle').classList.toggle('open'); document.getElementById('pw-body').classList.toggle('open'); }
 function advToggle(){ document.getElementById('adv-toggle').classList.toggle('open'); document.getElementById('adv-body').classList.toggle('open'); }
 let _pwI=null;
@@ -313,8 +391,12 @@ function runCalc(){
   const L=parseFloat(document.getElementById('in-len').value);
   if(!I||I<=0){ alert('부하 전류를 입력하세요(전력→전류 도우미 이용 가능).'); return; }
   if(!L||L<=0){ alert('긍장(전선 길이)을 입력하세요.'); return; }
+  const methodSel=document.getElementById('in-method').value||'C';
+  const tempRaw=parseFloat(document.getElementById('in-temp').value);
+  const circRaw=parseInt(document.getElementById('in-circuits').value);
   const input={ cableType:S.type, phase:S.phase, voltage:parseFloat(document.getElementById('in-volt').value)||(S.phase==='3p'?380:220),
-    currentA:I, lengthM:L, dropPct:parseFloat(document.getElementById('in-drop').value)||3, cores:parseInt(document.getElementById('in-cores').value)||(S.phase==='3p'?4:2) };
+    currentA:I, lengthM:L, dropPct:parseFloat(document.getElementById('in-drop').value)||3, cores:parseInt(document.getElementById('in-cores').value)||(S.phase==='3p'?4:2),
+    method:methodSel, ambientC:isFinite(tempRaw)?tempRaw:null, circuits:isFinite(circRaw)?circRaw:1 };
   S.in=input; S.out=computePower(input);
   renderResults();
   goStep(2);
@@ -330,7 +412,7 @@ function renderResults(){
       <div class="hero-dim" id="heroDim">${out.meta.full} · 외경 ${rec.od?rec.od+'mm':'—'} · 도체저항 ${rec.R} Ω/km</div>
       <div class="hero-kpis">
         <div class="hero-kpi">전압강하<b>${fmt(rec.vdV,2)} V (${fmt(rec.vdPct,2)}%)</b></div>
-        <div class="hero-kpi">허용전류(참고)<b>${rec.amp} A</b></div>
+        <div class="hero-kpi">보정 허용전류<b>${fmt(rec.amp,1)} A</b></div>
         <div class="hero-kpi">부하전류<b>${fmt(i.currentA,1)} A</b></div>
       </div></div>`;
   } else {
@@ -338,30 +420,31 @@ function renderResults(){
   }
   let noteHtml=out.notes.map(n=>`<div class="warn-box" style="margin-bottom:.5rem">⚠️ ${n}</div>`).join('');
   document.getElementById('result-summary-bar').innerHTML=
-    `<div class="info-box" style="margin-bottom:.5rem">입력: ${out.meta.name}(${out.meta.tmax}℃) · ${i.phase==='3p'?'3상':'단상'} ${i.voltage}V · 전류 <b>${fmt(i.currentA,1)} A</b> · 긍장 <b>${fmt(i.lengthM,0)} m</b> · 허용강하 <b>${fmt(i.dropPct,1)}%</b> · ${i.cores}심</div>${noteHtml}`;
+    `<div class="info-box" style="margin-bottom:.5rem">입력: ${out.meta.name}(${out.meta.tmax}℃) · ${i.phase==='3p'?'3상':'단상'} ${i.voltage}V · 전류 <b>${fmt(i.currentA,1)} A</b> · 긍장 <b>${fmt(i.lengthM,0)} m</b> · 허용강하 <b>${fmt(i.dropPct,1)}%</b> · ${i.cores}심<br>설치방식 <b>${out.methodLabel}</b> · 주위 <b>${fmt(out.ambientC,0)}℃</b>(온도보정 ×${fmt(out.kTemp,2)}) · 집합 <b>${out.circuits}회로</b>(집합보정 ×${fmt(out.kGroup,2)})</div>${noteHtml}`;
 
-  document.getElementById('cmp-head').innerHTML=['SQ','도체저항','전압강하','전압강하율','허용전류(참고)','판정'].map(h=>`<th>${h}</th>`).join('');
+  document.getElementById('cmp-head').innerHTML=['SQ','도체저항','전압강하','전압강하율','기준전류','보정 허용전류','판정'].map(h=>`<th>${h}</th>`).join('');
   document.getElementById('cmp-body').innerHTML=out.results.map(r=>{
     const tag=r.ok?'<span class="tag-ok">✅ 적합</span>':(!r.ampOk?'<span class="tag-bad">❌ 전류초과</span>':'<span class="tag-bad">❌ 강하초과</span>');
     const isRec=rec&&r.sq===rec.sq;
-    return `<tr class="${isRec?'rec':''}"><td><b>${r.sq} SQ</b></td><td class="mono">${r.R} Ω/km</td><td class="mono">${fmt(r.vdV,2)} V</td><td class="mono ${r.vdOk?'good':'bad'}">${fmt(r.vdPct,2)} %</td><td class="mono ${r.ampOk?'good':'bad'}">${r.amp} A</td><td>${tag}</td></tr>`;
+    return `<tr class="${isRec?'rec':''}"><td><b>${r.sq} SQ</b></td><td class="mono">${r.R} Ω/km</td><td class="mono">${fmt(r.vdV,2)} V</td><td class="mono ${r.vdOk?'good':'bad'}">${fmt(r.vdPct,2)} %</td><td class="mono">${r.baseAmp} A</td><td class="mono ${r.ampOk?'good':'bad'}">${fmt(r.amp,1)} A</td><td>${tag}</td></tr>`;
   }).join('');
 
   document.getElementById('disclaimer-text').innerHTML=
     `전압강하 = k·I·R·L/1000 (단상 k=2, 3상 k=√3). 도체저항·외경은 금강케이블 카탈로그(VV/CV) 실측값.<br>
-     <b>베타 계산기</b> — 전압강하는 카탈로그 저항으로 정확 계산하나, <b>허용전류는 IEC 60364-5-52 공사방법 C·주위 30℃ 표준 참고값</b>입니다. 실제 설치방식(배관·직매·트레이)·주위온도·집합 회로수에 따라 반드시 보정하세요. 과소선정은 안전·발열 위험.<br>
-     금강 카탈로그 수록 규격은 1.5~10SQ(1~4심)입니다. 그 이상은 제작 문의. · 데이터: 금강케이블 카탈로그 + IEC 60364-5-52`;
+     <b>보정 허용전류 = 기준 허용전류 × 온도보정 × 집합보정.</b> 기준 허용전류는 <b>IEC 60364-5-52(KS C IEC 60364-5-52) Table B.52.2~B.52.5</b>의 설치방식(A1·B1·C=기중 30℃, D=지중 20℃)·도체수별 표준값이며, 주위온도 보정(B.52.14/15)·집합 보정(B.52.17)을 적용했습니다. 지중(D)은 토양저항 2.5 K·m/W 기준이고 집합 보정은 다발 기준의 보수적 근사입니다.<br>
+     금강 카탈로그 수록 규격은 1.5~10SQ(1~4심)입니다. 그 이상은 제작 문의. 과소선정은 안전·발열 위험 — 최종 포설·그룹핑·토양 조건은 설계·감리로 확인하세요. · 데이터: 금강케이블 카탈로그 + IEC 60364-5-52`;
 }
 
 document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('in-volt').value=220;
+  selMethod();
   const pd=document.getElementById('print-date'); if(pd) pd.textContent=new Date().toLocaleDateString('ko-KR');
 });
 </script>
 
 <script>
 function poGetInputs(){try{
-  return poInputsStr([['케이블',S.type],['전원',S.phase==='3p'?'3상':'단상'],['전압',S.in?S.in.voltage:null,'V'],['전류',S.in?S.in.currentA:null,'A'],['긍장',S.in?S.in.lengthM:null,'m'],['허용강하',S.in?S.in.dropPct:null,'%'],['추천',S.out&&S.out.recommended?('금강 '+S.out.meta.name+' '+S.out.recommended.sq+'SQ×'+S.in.cores+'C'):null]]);
+  return poInputsStr([['케이블',S.type],['전원',S.phase==='3p'?'3상':'단상'],['전압',S.in?S.in.voltage:null,'V'],['전류',S.in?S.in.currentA:null,'A'],['긍장',S.in?S.in.lengthM:null,'m'],['허용강하',S.in?S.in.dropPct:null,'%'],['설치방식',S.out?S.out.method:null],['주위온도',S.out?S.out.ambientC:null,'℃'],['집합',S.out?S.out.circuits:null,'회로'],['추천',S.out&&S.out.recommended?('금강 '+S.out.meta.name+' '+S.out.recommended.sq+'SQ×'+S.in.cores+'C'):null]]);
 }catch(e){return '';}}
 </script>
 <script src="js/common.js"></script>
