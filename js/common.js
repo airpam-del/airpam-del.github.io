@@ -168,7 +168,7 @@ function poInitNav() {
   var isIndex = (page === '' || page === 'index.html');
   // 계산기 페이지 전용(홈은 자체 네비·레이아웃이 있으므로 제외)
   if (!isIndex) { renderNav(); renderMobileNav(); poRenderInquiryRows(); poRelatedInit(); }
-  poInjectResultBtnCSS(); poGradeInit(); poHistInit();
+  poInjectResultBtnCSS(); poGradeInit(); poHistInit(); poShareInit();
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -293,6 +293,160 @@ function poHistInit() {
     poRenderHistPanels();
     var page = poCurrentFile();
     if (page !== '' && page !== 'index.html') poHistCaptureInit();
+  } catch (e) {}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   결과 공유 링크 — 입력 조건을 URL 해시에 담아 복원·재계산.
+   서버·로그인 불필요. B2B에서 "이 규격 맞나요?" 담당자끼리 링크로 공유 + 재방문 유도.
+   ▶ 캡처: main 안의 input/select/textarea(id 보유) 값 + 선택 카드(.sel[id]) 목록.
+   ▶ 복원: 카드 먼저 click(상태 세팅) → 폼값 세팅 → 활성 스텝의 실행버튼(.btn-primary) click.
+     실행 함수명이 계산기마다 달라(runCalc/goStep2/calcAndShow…) 버튼 클릭으로 범용 처리.
+   ▶ 해시(#s=) 사용: 쿼리스트링과 달리 서버로 전송되지 않아 프라이버시에 유리.
+   ═══════════════════════════════════════════════════════════════ */
+function poShareSerialize() {
+  var data = { f: {}, c: [] };
+  try {
+    var scope = document.querySelector('main') || document.body;
+    var els = scope.querySelectorAll('input[id],select[id],textarea[id]');
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.type === 'button' || el.type === 'submit' || el.type === 'file') continue;
+      if (el.type === 'checkbox' || el.type === 'radio') { data.f[el.id] = el.checked ? 1 : 0; }
+      else if (el.value !== '' && el.value != null) { data.f[el.id] = el.value; }
+    }
+    var cards = scope.querySelectorAll('.sel[id]');
+    for (var j = 0; j < cards.length; j++) {
+      var c = cards[j];
+      if (c.classList.contains('step-wrap')) continue;      // 스텝 컨테이너 제외
+      if (/^step-/.test(c.id)) continue;
+      data.c.push(c.id);
+    }
+  } catch (e) {}
+  return data;
+}
+function poShareEncode(data) {
+  try { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+  catch (e) { return ''; }
+}
+function poShareDecode(s) {
+  try { s = String(s).replace(/-/g, '+').replace(/_/g, '/'); return JSON.parse(decodeURIComponent(escape(atob(s)))); }
+  catch (e) { return null; }
+}
+function poShareUrl() {
+  var enc = poShareEncode(poShareSerialize());
+  return location.origin + location.pathname + '#s=' + enc;
+}
+function poShareCopy(btn) {
+  var url = poShareUrl();
+  var label = btn ? btn.innerHTML : '';
+  var flash = function (ok) {
+    if (!btn) return;
+    btn.innerHTML = ok ? '✅ 링크 복사됨 — 붙여넣기 하세요' : '⚠️ 복사 실패 — 주소창의 링크를 복사하세요';
+    if (!ok) { try { location.hash = 's=' + poShareEncode(poShareSerialize()); } catch (e) {} }
+    setTimeout(function () { btn.innerHTML = label; }, 2200);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function () { flash(true); }, function () { flash(false); });
+  } else {
+    try {
+      var ta = document.createElement('textarea'); ta.value = url;
+      ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta);
+      ta.select(); var ok = document.execCommand('copy'); document.body.removeChild(ta); flash(ok);
+    } catch (e) { flash(false); }
+  }
+}
+function poShareApply() {
+  try {
+    var m = (location.hash || '').match(/[#&]s=([^&]+)/);
+    if (!m) return false;
+    var d = poShareDecode(m[1]);
+    if (!d) return false;
+    // 1) 선택 카드 먼저 click → 상태변수(S.type 등) 세팅
+    (d.c || []).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && typeof el.click === 'function') { try { el.click(); } catch (e) {} }
+    });
+    // 2) 폼값 세팅(카드 click 이 덮어쓴 값 위에 재적용) + change/input 발화
+    var f = d.f || {};
+    Object.keys(f).forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = !!f[id];
+      else el.value = f[id];
+      try { el.dispatchEvent(new Event('change', { bubbles: true })); el.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+    });
+    // 3) 실행버튼 click — 다단계 계산기는 결과까지 진행(최대 6스텝)
+    setTimeout(function () { poShareRun(0); }, 80);
+    return true;
+  } catch (e) { return false; }
+}
+/* 결과가 이미 렌더됐는지(진행 중단 판단) */
+function poShareHasResult() {
+  try {
+    var ids = ['result-grid', 'cmp-body', 'result-summary-bar', 'hero-wrap'];
+    for (var i = 0; i < ids.length; i++) {
+      var e = document.getElementById(ids[i]);
+      if (e && e.textContent && e.textContent.trim().length > 8) return true;
+    }
+    var hm = document.getElementById('heroModel');
+    if (hm && hm.textContent && hm.textContent.trim()) return true;
+  } catch (e) {}
+  return false;
+}
+/* 활성 스텝의 실행버튼을 눌러 결과까지 진행(스텝형·단일형 공통) */
+function poShareRun(tries) {
+  tries = tries || 0;
+  try {
+    if (tries >= 6) return;
+    if (poShareHasResult()) return;
+    var active = document.querySelector('.step-wrap.active');
+    var scope = active || document.querySelector('main') || document;
+    var btn = scope.querySelector('.btn-primary');
+    if (!btn) {
+      if (tries === 0) { var all = document.querySelectorAll('.btn-primary'); if (all.length) try { all[0].click(); } catch (e) {} }
+      return;
+    }
+    var before = active;
+    btn.click();
+    setTimeout(function () {
+      if (poShareHasResult()) return;
+      var after = document.querySelector('.step-wrap.active');
+      if (after && after !== before) poShareRun(tries + 1); // 스텝 전진 시에만 계속
+    }, 100);
+  } catch (e) {}
+}
+function poInjectShareCSS() {
+  if (document.getElementById('po-share-css')) return;
+  var st = document.createElement('style'); st.id = 'po-share-css';
+  st.textContent = [
+    '.po-share-row{text-align:center;margin:6px 0 2px}',
+    '.po-share-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--accent,#1A3A2A);cursor:pointer;background:transparent;border:1.5px solid var(--border,#D8D4CC);border-radius:8px;padding:9px 16px;font-family:inherit;transition:all .15s}',
+    '.po-share-btn:hover{border-color:var(--accent,#1A3A2A);background:rgba(0,0,0,.02)}',
+    '@media print{.po-share-row{display:none!important}}'
+  ].join('');
+  (document.head || document.documentElement).appendChild(st);
+}
+function poShareInjectButtons() {
+  try {
+    var reps = document.querySelectorAll('.po-rep-row');
+    for (var i = 0; i < reps.length; i++) {
+      var rep = reps[i];
+      if (rep.previousElementSibling && rep.previousElementSibling.classList && rep.previousElementSibling.classList.contains('po-share-row')) continue;
+      var row = document.createElement('div');
+      row.className = 'po-share-row';
+      row.innerHTML = '<button class="po-share-btn" type="button" onclick="poShareCopy(this)">🔗 결과 공유 링크 복사</button>';
+      rep.parentNode.insertBefore(row, rep);
+    }
+  } catch (e) {}
+}
+function poShareInit() {
+  try {
+    var page = poCurrentFile();
+    if (page === '' || page === 'index.html') return;
+    poInjectShareCSS();
+    poShareInjectButtons();
+    poShareApply();
   } catch (e) {}
 }
 
