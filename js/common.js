@@ -73,7 +73,7 @@ function renderNav() {
     : '';
   host.outerHTML =
     '<nav class="partson-nav">\n' +
-    '  <a href="index.html" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>\n' +
+    '  <a href="/" class="nav-brand" style="text-decoration:none;color:rgba(255,255,255,0.7);font-weight:600">PartsOn</a>\n' +
     '  <div class="pnav-drop electric-drop">\n' +
     '    <button class="pnav-toggle" onclick="pnavToggle(this)">전동 부품 ▾</button>\n' +
     '    <div class="pnav-menu">\n      ' + menu(electric) + '\n    </div>\n' +
@@ -146,7 +146,7 @@ function renderMobileNav() {
   panel.innerHTML = sec('⚡ 전동 부품', electric)
     + sec('💨 공압 부품', pneumatic)
     + (cable.length ? sec('🧵 케이블', cable) : '')
-    + '<div class="pmnav-sec"><a href="index.html" class="pmnav-home' + (cur === 'index.html' ? ' pmnav-active' : '') + '">🏠 PartsOn 홈</a></div>';
+    + '<div class="pmnav-sec"><a href="/" class="pmnav-home' + (cur === 'index.html' ? ' pmnav-active' : '') + '">🏠 PartsOn 홈</a></div>';
 
   host.appendChild(btn);
   anchor.appendChild(panel);
