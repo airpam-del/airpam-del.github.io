@@ -28,7 +28,9 @@
 {"@type":"Question","name":"유성 감속기 백래시는 몇 arcmin을 선택해야 하나요?",
 "acceptedAnswer":{"@type":"Answer","text":"일반 이송축은 5 arcmin, 정밀 위치결정은 3 arcmin, 왕복 반전이 잦은 고정밀 장비는 1 arcmin 이하를 권장합니다. 백래시가 작을수록 가격이 올라가므로 필요 이상 스펙은 낭비입니다."}},
 {"@type":"Question","name":"관성비 매칭을 위한 최적 감속비는?",
-"acceptedAnswer":{"@type":"Answer","text":"부하 관성은 감속비의 제곱으로 줄어듭니다. 이론상 최적 감속비 i = √(JL/JM)이며, 실무에서는 속도 조건과 함께 관성비 10 이하가 되는 감속비를 선택합니다."}}]}
+"acceptedAnswer":{"@type":"Answer","text":"부하 관성은 감속비의 제곱으로 줄어듭니다. 이론상 최적 감속비 i = √(JL/JM)이며, 실무에서는 속도 조건과 함께 관성비 10 이하가 되는 감속비를 선택합니다."}},
+{"@type":"Question","name":"유성 감속기 효율은 얼마나 되나요?",
+"acceptedAnswer":{"@type":"Answer","text":"유성 감속기 효율은 일반적으로 1단 약 97%, 2단 약 94%, 3단 약 90% 수준입니다(제조사·감속비·윤활에 따라 다름). 하모닉(약 70~90%)·웜(약 50~90%)보다 높아, 토크·발열 계산에서는 각 단 효율을 곱해 적용합니다. 출력 토크 = 입력 토크 × 감속비 × 효율."}}]}
 </script>
 <style>
 :root{--navy:#0f2540;--accent:#2b7de9;--gray:#5a6b7f;--bg:#f6f8fb}
@@ -102,6 +104,8 @@ a{color:var(--accent)}
 <p>감속비 3~10은 1단, 12~100은 2단 구성이 일반적입니다. 2단은 길이가 길어지고 효율이 약간 낮아지지만 큰 감속비를 얻습니다.</p>
 <h3>Q. 유성 감속기와 하모닉·사이클로이드는 어떻게 구분해 쓰나요?</h3>
 <p>일반 이송·반송은 유성, 로봇 관절처럼 제로 백래시·고감속이 필요하면 <a href="guide-harmonic-drive.html">하모닉 드라이브</a>나 <a href="guide-cycloidal-gearbox.html">사이클로이드 감속기</a>를 검토합니다.</p>
+<h3>Q. 유성 감속기 효율은 얼마나 되나요?</h3>
+<p>일반적으로 <strong>1단 약 97%, 2단 약 94%, 3단 약 90%</strong> 수준입니다(제조사·감속비·윤활에 따라 다름). 하모닉(약 70~90%)·웜(약 50~90%)보다 높은 편이라 서보 구동에 유리합니다. 토크·발열 계산 시 <strong>출력 토크 = 입력 토크 × 감속비 × 효율</strong>로 각 단 효율을 곱해 적용하세요.</p>
 
 <p style="margin-top:32px">관련 가이드: <a href="guide-servo-motor.html">서보모터 용량 선정</a> · <a href="guide-cycloidal-gearbox.html">사이클로이드 감속기 선정</a> · <a href="guide-harmonic-drive.html">하모닉 드라이브 선정</a></p>
 </div>
