@@ -37,7 +37,7 @@ test('단상 220V·50A·5m·VV → 허용전류가 10SQ 강제', () => {
 
 /* ── C) CV가 VV보다 기준 허용전류 큼 (모든 방법·도체수) ── */
 test('기준 허용전류: CV(XLPE) > VV(PVC) 동일 SQ', () => {
-  for (const m of ['A1','B1','C','D']) for (const ld of [2,3]) for (const s of [1.5,2.5,4,6,10]) {
+  for (const m of ['A2','B2','C','D']) for (const ld of [2,3]) for (const s of [1.5,2.5,4,6,10]) {
     assert.ok(AMP_BASE.CV[m][ld][s] > AMP_BASE.VV[m][ld][s], `CV>${m}/${ld}/${s}SQ`);
   }
 });
@@ -56,6 +56,17 @@ test('powerToCurrent: 3상 380V 10kW pf0.9, 단상 220V 2kW pf0.9', () => {
   assert.equal(powerToCurrent(0, 380, 0.9, '3p'), 0);
 });
 
+test('powerToCurrent: 효율(축출력) 반영 — 전류가 더 크고, eff 미지정=하위호환', () => {
+  // 축출력 7.5kW, η=0.88 → 입력전력 환산보다 1/0.88배 큰 전류
+  near(powerToCurrent(7.5, 380, 0.9, '3p', 0.88), 7500 / (Math.sqrt(3) * 380 * 0.9 * 0.88), 1e-9);
+  // 효율 넣으면 안 넣은 것보다 큼(과소선정 방지 방향)
+  assert.ok(powerToCurrent(7.5, 380, 0.9, '3p', 0.88) > powerToCurrent(7.5, 380, 0.9, '3p'));
+  // eff 미지정/1 = 기존 입력전력식과 동일(하위호환)
+  near(powerToCurrent(7.5, 380, 0.9, '3p'), powerToCurrent(7.5, 380, 0.9, '3p', 1), 1e-12);
+  // 비정상 eff는 1로 처리
+  near(powerToCurrent(5, 220, 0.9, '1p', 0), 5000 / (220 * 0.9), 1e-9);
+});
+
 /* ── F) 초과 → 추천 없음 ── */
 test('과대 조건 → 추천 없음 + 경고', () => {
   const r = computePower({ cableType:'VV', phase:'1p', currentA:30, lengthM:500, dropPct:3 });
@@ -64,19 +75,19 @@ test('과대 조건 → 추천 없음 + 경고', () => {
 });
 
 /* ── G) 설치방식: A1(최저) < B1 < C, D 는 지중 ── */
-test('설치방식별 기준 허용전류 대소: A1 < B1 < C', () => {
+test('설치방식별 기준 허용전류 대소: A2 < B2 < C (다심)', () => {
   for (const t of ['VV','CV']) for (const ld of [2,3]) for (const s of [1.5,2.5,4,6,10]) {
-    assert.ok(AMP_BASE[t].A1[ld][s] <= AMP_BASE[t].B1[ld][s], `A1<=B1 ${t}/${ld}/${s}`);
-    assert.ok(AMP_BASE[t].B1[ld][s] <= AMP_BASE[t].C[ld][s],  `B1<=C ${t}/${ld}/${s}`);
+    assert.ok(AMP_BASE[t].A2[ld][s] <= AMP_BASE[t].B2[ld][s], `A2<=B2 ${t}/${ld}/${s}`);
+    assert.ok(AMP_BASE[t].B2[ld][s] <= AMP_BASE[t].C[ld][s],  `B2<=C ${t}/${ld}/${s}`);
   }
 });
 
-test('방법 A1 이 C 보다 보수적 → 더 굵은 SQ', () => {
+test('방법 A2 가 C 보다 보수적 → 더 굵은 SQ', () => {
   const base = { cableType:'VV', phase:'1p', voltage:220, currentA:42, lengthM:10, dropPct:3 };
   const rC  = computePower({ ...base, method:'C' });
-  const rA1 = computePower({ ...base, method:'A1' });
+  const rA2 = computePower({ ...base, method:'A2' });
   assert.equal(rC.recommended.sq, 6);   // C: 6SQ=46 ≥ 42
-  assert.equal(rA1.recommended.sq, 10); // A1: 6SQ=34 < 42 → 10SQ=46
+  assert.equal(rA2.recommended.sq, 10); // A2: 6SQ=32 < 42 → 10SQ=43
 });
 
 /* ── H) 주위온도 보정 (B.52.14 기중) ── */
@@ -131,7 +142,7 @@ test('불변식: 무작위 입력 300개', () => {
   for (let i = 0; i < 300; i++) {
     const phase = pick(['1p','3p']);
     const type = pick(['VV','CV']);
-    const method = pick(['A1','B1','C','D']);
+    const method = pick(['A2','B2','C','D']);
     const ambientC = pick([null, 20, 30, 40, 45, 37]);
     const circuits = pick([1, 2, 3, 6, 10]);
     const input = { cableType:type, phase, voltage: phase==='3p'?380:220,

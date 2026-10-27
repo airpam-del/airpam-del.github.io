@@ -145,10 +145,10 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
 
     <div class="input-group">
       <label><i class="ti ti-topology-ring" aria-hidden="true"></i>심수 (코어)
-        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">회로 도체 수입니다. 단상 2선 = 2심, 3상 3선 = 3심, 3상4선(중성선) = 4심. 단심(1C)은 단선 포설용.</div></span>
+        <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">심수 = 케이블 안의 심(도체) 개수입니다. 회로도에서 전원선·중성선·보호도체를 세어 정하세요(보통 단상 2선=2심, 3상 3선=3심, 3상 4선=4심). ※심수(개수)와 단선/연선(도체 구성)은 다른 개념 — TFR-8은 연선입니다.</div></span>
       </label>
       <div class="choice-grid">
-        <div class="choice-card" id="co-1" onclick="selCore(1)"><div class="choice-title">1심</div><div class="choice-sub">단선</div></div>
+        <div class="choice-card" id="co-1" onclick="selCore(1)"><div class="choice-title">1심</div><div class="choice-sub">단심</div></div>
         <div class="choice-card sel" id="co-2" onclick="selCore(2)"><div class="choice-title">2심</div><div class="choice-sub">단상</div></div>
         <div class="choice-card" id="co-3" onclick="selCore(3)"><div class="choice-title">3심</div><div class="choice-sub">3상</div></div>
         <div class="choice-card" id="co-4" onclick="selCore(4)"><div class="choice-title">4심</div><div class="choice-sub">3상4선</div></div>

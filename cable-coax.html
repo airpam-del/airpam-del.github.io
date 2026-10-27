@@ -180,11 +180,11 @@ label>.ti{font-size:16px;vertical-align:-3px;margin-right:6px;color:var(--text3)
     <button class="adv-toggle" id="adv-toggle" onclick="advToggle()" type="button"><span>⚙️ 허용 손실·설치 조건 (선택)</span><span class="a-arrow">▾</span></button>
     <div class="adv-body" id="adv-body">
       <div class="input-group" style="margin-bottom:.8rem">
-        <label>허용 손실(dB budget)
-          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">케이블 구간에서 허용하는 최대 신호 손실입니다. 시스템(수신 감도·분배 손실·여유)에 따라 다릅니다. 일반적으로 10~20dB. 기본 20dB.</div></span>
+        <label>케이블에 허용할 손실(dB)
+          <span class="tip-wrap"><button class="tip-btn" type="button">?</button><div class="tip-popup">※ <b>케이블 자체</b>에 허용하는 손실입니다(커넥터·분배기 손실은 미포함). 전체 예산에서 커넥터·분배·여유분을 뺀 값을 넣으세요. 일반적으로 10~20dB. 기본 20dB.</div></span>
         </label>
         <div class="input-wrap"><input type="number" id="in-budget" min="1" step="1" value="20"><span class="input-unit">dB</span></div>
-        <div class="input-hint">이 손실 이내인 가장 경제적(가는) 품번을 추천합니다.</div>
+        <div class="input-hint">이 손실 이내인 가장 경제적(가는) 품번을 추천합니다. 커넥터·분배기 손실과 여유는 별도로 빼서 입력하세요. · 수록 제품은 75Ω이니 장비의 50Ω/75Ω 조건을 먼저 확인하세요.</div>
       </div>
       <label class="check-row"><input type="checkbox" id="in-ss"> 자가지지형(SS, 지지선 내장)만 — 가공 포설용</label>
     </div>
