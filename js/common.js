@@ -868,7 +868,8 @@ function poGradeInit() {
     if (host && !document.getElementById('po-grade-notice')) {
       var n = document.createElement('div');
       n.id = 'po-grade-notice';
-      n.innerHTML = '<b>' + poEsc(m.label) + '</b> · ' + poEsc(m.notice);
+      n.innerHTML = '<b>' + poEsc(m.label) + '</b> · ' + poEsc(m.notice) +
+        ' <a href="verification.html" style="color:' + m.color + ';font-weight:700;text-decoration:underline;white-space:nowrap">검증 기준 ›</a>';
       n.style.cssText = 'font-size:12px;line-height:1.6;color:' + m.color + ';background:' + m.bg + ';border:1px solid ' + m.border + ';border-radius:9px;padding:9px 13px;margin-bottom:1rem';
       host.insertBefore(n, host.firstChild);
     }
